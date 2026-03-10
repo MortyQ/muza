@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/*
+ * @theme inline — Tailwind generates utilities that reference CSS vars directly.
+ * Result: bg-mainBg compiles to `background-color: var(--mainBg)`
+ * Changing data-theme on <html> instantly switches all colors — no JS rebuild.
+ */
+@theme inline {
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-text: var(--primary-text);
+
+    --color-mainBg: var(--mainBg);
+    --color-cardBg: var(--cardBg);
+    --color-navigationBg: var(--navigationBg);
+    --color-surfaceBg: var(--surfaceBg);
+
+    --color-mainText: var(--mainText);
+    --color-secondaryText: var(--secondaryText);
+    --color-mutedText: var(--mutedText);
+
+    --color-border: var(--border);
+    --color-borderFocus: var(--borderFocus);
+
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
+    --color-info: var(--info);
+}
+
+/*
+ * dark: prefix activates when data-theme="dark" is on <html>.
+ * Use dark: only for static Tailwind values (ring, shadow, opacity).
+ * Semantic color utilities (bg-mainBg, text-mainText) adapt automatically
+ * via CSS variables — dark: is NOT needed for them.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ─── Light theme ────────────────────────────────── */
+:root,
+:root[data-theme="light"] {
+    --primary: oklch(52% 0.22 255);
+    --primary-hover: oklch(45% 0.22 255);
+    --primary-text: oklch(100% 0 0);
+
+    --mainBg: oklch(96% 0.005 255);
+    --cardBg: oklch(100% 0 0);
+    --navigationBg: oklch(22% 0.03 255);
+    --surfaceBg: oklch(92% 0.007 255);
+
+    --mainText: oklch(18% 0.01 255);
+    --secondaryText: oklch(45% 0.01 255);
+    --mutedText: oklch(65% 0.005 255);
+
+    --border: oklch(87% 0.005 255);
+    --borderFocus: oklch(52% 0.22 255);
+
+    --success: oklch(72% 0.17 145);
+    --warning: oklch(78% 0.17 75);
+    --danger: oklch(62% 0.22 25);
+    --info: oklch(68% 0.15 220);
+}
+
+/* ─── Dark theme ─────────────────────────────────── */
+:root[data-theme="dark"] {
+    --primary: oklch(62% 0.22 255);
+    --primary-hover: oklch(68% 0.22 255);
+    --primary-text: oklch(100% 0 0);
+
+    --mainBg: oklch(16% 0.01 255);
+    --cardBg: oklch(21% 0.01 255);
+    --navigationBg: oklch(12% 0.01 255);
+    --surfaceBg: oklch(25% 0.01 255);
+
+    --mainText: oklch(94% 0.005 255);
+    --secondaryText: oklch(70% 0.008 255);
+    --mutedText: oklch(50% 0.005 255);
+
+    --border: oklch(30% 0.01 255);
+    --borderFocus: oklch(62% 0.22 255);
+
+    --success: oklch(65% 0.17 145);
+    --warning: oklch(72% 0.17 75);
+    --danger: oklch(60% 0.22 25);
+    --info: oklch(65% 0.15 220);
+}
+
+/*
+ * To add a new theme (e.g. "ocean"):
+ *   1. Add :root[data-theme="ocean"] { ... } block here
+ *   2. Add "ocean" to ThemeType in libs/utils/src/theme/types.ts
+ * Nothing else needed.
+ */

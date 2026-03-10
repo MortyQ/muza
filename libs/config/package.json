@@ -1,0 +1,14 @@
+{
+  "name": "@muzakit/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tailwind/theme.css": "./src/tailwind/theme.css",
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint.base.mjs": "./src/eslint/eslint.base.mjs"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.0"
+  }
+}

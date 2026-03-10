@@ -1,0 +1,7 @@
+/* Import shared theme tokens — do NOT import tailwindcss again here,
+   it is already imported inside theme.css */
+@import "@muzakit/config/tailwind/theme.css";
+
+/* Component-level styles here */
+
+

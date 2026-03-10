@@ -1,0 +1,28 @@
+import { resolve } from "path";
+
+import tailwindcss from "@tailwindcss/vite";
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    tailwindcss(),
+    // dts({rollupTypes: true, tsconfigPath: "./tsconfig.json"}),
+    dts(),
+  ],
+  build: {
+    lib: {
+      entry: resolve(__dirname, "src/index.ts"),
+      formats: ["es"],
+      fileName: "index",
+    },
+    rollupOptions: {
+      external: ["vue", "vue-router"],
+      output: {
+        assetFileNames: "style.css",
+      },
+    },
+  },
+});
