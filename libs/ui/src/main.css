@@ -2,6 +2,8 @@
    it is already imported inside theme.css */
 @import "@muzakit/config/tailwind/theme.css";
 
-/* Component-level styles here */
+/* UI component design tokens with fallbacks */
+@import "./styles/tokens.css";
 
+/* Component-level styles here */
 

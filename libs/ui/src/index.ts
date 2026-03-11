@@ -1,3 +1,5 @@
+import "./styles/tokens.css";
+
 export { default as VButton } from "./components/base/VButton.vue";
 
 declare module "vue" {

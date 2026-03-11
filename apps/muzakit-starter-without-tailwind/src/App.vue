@@ -26,6 +26,7 @@ const { theme, toggleTheme } = useTheme();
         <span class="text-sm text-foreground-muted">Current theme:
           <strong class="text-foreground">{{ theme }}</strong></span>
         <VButton
+          variant="negative"
           @click="toggleTheme"
         >
           Toggle theme

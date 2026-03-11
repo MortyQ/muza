@@ -1,37 +1,55 @@
 @import "tailwindcss";
 
-/*
- * @theme inline — Tailwind generates utilities that reference CSS vars directly.
- * Result: bg-mainBg compiles to `background-color: var(--mainBg)`
- * Changing data-theme on <html> instantly switches all colors — no JS rebuild.
- */
 @theme inline {
+    /* Brand */
     --color-primary: var(--primary);
     --color-primary-hover: var(--primary-hover);
-    --color-primary-text: var(--primary-text);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary-subtle: var(--primary-subtle);
 
-    --color-mainBg: var(--mainBg);
-    --color-cardBg: var(--cardBg);
-    --color-navigationBg: var(--navigationBg);
-    --color-surfaceBg: var(--surfaceBg);
+    /* Backgrounds / Surfaces */
+    --color-background: var(--background);
+    --color-surface: var(--surface);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-hover: var(--surface-hover);
+    --color-nav: var(--nav);
+    --color-overlay: var(--overlay);
 
-    --color-mainText: var(--mainText);
-    --color-secondaryText: var(--secondaryText);
-    --color-mutedText: var(--mutedText);
+    /* Text */
+    --color-foreground: var(--foreground);
+    --color-foreground-secondary: var(--foreground-secondary);
+    --color-foreground-muted: var(--foreground-muted);
 
+    /* Borders */
     --color-border: var(--border);
-    --color-borderFocus: var(--borderFocus);
+    --color-border-focus: var(--border-focus);
 
+    /* Status */
     --color-success: var(--success);
+    --color-success-hover: var(--success-hover);
+    --color-success-foreground: var(--success-foreground);
+    --color-success-subtle: var(--success-subtle);
+
     --color-warning: var(--warning);
+    --color-warning-hover: var(--warning-hover);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-warning-subtle: var(--warning-subtle);
+
     --color-danger: var(--danger);
+    --color-danger-hover: var(--danger-hover);
+    --color-danger-foreground: var(--danger-foreground);
+    --color-danger-subtle: var(--danger-subtle);
+
     --color-info: var(--info);
+    --color-info-hover: var(--info-hover);
+    --color-info-foreground: var(--info-foreground);
+    --color-info-subtle: var(--info-subtle);
 }
 
 /*
  * dark: prefix activates when data-theme="dark" is on <html>.
  * Use dark: only for static Tailwind values (ring, shadow, opacity).
- * Semantic color utilities (bg-mainBg, text-mainText) adapt automatically
+ * Semantic color utilities (bg-background, text-foreground) adapt automatically
  * via CSS variables — dark: is NOT needed for them.
  */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -39,50 +57,102 @@
 /* ─── Light theme ────────────────────────────────── */
 :root,
 :root[data-theme="light"] {
+    /* Brand */
     --primary: oklch(52% 0.22 255);
     --primary-hover: oklch(45% 0.22 255);
-    --primary-text: oklch(100% 0 0);
+    --primary-foreground: oklch(100% 0 0);
+    --primary-subtle: oklch(94% 0.06 255);
 
-    --mainBg: oklch(96% 0.005 255);
-    --cardBg: oklch(100% 0 0);
-    --navigationBg: oklch(22% 0.03 255);
-    --surfaceBg: oklch(92% 0.007 255);
+    /* Backgrounds / Surfaces */
+    --background: oklch(96% 0.005 255);
+    --surface: oklch(100% 0 0);
+    --surface-raised: oklch(92% 0.007 255);
+    --surface-hover: oklch(93% 0.005 255);
+    --nav: oklch(22% 0.03 255);
+    --overlay: oklch(0% 0 0 / 0.5);
 
-    --mainText: oklch(18% 0.01 255);
-    --secondaryText: oklch(45% 0.01 255);
-    --mutedText: oklch(65% 0.005 255);
+    /* Text */
+    --foreground: oklch(18% 0.01 255);
+    --foreground-secondary: oklch(45% 0.01 255);
+    --foreground-muted: oklch(65% 0.005 255);
 
+    /* Borders */
     --border: oklch(87% 0.005 255);
-    --borderFocus: oklch(52% 0.22 255);
+    --border-focus: oklch(52% 0.22 255);
 
+    /* Status — Success */
     --success: oklch(72% 0.17 145);
+    --success-hover: oklch(65% 0.17 145);
+    --success-foreground: oklch(100% 0 0);
+    --success-subtle: oklch(94% 0.05 145);
+
+    /* Status — Warning */
     --warning: oklch(78% 0.17 75);
+    --warning-hover: oklch(71% 0.17 75);
+    --warning-foreground: oklch(20% 0.01 75);
+    --warning-subtle: oklch(96% 0.05 75);
+
+    /* Status — Danger */
     --danger: oklch(62% 0.22 25);
+    --danger-hover: oklch(55% 0.22 25);
+    --danger-foreground: oklch(100% 0 0);
+    --danger-subtle: oklch(95% 0.05 25);
+
+    /* Status — Info */
     --info: oklch(68% 0.15 220);
+    --info-hover: oklch(61% 0.15 220);
+    --info-foreground: oklch(100% 0 0);
+    --info-subtle: oklch(94% 0.05 220);
 }
 
 /* ─── Dark theme ─────────────────────────────────── */
 :root[data-theme="dark"] {
+    /* Brand */
     --primary: oklch(62% 0.22 255);
     --primary-hover: oklch(68% 0.22 255);
-    --primary-text: oklch(100% 0 0);
+    --primary-foreground: oklch(100% 0 0);
+    --primary-subtle: oklch(25% 0.08 255);
 
-    --mainBg: oklch(16% 0.01 255);
-    --cardBg: oklch(21% 0.01 255);
-    --navigationBg: oklch(12% 0.01 255);
-    --surfaceBg: oklch(25% 0.01 255);
+    /* Backgrounds / Surfaces */
+    --background: oklch(16% 0.01 255);
+    --surface: oklch(21% 0.01 255);
+    --surface-raised: oklch(25% 0.01 255);
+    --surface-hover: oklch(27% 0.01 255);
+    --nav: oklch(12% 0.01 255);
+    --overlay: oklch(0% 0 0 / 0.7);
 
-    --mainText: oklch(94% 0.005 255);
-    --secondaryText: oklch(70% 0.008 255);
-    --mutedText: oklch(50% 0.005 255);
+    /* Text */
+    --foreground: oklch(94% 0.005 255);
+    --foreground-secondary: oklch(70% 0.008 255);
+    --foreground-muted: oklch(50% 0.005 255);
 
+    /* Borders */
     --border: oklch(30% 0.01 255);
-    --borderFocus: oklch(62% 0.22 255);
+    --border-focus: oklch(62% 0.22 255);
 
+    /* Status — Success */
     --success: oklch(65% 0.17 145);
+    --success-hover: oklch(71% 0.17 145);
+    --success-foreground: oklch(100% 0 0);
+    --success-subtle: oklch(22% 0.06 145);
+
+    /* Status — Warning */
     --warning: oklch(72% 0.17 75);
+    --warning-hover: oklch(78% 0.17 75);
+    --warning-foreground: oklch(15% 0.01 75);
+    --warning-subtle: oklch(22% 0.06 75);
+
+    /* Status — Danger */
     --danger: oklch(60% 0.22 25);
+    --danger-hover: oklch(66% 0.22 25);
+    --danger-foreground: oklch(100% 0 0);
+    --danger-subtle: oklch(22% 0.08 25);
+
+    /* Status — Info */
     --info: oklch(65% 0.15 220);
+    --info-hover: oklch(71% 0.15 220);
+    --info-foreground: oklch(100% 0 0);
+    --info-subtle: oklch(22% 0.06 220);
 }
 
 /*

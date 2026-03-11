@@ -88,6 +88,46 @@ importers:
         specifier: ^2.0.0
         version: 2.2.12(typescript@5.9.3)
 
+  apps/muzakit-starter-without-tailwind:
+    dependencies:
+      '@muzakit/ui':
+        specifier: workspace:*
+        version: link:../../libs/ui
+      '@muzakit/utils':
+        specifier: workspace:*
+        version: link:../../libs/utils
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.30(typescript@5.9.3)
+      vue-router:
+        specifier: ^4.0.0
+        version: 4.6.4(vue@3.5.30(typescript@5.9.3))
+    devDependencies:
+      '@muzakit/config':
+        specifier: workspace:*
+        version: link:../../libs/config
+      '@tailwindcss/vite':
+        specifier: ^4.1.0
+        version: 4.2.1(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.31.1)(sass-embedded@1.97.3)(sass@1.97.3)(yaml@2.8.2))
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.19.15
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.0
+        version: 5.2.4(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.31.1)(sass-embedded@1.97.3)(sass@1.97.3)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3))
+      tailwindcss:
+        specifier: ^4.1.0
+        version: 4.2.1
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+      vite:
+        specifier: ^6.3.0
+        version: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.31.1)(sass-embedded@1.97.3)(sass@1.97.3)(yaml@2.8.2)
+      vue-tsc:
+        specifier: ^2.0.0
+        version: 2.2.12(typescript@5.9.3)
+
   libs/config:
     devDependencies:
       tailwindcss:
