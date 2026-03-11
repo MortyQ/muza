@@ -20,6 +20,7 @@ const test = ref("");
     >
       <VInput
         v-model="test"
+        icon="lucide:cloud-sun"
         name="Test"
       />
       <h1 class="text-2xl font-bold text-foreground">

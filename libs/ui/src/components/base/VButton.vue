@@ -3,6 +3,8 @@ import { computed } from "vue";
 
 import { RouterLink } from "vue-router";
 
+import VIcon from "./VIcon.vue";
+
 const {
   text = "",
   type = "button",
@@ -22,8 +24,6 @@ const {
   to?: string | object
   replace?: boolean
 }>();
-
-// import VIcon from "./VIcon.vue";
 
 const slots = defineSlots();
 
@@ -79,9 +79,13 @@ const rootAttrs = computed(() => {
       v-if="$slots.iconLeft || loading || icon"
       class="inline-flex items-center justify-center"
     >
-      <template v-if="!loading">
-        <slot name="iconLeft" />
-      </template>
+      <slot name="iconLeft">
+        <VIcon
+          :icon="icon"
+          :loading="loading"
+          :size="24"
+        />
+      </slot>
     </span>
 
     <span

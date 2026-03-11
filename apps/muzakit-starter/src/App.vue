@@ -20,7 +20,9 @@ const test = ref("");
     >
       <VInput
         v-model="test"
+        icon="lucide:cloud-sun"
         name="Test"
+        type="password"
       />
       <h1 class="text-2xl font-bold text-foreground">
         Muzakit Starter
@@ -34,6 +36,7 @@ const test = ref("");
         <span class="text-sm text-foreground-muted">Current theme:
           <strong class="text-foreground">{{ theme }}</strong></span>
         <VButton
+          icon="lucide:cloud-sun"
           @click="toggleTheme"
         >
           Toggle theme

@@ -36,6 +36,7 @@
     "vue-tsc": "^2.0.0"
   },
   "dependencies": {
+    "@iconify/vue": "^5.0.0",
     "@vueuse/core": "^14.2.1"
   }
 }

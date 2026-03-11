@@ -9,7 +9,6 @@ export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
-    // dts({rollupTypes: true, tsconfigPath: "./tsconfig.json"}),
     dts(),
   ],
   build: {
@@ -19,7 +18,7 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["vue", "vue-router"],
+      external: ["vue", "vue-router", "@vueuse/core", "@iconify/vue"],
       output: {
         assetFileNames: "style.css",
       },

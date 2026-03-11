@@ -4,7 +4,7 @@ import { ref, computed, useId, useSlots, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 
 import type { FieldValidation } from "../../types/validation";
-// import VIcon from "../base/VIcon.vue";
+import VIcon from "../base/VIcon.vue";
 
 const {
   name = "",
@@ -111,7 +111,7 @@ const showClearButton = computed(() =>
 const showLeftIcon = computed(() => icon || isSearchType.value || !!slots["icon-left"] || loading);
 const showRightIcon = computed(() => type === "password" || showClearButton.value || !!slots["icon-right"]);
 
-const _leftIconName = computed(() => {
+const leftIconName = computed(() => {
   if (icon) return icon;
   if (isSearchType.value) return "mdi:search";
   return "";
@@ -160,12 +160,12 @@ const computedPlaceholder = computed(() => {
         ]"
       >
         <slot name="icon-left">
-          <!--          <VIcon-->
-          <!--            v-if="leftIconName || loading"-->
-          <!--            :icon="leftIconName"-->
-          <!--            :loading="loading"-->
-          <!--            class="v-input-icon-svg"-->
-          <!--          />-->
+          <VIcon
+            v-if="leftIconName || loading"
+            :icon="leftIconName"
+            :loading="loading"
+            class="v-input-icon-svg"
+          />
         </slot>
       </div>
 
@@ -216,10 +216,10 @@ const computedPlaceholder = computed(() => {
             type="button"
             @click="clearInput"
           >
-            <!--            <VIcon-->
-            <!--              class="v-input-icon-svg v-input-icon-svg&#45;&#45;sm"-->
-            <!--              icon="lucide:x"-->
-            <!--            />-->
+            <VIcon
+              class="v-input-icon-svg v-input-icon-svg--sm"
+              icon="lucide:x"
+            />
           </button>
 
           <!-- Password Toggle -->
@@ -229,10 +229,10 @@ const computedPlaceholder = computed(() => {
             type="button"
             @click="changeInputType"
           >
-            <!--            <VIcon-->
-            <!--              :icon="currentInputType === 'text' ? 'mdi:eye-off' : 'mdi:eye'"-->
-            <!--              class="v-input-icon-svg"-->
-            <!--            />-->
+            <VIcon
+              :icon="currentInputType === 'text' ? 'mdi:eye-off' : 'mdi:eye'"
+              class="v-input-icon-svg"
+            />
           </button>
         </slot>
       </div>

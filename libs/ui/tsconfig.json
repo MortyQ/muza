@@ -6,8 +6,12 @@
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
   "include": [
+    "vite.config.ts",
     "src/**/*",
     "src/**/*.vue"
+  ],
+  "references": [
+    { "path": "./tsconfig.node.json" }
   ]
 }
 
