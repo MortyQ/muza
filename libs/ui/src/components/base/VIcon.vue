@@ -23,6 +23,7 @@ const iconSize = computed(() =>
   typeof size === "number" ? size : parseInt(size),
 );
 </script>
+
 <template>
   <Icon
     :class="{ 'v-icon--spin': loading }"
