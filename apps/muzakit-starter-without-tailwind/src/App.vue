@@ -1,8 +1,12 @@
 <script lang="ts" setup>
-import { VButton } from "@muzakit/ui";
+import { ref } from "vue";
+
+import { VButton, VInput } from "@muzakit/ui";
 import { useTheme } from "@muzakit/utils";
 
 const { theme, toggleTheme } = useTheme();
+
+const test = ref("");
 </script>
 
 <template>
@@ -14,6 +18,10 @@ const { theme, toggleTheme } = useTheme();
       class="bg-surface border border-border rounded-2xl p-8 w-full
     max-w-sm flex flex-col gap-4 shadow-sm"
     >
+      <VInput
+        v-model="test"
+        name="Test"
+      />
       <h1 class="text-2xl font-bold text-foreground">
         Muzakit Starter
       </h1>

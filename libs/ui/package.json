@@ -34,5 +34,8 @@
     "vue": "^3.5.0",
     "vue-router": "^4.0.0",
     "vue-tsc": "^2.0.0"
+  },
+  "dependencies": {
+    "@vueuse/core": "^14.2.1"
   }
 }
