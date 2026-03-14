@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { VButton, VTab, VFloating, VTag, useToast } from "@muzakit/ui";
+import { VButton, VTab, VFloating, VTag, useToast, VCard, VLoader } from "@muzakit/ui";
 import { useTheme } from "@muzakit/utils";
 
 import LoginForm from "@/features/auth/components/LoginForm.vue";
@@ -31,6 +31,7 @@ const tabs = [
         variant="negative"
         @click="error('Error Toast Error')"
       />
+      <VLoader />
     </div>
     <VFloating>
       <template #trigger>
@@ -41,9 +42,8 @@ const tabs = [
         Sed do eiusmod tempor incididunt ut
       </template>
     </VFloating>
-    <div
-      class="bg-surface border border-border rounded-2xl p-8 w-full
-    max-w-sm flex flex-col gap-4 shadow-sm"
+    <v-card
+      size="md"
     >
       <h1 class="text-2xl font-bold text-foreground">
         Muzakit Starter
@@ -51,11 +51,6 @@ const tabs = [
       <VTab
         :tabs="tabs"
       />
-      <p class="text-foreground-secondary text-sm">
-        Workspace links: ✅<br>
-        Tailwind v4 theme: ✅
-      </p>
-
       <div class="flex items-center justify-between pt-2">
         <span class="text-sm text-foreground-muted">Current theme:
           <strong class="text-foreground">{{ theme }}</strong></span>
@@ -66,7 +61,7 @@ const tabs = [
           Toggle theme
         </VButton>
       </div>
-    </div>
+    </v-card>
 
     <div class="flex flex-wrap gap-2 w-full max-w-sm items-center">
       <VTag

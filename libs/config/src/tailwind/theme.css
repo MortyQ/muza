@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../../../ui/src";
+
 @theme inline {
     /* Brand */
     --color-primary: var(--primary);

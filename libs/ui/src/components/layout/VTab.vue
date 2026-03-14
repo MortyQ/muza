@@ -277,36 +277,34 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex flex-col flex-1 w-full">
+  <div class="v-tab">
     <!-- Tabs Header -->
     <div
       v-if="tabs.length > 0"
-      class="flex justify-between items-center"
+      class="v-tab__header"
     >
       <!-- Loading Skeleton -->
       <section
         v-if="loading"
         aria-busy="true"
-        class="flex gap-4 py-4"
+        class="v-tab__loading"
       >
         <div
           v-for="item in tabs.length"
           :key="item"
-          class="h-10 w-32 rounded-lg bg-base-200 animate-pulse"
+          class="v-tab__skeleton"
         />
       </section>
 
       <!-- Tabs List -->
       <div
         ref="tabsContainerRef"
-        class="flex w-full border-b border-border"
+        class="v-tab__list-wrapper"
       >
-        <div
-          class="flex overflow-x-auto scrollbar-hide scroll-smooth flex-1"
-        >
+        <div class="v-tab__scroll">
           <nav
             aria-label="Tabs navigation"
-            class="flex"
+            class="v-tab__nav"
             role="tablist"
             @keydown="handleTabsKeydown"
           >
@@ -331,7 +329,6 @@ defineExpose({
               type="button"
               @click="selectTab(tab.id)"
             >
-              <!-- Icon Slot or Icon -->
               <slot
                 v-if="!tab.icon"
                 :name="`tab-icon-${tab.id}`"
@@ -339,19 +336,17 @@ defineExpose({
               <VIcon
                 v-else
                 :icon="tab.icon"
-                class="w-4 h-4"
+                class="v-tab__icon"
               />
-
-              <!-- Tab Label -->
               <span>{{ tab.label }}</span>
             </button>
           </nav>
         </div>
 
-        <!-- More Button with Dropdown for overflow tabs -->
+        <!-- More Button -->
         <div
           v-if="overflowTabs.length > 0"
-          class="relative flex-shrink-0 more-button"
+          class="v-tab__more more-button"
         >
           <VFloating
             :items="dropdownItems"
@@ -365,10 +360,10 @@ defineExpose({
         </div>
       </div>
 
-      <!-- Right Slot (e.g., actions, filters) -->
+      <!-- Right Slot -->
       <div
         v-if="$slots['tabs-right']"
-        class="flex-shrink-0 ml-4"
+        class="v-tab__right"
       >
         <slot
           :current-tab-id="currentTabId"
@@ -382,13 +377,11 @@ defineExpose({
       v-if="!loading"
       :id="`tabpanel-${currentTabId}`"
       :aria-labelledby="`tab-${currentTabId}`"
-      class="flex-1 flex flex-col min-h-0"
+      class="v-tab__panel"
       role="tabpanel"
     >
-      <div class="flex-1 pt-4">
-        <slot
-          :name="`${currentTabId}`"
-        >
+      <div class="v-tab-content-wrapper pt-4">
+        <slot :name="`${currentTabId}`">
           <component
             :is="activeTab.component"
             v-if="activeTab?.component"

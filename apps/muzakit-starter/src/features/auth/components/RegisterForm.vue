@@ -12,9 +12,6 @@ const form = reactive({
 
 <template>
   <div class="flex flex-col gap-4">
-    <div>
-      Register
-    </div>
     <VInput
       v-model="form.name"
       icon="lucide:cloud"
