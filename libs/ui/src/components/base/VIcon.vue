@@ -6,12 +6,10 @@ import { Icon } from "@iconify/vue";
 const {
   icon = "",
   size = 24,
-  color = "currentColor",
   loading = false,
 } = defineProps<{
   icon?: string
   size?: string | number
-  color?: string
   loading?: boolean
 }>();
 
@@ -27,11 +25,12 @@ const iconSize = computed(() =>
 <template>
   <Icon
     :class="{ 'v-icon--spin': loading }"
-    :color="color"
     :height="iconSize"
     :icon="resolvedIcon"
     :width="iconSize"
+    aria-hidden="true"
     class="v-icon"
+    focusable="false"
   />
 </template>
 

@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import { RouterLink } from "vue-router";
+import { type RouteLocationRaw, RouterLink } from "vue-router";
 
 import VIcon from "./VIcon.vue";
 
 const {
   text = "",
   type = "button",
-  variant = "default",
+  variant = "primary",
   icon = undefined,
   to = undefined,
   replace = false,
@@ -20,8 +20,8 @@ const {
   disabled?: boolean
   loading?: boolean
   icon?: string
-  variant?: "default" | "primary" | "positive" | "negative" | "warning" | "link"
-  to?: string | object
+  variant?: "primary" | "positive" | "negative" | "warning" | "link"
+  to?: RouteLocationRaw
   replace?: boolean
 }>();
 
@@ -31,40 +31,28 @@ const isIconOnly = computed(() => !text && !!icon && !slots.default);
 const isRouterLink = computed(() => !!to);
 const isDisabled = computed(() => disabled || loading);
 
-const variantClass = computed(() => {
-  switch (variant) {
-    case "primary":
-      return "v-button--primary";
-    case "positive":
-      return "v-button--positive";
-    case "negative":
-      return "v-button--negative";
-    case "warning":
-      return "v-button--warning";
-    case "link":
-      return "v-button--link";
-    default:
-      return "v-button--primary";
-  }
-});
+const variantClass = computed(() => `v-button--${variant}`);
 
-const rootClass = computed(() => [
-  "v-button",
-  isIconOnly.value ? "v-button--icon-only" : "",
-  variantClass.value,
-  isDisabled.value ? "v-button--disabled" : "",
-]);
+const rootClass = computed(() => ({
+  "v-button": true,
+  "v-button--icon-only": isIconOnly.value,
+  [variantClass.value]: true,
+  "v-button--disabled": isDisabled.value,
+}));
 
 const rootAttrs = computed(() => {
   if (isRouterLink.value) {
     return {
-      to: isDisabled.value ? undefined : to,
+      to,
       replace,
+      "aria-disabled": isDisabled.value || undefined,
+      tabindex: isDisabled.value ? -1 : undefined,
     };
   }
   return {
     type,
     disabled: isDisabled.value,
+    "aria-busy": loading || undefined,
   };
 });
 </script>
@@ -92,8 +80,7 @@ const rootAttrs = computed(() => {
       v-if="!isIconOnly"
       class="inline-flex items-center justify-center gap-0.75"
     >
-      <span v-if="text">{{ text }}</span>
-      <slot />
+      <slot>{{ text }}</slot>
     </span>
 
     <span

@@ -6,6 +6,8 @@ import { useDebounceFn } from "@vueuse/core";
 import type { FieldValidation } from "../../types/validation";
 import VIcon from "../base/VIcon.vue";
 
+defineOptions({ inheritAttrs: false });
+
 const {
   name = "",
   type = "text",
@@ -23,7 +25,7 @@ const {
   showClearButton: showClearButtonProp = true,
 } = defineProps<{
   name?: string
-  type?: string
+  type?: "text" | "password" | "email" | "number" | "search" | "tel" | "url" | "date"
   placeholder?: string
   disabled?: boolean
   helperText?: string
@@ -31,6 +33,10 @@ const {
   icon?: string
   size?: "sm" | "md" | "lg"
   id?: string
+  /**
+   * Debounce delay in ms. Static — evaluated once on mount.
+   * Changing this prop at runtime has no effect.
+   */
   debounce?: boolean | number
   loading?: boolean
   textarea?: boolean
@@ -61,6 +67,9 @@ watch(model, (newVal) => {
   }
 });
 
+// NOTE: external model reset while debounce is pending will be overridden
+// by the debounced update. Acceptable tradeoff — no programmatic resets
+// happen while user is actively typing in current usage.
 const updateModel = useDebounceFn((val: string | number | undefined) => {
   model.value = val;
 }, delay);
@@ -104,9 +113,15 @@ const sizeClass = computed(() => ({
 
 const isSearchType = computed(() => type === "search");
 
-const showClearButton = computed(() =>
-  type !== "password" && localValue.value !== "" && showClearButtonProp,
-);
+const showClearButton = computed(() => {
+  if (type === "password" || !showClearButtonProp) return false;
+
+  if (delay > 0) {
+    return model.value !== "" && model.value !== null && model.value !== undefined;
+  }
+
+  return localValue.value !== "";
+});
 
 const showLeftIcon = computed(() => icon || isSearchType.value || !!slots["icon-left"] || loading);
 const showRightIcon = computed(() => type === "password" || showClearButton.value || !!slots["icon-right"]);
@@ -125,6 +140,7 @@ const computedPlaceholder = computed(() => {
   if (!name) return placeholder;
   return isFocused.value ? placeholder : "";
 });
+
 </script>
 
 <template>
@@ -155,7 +171,7 @@ const computedPlaceholder = computed(() => {
           'v-input-icon v-input-icon-left',
           {
             'v-input-icon-textarea': textarea,
-            'v-input-icon--active': isFocused && isSearchType || loading
+            'v-input-icon--active': isFocused || loading
           }
         ]"
       >
@@ -173,8 +189,10 @@ const computedPlaceholder = computed(() => {
       <component
         :is="textarea ? 'textarea' : 'input'"
         :id="inputId"
-        :key="`${textarea ? 'textarea' : 'input'}-${inputId}`"
         ref="inputRef"
+        :aria-describedby="validation?.$error ? `${inputId}-error`
+          : helperText ? `${inputId}-helper` : undefined"
+        :aria-invalid="validation?.$error || undefined"
         :class="[
           'v-input-field',
           sizeClass,
@@ -211,8 +229,8 @@ const computedPlaceholder = computed(() => {
           <!-- Clear Button -->
           <button
             v-if="showClearButton"
+            aria-label="Clear input"
             class="v-input-clear-btn"
-            title="Clear"
             type="button"
             @click="clearInput"
           >
@@ -225,6 +243,8 @@ const computedPlaceholder = computed(() => {
           <!-- Password Toggle -->
           <button
             v-else-if="type === 'password'"
+            :aria-label="currentInputType === 'text' ? 'Hide password' : 'Show password'"
+            :aria-pressed="currentInputType === 'text'"
             class="v-input-password-toggle"
             type="button"
             @click="changeInputType"
@@ -277,7 +297,7 @@ const computedPlaceholder = computed(() => {
           v-if="validation?.$error"
           class="v-input-error-message"
         >
-          {{ validation?.$errors[0]?.$message }}
+          {{ String(validation?.$errors[0]?.$message ?? '') }}
         </p>
       </slot>
     </transition>

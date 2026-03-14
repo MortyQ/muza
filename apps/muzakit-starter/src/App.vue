@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { reactive } from "vue";
 
 import { VButton, VInput } from "@muzakit/ui";
 import { useTheme } from "@muzakit/utils";
 
 const { theme, toggleTheme } = useTheme();
 
-const test = ref("");
+const form = reactive({
+  name: "",
+  password: "",
+});
 </script>
 
 <template>
@@ -19,11 +22,17 @@ const test = ref("");
     max-w-sm flex flex-col gap-4 shadow-sm"
     >
       <VInput
-        v-model="test"
-        icon="lucide:cloud-sun"
-        name="Test"
+        v-model="form.name"
+        icon="lucide:cloud"
+        name="Name"
+      />
+      <VInput
+        v-model="form.password"
+        icon="lucide:lock"
+        name="Password"
         type="password"
       />
+
       <h1 class="text-2xl font-bold text-foreground">
         Muzakit Starter
       </h1>
