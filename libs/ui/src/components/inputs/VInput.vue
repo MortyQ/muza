@@ -250,7 +250,7 @@ const computedPlaceholder = computed(() => {
             @click="changeInputType"
           >
             <VIcon
-              :icon="currentInputType === 'text' ? 'mdi:eye-off' : 'mdi:eye'"
+              :icon="currentInputType === 'text' ? 'lucide:eye-off' : 'lucide:eye'"
               class="v-input-icon-svg"
             />
           </button>
