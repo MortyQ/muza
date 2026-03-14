@@ -8,7 +8,6 @@ import importPlugin from 'eslint-plugin-import-x'
 export const baseConfig = [
   {
     ignores: [
-      '**/*.d.ts',
       '**/coverage/**',
       '**/dist/**',
       '*.config.ts',

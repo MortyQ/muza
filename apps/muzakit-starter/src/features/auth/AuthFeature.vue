@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
-
-import { VButton, VInput } from "@muzakit/ui";
+import { VButton, VTab, VFloating } from "@muzakit/ui";
 import { useTheme } from "@muzakit/utils";
+
+import LoginForm from "@/features/auth/components/LoginForm.vue";
+import RegisterForm from "@/features/auth/components/RegisterForm.vue";
 
 const { theme, toggleTheme } = useTheme();
 
-const form = reactive({
-  name: "",
-  password: "",
-});
+const tabs = [
+  { label: "Login", id: "login", icon: "lucide:log-in", component: LoginForm },
+  { label: "Register", id: "register", icon: "lucide:user-plus", component: RegisterForm },
+];
+
 </script>
 
 <template>
@@ -17,25 +19,24 @@ const form = reactive({
     class="min-h-screen bg-background text-foreground flex flex-col items-center
   justify-center gap-6 p-8"
   >
+    <VFloating>
+      <template #trigger>
+        <VButton text="Test Floating" />
+      </template>
+      <template #content>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+      </template>
+    </VFloating>
     <div
       class="bg-surface border border-border rounded-2xl p-8 w-full
     max-w-sm flex flex-col gap-4 shadow-sm"
     >
-      <VInput
-        v-model="form.name"
-        icon="lucide:cloud"
-        name="Name"
-      />
-      <VInput
-        v-model="form.password"
-        icon="lucide:lock"
-        name="Password"
-        type="password"
-      />
-
       <h1 class="text-2xl font-bold text-foreground">
         Muzakit Starter
       </h1>
+      <VTab
+        :tabs="tabs"
+      />
       <p class="text-foreground-secondary text-sm">
         Workspace links: ✅<br>
         Tailwind v4 theme: ✅

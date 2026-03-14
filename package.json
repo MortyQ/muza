@@ -19,6 +19,7 @@
     "@eslint/js": "^10.0.1",
     "@muzakit/config": "workspace:*",
     "@stylistic/eslint-plugin": "^5.10.0",
+    "@vue/typescript-plugin": "^3.2.5",
     "eslint": "^10.0.3",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.1",

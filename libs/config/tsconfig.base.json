@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@vue/typescript-plugin",
+        "languages": ["vue"]
+      }
+    ],
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",

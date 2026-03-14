@@ -1,4 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 :root {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-optical-sizing: auto;
     /* Brand */
     --ui-primary: var(--primary, oklch(52% 0.22 255));
     --ui-primary-hover: var(--primary-hover, oklch(45% 0.22 255));
