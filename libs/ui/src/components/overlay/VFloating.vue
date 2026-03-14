@@ -323,7 +323,7 @@ defineExpose({
         :class="[floatingClasses, { 'v-floating--positioning': !isPositioned }]"
         :role="isDropdownMode ? 'listbox' : 'dialog'"
         :style="floatingStyles"
-        class="v-floating-content"
+        class="v-floating-content text-foreground"
       >
         <slot name="content">
           <template v-if="isDropdownMode">

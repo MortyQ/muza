@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { VButton, VTab, VFloating, VTag, useToast, VCard, VLoader } from "@muzakit/ui";
+import { VButton, VTab, VFloating, VTag, useToast, VCard, VLoader, VAnimatedBackground } from "@muzakit/ui";
 import { useTheme } from "@muzakit/utils";
 
 import LoginForm from "@/features/auth/components/LoginForm.vue";
@@ -20,6 +20,11 @@ const tabs = [
     class="min-h-screen bg-background text-foreground flex flex-col items-center
   justify-center gap-6 p-8"
   >
+    <VAnimatedBackground
+      :blob-count="20"
+      :blob-radius="{min:50, max:100}"
+      :blob-speed="2"
+    />
     <div class="flex gap-4">
       <VButton
         text="Test Toast Success"
@@ -31,7 +36,7 @@ const tabs = [
         variant="negative"
         @click="error('Error Toast Error')"
       />
-      <VLoader />
+      <VLoader class="text-primary" />
     </div>
     <VFloating>
       <template #trigger>
@@ -44,6 +49,7 @@ const tabs = [
     </VFloating>
     <v-card
       size="md"
+      variant="translucent"
     >
       <h1 class="text-2xl font-bold text-foreground">
         Muzakit Starter

@@ -52,7 +52,7 @@ const cardClasses = computed(() => [
   >
     <div
       v-if="loading"
-      class="v-card__loading"
+      class="v-card__loading text-primary"
     >
       <slot name="loading">
         <VLoader />

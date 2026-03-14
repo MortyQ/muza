@@ -8,9 +8,10 @@ export { default as VTab } from "./components/layout/VTab.vue";
 export {
   default as VCard, type CardSize, type CardVariant, type CardRadius, type CardPadding,
 } from "./components/layout/VCard.vue";
+export { default as VAnimatedBackground } from "./components/layout/VAnimatedBackground.vue";
 export { default as VFloating } from "./components/overlay/VFloating.vue";
 export { default as VToaster } from "./components/feedback/VToaster.vue";
-export { default as VLoader, type LoaderColor } from "./components/feedback/VLoader.vue";
+export { default as VLoader } from "./components/feedback/VLoader.vue";
 
 export { useToast } from "./composables/useToast";
 
@@ -24,6 +25,7 @@ declare module "vue" {
     VInput: typeof import("./components/inputs/VInput.vue").default
     VTab: typeof import("./components/layout/VTab.vue").default
     VCard: typeof import("./components/layout/VCard.vue").default
+    VAnimatedBackground: typeof import("./components/layout/VAnimatedBackground.vue").default
     VFloating: typeof import("./components/overlay/VFloating.vue").default
     VToaster: typeof import("./components/feedback/VToaster.vue").default
     VLoader: typeof import("./components/feedback/VLoader.vue").default
