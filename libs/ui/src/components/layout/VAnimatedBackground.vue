@@ -82,13 +82,26 @@ onMounted(() => {
   if (!ctx) return;
 
   const resize = () => {
+    const prevWidth = canvas.width;
+    const prevHeight = canvas.height;
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    initBlobs(canvas);
+
+    if (blobs.length === 0) {
+      initBlobs(canvas);
+    }
+    else {
+      const scaleX = canvas.width / prevWidth;
+      const scaleY = canvas.height / prevHeight;
+      blobs.forEach((blob) => {
+        blob.x *= scaleX;
+        blob.y *= scaleY;
+      });
+    }
   };
 
   const handleResize = () => {
-    clearTimeout(resizeTimer);
     resizeTimer = setTimeout(resize, 150);
   };
 

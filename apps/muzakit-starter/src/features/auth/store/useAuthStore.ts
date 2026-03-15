@@ -9,6 +9,9 @@ import { useUserStore } from "@/shared/store/useUserStore";
 export const useAuthStore = defineStore("auth", () => {
   const userStore = useUserStore();
 
+  const user = computed(() => userStore.user);
+  const isAuthenticated = computed(() => !!user.value);
+
   const initLoading = computed(() => loginLoading.value || userStore.loading);
 
   const { loading: loginLoading, execute: loginExecute } = useApiPost<{
@@ -17,29 +20,32 @@ export const useAuthStore = defineStore("auth", () => {
   }>("/auth/login", {
     onSuccess: async ({ data }) => {
       tokenManager.setTokens(data);
-      await userStore.initialize();
       await router.push("/");
     },
   });
 
   const login = async ({ email, password }: { email: string, password: string }): Promise<void> => {
     await loginExecute({
-      data: {
-        email,
-        password,
-      },
+      data: { email, password },
     });
   };
 
-  const logout = async () => {
+  const initialize = async (): Promise<void> => {
+    await userStore.initialize();
+  };
+
+  const logout = (): void => {
     tokenManager.clearTokens();
     userStore.cleanInitialState();
-    await router.push("/auth");
+    router.push("/auth");
   };
 
   return {
     initLoading,
+    isAuthenticated,
+    user,
     login,
     logout,
+    initialize,
   };
 });

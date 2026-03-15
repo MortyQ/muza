@@ -11,21 +11,21 @@ import App from "./App.vue";
 import "./assets/main.css";
 import { router } from "./routes";
 
-const { error } = useToast();
-
-// Create Vue app instance
 const app = createApp(App);
 
-// Install plugins
 const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
+const { error } = useToast();
+
 app.use(createApi({
   axios: myAxios,
   onError: (errorMessage) => {
-    if (errorMessage.message === "Token is expired"
-      || errorMessage.message === "Token is invalid") return;
+    if (
+      errorMessage.message === "Token is expired"
+      || errorMessage.message === "Token is invalid"
+    ) return;
     error(errorMessage.message);
   },
 }));

@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-import { VButton, VTab, VCard, VAnimatedBackground } from "@muzakit/ui";
-import { useTheme } from "@muzakit/utils";
+import { VTab, VCard, VAnimatedBackground } from "@muzakit/ui";
 
 import LoginForm from "./components/LoginForm.vue";
 import RegisterForm from "./components/RegisterForm.vue";
-
-const { theme, toggleTheme } = useTheme();
 
 const tabs = [
   { label: "Login", id: "login", icon: "lucide:log-in", component: LoginForm },
@@ -33,16 +30,6 @@ const tabs = [
       <VTab
         :tabs="tabs"
       />
-      <div class="flex items-center justify-between pt-2">
-        <span class="text-sm text-foreground-muted">Current theme:
-          <strong class="text-foreground">{{ theme }}</strong></span>
-        <VButton
-          icon="lucide:cloud-sun"
-          @click="toggleTheme"
-        >
-          Toggle theme
-        </VButton>
-      </div>
     </v-card>
   </div>
 </template>

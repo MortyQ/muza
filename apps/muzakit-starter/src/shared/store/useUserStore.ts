@@ -1,10 +1,12 @@
 import { useApi } from "@ametie/vue-muza-use";
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore("user-store", () => {
-  const { loading, execute: initialize, data: user, mutate } = useApi("/me");
+import type { User } from "@/features/auth/types";
 
-  const cleanInitialState = () => {
+export const useUserStore = defineStore("user-store", () => {
+  const { loading, execute: initialize, data: user, mutate } = useApi<User>("/me");
+
+  const cleanInitialState = (): void => {
     mutate(null);
   };
 

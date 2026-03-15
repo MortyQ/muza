@@ -138,8 +138,10 @@
 }
 
 .v-card--translucent {
-  background-color: color-mix(in oklch, var(--ui-surface) 55%, transparent);
-  border: 1px solid var(--ui-border);
+  background: color-mix(in oklch, var(--ui-surface) 55%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08),
               0 4px 6px -4px rgb(0 0 0 / 0.08);
 }

@@ -4,7 +4,7 @@ import { type VNode, computed } from "vue";
 import VLoader from "../feedback/VLoader.vue";
 
 export type CardSize = "fit" | "sm" | "md" | "lg" | "xl" | "full";
-export type CardVariant = "default" | "elevated" | "outlined" | "ghost" | "glass" | "glass-elevated" | "translucent";
+export type CardVariant = "default" | "elevated" | "outlined" | "ghost" | "translucent";
 export type CardRadius = "none" | "sm" | "md" | "lg" | "xl" | "full";
 export type CardPadding = "none" | "sm" | "md" | "lg" | "xl";
 
