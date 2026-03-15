@@ -54,14 +54,20 @@ importers:
   apps/muzakit-starter:
     dependencies:
       '@ametie/vue-muza-use':
-        specifier: ^0.6.0
-        version: 0.6.0(axios@1.13.6)(vue@3.5.30(typescript@5.9.3))
+        specifier: ^0.6.1
+        version: 0.6.1(axios@1.13.6)(vue@3.5.30(typescript@5.9.3))
       '@muzakit/ui':
         specifier: workspace:*
         version: link:../../libs/ui
       '@muzakit/utils':
         specifier: workspace:*
         version: link:../../libs/utils
+      '@vuelidate/core':
+        specifier: ^2.0.3
+        version: 2.0.3(vue@3.5.30(typescript@5.9.3))
+      '@vuelidate/validators':
+        specifier: ^2.0.4
+        version: 2.0.4(vue@3.5.30(typescript@5.9.3))
       axios:
         specifier: ^1.13.6
         version: 1.13.6
@@ -103,14 +109,20 @@ importers:
   apps/muzakit-starter-without-tailwind:
     dependencies:
       '@ametie/vue-muza-use':
-        specifier: ^0.6.0
-        version: 0.6.0(axios@1.13.6)(vue@3.5.30(typescript@5.9.3))
+        specifier: ^0.6.1
+        version: 0.6.1(axios@1.13.6)(vue@3.5.30(typescript@5.9.3))
       '@muzakit/ui':
         specifier: workspace:*
         version: link:../../libs/ui
       '@muzakit/utils':
         specifier: workspace:*
         version: link:../../libs/utils
+      '@vuelidate/core':
+        specifier: ^2.0.3
+        version: 2.0.3(vue@3.5.30(typescript@5.9.3))
+      '@vuelidate/validators':
+        specifier: ^2.0.4
+        version: 2.0.4(vue@3.5.30(typescript@5.9.3))
       axios:
         specifier: ^1.13.6
         version: 1.13.6
@@ -219,8 +231,8 @@ importers:
 
 packages:
 
-  '@ametie/vue-muza-use@0.6.0':
-    resolution: {integrity: sha512-JTU0NQ1D3hjyluyCiiNZ2/tAy+PTDnWcNaXYrjuTBG8YT6EfAoG4LOe40kwucFDArPL+7/kyaplCgCUmgdd/Vg==}
+  '@ametie/vue-muza-use@0.6.1':
+    resolution: {integrity: sha512-5su4QaXfsItMIxZb1iK5YT4VlMMRsvZB2noxVqWdbOXSGEc3CRnhTFKZoUr2UFKUIUlY2SQst38hDVhWvKYpHQ==}
     peerDependencies:
       axios: ^1.0.0
       vue: ^3.3.0
@@ -1195,6 +1207,24 @@ packages:
 
   '@vue/typescript-plugin@3.2.5':
     resolution: {integrity: sha512-efEFD1QEq4tQhLpsVOdPXNiJlhQU4Z4yG52ggvuXK8r+wrLLNMAlrM47lfzk7Mua7HCeVzxXL1r401JcCVVNMw==}
+
+  '@vuelidate/core@2.0.3':
+    resolution: {integrity: sha512-AN6l7KF7+mEfyWG0doT96z+47ljwPpZfi9/JrNMkOGLFv27XVZvKzRLXlmDPQjPl/wOB1GNnHuc54jlCLRNqGA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@vuelidate/validators@2.0.4':
+    resolution: {integrity: sha512-odTxtUZ2JpwwiQ10t0QWYJkkYrfd0SyFYhdHH44QQ1jDatlZgTh/KRzrWVmn/ib9Gq7H4hFD4e8ahoo5YlUlDw==}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
 
   '@vueuse/core@14.2.1':
     resolution: {integrity: sha512-3vwDzV+GDUNpdegRY6kzpLm4Igptq+GA0QkJ3W61Iv27YWwW/ufSlOfgQIpN6FZRMG0mkaz4gglJRtq5SeJyIQ==}
@@ -2934,6 +2964,17 @@ packages:
       typescript:
         optional: true
 
+  vue-demi@0.13.11:
+    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@10.4.0:
     resolution: {integrity: sha512-Vxi9pJdbN3ZnVGLODVtZ7y4Y2kzAAE2Cm0CZ3ZDRvydVYxZ6VrnBhLikBsRS+dpwj4Jv4UCv21PTEwF5rQ9WXg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -3036,7 +3077,7 @@ packages:
 
 snapshots:
 
-  '@ametie/vue-muza-use@0.6.0(axios@1.13.6)(vue@3.5.30(typescript@5.9.3))':
+  '@ametie/vue-muza-use@0.6.1(axios@1.13.6)(vue@3.5.30(typescript@5.9.3))':
     dependencies:
       axios: 1.13.6
       vue: 3.5.30(typescript@5.9.3)
@@ -3970,6 +4011,16 @@ snapshots:
       vue-component-meta: 3.2.5(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
+
+  '@vuelidate/core@2.0.3(vue@3.5.30(typescript@5.9.3))':
+    dependencies:
+      vue: 3.5.30(typescript@5.9.3)
+      vue-demi: 0.13.11(vue@3.5.30(typescript@5.9.3))
+
+  '@vuelidate/validators@2.0.4(vue@3.5.30(typescript@5.9.3))':
+    dependencies:
+      vue: 3.5.30(typescript@5.9.3)
+      vue-demi: 0.13.11(vue@3.5.30(typescript@5.9.3))
 
   '@vueuse/core@14.2.1(vue@3.5.30(typescript@5.9.3))':
     dependencies:
@@ -5899,6 +5950,10 @@ snapshots:
       path-browserify: 1.0.1
     optionalDependencies:
       typescript: 5.9.3
+
+  vue-demi@0.13.11(vue@3.5.30(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.30(typescript@5.9.3)
 
   vue-eslint-parser@10.4.0(eslint@10.0.3(jiti@2.6.1)):
     dependencies:

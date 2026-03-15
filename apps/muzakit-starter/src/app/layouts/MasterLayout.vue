@@ -17,7 +17,6 @@
 //
 // const route = useRoute();
 // const router = useRouter();
-// const themeStore = useThemeStore();
 // const authStore = useAuthStore();
 // const globalFiltersStore = useGlobalFiltersStore();
 
@@ -28,9 +27,6 @@
 // router.isReady().then(() => {
 //   isRouterReady.value = true;
 // });
-
-// Initialize theme immediately (synchronous)
-// themeStore.initTheme();
 
 // Initialize global filters once when user is authenticated
 // watch(() => authStore.user, async () => {
@@ -52,6 +48,13 @@
 //   const layoutName = (route.meta?.layout as string) || "default";
 //   return layouts[layoutName] || layouts.default;
 // });
+
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { setOnAuthFailed } from "@/shared/config/axios";
+
+const authStore = useAuthStore();
+
+setOnAuthFailed(() => authStore.logout());
 </script>
 
 <template>

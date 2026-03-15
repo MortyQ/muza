@@ -1,26 +1,64 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
 
-import { VInput } from "@muzakit/ui";
+import { useVuelidate } from "@vuelidate/core";
+import { email, helpers, minLength, required } from "@vuelidate/validators";
+
+import { VInput, VButton } from "@muzakit/ui";
+
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+
+const authStore = useAuthStore();
 
 const form = reactive({
-  name: "",
+  email: "",
   password: "",
 });
+
+const rules = computed(() => ({
+  email: {
+    required: helpers.withMessage("Email is required", required),
+    email: helpers.withMessage("Please enter a valid email", email),
+  },
+  password: {
+    required: helpers.withMessage("Password is required", required),
+    minLength: helpers.withMessage("Password must be at least 6 characters", minLength(6)),
+  },
+}));
+
+const v$ = useVuelidate(rules, form);
+
+const submit = async () => {
+  const isValid = await v$.value.$validate();
+
+  if (!isValid) return;
+  await authStore.login(form);
+};
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <form
+    class="flex flex-col gap-4"
+    @submit.prevent="submit"
+  >
     <VInput
-      v-model="form.name"
-      icon="lucide:cloud"
+      v-model="form.email"
+      :validation="v$.email"
+      icon="lucide:mail"
       name="Name"
+      type="email"
     />
     <VInput
       v-model="form.password"
+      :validation="v$.password"
       icon="lucide:lock"
       name="Password"
       type="password"
     />
-  </div>
+    <VButton
+      :loading="authStore.initLoading"
+      text="Sign In"
+      type="submit"
+    />
+  </form>
 </template>

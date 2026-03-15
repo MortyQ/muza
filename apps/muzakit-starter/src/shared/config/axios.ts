@@ -1,8 +1,12 @@
 import { createApiClient } from "@ametie/vue-muza-use";
 
-// import { useAuthStore } from "@/features/auth/store/authStore";
+type OnAuthFailedCallback = () => void;
+let _onAuthFailed: OnAuthFailedCallback = () => {
+};
 
-import { router } from "@/app/routes";
+export const setOnAuthFailed = (cb: OnAuthFailedCallback) => {
+  _onAuthFailed = cb;
+};
 
 export const myAxios = createApiClient({
   baseURL: import.meta.env.VITE_API_URL
@@ -12,12 +16,8 @@ export const myAxios = createApiClient({
   timeout: 2 * 60 * 1000, // 2 minutes timeout
   authOptions: {
     refreshUrl: "/auth/refresh",
-    onTokenRefreshFailed: () => {
-      // Use authStore.logout() to properly reset all state and redirect
-      // const authStore = useAuthStore();
-      // authStore.logout().finally(() => {
-      // });
-      router.push("/login");
+    onTokenRefreshFailed: async () => {
+      _onAuthFailed();
     },
   },
 });
