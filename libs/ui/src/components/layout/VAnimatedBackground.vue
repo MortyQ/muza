@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 
 interface Blob {
   x: number
@@ -11,70 +11,88 @@ interface Blob {
 }
 
 interface Props {
-  blobCount?: number
-  blobRadius?: { min: number, max: number }
-  blobSpeed?: number
-  blobOpacity?: number
+  count?: number
+  minRadius?: number
+  maxRadius?: number
+  speed?: number
+  colors?: string[]
 }
 
 const {
-  blobCount = 8,
-  blobRadius = { min: 100, max: 300 },
-  blobSpeed = 0.8,
-  blobOpacity = 0.35,
+  count = 15,
+  minRadius = 100,
+  maxRadius = 200,
+  speed = 1,
+  colors = [
+    "rgba(37, 99, 235, 0.3)", // primary
+    "rgba(251, 191, 36, 0.3)", // accent
+    "rgba(14, 165, 233, 0.3)", // info
+    "rgba(34, 197, 94, 0.3)", // success
+  ],
 } = defineProps<Props>();
 
-const BLOB_VARS = ["--primary", "--info", "--success", "--warning"];
-
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-
 let animationFrameId: number;
-let resizeTimer: ReturnType<typeof setTimeout>;
+let resizeHandler: (() => void) | null = null;
 const blobs: Blob[] = [];
 
 const initBlobs = (canvas: HTMLCanvasElement) => {
   blobs.length = 0;
-  const style = getComputedStyle(document.documentElement);
 
-  for (let i = 0; i < blobCount; i++) {
+  for (let i = 0; i < count; i++) {
     blobs.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: Math.random() * (blobRadius.max - blobRadius.min) + blobRadius.min,
-      vx: (Math.random() - 0.5) * blobSpeed,
-      vy: (Math.random() - 0.5) * blobSpeed,
-      color: style.getPropertyValue(BLOB_VARS[i % BLOB_VARS.length]).trim(),
+      radius: Math.random() * maxRadius + minRadius,
+      vx: (Math.random() - 0.5) * speed,
+      vy: (Math.random() - 0.5) * speed,
+      color: colors[i % colors.length],
     });
   }
 };
 
 const animate = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.filter = "blur(70px)";
 
   blobs.forEach((blob) => {
     blob.x += blob.vx;
     blob.y += blob.vy;
 
-    if (blob.x < -blob.radius || blob.x > canvas.width + blob.radius) blob.vx *= -1;
-    if (blob.y < -blob.radius || blob.y > canvas.height + blob.radius) blob.vy *= -1;
+    if (blob.x < -blob.radius || blob.x > canvas.width + blob.radius) {
+      blob.vx *= -1;
+    }
+    if (blob.y < -blob.radius || blob.y > canvas.height + blob.radius) {
+      blob.vy *= -1;
+    }
 
-    ctx.globalAlpha = blobOpacity;
-    ctx.fillStyle = blob.color;
+    const gradient = ctx.createRadialGradient(
+      blob.x,
+      blob.y,
+      0,
+      blob.x,
+      blob.y,
+      blob.radius * 0.7,
+    );
+
+    // Extract RGB values and create sharper gradient with higher opacity
+    const rgbMatch = blob.color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (rgbMatch) {
+      const [, r, g, b] = rgbMatch;
+      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.5)`);
+      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.25)`);
+      gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+    }
+
+    ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  ctx.filter = "none";
-  ctx.globalAlpha = 1;
-
   animationFrameId = requestAnimationFrame(() => animate(canvas, ctx));
 };
 
 onMounted(() => {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
   const canvas = canvasRef.value;
   if (!canvas) return;
 
@@ -82,32 +100,48 @@ onMounted(() => {
   if (!ctx) return;
 
   const resize = () => {
+    if (!canvas) return;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    initBlobs(canvas);
+    if (blobs.length === 0) {
+      initBlobs(canvas);
+    }
   };
 
-  const handleResize = () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
-  };
-
+  resizeHandler = resize;
   resize();
-  window.addEventListener("resize", handleResize);
+  window.addEventListener("resize", resize);
+
   animate(canvas, ctx);
 
-  onUnmounted(() => {
-    window.removeEventListener("resize", handleResize);
+  watch(
+    () => [count, minRadius, maxRadius, speed, colors],
+    () => {
+      if (canvasRef.value) {
+        initBlobs(canvasRef.value);
+      }
+    },
+    { deep: true },
+  );
+});
+
+onUnmounted(() => {
+  if (resizeHandler) {
+    window.removeEventListener("resize", resizeHandler);
+  }
+  if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
-    clearTimeout(resizeTimer);
-    blobs.length = 0;
-  });
+  }
+  blobs.length = 0;
 });
 </script>
 
 <template>
   <canvas
     ref="canvasRef"
-    class="absolute inset-0 pointer-events-none"
+    class="fixed inset-0 z-1 pointer-events-none"
+  />
+  <div
+    class="fixed inset-0 z-1 bg-linear-to-br from-primary/5 via-accent/5 to-info/5"
   />
 </template>

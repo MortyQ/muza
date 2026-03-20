@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { RouterView } from "vue-router";
-
 import { VToaster } from "@muzakit/ui";
+
+import MasterLayout from "@/app/layouts/MasterLayout.vue";
 </script>
 
 <template>
-  <RouterView />
+  <MasterLayout />
   <VToaster />
 </template>

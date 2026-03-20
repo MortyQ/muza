@@ -1,0 +1,8 @@
+@import "@muzakit/config/tailwind/theme.css";
+@import "@muzakit/ui/style.css";
+
+@layer base {
+    body {
+        @apply bg-background text-foreground;
+    }
+}

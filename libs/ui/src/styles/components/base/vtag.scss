@@ -9,8 +9,8 @@
   white-space: nowrap;
   user-select: none;
   transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
-              color 200ms cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+  border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================
@@ -102,33 +102,33 @@
 }
 
 .vtag--soft-success {
-  background-color: var(--ui-success-subtle);
+  background-color: var(--ui-success-muted);
   color: var(--ui-success);
 }
 
 .vtag--soft-warning {
-  background-color: var(--ui-warning-subtle);
+  background-color: var(--ui-warning-muted);
   color: var(--ui-warning);
 }
 
 .vtag--soft-error {
-  background-color: var(--ui-danger-subtle);
+  background-color: var(--ui-danger-muted);
   color: var(--ui-danger);
 }
 
 .vtag--soft-info {
-  background-color: var(--ui-info-subtle);
+  background-color: var(--ui-info-muted);
   color: var(--ui-info);
 }
 
 .vtag--soft-neutral {
-  background-color: color-mix(in oklch, var(--ui-foreground-secondary) 12%, transparent);
-  color: var(--ui-foreground-secondary);
+  background-color: var(--ui-badge-neutral-bg);
+  color: var(--ui-badge-neutral-text);
 }
 
 .vtag--soft-gray {
-  background-color: color-mix(in oklch, var(--ui-foreground-muted) 12%, transparent);
-  color: var(--ui-foreground-muted);
+  background-color: var(--ui-badge-neutral-bg);
+  color: var(--ui-badge-neutral-text);
 }
 
 /* ============================================
@@ -241,4 +241,3 @@
     background-color: color-mix(in oklch, var(--ui-foreground-muted) 10%, transparent);
   }
 }
-

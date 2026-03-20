@@ -34,7 +34,6 @@ const isDisabled = computed(() => disabled || loading);
 const variantClass = computed(() => `v-button--${variant}`);
 
 const rootClass = computed(() => ({
-  "v-button": true,
   "v-button--icon-only": isIconOnly.value,
   [variantClass.value]: true,
   "v-button--disabled": isDisabled.value,
@@ -61,6 +60,7 @@ const rootAttrs = computed(() => {
   <component
     :is="isRouterLink ? RouterLink : 'button'"
     :class="rootClass"
+    class="v-button"
     v-bind="rootAttrs"
   >
     <span
@@ -91,6 +91,14 @@ const rootAttrs = computed(() => {
     </span>
   </component>
 </template>
+
+<style>
+@layer components {
+  :where(.v-button) {
+    width: fit-content;
+  }
+}
+</style>
 
 <style scoped>
 @import "../../styles/components/base/vbutton.scss";

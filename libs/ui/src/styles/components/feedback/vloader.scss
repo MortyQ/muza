@@ -17,8 +17,9 @@
 .v-loader {
   aspect-ratio: 5;
   display: grid;
+  color: var(--ui-primary);
   --_g: no-repeat radial-gradient(farthest-side, currentColor 94%, transparent);
-
+  
   &::before,
   &::after {
     content: "";

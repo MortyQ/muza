@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./tailwind/theme.css": "./src/tailwind/theme.css",
     "./tsconfig.base.json": "./tsconfig.base.json",
     "./eslint.base.mjs": "./src/eslint/eslint.base.mjs"
   },
   "devDependencies": {
     "tailwindcss": "^4.1.0"
+  },
+  "dependencies": {
+    "nprogress": "^0.2.0"
   }
 }

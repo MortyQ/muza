@@ -55,14 +55,11 @@
 .v-card--elevated {
   background-color: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08),
-              0 6px 16px -4px rgb(0 0 0 / 0.06),
-              0 9px 28px -8px rgb(0 0 0 / 0.04);
+  box-shadow: var(--ui-shadow-md);
 }
 
 .v-card--elevated:hover {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-              0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: var(--ui-shadow-xl);
   transform: translateY(-2px);
 }
 
@@ -74,8 +71,7 @@
 
 .v-card--outlined:hover {
   border-color: var(--ui-primary);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1),
-              0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  box-shadow: var(--ui-shadow-sm) !important;
 }
 
 .v-card--ghost {
@@ -95,9 +91,7 @@
 .v-card--glass {
   background-color: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-border) 40%, transparent);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08),
-              0 6px 16px -4px rgb(0 0 0 / 0.06),
-              0 9px 28px -8px rgb(0 0 0 / 0.04);
+  box-shadow: var(--ui-shadow-md);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (min-width: 768px) {
@@ -108,18 +102,14 @@
   }
 
   &:hover {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.12),
-                0 10px 24px -4px rgb(0 0 0 / 0.1),
-                0 16px 40px -8px rgb(0 0 0 / 0.08);
+    box-shadow: var(--ui-shadow-xl);
   }
 }
 
 .v-card--glass-elevated {
   background-color: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
-  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1),
-              0 10px 24px -4px rgb(0 0 0 / 0.08),
-              0 16px 48px -8px rgb(0 0 0 / 0.06);
+  box-shadow: var(--ui-shadow-lg);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (min-width: 768px) {
@@ -131,37 +121,67 @@
 
   &:hover {
     transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.12),
-                0 16px 36px -4px rgb(0 0 0 / 0.12),
-                0 28px 64px -8px rgb(0 0 0 / 0.1);
+    box-shadow: var(--ui-shadow-xl);
   }
 }
 
 .v-card--translucent {
-  background-color: color-mix(in oklch, var(--ui-surface) 55%, transparent);
-  border: 1px solid var(--ui-border);
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08),
-              0 4px 6px -4px rgb(0 0 0 / 0.08);
+  background: color-mix(in oklch, var(--ui-surface) 55%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
+  box-shadow: var(--ui-shadow-md);
 }
 
 /* ============================================
    BORDER RADIUS
    ============================================ */
-.v-card--radius-none { border-radius: 0 !important; }
-.v-card--radius-sm   { border-radius: 0.125rem !important; }
-.v-card--radius-md   { border-radius: var(--ui-radius) !important; }
-.v-card--radius-lg   { border-radius: var(--ui-radius-lg) !important; }
-.v-card--radius-xl   { border-radius: 0.75rem !important; }
-.v-card--radius-full { border-radius: 9999px !important; }
+.v-card--radius-none {
+  border-radius: 0 !important;
+}
+
+.v-card--radius-sm {
+  border-radius: 0.125rem !important;
+}
+
+.v-card--radius-md {
+  border-radius: var(--ui-radius) !important;
+}
+
+.v-card--radius-lg {
+  border-radius: var(--ui-radius-lg) !important;
+}
+
+.v-card--radius-xl {
+  border-radius: 0.75rem !important;
+}
+
+.v-card--radius-full {
+  border-radius: 9999px !important;
+}
 
 /* ============================================
    PADDING
    ============================================ */
-.v-card--padding-none { padding: 0 !important; }
-.v-card--padding-sm   { padding: 0.75rem !important; }
-.v-card--padding-md   { padding: 1rem 1.5rem !important; }
-.v-card--padding-lg   { padding: 1.5rem 2rem !important; }
-.v-card--padding-xl   { padding: 2rem 2.5rem !important; }
+.v-card--padding-none {
+  padding: 0 !important;
+}
+
+.v-card--padding-sm {
+  padding: 0.75rem !important;
+}
+
+.v-card--padding-md {
+  padding: 1rem 1.5rem !important;
+}
+
+.v-card--padding-lg {
+  padding: 1.5rem 2rem !important;
+}
+
+.v-card--padding-xl {
+  padding: 2rem 2.5rem !important;
+}
 
 /* ============================================
    STATES
@@ -175,8 +195,7 @@
 .v-card--interactive.v-card--elevated {
   &:hover:not(.v-card--disabled):not(.v-card--loading) {
     transform: scale(1.02);
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-                0 8px 10px -6px rgb(0 0 0 / 0.1);
+    box-shadow: var(--ui-shadow-xl);
   }
 }
 
@@ -283,8 +302,18 @@
   }
 }
 
-.v-card--padding-none .v-card__image { margin: 0 0 1rem 0; }
-.v-card--padding-sm   .v-card__image { margin: -0.75rem -0.75rem 0.75rem -0.75rem; }
-.v-card--padding-lg   .v-card__image { margin: -1.5rem -2rem 1.5rem -2rem; }
-.v-card--padding-xl   .v-card__image { margin: -2rem -2.5rem 2rem -2.5rem; }
+.v-card--padding-none .v-card__image {
+  margin: 0 0 1rem 0;
+}
 
+.v-card--padding-sm .v-card__image {
+  margin: -0.75rem -0.75rem 0.75rem -0.75rem;
+}
+
+.v-card--padding-lg .v-card__image {
+  margin: -1.5rem -2rem 1.5rem -2rem;
+}
+
+.v-card--padding-xl .v-card__image {
+  margin: -2rem -2.5rem 2rem -2.5rem;
+}

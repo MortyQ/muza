@@ -4,13 +4,12 @@
   justify-content: center;
   gap: 0.5rem;
   height: 2.5rem;
-  width: fit-content;
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   font-weight: 300;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: var(--ui-shadow-xs);
   transition: background-color 300ms ease-in-out,
   color 300ms ease-in-out,
   border-color 300ms ease-in-out,
@@ -18,15 +17,20 @@
 }
 
 .v-button--icon-only {
-  width: 2.5rem;
   padding: 0;
 }
 
 .v-button--disabled,
 .v-button:disabled {
+  color: var(--ui-foreground-disabled);
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.v-button:focus-visible {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: 2px;
 }
 
 .v-button--primary {
@@ -38,6 +42,16 @@
     background-color: var(--ui-primary-hover);
     border-color: var(--ui-primary-hover);
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--ui-primary-active);
+    border-color: var(--ui-primary-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: 2px;
   }
 }
 
@@ -51,6 +65,11 @@
     border-color: color-mix(in oklch, var(--ui-success) 82%, black);
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
+
+  &:active:not(:disabled) {
+    background-color: var(--ui-success-hover);
+    border-color: var(--ui-success-hover);
+  }
 }
 
 .v-button--negative {
@@ -63,6 +82,11 @@
     border-color: color-mix(in oklch, var(--ui-danger) 82%, black);
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
+
+  &:active:not(:disabled) {
+    background-color: var(--ui-danger-hover);
+    border-color: var(--ui-danger-hover);
+  }
 }
 
 .v-button--warning {
@@ -74,6 +98,11 @@
     background-color: color-mix(in oklch, var(--ui-warning) 82%, black);
     border-color: color-mix(in oklch, var(--ui-warning) 82%, black);
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--ui-warning-hover);
+    border-color: var(--ui-warning-hover);
   }
 }
 
@@ -127,3 +156,4 @@
     opacity: 0.5;
   }
 }
+

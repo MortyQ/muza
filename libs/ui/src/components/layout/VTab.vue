@@ -270,6 +270,16 @@ watch(() => [...tabs], async () => {
   calculateVisibleTabs();
 });
 
+// React to external hash changes (e.g. router.push({ hash }) from child components)
+watch(() => route?.hash, (newHash) => {
+  if (!useHash || !newHash) return;
+  const hashTabId = newHash.replace("#tab-", "");
+  const tab = tabs.find(t => String(t.id) === hashTabId);
+  if (tab && tab.id !== currentTabId.value) {
+    selectTab(tab.id, false);
+  }
+});
+
 defineExpose({
   currentTabId,
   selectTab,

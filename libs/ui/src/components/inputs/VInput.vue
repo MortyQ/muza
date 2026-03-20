@@ -178,6 +178,9 @@ const computedPlaceholder = computed(() => {
         <slot name="icon-left">
           <VIcon
             v-if="leftIconName || loading"
+            :class="{
+              'text-danger': validation?.$error
+            }"
             :icon="leftIconName"
             :loading="loading"
             class="v-input-icon-svg"
@@ -241,19 +244,19 @@ const computedPlaceholder = computed(() => {
           </button>
 
           <!-- Password Toggle -->
-          <button
+          <div
             v-else-if="type === 'password'"
-            :aria-label="currentInputType === 'text' ? 'Hide password' : 'Show password'"
-            :aria-pressed="currentInputType === 'text'"
             class="v-input-password-toggle"
-            type="button"
+            role="button"
+            tabindex="0"
             @click="changeInputType"
+            @keydown.enter.space="changeInputType"
           >
             <VIcon
-              :icon="currentInputType === 'text' ? 'mdi:eye-off' : 'mdi:eye'"
+              :icon="currentInputType === 'text' ? 'lucide:eye-off' : 'lucide:eye'"
               class="v-input-icon-svg"
             />
-          </button>
+          </div>
         </slot>
       </div>
 
