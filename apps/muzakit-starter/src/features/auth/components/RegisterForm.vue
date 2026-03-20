@@ -71,7 +71,7 @@ const handleSubmit = async () => {
     <VInput
       v-model="form.name"
       :validation="v$.name"
-      icon="lucide:cloud"
+      icon="lucide:user"
       name="Name"
     />
     <VInput
@@ -116,7 +116,7 @@ const handleSubmit = async () => {
     <VButton
       :loading="loading"
       class="w-full"
-      text="Sign Up"
+      text="Create Account"
       type="submit"
       variant="positive"
     />

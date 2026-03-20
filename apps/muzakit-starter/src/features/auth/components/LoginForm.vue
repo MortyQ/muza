@@ -45,7 +45,7 @@ const submit = async () => {
       v-model="form.email"
       :validation="v$.email"
       icon="lucide:mail"
-      name="Name"
+      name="Email"
       type="email"
     />
     <VInput
@@ -55,10 +55,25 @@ const submit = async () => {
       name="Password"
       type="password"
     />
+    <div class="login-form__forgot">
+      <VButton
+        text="Forgot password?"
+        variant="link"
+      />
+    </div>
     <VButton
       :loading="authStore.initLoading"
+      class="w-full"
       text="Sign In"
       type="submit"
     />
   </form>
 </template>
+
+<style scoped>
+.login-form__forgot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.5rem;
+}
+</style>

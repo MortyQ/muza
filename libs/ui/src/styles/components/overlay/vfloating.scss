@@ -19,7 +19,7 @@
    FLOATING CONTENT
    ============================================ */
 .v-floating-content {
-  background-color: var(--ui-surface);
+  background-color: var(--ui-surface-overlay);
 
   &.v-floating--positioning {
     position: absolute;
@@ -135,7 +135,7 @@
   }
 
   &--active {
-    background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+    background-color: var(--ui-surface-active);
     color: var(--ui-primary);
 
     .v-floating-item-icon {

@@ -26,7 +26,7 @@
   }
 
   &:hover:not(&--active):not(&--disabled) {
-    color: var(--ui-foreground);
+    color: var(--ui-foreground-secondary);
     background: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
   }
 
@@ -106,7 +106,7 @@
 .v-tab__list-wrapper {
   display: flex;
   width: 100%;
-  border-bottom: 1px solid var(--ui-border);
+  border-bottom: 1px solid var(--ui-border-subtle);
 }
 
 .v-tab__scroll {
@@ -150,6 +150,10 @@
 }
 
 @keyframes v-tab-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
