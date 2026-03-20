@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { RouterView } from "vue-router";
 
+import { VButton } from "@muzakit/ui";
+
 import { useMenu } from "@/app/routes/composables/useMenu";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+
+const authStore = useAuthStore();
 
 const { menuItems } = useMenu();
 </script>
@@ -19,5 +24,9 @@ const { menuItems } = useMenu();
       </span>
     </div>
     <RouterView />
+    <VButton
+      text="logout"
+      @click="authStore.logout"
+    />
   </div>
 </template>

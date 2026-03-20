@@ -6,22 +6,22 @@ export default [
     name: RouteNames.HOME,
     component: () => import("@/pages/HomePage.vue"),
     meta: {
-      title: "Home",
+      title: "Dashboard",
       showInMenu: true,
       menuTitle: "Home",
       menuOrder: 1,
-      permissions: ["read:all-lists"],
+      permissions: ["read:list"],
     },
   },
   {
-    path: "/list",
-    name: RouteNames.LIST,
-    component: () => import("@/pages/ListPage.vue"),
+    path: "/analytics",
+    name: RouteNames.ANALYTICS,
+    component: () => import("@/pages/AnalyticsPage.vue"),
     meta: {
-      title: "List",
+      title: "Analytics",
       showInMenu: true,
-      menuTitle: "List",
-
+      menuTitle: "Analytics",
+      permissions: ["read:analytics"],
     },
   },
 ];

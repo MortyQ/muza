@@ -4,4 +4,5 @@ export enum RouteNames {
   AUTH = "Auth",
   NOT_FOUND = "NotFound",
   FORBIDDEN = "Forbidden",
+  ANALYTICS = "Analytics",
 }

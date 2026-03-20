@@ -1,5 +1,5 @@
 <template>
   <div>
-    List Page
+    Analytics Page
   </div>
 </template>

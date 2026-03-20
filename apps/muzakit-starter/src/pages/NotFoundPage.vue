@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 import { useRouter } from "vue-router";
 
-import { VAnimatedBackground, VButton, VCard, VIcon } from "@muzakit/ui";
+import { VButton, VCard, VIcon } from "@muzakit/ui";
 
 const router = useRouter();
 const mouseX = ref(0);
@@ -26,8 +26,6 @@ const handleMouseMove = (e: MouseEvent) => {
     class="relative flex items-center justify-center overflow-hidden p-8 w-full"
     @mousemove="handleMouseMove"
   >
-    <VAnimatedBackground />
-
     <!-- Noise texture overlay -->
     <div class="nf-noise absolute inset-0 opacity-[0.03] z-0 pointer-events-none" />
 
