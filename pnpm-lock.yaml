@@ -51,7 +51,7 @@ importers:
         specifier: ^8.57.0
         version: 8.57.0(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
 
-  apps/muzakit-starter:
+  apps/muzakit-dashboard:
     dependencies:
       '@ametie/vue-muza-use':
         specifier: ^0.6.1
