@@ -8,9 +8,9 @@
     "pnpm": ">=10"
   },
   "scripts": {
-    "dev": "pnpm --filter @muzakit/app dev",
+    "dev": "pnpm --filter @muzakit/dashboard dev",
     "build:libs": "pnpm --filter @muzakit/utils build && pnpm --filter @muzakit/ui build",
-    "build": "pnpm run build:libs && pnpm --filter @muzakit/app build",
+    "build": "pnpm run build:libs && pnpm --filter @muzakit/dashboard build",
     "prepare": "husky"
   },
   "devDependencies": {

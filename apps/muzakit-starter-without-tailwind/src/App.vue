@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-import { VButton, VInput } from "@muzakit/ui";
+import { VButton, VCard, VInput } from "@muzakit/ui";
 import { useTheme } from "@muzakit/utils";
 
 const { theme, toggleTheme } = useTheme();
@@ -28,7 +28,6 @@ const test = ref("");
       </h1>
       <p class="text-foreground-secondary text-sm">
         Workspace links: ✅<br>
-        Tailwind v4 theme: ✅
       </p>
 
       <div class="flex items-center justify-between pt-2">
@@ -43,19 +42,32 @@ const test = ref("");
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-3 w-full max-w-sm text-xs">
-      <div class="bg-nav text-primary-foreground rounded-lg p-3">
-        nav
-      </div>
-      <div class="bg-surface-raised border border-border rounded-lg p-3 text-foreground">
-        surface-raised
-      </div>
-      <div class="bg-success/20 text-success rounded-lg p-3">
-        success
-      </div>
-      <div class="bg-danger/20 text-danger rounded-lg p-3">
-        danger
-      </div>
-    </div>
+    <VCard size="xl">
+      <form
+        class="flex flex-col gap-4"
+      >
+        <VInput
+          icon="lucide:mail"
+          name="Email"
+          type="email"
+        />
+        <VInput
+          icon="lucide:lock"
+          name="Password"
+          type="password"
+        />
+        <div class="login-form__forgot">
+          <VButton
+            text="Forgot password?"
+            variant="link"
+          />
+        </div>
+        <VButton
+          class="w-full"
+          text="Sign In"
+          type="submit"
+        />
+      </form>
+    </VCard>
   </div>
 </template>
