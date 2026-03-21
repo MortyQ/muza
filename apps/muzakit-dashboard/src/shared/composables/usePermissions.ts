@@ -1,4 +1,7 @@
-export enum Permissions {
+import { PermissionValues } from "@/features/auth/config/permissions";
+import { useUserStore } from "@/shared/store/useUserStore";
+
+enum Permissions {
   CREATE_LIST = "create:list",
   READ_LIST = "read:list",
   UPDATE_LIST = "update:list",
@@ -18,10 +21,7 @@ export enum Permissions {
   READ_ANALYTICS = "read:analytics",
 }
 
-export type PermissionType = `${Permissions}`;
-export const PermissionValues = Object.values(Permissions) as PermissionType[];
-
-export const PermissionGroups = {
+const PermissionGroups = {
   LISTS: [
     Permissions.CREATE_LIST, Permissions.READ_LIST,
     Permissions.UPDATE_LIST, Permissions.DELETE_LIST, Permissions.READ_ALL_LISTS,
@@ -38,3 +38,17 @@ export const PermissionGroups = {
   ALL_DELETE: PermissionValues.filter(p => p.startsWith("delete:")),
   ALL_MANAGE: PermissionValues.filter(p => p.startsWith("manage:")),
 } as const;
+
+export const usePermissions = () => {
+  const userStore = useUserStore();
+
+  const hasPermission = (permission: Permissions): boolean => {
+    return userStore.user?.permissions.includes(permission) ?? false;
+  };
+
+  return {
+    hasPermission,
+    Permissions,
+    PermissionGroups,
+  };
+};
