@@ -10,13 +10,7 @@
 /**
  * Available filter keys for global filters visibility
  */
-export type FilterKey
-  = | "brands"
-    | "channels"
-    | "products"
-    | "dateRange"
-    | "comparison"
-    | "granularity";
+export type FilterKey = "dateRange" | "granularity" | "search";
 
 /**
  * Granularity values that can be excluded via route config
@@ -48,23 +42,16 @@ export type ExtendedFilterKey = Exclude<FilterKey, "granularity"> | GranularityM
  * All available filters in the system
  */
 export const ALL_FILTERS: FilterKey[] = [
-  "brands",
-  "channels",
-  "products",
   "dateRange",
-  "comparison",
   "granularity",
+  "search",
 ];
 
 /**
  * Default filters shown when no route.meta.filters specified
  */
 export const DEFAULT_FILTERS: FilterKey[] = [
-  "brands",
-  "channels",
-  "products",
   "dateRange",
-  "comparison",
   "granularity",
 ];
 
@@ -73,12 +60,9 @@ export const DEFAULT_FILTERS: FilterKey[] = [
  * Used for URL sync and persistence
  */
 export const FILTER_URL_PARAMS: Record<FilterKey, string[]> = {
-  brands: ["brands"],
-  channels: ["channels"],
-  products: ["products"],
-  dateRange: ["primary_since", "primary_until"],
-  comparison: ["secondary_since", "secondary_until"],
+  dateRange: ["since", "until"],
   granularity: ["granularity"],
+  search: ["search"],
 };
 
 /**
@@ -92,12 +76,9 @@ export const PERSISTENT_FILTER_PARAMS: string[] = Object.values(FILTER_URL_PARAM
  * Add permission string to restrict filter visibility
  */
 export const FILTER_PERMISSIONS: Record<FilterKey, string | null> = {
-  brands: null,
-  channels: null,
-  products: null,
   dateRange: null,
-  comparison: null,
   granularity: null,
+  search: null,
 };
 
 // ==================== Granularity Helpers ====================

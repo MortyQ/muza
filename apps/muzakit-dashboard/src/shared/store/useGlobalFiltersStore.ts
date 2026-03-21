@@ -14,10 +14,8 @@ import {
   type GranularityValue,
   parseGranularityOptions,
 } from "@/shared/config/global-filter/globalFilters.config";
-import { useGlobalFiltersSync } from "@/shared/config/global-filter/useGlobalFiltersSync";
 
 export const useGlobalFiltersStore = defineStore("globalFilters", () => {
-  const { resetAllFilters: resetAllFiltersURL } = useGlobalFiltersSync();
   const { abort: abortPendingRequests } = useAbortController();
   const router = useRouter();
   const { hasPermission } = usePermissions();
@@ -92,24 +90,6 @@ export const useGlobalFiltersStore = defineStore("globalFilters", () => {
   };
 
   // ==================== Helper Functions ====================
-
-  /**
-     * Parse ISO date strings to Date objects.
-     */
-  function parseDateRange(since: string, until: string): [Date, Date] | null {
-    try {
-      const sinceDate = DateTime.fromISO(since, { zone: "utc" });
-      const untilDate = DateTime.fromISO(until, { zone: "utc" });
-
-      if (sinceDate.isValid && untilDate.isValid) {
-        return [sinceDate.toJSDate(), untilDate.toJSDate()];
-      }
-    }
-    catch (error) {
-      console.error("Failed to parse date range:", error);
-    }
-    return null;
-  }
 
   /**
      * Get default date range (Last 3 Months).
@@ -214,37 +194,18 @@ export const useGlobalFiltersStore = defineStore("globalFilters", () => {
 
   /**
      * Reset all filters to default values.
+     * URL will be updated automatically via the reactive watcher in useGlobalFiltersSync.
      */
-  const resetAllFilters = async () => {
+  const resetAllFilters = () => {
     dateRange.value = getDefaultRange();
     granularity.value = "MONTH";
     search.value = [];
-    await resetAllFiltersURL();
   };
 
   /**
-     * Initialize filters — restore state from URL query params.
-     * Call this once in DefaultLayout before rendering page content.
+     * Mark filters as initialized (called by useGlobalFiltersSync after first URL parse).
      */
-  const initFilters = async (query: Record<string, string | undefined>) => {
-    if (isInitialized.value) return;
-
-    // Restore date range from URL
-    if (query.since && query.until) {
-      const range = parseDateRange(query.since, query.until);
-      if (range) dateRange.value = range;
-    }
-
-    // Restore granularity from URL
-    if (query.granularity && (["MONTH", "WEEK", "DAY"] as string[]).includes(query.granularity)) {
-      granularity.value = query.granularity as Granularity;
-    }
-
-    // Restore search from URL
-    if (query.search) {
-      search.value = query.search.split(",").filter(Boolean);
-    }
-
+  const setInitialized = () => {
     isInitialized.value = true;
   };
 
@@ -272,7 +233,7 @@ export const useGlobalFiltersStore = defineStore("globalFilters", () => {
     setSearch,
     clearSearch,
     resetAllFilters,
-    initFilters,
+    setInitialized,
     withoutAbort,
   };
 });

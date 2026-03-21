@@ -7,13 +7,13 @@ import { VLoader } from "@muzakit/ui";
 
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { setOnAuthFailed } from "@/shared/config/axios";
-import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
+import { useGlobalFiltersSync } from "@/shared/config/global-filter/useGlobalFiltersSync";
 
 import AuthLayout from "./AuthLayout.vue";
 import DefaultLayout from "./DefaultLayout.vue";
 
 const authStore = useAuthStore();
-const globalFiltersStore = useGlobalFiltersStore();
+const { syncFromUrl } = useGlobalFiltersSync();
 
 const layouts: Record<string, Component> = {
   default: DefaultLayout,
@@ -31,10 +31,9 @@ router.isReady().then(() => {
 setOnAuthFailed(() => authStore.logout());
 
 // Initialize global filters once when user is authenticated
-watch(() => authStore.user, async () => {
+watch(() => authStore.user, () => {
   if (!authStore.user) return;
-  // Initialize all filters from URL (loads data and restores all filters including dates)
-  await globalFiltersStore.initFilters(route.query as Record<string, string | undefined>);
+  syncFromUrl(route.query);
 }, {
   immediate: true,
 });

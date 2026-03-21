@@ -4,11 +4,9 @@ import { computed } from "vue";
 import { type SegmentOption, VSegmentedControl } from "@muzakit/ui";
 
 import type { GranularityValue } from "@/shared/config/global-filter/globalFilters.config";
-import { useGlobalFiltersSync } from "@/shared/config/global-filter/useGlobalFiltersSync";
 import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
 
 const filtersStore = useGlobalFiltersStore();
-const { updateGranularity } = useGlobalFiltersSync();
 
 const allOptions: Record<GranularityValue, SegmentOption> = {
   MONTH: { label: "Month", value: "MONTH", icon: "lucide:calendar" },
@@ -24,7 +22,6 @@ const selectedGranularity = computed({
   get: () => filtersStore.granularity,
   set: (value: string | number) => {
     filtersStore.setGranularity(value as "MONTH" | "WEEK" | "DAY");
-    updateGranularity();
   },
 });
 </script>

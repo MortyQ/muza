@@ -44,25 +44,14 @@ function parseDateRange(since?: QueryParam, until?: QueryParam): [Date, Date] | 
 /**
  * Composable for syncing global filters store with URL query params.
  *
- * Provides explicit functions to update URL — no automatic watchers for Store → URL.
- * Only browser navigation (back/forward) triggers URL → Store sync.
+ * Store → URL: automatic via watcher. Components only call store.setXxx().
+ * URL → Store: via syncFromUrl(), called on init and browser back/forward.
  *
- * Usage:
- * const { updateDateRange, updateGranularity, updateSearch } = useGlobalFiltersSync();
- *
- * // After user changes date picker:
- * store.setDateRange(newRange);
- * updateDateRange();
- *
- * // After user changes granularity:
- * store.setGranularity(value);
- * updateGranularity();
+ * Call useGlobalFiltersSync() only ONCE — in root layout.
  */
 
-// Global singleton flag to prevent circular URL updates
+// Module-level singleton flags
 let isUpdatingUrl = false;
-
-// Track if watch is already registered (prevent multiple watches)
 let isWatchRegistered = false;
 
 export function useGlobalFiltersSync() {
@@ -70,134 +59,90 @@ export function useGlobalFiltersSync() {
   const route = useRoute();
   const router = useRouter();
 
+  // ==================== URL → Store ====================
+
   /**
-     * Helper to update URL without triggering the watch
+     * Sync store state from URL query params.
+     * Handles both initial load and browser back/forward navigation.
+     * Sets store.isInitialized = true after first call.
      */
-  async function updateUrlSilently(updateFn: () => Promise<void>) {
+  function syncFromUrl(query: LocationQuery) {
     isUpdatingUrl = true;
     try {
-      await updateFn();
+      store.withoutAbort(() => {
+        const range = parseDateRange(query.since, query.until);
+        if (range) store.setDateRange(range);
+
+        const granularityParam = Array.isArray(query.granularity)
+          ? query.granularity[0]
+          : query.granularity;
+        if (granularityParam && ["MONTH", "WEEK", "DAY"].includes(granularityParam)) {
+          store.setGranularity(granularityParam as "MONTH" | "WEEK" | "DAY");
+        }
+
+        const searchItems = parseArrayParam(query.search);
+        store.setSearch(searchItems);
+      });
     }
     finally {
       isUpdatingUrl = false;
+      store.setInitialized();
     }
   }
 
-  // ==================== URL → Store (Init & Browser Navigation) ====================
+  // ==================== Store → URL (Reactive) ====================
 
   /**
-     * Update store from URL query params.
-     * Called on init and browser navigation (back/forward).
-     * Uses withoutAbort to prevent cancelling requests during URL sync.
+     * Build URL query object from current store state.
      */
-  function syncFromUrl(query: LocationQuery) {
-    store.withoutAbort(() => {
-      // Date range
-      const range = parseDateRange(query.since, query.until);
-      if (range) {
-        store.setDateRange(range);
-      }
+  function buildQuery(): Record<string, string | undefined> {
+    const { since, until } = store.formattedDateRange;
+    const granularity = store.granularity !== "MONTH" ? store.granularity : undefined;
+    const searchItems = store.search;
 
-      // Granularity
-      const granularityParam = Array.isArray(query.granularity)
-        ? query.granularity[0]
-        : query.granularity;
-      if (granularityParam && ["MONTH", "WEEK", "DAY"].includes(granularityParam)) {
-        store.setGranularity(granularityParam as "MONTH" | "WEEK" | "DAY");
-      }
-
-      // Search
-      const searchItems = parseArrayParam(query.search);
-      store.setSearch(searchItems);
-
-      // Future filters:
-      // if (query.project_id) store.setProjectId(query.project_id);
-      // if (query.status) store.setStatus(query.status);
-    });
-  }
-
-  // ==================== Store → URL (Explicit Updates) ====================
-
-  /**
-     * Update date range in URL.
-     * Call this after user changes the date picker.
-     */
-  async function updateDateRange() {
-    await updateUrlSilently(async () => {
-      await router.replace({
-        query: {
-          ...route.query,
-          since: store.formattedDateRange.since,
-          until: store.formattedDateRange.until,
-        },
-      });
-    });
+    return {
+      since,
+      until,
+      granularity,
+      search: searchItems.length > 0 ? searchItems.join(",") : undefined,
+    };
   }
 
   /**
-     * Update granularity in URL.
-     * Call this after user changes granularity filter.
-     * Default "MONTH" is omitted from URL.
+     * Push current store state to URL, cleaning up undefined params.
      */
-  async function updateGranularity() {
-    await updateUrlSilently(async () => {
-      const value = store.granularity;
-      if (value === "MONTH") {
-        const { granularity: _granularity, ...restQuery } = route.query;
-        await router.replace({ query: restQuery });
+  async function syncToUrl() {
+    const updates = buildQuery();
+    const mergedQuery = { ...route.query };
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (value === undefined) {
+        delete mergedQuery[key];
       }
       else {
-        await router.replace({
-          query: {
-            ...route.query,
-            granularity: value,
-          },
-        });
+        mergedQuery[key] = value;
       }
-    });
+    }
+
+    await router.replace({ query: mergedQuery });
   }
 
-  /**
-     * Update search in URL.
-     * Call this after user changes search filter.
-     * Empty search removes param from URL.
-     */
-  async function updateSearch() {
-    await updateUrlSilently(async () => {
-      const items = store.search;
-      if (items.length === 0) {
-        const { search: _search, ...restQuery } = route.query;
-        await router.replace({ query: restQuery });
-      }
-      else {
-        await router.replace({
-          query: {
-            ...route.query,
-            search: items.join(","),
-          },
-        });
-      }
-    });
-  }
+  // ==================== Watchers ====================
 
-  /**
-     * Clear all URL query params (used on full filter reset).
-     */
-  const resetAllFilters = async () => {
-    await updateUrlSilently(async () => {
-      await router.replace({ query: {} });
-    });
-  };
-
-  // ==================== Watchers (Only for Browser Navigation) ====================
-
-  /**
-     * Sync URL → Store on browser back/forward navigation.
-     * This is the ONLY watcher — no automatic Store → URL sync.
-     * Only registered ONCE (first call to useGlobalFiltersSync).
-     */
   if (!isWatchRegistered) {
     isWatchRegistered = true;
+
+    // Store → URL: reactive auto-sync
+    watch(
+      () => [store.granularity, store.dateRange, store.search] as const,
+      () => {
+        if (isUpdatingUrl) return;
+        syncToUrl();
+      },
+      { deep: true },
+    );
+
+    // URL → Store: browser back/forward navigation
     watch(
       () => route.query,
       (newQuery) => {
@@ -209,9 +154,6 @@ export function useGlobalFiltersSync() {
   }
 
   return {
-    updateDateRange,
-    updateGranularity,
-    updateSearch,
-    resetAllFilters,
+    syncFromUrl,
   };
 }
