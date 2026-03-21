@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 import { type SegmentOption, VSegmentedControl } from "@muzakit/ui";
 
-import type { GranularityValue } from "@/shared/config/global-filter/globalFilters.config";
+import type { GranularityValue } from "@/shared/config/global-filter/filterRegistry";
 import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
 
 const filtersStore = useGlobalFiltersStore();

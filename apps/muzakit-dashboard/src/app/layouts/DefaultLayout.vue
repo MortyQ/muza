@@ -33,7 +33,12 @@ const { toggleTheme } = useTheme();
         v-for="item in menuItems"
         :key="item.id"
       >
-        {{ item.label }}
+        <router-link
+          :to="item.to as string"
+          class="text-sm text-secondaryText hover:text-mainText transition-colors"
+        >
+          {{ item.label }}
+        </router-link>
       </span>
     </div>
     <RouterView />

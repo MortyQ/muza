@@ -1,88 +1,53 @@
 import { watch } from "vue";
 
-import { DateTime } from "luxon";
-import { type LocationQuery, type LocationQueryValue, useRoute, useRouter } from "vue-router";
+import { type LocationQuery, useRoute, useRouter } from "vue-router";
 
 import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
 
-type QueryParam = LocationQueryValue | LocationQueryValue[];
+// ==================== Singleton ====================
 
-/**
- * Parse comma-separated string to array
- */
-function parseArrayParam(param?: QueryParam): string[] {
-  const value = Array.isArray(param) ? param[0] : param;
-  if (!value) return [];
-  return value.split(",").filter(Boolean);
+interface SyncApi {
+  syncFromUrl: (query: LocationQuery) => void
 }
 
 /**
- * Parse ISO date strings to Date objects
- * Returns null if invalid or missing
- */
-function parseDateRange(since?: QueryParam, until?: QueryParam): [Date, Date] | null {
-  const sinceStr = Array.isArray(since) ? since[0] : since;
-  const untilStr = Array.isArray(until) ? until[0] : until;
-
-  if (!sinceStr || !untilStr) return null;
-
-  try {
-    const sinceDate = DateTime.fromISO(sinceStr, { zone: "utc" });
-    const untilDate = DateTime.fromISO(untilStr, { zone: "utc" });
-
-    if (sinceDate.isValid && untilDate.isValid) {
-      return [sinceDate.toJSDate(), untilDate.toJSDate()];
-    }
-  }
-  catch (error) {
-    console.error("Failed to parse date range:", error);
-  }
-
-  return null;
-}
-
-/**
- * Composable for syncing global filters store with URL query params.
+ * Module-level singleton.
+ * Created on the FIRST call to useGlobalFiltersSync() (from MasterLayout).
+ * All subsequent calls return the same instance.
  *
- * Store → URL: automatic via watcher. Components only call store.setXxx().
+ * Reset on HMR via import.meta.hot.dispose to prevent stale watchers.
+ */
+let _instance: SyncApi | null = null;
+
+/**
+ * Composable for syncing global filters store ↔ URL query params.
+ *
+ * Store → URL: automatic via watcher on store.toQuery().
  * URL → Store: via syncFromUrl(), called on init and browser back/forward.
  *
- * Call useGlobalFiltersSync() only ONCE — in root layout.
+ * ⚠️  Must be called exactly ONCE — in the root layout (MasterLayout).
+ *      Every subsequent call returns the cached singleton.
  */
+export function useGlobalFiltersSync(): SyncApi {
+  if (_instance) return _instance;
 
-// Module-level singleton flags
-let isUpdatingUrl = false;
-let isWatchRegistered = false;
-
-export function useGlobalFiltersSync() {
   const store = useGlobalFiltersStore();
   const route = useRoute();
   const router = useRouter();
 
+  // Lives in closure — no module-level leakage between HMR cycles
+  let isUpdatingUrl = false;
+
   // ==================== URL → Store ====================
 
   /**
-     * Sync store state from URL query params.
-     * Handles both initial load and browser back/forward navigation.
-     * Sets store.isInitialized = true after first call.
+     * Apply URL query params to store state.
+     * Each filter's fromQuery() handles its own parsing — zero parsing logic here.
      */
   function syncFromUrl(query: LocationQuery) {
     isUpdatingUrl = true;
     try {
-      store.withoutAbort(() => {
-        const range = parseDateRange(query.since, query.until);
-        if (range) store.setDateRange(range);
-
-        const granularityParam = Array.isArray(query.granularity)
-          ? query.granularity[0]
-          : query.granularity;
-        if (granularityParam && ["MONTH", "WEEK", "DAY"].includes(granularityParam)) {
-          store.setGranularity(granularityParam as "MONTH" | "WEEK" | "DAY");
-        }
-
-        const searchItems = parseArrayParam(query.search);
-        store.setSearch(searchItems);
-      });
+      store.withoutAbort(() => store.applyQuery(query));
     }
     finally {
       isUpdatingUrl = false;
@@ -90,29 +55,14 @@ export function useGlobalFiltersSync() {
     }
   }
 
-  // ==================== Store → URL (Reactive) ====================
+  // ==================== Store → URL ====================
 
   /**
-     * Build URL query object from current store state.
-     */
-  function buildQuery(): Record<string, string | undefined> {
-    const { since, until } = store.formattedDateRange;
-    const granularity = store.granularity !== "MONTH" ? store.granularity : undefined;
-    const searchItems = store.search;
-
-    return {
-      since,
-      until,
-      granularity,
-      search: searchItems.length > 0 ? searchItems.join(",") : undefined,
-    };
-  }
-
-  /**
-     * Push current store state to URL, cleaning up undefined params.
+     * Push current store state to URL.
+     * Removes keys whose toQuery() returned undefined.
      */
   async function syncToUrl() {
-    const updates = buildQuery();
+    const updates = store.toQuery();
     const mergedQuery = { ...route.query };
 
     for (const [key, value] of Object.entries(updates)) {
@@ -127,33 +77,35 @@ export function useGlobalFiltersSync() {
     await router.replace({ query: mergedQuery });
   }
 
-  // ==================== Watchers ====================
+  // ==================== Watchers (registered exactly once) ====================
 
-  if (!isWatchRegistered) {
-    isWatchRegistered = true;
+  // Store → URL: reactive auto-sync via registry toQuery()
+  watch(
+    () => store.toQuery(),
+    () => {
+      if (isUpdatingUrl) return;
+      syncToUrl();
+    },
+    { deep: true },
+  );
 
-    // Store → URL: reactive auto-sync
-    watch(
-      () => [store.granularity, store.dateRange, store.search] as const,
-      () => {
-        if (isUpdatingUrl) return;
-        syncToUrl();
-      },
-      { deep: true },
-    );
+  // URL → Store: browser back/forward navigation
+  watch(
+    () => route.query,
+    (newQuery) => {
+      if (isUpdatingUrl) return;
+      if (!store.isInitialized) return;
+      syncFromUrl(newQuery);
+    },
+  );
 
-    // URL → Store: browser back/forward navigation
-    watch(
-      () => route.query,
-      (newQuery) => {
-        if (isUpdatingUrl) return;
-        if (!store.isInitialized) return;
-        syncFromUrl(newQuery);
-      },
-    );
-  }
+  _instance = { syncFromUrl };
+  return _instance;
+}
 
-  return {
-    syncFromUrl,
-  };
+// Reset singleton on HMR so stale watchers don't accumulate after hot reload
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    _instance = null;
+  });
 }

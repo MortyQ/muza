@@ -1,4 +1,5 @@
 import { RouteNames } from "@/app/routes/types/names";
+import type { ExtendedFilterKey } from "@/shared/config/global-filter/filterRegistry";
 
 export default [
   {
@@ -11,6 +12,9 @@ export default [
       menuTitle: "Home",
       menuOrder: 1,
       permissions: ["read:list"],
+      filters: {
+        show: ["dateRange", "granularity"] as ExtendedFilterKey[],
+      },
     },
   },
   {
