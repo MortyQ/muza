@@ -1,20 +1,20 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import { type SegmentOption, VSegmentedControl } from "@muzakit/ui";
+import { type ToggleOption, VToggleGroup } from "@muzakit/ui";
 
 import type { GranularityValue } from "@/shared/config/global-filter/filterRegistry";
 import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
 
 const filtersStore = useGlobalFiltersStore();
 
-const allOptions: Record<GranularityValue, SegmentOption> = {
+const allOptions: Record<GranularityValue, ToggleOption> = {
   MONTH: { label: "Month", value: "MONTH", icon: "lucide:calendar" },
   WEEK: { label: "Week", value: "WEEK", icon: "lucide:calendar-range" },
   DAY: { label: "Day", value: "DAY", icon: "lucide:calendar-days" },
 };
 
-const options = computed<SegmentOption[]>(() => {
+const options = computed<ToggleOption[]>(() => {
   return filtersStore.allowedGranularityValues.map(value => allOptions[value]);
 });
 
@@ -27,7 +27,7 @@ const selectedGranularity = computed({
 </script>
 
 <template>
-  <VSegmentedControl
+  <VToggleGroup
     v-model="selectedGranularity"
     :options="options"
     size="md"

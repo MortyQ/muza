@@ -4,7 +4,10 @@ export { default as VButton } from "./components/base/VButton.vue";
 export { default as VIcon } from "./components/base/VIcon.vue";
 export { default as VTag, type TagVariant, type TagColor, type TagSize } from "./components/base/VTag.vue";
 export { default as VInput } from "./components/inputs/VInput.vue";
+export { default as VDatepicker } from "./components/inputs/VDatepicker.vue";
 export { default as VSegmentedControl, type SegmentOption } from "./components/inputs/VSegmentedControl.vue";
+export { default as VToggleGroup, type ToggleOption } from "./components/inputs/VToggleGroup.vue";
+export { default as VTooltip } from "./components/overlay/VTooltip.vue";
 export { default as VTab } from "./components/layout/VTab.vue";
 export {
   default as VCard, type CardSize, type CardVariant, type CardRadius, type CardPadding,
@@ -24,7 +27,10 @@ declare module "vue" {
     VIcon: typeof import("./components/base/VIcon.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
     VInput: typeof import("./components/inputs/VInput.vue").default
+    VDatepicker: typeof import("./components/inputs/VDatepicker.vue").default
     VSegmentedControl: typeof import("./components/inputs/VSegmentedControl.vue").default
+    VToggleGroup: typeof import("./components/inputs/VToggleGroup.vue").default
+    VTooltip: typeof import("./components/overlay/VTooltip.vue").default
     VTab: typeof import("./components/layout/VTab.vue").default
     VCard: typeof import("./components/layout/VCard.vue").default
     VAnimatedBackground: typeof import("./components/layout/VAnimatedBackground.vue").default
