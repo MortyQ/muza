@@ -48,7 +48,7 @@ const emit = defineEmits<{ clear: [] }>();
 
 const model = defineModel<string | number | undefined>();
 
-const slots = useSlots();
+const slots: ReturnType<typeof useSlots> = useSlots();
 const generatedId = useId();
 
 const isShowPassword = ref(false);
@@ -124,7 +124,7 @@ const showClearButton = computed(() => {
 });
 
 const showLeftIcon = computed(() => icon || isSearchType.value || !!slots["icon-left"] || loading);
-const showRightIcon = computed(() => type === "password" || showClearButton.value || !!slots["icon-right"]);
+const showRightIcon = computed<boolean>(() => type === "password" || showClearButton.value || !!slots["icon-right"]);
 
 const leftIconName = computed(() => {
   if (icon) return icon;
