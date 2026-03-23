@@ -7,6 +7,8 @@ const filtersStore = useGlobalFiltersStore();
 </script>
 
 <template>
-  <DateRangeFilter v-if="filtersStore.isFilterVisible('dateRange')" />
-  <GranularityFilter v-if="filtersStore.isFilterVisible('granularity')" />
+  <div>
+    <DateRangeFilter v-if="filtersStore.isFilterVisible('dateRange')" />
+    <GranularityFilter v-if="filtersStore.isFilterVisible('granularity')" />
+  </div>
 </template>

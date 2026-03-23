@@ -21,8 +21,25 @@ export { useToast } from "./composables/useToast";
 
 export type { FieldValidation } from "./types/validation";
 
+// ── Navigation Sidebar ──────────────────────────────────────────────────────
+export {
+  NavigationSidebar,
+  createSidebar,
+  useSidebarState,
+  useNavigation,
+  buildMenuTree,
+} from "./components/navigation-sidebar";
+export type {
+  SidebarNavItem,
+  SidebarOptions,
+  SidebarInstance,
+  SidebarRouteMeta,
+  FlatMenuItem,
+} from "./components/navigation-sidebar";
+
 declare module "vue" {
   export interface GlobalComponents {
+    NavigationSidebar: typeof import("./components/navigation-sidebar/NavigationSidebar.vue").default
     VButton: typeof import("./components/base/VButton.vue").default
     VIcon: typeof import("./components/base/VIcon.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
