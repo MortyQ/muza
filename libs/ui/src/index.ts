@@ -3,6 +3,7 @@ import "./styles/tokens.css";
 export { default as VButton } from "./components/base/VButton.vue";
 export { default as VIcon } from "./components/base/VIcon.vue";
 export { default as VTag, type TagVariant, type TagColor, type TagSize } from "./components/base/VTag.vue";
+export { default as VThemeSwitcher, type ThemeOption } from "./components/base/VThemeSwitcher.vue";
 export { default as VInput } from "./components/inputs/VInput.vue";
 export { default as VDatepicker } from "./components/inputs/VDatepicker.vue";
 export { default as VSegmentedControl, type SegmentOption } from "./components/inputs/VSegmentedControl.vue";
@@ -43,6 +44,7 @@ declare module "vue" {
     VButton: typeof import("./components/base/VButton.vue").default
     VIcon: typeof import("./components/base/VIcon.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
+    VThemeSwitcher: typeof import("./components/base/VThemeSwitcher.vue").default
     VInput: typeof import("./components/inputs/VInput.vue").default
     VDatepicker: typeof import("./components/inputs/VDatepicker.vue").default
     VSegmentedControl: typeof import("./components/inputs/VSegmentedControl.vue").default

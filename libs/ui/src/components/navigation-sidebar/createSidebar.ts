@@ -21,6 +21,26 @@ function saveCollapsed(key: string, value: boolean): void {
   }
 }
 
+function loadExpandedItems(key: string): Set<string> {
+  try {
+    const raw = localStorage.getItem(`${key}:expanded`);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? new Set<string>(parsed) : new Set();
+  }
+  catch {
+    return new Set();
+  }
+}
+
+function saveExpandedItems(key: string, value: Set<string>): void {
+  try {
+    localStorage.setItem(`${key}:expanded`, JSON.stringify([...value]));
+  }
+  catch { /* noop — storage unavailable */
+  }
+}
+
 /**
  * Factory function that creates an isolated sidebar instance.
  * Each call returns independent reactive state — no module-level singletons.
@@ -48,9 +68,14 @@ export function createSidebar(options: SidebarOptions): SidebarInstance {
   // SSR-safe lazy init — typeof window check prevents crash in server environments
   if (resolvedOptions.persistCollapse && typeof window !== "undefined") {
     isCollapsed.value = loadCollapsed(resolvedOptions.storageKey);
+    expandedItems.value = loadExpandedItems(resolvedOptions.storageKey);
 
     watchEffect(() => {
       saveCollapsed(resolvedOptions.storageKey, isCollapsed.value);
+    });
+
+    watchEffect(() => {
+      saveExpandedItems(resolvedOptions.storageKey, expandedItems.value);
     });
   }
 

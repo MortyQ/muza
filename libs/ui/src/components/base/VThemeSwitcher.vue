@@ -11,13 +11,10 @@ export interface ThemeOption {
 }
 
 const {
-  modelValue,
   themes,
   variant = "cycle",
   size = "md",
 } = defineProps<{
-  /** Currently active theme value */
-  modelValue: string
   /** All available theme options — labels + icons */
   themes: ThemeOption[]
   /**
@@ -28,30 +25,29 @@ const {
   size?: "sm" | "md" | "lg"
 }>();
 
-const emit = defineEmits<{
-  "update:modelValue": [value: string]
-}>();
+const model = defineModel<string>({ required: true });
 
 const iconSize = computed(() => ({ sm: 14, md: 16, lg: 20 }[size]));
 
 const currentTheme = computed(
-  () => themes.find(t => t.value === modelValue) ?? themes[0],
+  () => themes.find(t => t.value === model.value) ?? themes[0],
 );
 
 const nextTheme = computed(() => {
-  const i = themes.findIndex(t => t.value === modelValue);
+  const i = themes.findIndex(t => t.value === model.value);
   return themes[(i + 1) % themes.length];
 });
 
-function cycle() {
-  emit("update:modelValue", nextTheme.value.value);
-}
+const cycle = () => {
+  model.value = nextTheme.value.value;
+};
 
 const rootClass = computed(() => [
   "v-theme-switcher",
   `v-theme-switcher--${variant}`,
   `v-theme-switcher--${size}`,
 ]);
+
 </script>
 
 <template>
@@ -69,7 +65,7 @@ const rootClass = computed(() => [
       name="v-theme-icon"
     >
       <VIcon
-        :key="modelValue"
+        :key="model"
         :icon="currentTheme?.icon ?? 'lucide:palette'"
         :size="iconSize"
       />
@@ -84,12 +80,12 @@ const rootClass = computed(() => [
     <button
       v-for="theme in themes"
       :key="theme.value"
-      :aria-pressed="modelValue === theme.value"
-      :class="{ 'v-ts__item--active': modelValue === theme.value }"
+      :aria-pressed="model === theme.value"
+      :class="{ 'v-ts__item--active': model === theme.value }"
       :title="theme.label"
       class="v-ts__item"
       type="button"
-      @click="emit('update:modelValue', theme.value)"
+      @click="model = theme.value"
     >
       <VIcon
         v-if="theme.icon"
@@ -100,7 +96,6 @@ const rootClass = computed(() => [
     </button>
   </div>
 </template>
-
 <style scoped>
 @import "../../styles/components/base/vthemeswitcher.scss";
 </style>

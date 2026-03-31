@@ -52,6 +52,7 @@ const handleSelect = (option: ToggleOption<T>) => {
       :allow-html="true"
       :disabled="!option.tooltip"
       :text="option.tooltip ?? ''"
+      placement="top"
     >
       <button
         :aria-pressed="modelValue === option.value"

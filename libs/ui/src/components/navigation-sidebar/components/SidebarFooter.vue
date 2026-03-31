@@ -16,8 +16,8 @@ const { isCollapsed } = useSidebarState();
 
 <template>
   <div
-    :class="{ 'sidebar-footer--collapsed': isCollapsed }"
-    class="sidebar-footer"
+    :class="{ 'v-sidebar-footer--collapsed': isCollapsed }"
+    class="v-sidebar-footer"
   >
     <!--
       #start — slot for content above nav items (e.g. user menu)
@@ -25,7 +25,7 @@ const { isCollapsed } = useSidebarState();
     -->
     <div
       v-if="$slots.start"
-      class="sidebar-footer__slot"
+      class="v-sidebar-footer__slot"
     >
       <slot name="start" />
     </div>
@@ -33,7 +33,7 @@ const { isCollapsed } = useSidebarState();
     <!-- Footer nav items -->
     <nav
       v-if="items.length"
-      class="sidebar-footer__nav"
+      class="v-sidebar-footer__nav"
     >
       <SidebarNavItem
         v-for="item in items"
