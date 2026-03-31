@@ -23,7 +23,7 @@ const handleMouseMove = (e: MouseEvent) => {
 
 <template>
   <div
-    class="relative flex items-center justify-center overflow-hidden p-8 w-full"
+    class="relative flex items-center justify-center overflow-hidden p-8 w-full bg-surface-sunken"
     @mousemove="handleMouseMove"
   >
     <!-- Noise texture overlay -->

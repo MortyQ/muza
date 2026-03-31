@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 import { RouterView, useRouter } from "vue-router";
 
-import { VButton, NavigationSidebar, createSidebar, VIcon } from "@muzakit/ui";
+import { VButton, NavigationSidebar, createSidebar, VIcon, VThemeSwitcher, type ThemeOption } from "@muzakit/ui";
 import { useTheme, prefetchRoute } from "@muzakit/utils";
 
 import { useMenu } from "@/app/routes/composables/useMenu";
@@ -15,13 +15,19 @@ const authStore = useAuthStore();
 
 const { menuItems } = useMenu();
 const router = useRouter();
-const { toggleTheme } = useTheme();
+const { theme } = useTheme();
+
+const THEMES: ThemeOption[] = [
+  { value: "light", label: "Light", icon: "lucide:sun" },
+  { value: "dark", label: "Dark", icon: "lucide:moon" },
+];
+
 const globalFiltersStore = useGlobalFiltersStore();
 
 const sidebar = createSidebar({
   items: menuItems,
   brandName: "Muzakit",
-  storageKey: "so-insights-sidebar",
+  storageKey: "muzakit-sidebar",
   persistCollapse: true,
   persistentQueryParams: ["since", "until", "granularity"],
 });
@@ -34,20 +40,20 @@ const contentMargin = computed(() => ({
 
 <template>
   <div
-    class="flex min-h-screen bg-mainBg text-mainText overflow-x-hidden p-4"
+    class="flex min-h-screen text-mainText overflow-x-hidden p-4"
   >
     <NavigationSidebar
       :sidebar="sidebar"
       @prefetch="(to) => prefetchRoute(router, to)"
     >
       <template #footer-end>
-        <VButton
-          class="w-full"
-          icon="lucide:cloud-sun"
-          @click="toggleTheme"
-        >
-          Toggle theme
-        </VButton>
+        <VThemeSwitcher
+          v-model="theme"
+          :themes="THEMES"
+          :variant="sidebar.isCollapsed ? 'cycle' : 'segment'"
+          class="w-full justify-center"
+          size="lg"
+        />
 
         <VButton
           text="logout"
