@@ -50,7 +50,7 @@ const contentMargin = computed(() => ({
         <VThemeSwitcher
           v-model="theme"
           :themes="THEMES"
-          :variant="sidebar.isCollapsed ? 'cycle' : 'segment'"
+          :variant="sidebar.isCollapsed.value ? 'cycle' : 'segment'"
           class="w-full justify-center"
           size="lg"
         />

@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 

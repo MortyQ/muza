@@ -6,6 +6,9 @@ export { default as VTag, type TagVariant, type TagColor, type TagSize } from ".
 export { default as VThemeSwitcher, type ThemeOption } from "./components/base/VThemeSwitcher.vue";
 export { default as VInput } from "./components/inputs/VInput.vue";
 export { default as VDatepicker } from "./components/inputs/VDatepicker.vue";
+export { default as VCheckbox, type CheckboxValue, type CheckboxModelValue } from "./components/inputs/VCheckbox.vue";
+export { default as VSwitch } from "./components/inputs/VSwitch.vue";
+export { default as VSelect } from "./components/inputs/VSelect.vue";
 export { default as VSegmentedControl, type SegmentOption } from "./components/inputs/VSegmentedControl.vue";
 export { default as VToggleGroup, type ToggleOption } from "./components/inputs/VToggleGroup.vue";
 export { default as VTooltip } from "./components/overlay/VTooltip.vue";
@@ -21,6 +24,7 @@ export { default as VLoader } from "./components/feedback/VLoader.vue";
 export { useToast } from "./composables/useToast";
 
 export type { FieldValidation } from "./types/validation";
+export type { SelectOption } from "./types/select";
 
 // ── Navigation Sidebar ──────────────────────────────────────────────────────
 export {
@@ -47,6 +51,9 @@ declare module "vue" {
     VThemeSwitcher: typeof import("./components/base/VThemeSwitcher.vue").default
     VInput: typeof import("./components/inputs/VInput.vue").default
     VDatepicker: typeof import("./components/inputs/VDatepicker.vue").default
+    VCheckbox: typeof import("./components/inputs/VCheckbox.vue").default
+    VSwitch: typeof import("./components/inputs/VSwitch.vue").default
+    VSelect: typeof import("./components/inputs/VSelect.vue").default
     VSegmentedControl: typeof import("./components/inputs/VSegmentedControl.vue").default
     VToggleGroup: typeof import("./components/inputs/VToggleGroup.vue").default
     VTooltip: typeof import("./components/overlay/VTooltip.vue").default

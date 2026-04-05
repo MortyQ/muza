@@ -29,6 +29,9 @@
   display: flex;
   align-items: center;
   width: 100%;
+  background: var(--ui-surface-raised);
+  border-radius: 0.5rem;
+  box-shadow: var(--ui-shadow-sm);
 }
 
 /* ============================================
@@ -44,7 +47,6 @@
   font-family: inherit;
   position: relative;
   z-index: 10;
-  box-shadow: var(--ui-shadow-sm);
   transition: all 0.2s ease-in-out;
 
   &::placeholder {
@@ -275,9 +277,12 @@
   }
 
   &--disabled {
-    background-color: var(--ui-surface-sunken);
     border-color: color-mix(in oklch, var(--ui-foreground) 20%, transparent);
   }
+}
+
+.v-input-container:has(.v-fieldset--disabled) {
+  background-color: var(--ui-surface-sunken);
 }
 
 .v-input-container:hover .v-fieldset:not(.v-fieldset--active):not(.v-fieldset--error):not(.v-fieldset--disabled) {
@@ -345,7 +350,7 @@ textarea:-webkit-autofill:focus,
 textarea:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   -webkit-text-fill-color: var(--ui-foreground) !important;
-  box-shadow: 0 0 0 1000px var(--ui-input-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--ui-surface-raised) inset !important;
   caret-color: var(--ui-foreground);
 }
 

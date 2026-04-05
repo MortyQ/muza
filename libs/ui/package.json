@@ -39,6 +39,7 @@
     "@iconify/vue": "^5.0.0",
     "@vueuse/core": "^14.2.1",
     "vue-sonner": "^2.0.9",
-    "@vuepic/vue-datepicker": "^12.0.0"
+    "@vuepic/vue-datepicker": "^12.0.0",
+    "vue-multiselect": "^3.0.0"
   }
 }
