@@ -856,6 +856,7 @@ onUnmounted(() => {
           <VFloating
             ref="columnSetupPopoverRef"
             :offset="8"
+            content-class="rounded-xl"
             placement="bottom-right"
             unstyled
           >
