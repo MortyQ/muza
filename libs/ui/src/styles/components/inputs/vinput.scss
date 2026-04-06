@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  background: var(--ui-surface-raised);
+  background: var(--ui-input-bg);
   border-radius: 0.5rem;
   box-shadow: var(--ui-shadow-sm);
 }
@@ -352,7 +352,7 @@ textarea:-webkit-autofill:focus,
 textarea:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   -webkit-text-fill-color: var(--ui-foreground) !important;
-  box-shadow: 0 0 0 1000px var(--ui-surface-raised) inset !important;
+  box-shadow: 0 0 0 1000px var(--ui-input-bg) inset !important;
   caret-color: var(--ui-foreground);
 }
 

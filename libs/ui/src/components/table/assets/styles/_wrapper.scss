@@ -26,7 +26,7 @@
 .v-table-toolbar-slot {
   width: 100%;
   border-bottom: $table-border-width solid var(--ui-border);
-  background-color: var(--ui-surface-raised);
+  background-color: transparent;
 }
 
 .v-table-scroll-container {
