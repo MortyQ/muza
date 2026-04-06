@@ -22,6 +22,9 @@ export { default as VAnimatedBackground } from "./components/layout/VAnimatedBac
 export { default as VFloating } from "./components/overlay/VFloating.vue";
 export { default as VToaster } from "./components/feedback/VToaster.vue";
 export { default as VLoader } from "./components/feedback/VLoader.vue";
+export { default as VTable } from "./components/table/VTable.vue";
+export type { Column, SortItem, PaginationConfig, ToolbarConfig, ExpandableRow } from "./components/table/types/index";
+export type { TableProps } from "./components/table/types/props";
 
 export { useToast } from "./composables/useToast";
 export { useModal } from "./composables/useModal";
@@ -68,5 +71,6 @@ declare module "vue" {
     VFloating: typeof import("./components/overlay/VFloating.vue").default
     VToaster: typeof import("./components/feedback/VToaster.vue").default
     VLoader: typeof import("./components/feedback/VLoader.vue").default
+    VTable: typeof import("./components/table/VTable.vue").default
   }
 }

@@ -226,4 +226,17 @@ export default [
       permissions: ["read:list"],
     },
   },
+  {
+    path: "/table-demo",
+    name: RouteNames.TABLE_DEMO,
+    component: () => import("@/pages/TableDemoPage.vue"),
+    meta: {
+      title: "Table Demo",
+      showInMenu: true,
+      menuTitle: "Table Demo",
+      menuIcon: "lucide:table",
+      menuOrder: 6,
+      permissions: ["read:list"],
+    },
+  },
 ];

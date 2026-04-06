@@ -48,6 +48,8 @@
   position: relative;
   z-index: 10;
   transition: all 0.2s ease-in-out;
+  -webkit-appearance: none;
+  appearance: none;
 
   &::placeholder {
     color: var(--ui-input-placeholder);

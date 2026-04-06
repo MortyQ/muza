@@ -26,4 +26,5 @@ export enum RouteNames {
 
   // Root level
   INTEGRATIONS = "Integrations",
+  TABLE_DEMO = "TableDemo",
 }

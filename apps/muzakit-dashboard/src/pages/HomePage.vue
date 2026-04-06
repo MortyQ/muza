@@ -9,9 +9,11 @@ import {
   VModal,
   VSelect,
   VSwitch,
+  VTable,
   VToggleGroup,
   VTooltip,
   useModal,
+  type Column,
   type SelectOption,
   type ToggleOption,
 } from "@muzakit/ui";
@@ -68,6 +70,64 @@ const inputSearch = ref("");
 const inputWithIcon = ref("");
 const inputDisabled = ref("Disabled value");
 const inputTextarea = ref("");
+
+// VTable
+const tableColumns: Column[] = [
+  { key: "name", label: "Name", width: "350px", fixed: "left" },
+  { key: "role", label: "Role", width: "350px" },
+  { key: "status", label: "Status", width: "350px" },
+  { key: "tasks", label: "Tasks", width: "350px", align: "right", format: { number: { type: "default" } } },
+  { key: "salary", label: "Salary", width: "350px", align: "right", format: { currency: "USD" } },
+  { key: "joined", label: "Joined", width: "350px", format: { date: "short" } },
+];
+
+const tableData = [
+  { name: "Alice Johnson", role: "Frontend Engineer", status: "Active", tasks: 14, salary: 95000, joined: "2021-03-15" },
+  { name: "Bob Martinez", role: "Backend Engineer", status: "Active", tasks: 9, salary: 102000, joined: "2020-07-01" },
+  { name: "Clara Kim", role: "Product Designer", status: "On Leave", tasks: 3, salary: 88000, joined: "2022-01-20" },
+  { name: "David Chen", role: "DevOps", status: "Active", tasks: 21, salary: 110000, joined: "2019-11-05" },
+  { name: "Elena Vasquez", role: "QA Engineer", status: "Inactive", tasks: 0, salary: 78000, joined: "2023-02-28" },
+  { name: "Frank O'Brien", role: "Tech Lead", status: "Active", tasks: 7, salary: 130000, joined: "2018-09-12" },
+  { name: "Grace Lin", role: "Frontend Engineer", status: "Active", tasks: 11, salary: 96000, joined: "2022-06-10" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Alice Johnson", role: "Frontend Engineer", status: "Active", tasks: 14, salary: 95000, joined: "2021-03-15" },
+  { name: "Bob Martinez", role: "Backend Engineer", status: "Active", tasks: 9, salary: 102000, joined: "2020-07-01" },
+  { name: "Clara Kim", role: "Product Designer", status: "On Leave", tasks: 3, salary: 88000, joined: "2022-01-20" },
+  { name: "David Chen", role: "DevOps", status: "Active", tasks: 21, salary: 110000, joined: "2019-11-05" },
+  { name: "Elena Vasquez", role: "QA Engineer", status: "Inactive", tasks: 0, salary: 78000, joined: "2023-02-28" },
+  { name: "Frank O'Brien", role: "Tech Lead", status: "Active", tasks: 7, salary: 130000, joined: "2018-09-12" },
+  { name: "Grace Lin", role: "Frontend Engineer", status: "Active", tasks: 11, salary: 96000, joined: "2022-06-10" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Alice Johnson", role: "Frontend Engineer", status: "Active", tasks: 14, salary: 95000, joined: "2021-03-15" },
+  { name: "Bob Martinez", role: "Backend Engineer", status: "Active", tasks: 9, salary: 102000, joined: "2020-07-01" },
+  { name: "Clara Kim", role: "Product Designer", status: "On Leave", tasks: 3, salary: 88000, joined: "2022-01-20" },
+  { name: "David Chen", role: "DevOps", status: "Active", tasks: 21, salary: 110000, joined: "2019-11-05" },
+  { name: "Elena Vasquez", role: "QA Engineer", status: "Inactive", tasks: 0, salary: 78000, joined: "2023-02-28" },
+  { name: "Frank O'Brien", role: "Tech Lead", status: "Active", tasks: 7, salary: 130000, joined: "2018-09-12" },
+  { name: "Grace Lin", role: "Frontend Engineer", status: "Active", tasks: 11, salary: 96000, joined: "2022-06-10" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+  { name: "Hiro Tanaka", role: "Data Analyst", status: "Active", tasks: 5, salary: 92000, joined: "2021-08-30" },
+];
 
 // VDrawer & VModal
 const drawer = useModal("demo-drawer");
@@ -463,6 +523,19 @@ const handleConfirm = () => {
           — the button will show a loading spinner for 2 seconds.
         </p>
       </VModal>
+    </section>
+
+    <!-- VTable -->
+    <section class="home-page__section">
+      <h2 class="home-page__section-title">
+        VTable
+      </h2>
+      <VTable
+        :columns="tableColumns"
+        :data="tableData"
+        :toolbar="{ enabled: true, title: 'Team Members', subtitle: 'All employees' }"
+        :virtualized="false"
+      />
     </section>
   </div>
 </template>

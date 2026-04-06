@@ -128,7 +128,7 @@ const showRightIcon = computed<boolean>(() => type === "password" || showClearBu
 
 const leftIconName = computed(() => {
   if (icon) return icon;
-  if (isSearchType.value) return "mdi:search";
+  if (isSearchType.value) return "lucide:search";
   return "";
 });
 
