@@ -204,7 +204,7 @@
 }
 
 /* Disabled background on the wrapper (sits behind fieldset, same as VInput pattern) */
-:has(:deep(.multiselect--disabled)) {
+.v-select--disabled {
   background-color: var(--ui-surface-sunken);
 }
 

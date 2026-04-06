@@ -167,7 +167,10 @@ onBeforeUnmount(() => disableFloating());
 </script>
 
 <template>
-  <div class="v-select">
+  <div
+    class="v-select"
+    :class="{ 'v-select--disabled': disabled }"
+  >
     <!-- Floating label -->
     <label
       v-if="name"
