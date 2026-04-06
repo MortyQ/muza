@@ -2,12 +2,16 @@
 import { ref } from "vue";
 
 import {
+  VButton,
   VCheckbox,
+  VDrawer,
   VInput,
+  VModal,
   VSelect,
   VSwitch,
   VToggleGroup,
   VTooltip,
+  useModal,
   type SelectOption,
   type ToggleOption,
 } from "@muzakit/ui";
@@ -64,6 +68,22 @@ const inputSearch = ref("");
 const inputWithIcon = ref("");
 const inputDisabled = ref("Disabled value");
 const inputTextarea = ref("");
+
+// VDrawer & VModal
+const drawer = useModal("demo-drawer");
+const drawerLeft = useModal("demo-drawer-left");
+const modal = useModal("demo-modal");
+const modalConfirm = useModal("demo-modal-confirm");
+const modalLoading = useModal("demo-modal-loading");
+const isModalLoading = ref(false);
+
+const handleConfirm = () => {
+  isModalLoading.value = true;
+  setTimeout(() => {
+    isModalLoading.value = false;
+    modalLoading.close();
+  }, 2000);
+};
 </script>
 
 <template>
@@ -327,6 +347,122 @@ const inputTextarea = ref("");
           placeholder="Tell us about yourself..."
         />
       </div>
+    </section>
+
+    <!-- VDrawer -->
+    <section class="home-page__section">
+      <h2 class="home-page__section-title">
+        VDrawer
+      </h2>
+      <div class="home-page__row">
+        <VButton
+          text="Open right drawer"
+          @click="drawer.open()"
+        />
+        <VButton
+          text="Open left drawer"
+          variant="link"
+          @click="drawerLeft.open()"
+        />
+      </div>
+
+      <!-- Right drawer -->
+      <VDrawer
+        id="demo-drawer"
+        title="Right Drawer"
+        width="md"
+      >
+        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+          This is the drawer content area. It scrolls independently from the backdrop.
+          You can put forms, details, navigation — anything here.
+        </p>
+        <template #footer>
+          <VButton
+            text="Cancel"
+            variant="link"
+            @click="drawer.close()"
+          />
+          <VButton
+            text="Save"
+            @click="drawer.close()"
+          />
+        </template>
+      </VDrawer>
+
+      <!-- Left drawer -->
+      <VDrawer
+        id="demo-drawer-left"
+        position="left"
+        title="Left Drawer"
+        width="sm"
+      >
+        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+          A narrow left-side drawer — useful for navigation or filters.
+        </p>
+      </VDrawer>
+    </section>
+
+    <!-- VModal -->
+    <section class="home-page__section">
+      <h2 class="home-page__section-title">
+        VModal
+      </h2>
+      <div class="home-page__row">
+        <VButton
+          text="Simple modal"
+          @click="modal.open()"
+        />
+        <VButton
+          text="Confirm dialog"
+          variant="warning"
+          @click="modalConfirm.open()"
+        />
+        <VButton
+          text="Async confirm"
+          variant="positive"
+          @click="modalLoading.open()"
+        />
+      </div>
+
+      <!-- Simple modal -->
+      <VModal
+        id="demo-modal"
+        max-width="md"
+        title="Simple Modal"
+      >
+        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+          A basic modal with a title and close button. Click outside or press Escape to dismiss.
+        </p>
+      </VModal>
+
+      <!-- Confirm dialog -->
+      <VModal
+        id="demo-modal-confirm"
+        :footer-actions="{ confirmText: 'Delete',
+                           confirmVariant: 'negative', cancelText: 'Keep it' }"
+        max-width="sm"
+        title="Delete item?"
+        @confirm="modalConfirm.close()"
+      >
+        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+          This action cannot be undone. Are you sure you want to permanently delete this item?
+        </p>
+      </VModal>
+
+      <!-- Async with loading state -->
+      <VModal
+        id="demo-modal-loading"
+        :footer-actions="{ confirmText: 'Save', cancelText: 'Discard' }"
+        :loading="isModalLoading"
+        max-width="sm"
+        title="Save changes"
+        @confirm="handleConfirm"
+      >
+        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+          Click "Save" to simulate an async operation
+          — the button will show a loading spinner for 2 seconds.
+        </p>
+      </VModal>
     </section>
   </div>
 </template>

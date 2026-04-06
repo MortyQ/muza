@@ -12,6 +12,8 @@ export { default as VSelect } from "./components/inputs/VSelect.vue";
 export { default as VSegmentedControl, type SegmentOption } from "./components/inputs/VSegmentedControl.vue";
 export { default as VToggleGroup, type ToggleOption } from "./components/inputs/VToggleGroup.vue";
 export { default as VTooltip } from "./components/overlay/VTooltip.vue";
+export { default as VDrawer } from "./components/overlay/VDrawer.vue";
+export { default as VModal } from "./components/overlay/VModal.vue";
 export { default as VTab } from "./components/layout/VTab.vue";
 export {
   default as VCard, type CardSize, type CardVariant, type CardRadius, type CardPadding,
@@ -22,6 +24,7 @@ export { default as VToaster } from "./components/feedback/VToaster.vue";
 export { default as VLoader } from "./components/feedback/VLoader.vue";
 
 export { useToast } from "./composables/useToast";
+export { useModal } from "./composables/useModal";
 
 export type { FieldValidation } from "./types/validation";
 export type { SelectOption } from "./types/select";
@@ -57,6 +60,8 @@ declare module "vue" {
     VSegmentedControl: typeof import("./components/inputs/VSegmentedControl.vue").default
     VToggleGroup: typeof import("./components/inputs/VToggleGroup.vue").default
     VTooltip: typeof import("./components/overlay/VTooltip.vue").default
+    VDrawer: typeof import("./components/overlay/VDrawer.vue").default
+    VModal: typeof import("./components/overlay/VModal.vue").default
     VTab: typeof import("./components/layout/VTab.vue").default
     VCard: typeof import("./components/layout/VCard.vue").default
     VAnimatedBackground: typeof import("./components/layout/VAnimatedBackground.vue").default
