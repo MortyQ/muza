@@ -12,7 +12,7 @@ import type {
 interface UseTableSortOptions<T = Record<string, unknown>> {
   sort?: SortConfig
   sortState?: Ref<SortItem[]>
-  columns: Ref<Column[]>
+  columns: Ref<Column<T>[]>
   page?: Ref<number | undefined>
   pageSize?: Ref<number | undefined>
   // For frontend sorting

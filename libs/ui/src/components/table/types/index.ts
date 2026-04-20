@@ -33,7 +33,8 @@ export interface ColumnFormatOptions {
 
 // Cell context for cellClass and cellStyle functions
 // Provides named parameters for better developer experience
-export interface CellContext<T = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface CellContext<T = any> {
   value: unknown // Cell value
   row: T // Full row data
   rowIndex: number // Row index in current view
@@ -48,35 +49,23 @@ export interface HeaderContext {
   event: MouseEvent // Native click event for advanced use cases
 }
 
-export interface Column {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Column<TData = any> {
   key: string // Key from data object
   label: string // Header text
   width?: string | "flex" // Fixed width (e.g., "150px") - makes column resizable. Without width, column is flexible (not resizable)
   align?: "left" | "center" | "right" | string
   interactive?: boolean // Whether column contains interactive elements (select, dropdown, etc.)
   fixed?: "left" | "right" // Fix column (sticky) to left or right
-  children?: Column[] // Nested columns for grouped headers (AG-Grid style)
+  children?: Column<TData>[] // Nested columns for grouped headers (AG-Grid style)
   sortable?: boolean // Enable sorting for this column
-  // Custom sort value getter - return the value to sort by
-  // If not provided, default behavior is to use column.key
-
-  sortValue?: <T = Record<string, unknown>>(row: T, key: string) => unknown
+  sortValue?: (row: TData, key: string) => unknown
 
   // Formatting options (mutually exclusive - only one should be used)
   format?: ColumnFormatOptions
 
-  // Custom cell styling (best practice from TanStack Table, AG-Grid)
-  // Function receives: CellContext with { value, row, rowIndex }
-  // Returns: class string or style object
-  // Example: cellClass: ({ value, rowIndex }) => value > 100 ? 'text-green-500' : undefined
-  cellClass?: <T = Record<string, unknown>>(context: CellContext<T>) => string | undefined
-  cellStyle?: <T = Record<string, unknown>>(
-    context: CellContext<T>) => Record<string, string> | undefined
-
-  // Header click callback
-  // Function receives: HeaderContext with { column, columnKey, event }
-  // Use cases: custom sorting, filtering, column actions, analytics tracking
-  // Example: onHeaderClick: ({ columnKey, event }) => { console.log('Clicked:', columnKey); }
+  cellClass?: (context: CellContext<TData>) => string | undefined
+  cellStyle?: (context: CellContext<TData>) => Record<string, string> | undefined
 
   onHeaderClick?: (context: HeaderContext) => void
 
@@ -97,7 +86,6 @@ export interface HeaderCell {
 export interface ExpandableRow {
   id?: string | number
   children?: ExpandableRow[]
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }

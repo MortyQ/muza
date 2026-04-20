@@ -1,5 +1,5 @@
-<script lang="ts" setup>
-import { type ComputedRef, ref, computed, watch, onUnmounted, useSlots, provide, inject, type Component } from "vue";
+<script generic="TData extends Record<string, unknown> = Record<string, unknown>" lang="ts" setup>
+import { ref, computed, watch, onUnmounted, useSlots, provide, inject, type Component, type Ref } from "vue";
 
 import type { VirtualItem } from "@tanstack/vue-virtual";
 
@@ -24,21 +24,41 @@ import { TABLE_PAGE_KEY } from "./composables/useTablePage";
 import { useTableSelection } from "./composables/useTableSelection";
 import { useTableSort } from "./composables/useTableSort";
 import { useVirtualTable } from "./composables/useVirtualTable";
-import type { Column, ExpandableRow, FlattenedRow, HeaderCell } from "./types/index";
-import type { TableEmits, TableProps } from "./types/props";
+import type {
+  Column,
+  ExpandableRow,
+  FlattenedRow,
+  HeaderCell,
+} from "./types/index";
+import type { TableProps, TableEmits } from "./types/props";
 import tableStorage from "./utils/storage";
 
-const props = withDefaults(defineProps<TableProps>(), {
-  loading: false,
-  virtualized: true,
-  rowHeight: 50,
-  expandMode: "auto",
-  sort: () => ({ type: "server", multiple: true }),
-  toolbar: undefined,
-  search: "",
-});
+const {
+  loading = false,
+  virtualized = true,
+  rowHeight = 50,
+  expandMode = "auto",
+  sort = { type: "server", multiple: true },
+  toolbar,
+  columns,
+  data,
+  height,
+  totalRow,
+  selectedRows,
+  multiSelect,
+  sortState,
+  pagination,
+  page,
+  rowClassName,
+} = defineProps<TableProps>();
 
-const emit = defineEmits<TableEmits>();
+// defineEmits with generic type params is broken in generic SFCs (Vue compiler limitation —
+// only the last overload is recognized). Workaround: runtime array + cast to TableEmits<TData>.
+const emit = defineEmits([
+  "row-click", "update:selected-rows", "expand-click",
+  "update:sort-state", "update:page", "request", "sort",
+  "update:search", "toolbar:refresh", "toolbar:reset-sort", "toolbar:export",
+]) as unknown as TableEmits<TData>;
 
 const $slots = useSlots();
 
@@ -63,11 +83,11 @@ provide("tableSlots", {
   toolbarActions: $slots["toolbar-actions"],
 });
 
-const searchModel = defineModel<string>("search");
+const searchModel = defineModel<string>("search", { default: "" });
 
 // Toolbar enabled check
 const toolbarEnabled = computed(() => {
-  return props.toolbar?.enabled || $slots.toolbar;
+  return toolbar?.enabled || $slots.toolbar;
 });
 
 // Toolbar event handlers
@@ -76,7 +96,7 @@ const handleToolbarRefresh = () => {
   emit("toolbar:refresh");
 
   // Check refresh action mode from config
-  const refreshMode = props.toolbar?.actions?.refresh;
+  const refreshMode = toolbar?.actions?.refresh;
 
   // Apply built-in behavior only if mode is 'default', true, or not specified
   // If mode is 'custom', only emit event without built-in behavior
@@ -90,8 +110,8 @@ const handleToolbarRefresh = () => {
   expandableLogic.collapseAll();
   // Emit request event (works for both with/without pagination)
   emit("request", {
-    page: props.pagination?.page ?? 1,
-    pageSize: props.pagination?.pageSize ?? 10,
+    page: pagination?.page ?? 1,
+    pageSize: pagination?.pageSize ?? 10,
     sort: [],
   });
 };
@@ -101,7 +121,7 @@ const handleToolbarResetSort = () => {
   emit("toolbar:reset-sort");
 
   // Check reset sort action mode from config
-  const resetSortMode = props.toolbar?.actions?.resetSort;
+  const resetSortMode = toolbar?.actions?.resetSort;
 
   // Apply built-in behavior only if mode is 'default', true, or not specified
   // If mode is 'custom', only emit event without built-in behavior
@@ -115,8 +135,8 @@ const handleToolbarResetSort = () => {
   expandableLogic.collapseAll();
   // Emit request event with current page (works for both with/without pagination)
   emit("request", {
-    page: props.pagination?.page ?? 1,
-    pageSize: props.pagination?.pageSize ?? 10,
+    page: pagination?.page ?? 1,
+    pageSize: pagination?.pageSize ?? 10,
     sort: [],
   });
 };
@@ -127,7 +147,7 @@ const handleToolbarExport = (format: string, selectedOnly?: boolean) => {
 
 // Column Setup Logic - basic check without hasGroups (will be checked later)
 const columnSetupEnabledBasic = computed(() => {
-  const setup = props.toolbar?.actions?.columnSetup;
+  const setup = toolbar?.actions?.columnSetup;
   // Enabled if string or object (not false, not undefined)
   return typeof setup === "string" || typeof setup === "object";
 });
@@ -138,7 +158,7 @@ const columnSetupConfig = computed<{
   allowReorder?: boolean
   initialVisible?: string[]
 }>(() => {
-  const setup = props.toolbar?.actions?.columnSetup;
+  const setup = toolbar?.actions?.columnSetup;
 
   // String shorthand: use as storage key with defaults
   if (typeof setup === "string") {
@@ -161,7 +181,7 @@ const columnSetupConfig = computed<{
 });
 
 // Helper: Load saved column state from storage (async)
-const loadColumnsFromStorage = async (): Promise<Column[] | null> => {
+const loadColumnsFromStorage = async (): Promise<Column<TData>[] | null> => {
   if (!columnSetupEnabledBasic.value) return null;
 
   const config = columnSetupConfig.value;
@@ -186,11 +206,11 @@ const loadColumnsFromStorage = async (): Promise<Column[] | null> => {
   // If we have a persisted state – build columns from it
   // If we have a persisted state – build columns from it
   if (loaded) {
-    const flatten = (cols: Column[]): Column[] =>
+    const flatten = (cols: Column<TData>[]): Column<TData>[] =>
       cols.flatMap(c => (c.children && c.children.length ? flatten(c.children) : [c]));
-    const flat = flatten(props.columns);
-    const map = new Map(flat.map(c => [c.key, c]));
-    const result: Column[] = [];
+    const flat = flatten(columns);
+    const map = new Map<string, Column<TData>>(flat.map(c => [c.key, c]));
+    const result: Column<TData>[] = [];
     const savedFixed = loaded.fixed;
 
     loaded.order.forEach((key) => {
@@ -224,7 +244,7 @@ const loadColumnsFromStorage = async (): Promise<Column[] | null> => {
   const initial = Array.isArray(config.initialVisible) ? config.initialVisible : null;
   if (initial) {
     // Preserve original column order; ignore unknown keys
-    const filtered = props.columns.filter(c => initial.includes(c.key));
+    const filtered = columns.filter(c => initial.includes(c.key));
     // If initialVisible is an empty array => return empty to hide all columns explicitly.
     if (initial.length === 0) return [];
     return filtered.length ? filtered : null; // null => fall back to all columns if none matched
@@ -235,7 +255,7 @@ const loadColumnsFromStorage = async (): Promise<Column[] | null> => {
 
 // Visible columns - managed by TableColumnSetup component
 // Initialize with saved state from storage if available
-const visibleColumns = ref<Column[] | null>(null);
+const visibleColumns = ref<Column<TData>[] | null>(null);
 const columnSetupPopoverRef = ref<{ close: () => void } | null>(null);
 
 // Load columns from storage asynchronously
@@ -245,8 +265,8 @@ loadColumnsFromStorage().then((columns) => {
   }
 });
 
-const handleVisibleColumnsUpdate = (columns: Column[]) => {
-  visibleColumns.value = [...columns]; // Create new array to trigger reactivity
+const handleVisibleColumnsUpdate = (cols: Column[]) => {
+  visibleColumns.value = [...cols]; // Create new array to trigger reactivity
 };
 
 const handleColumnSetupClose = () => {
@@ -256,14 +276,14 @@ const handleColumnSetupClose = () => {
 // Use visible columns if column setup is enabled, otherwise use all columns
 const effectiveColumns = computed(() => {
   if (!columnSetupEnabledBasic.value) {
-    return props.columns;
+    return columns;
   }
   // If column setup is enabled but not yet initialized, use props.columns temporarily
-  return visibleColumns.value ?? props.columns;
+  return visibleColumns.value ?? columns;
 });
 
 // Total row visibility - simply check for presence
-const shouldShowTotal = computed(() => props.totalRow !== undefined);
+const shouldShowTotal = computed(() => totalRow !== undefined);
 
 // Column resizing logic - needs to know about flat columns first
 const columnsRef = computed(() => effectiveColumns.value);
@@ -342,22 +362,22 @@ const {
 
 // Table height - simple calculation based on prop
 const tableHeight = computed(() => {
-  if (!props.height) {
+  if (!height) {
     return "600px"; // Default height
   }
 
   // If number - add 'px'
-  if (typeof props.height === "number") {
-    return `${props.height}px`;
+  if (typeof height === "number") {
+    return `${height}px`;
   }
 
   // If string - use as is (supports: '100%', '50vh', 'calc(...)')
-  return props.height;
+  return height;
 });
 
 // Sort logic - must be before dataToDisplay usage
 const sortStateRef = computed({
-  get: () => props.sortState || [],
+  get: () => sortState || [],
   set: val => emit("update:sort-state", val),
 });
 
@@ -368,9 +388,9 @@ const sortStateRef = computed({
 const injectedPage = inject(TABLE_PAGE_KEY, null);
 
 const pageRef = computed({
-  get: () => props.page ?? injectedPage?.value ?? props.pagination?.page ?? 1,
+  get: () => page ?? injectedPage?.value ?? pagination?.page ?? 1,
   set: (val) => {
-    if (props.page !== undefined) {
+    if (page !== undefined) {
       emit("update:page", val); // mode 2: v-model:page
     }
     else if (injectedPage) {
@@ -385,19 +405,19 @@ const {
   handleSortClick: internalHandleSortClick,
   sortedData,
 } = useTableSort({
-  sort: props.sort,
+  sort,
   sortState: sortStateRef,
   columns: columnsRef,
-  page: computed(() => props.pagination?.page),
-  pageSize: computed(() => props.pagination?.pageSize),
-  data: computed(() => props.data), // Pass data for frontend sorting
+  page: computed(() => pagination?.page),
+  pageSize: computed(() => pagination?.pageSize),
+  data: computed<TData[]>(() => data as TData[]),
   onRequest: (payload) => {
     pageRef.value = payload.page; // sync v-model:page (sort resets to page 1)
     expandableLogic.collapseAll();
     emit("request", payload);
   },
   onSort: payload => emit("sort", payload),
-  onUpdateSortState: sortState => emit("update:sort-state", sortState),
+  onUpdateSortState: newSortState => emit("update:sort-state", newSortState),
 });
 
 // Formatter composable
@@ -449,7 +469,7 @@ const handleSortClick = (column: Column) => {
 // Use sorted data for frontend, original data for server
 // PERFORMANCE: Auto-generate id for rows without id (needed for expandable logic)
 const dataToDisplay = computed(() => {
-  const source = props.sort?.type === "front" ? sortedData.value : props.data;
+  const source = sort?.type === "front" ? sortedData.value : data;
 
   // Add id to rows that don't have one (recursive for children)
   const ensureIds = (rows: ExpandableRow[], prefix = ""): ExpandableRow[] => {
@@ -481,25 +501,26 @@ const dataRef = computed(() => dataToDisplay.value);
 const expandableLogic = useExpandableTable(dataRef);
 
 // Data for rendering (with flatten if expandable, otherwise regular)
-const displayData = computed(() => {
-  return isExpandable.value
+const displayData = computed<(TData & FlattenedRow)[]>(() => {
+  const rows = isExpandable.value
     ? expandableLogic.flattenedData.value
     : dataToDisplay.value;
+  return rows as unknown as (TData & FlattenedRow)[];
 });
 
 // Multi-select logic
-const multiSelectConfig = computed(() => props.multiSelect);
+const multiSelectConfig = computed(() => multiSelect);
 const selectedRowsRef = computed({
-  get: () => props.selectedRows || [],
-  set: value => emit("update:selected-rows", value),
+  get: () => selectedRows ?? [],
+  set: (value: TData[]) => emit("update:selected-rows", value),
 });
 
 const selection = useTableSelection({
   config: multiSelectConfig,
-  flattenedData: displayData as unknown as ComputedRef<FlattenedRow[]>,
-  selectedRows: selectedRowsRef,
+  flattenedData: displayData as unknown as Ref<FlattenedRow[]>,
+  selectedRows: selectedRowsRef as unknown as Ref<ExpandableRow[]>,
   onSelectionChange: (selected) => {
-    emit("update:selected-rows", selected);
+    emit("update:selected-rows", selected as unknown as TData[]);
   },
 });
 
@@ -513,7 +534,7 @@ const {
   scrollContainerRef,
   displayData,
   {
-    estimateSize: props.rowHeight,
+    estimateSize: rowHeight,
     overscan: 2, // Reduced from 5 for better performance
     // PERFORMANCE: Disable measureElement to prevent memory leaks
     // Using fixed height improves performance dramatically for large datasets
@@ -523,25 +544,25 @@ const {
 );
 
 const gridStyles = computed(() => {
-  const columns = selection.isEnabled.value
+  const gridColumnsTemplate = selection.isEnabled.value
     ? getGridTemplateWithCheckbox(50) // 50px for checkbox column
     : gridTemplateColumns.value;
 
   return {
     display: "grid",
-    gridTemplateColumns: columns,
+    gridTemplateColumns: gridColumnsTemplate,
     gridAutoRows: "auto", // All rows auto-sized (headers get height from CSS)
   };
 });
 
 // Handle row click
-const onRowClick = (row: Record<string, unknown>) => {
+const onRowClick = (row: TData & FlattenedRow) => {
   emit("row-click", row);
 };
 
 // Handle pagination change (page or pageSize)
 const handlePaginationChange = ({ page, pageSize }: { page: number, pageSize: number }) => {
-  if (!props.pagination || props.loading) return; // Prevent changes during loading
+  if (!pagination || loading) return; // Prevent changes during loading
 
   // Scroll to top of table when pagination changes (smooth UX)
   // Only scroll if user is not already at the top (optimization)
@@ -561,27 +582,25 @@ const handlePaginationChange = ({ page, pageSize }: { page: number, pageSize: nu
   });
 };
 
-const handleToggleRow = (id: string | number, row: ExpandableRow, column: Column) => {
+const handleToggleRow = (id: string | number, row: TData & FlattenedRow, column: Column<TData>) => {
   if (!isExpandable.value) return;
 
-  if (props.expandMode === "controlled") {
-    // Controlled mode: emit event with callback, parent controls expansion
+  if (expandMode === "controlled") {
     emit("expand-click", {
       row,
       column,
       callback: () => expandableLogic.toggleRow(id),
-      expanded: isRowExpanded(row as Record<string, unknown>),
+      expanded: isRowExpanded(row),
     });
   }
   else {
-    // Auto mode (default): toggle immediately, emit for notification
     expandableLogic.toggleRow(id);
     emit("expand-click", {
       row,
       column,
       callback: () => {
-      }, // Already toggled, callback is no-op
-      expanded: !isRowExpanded(row as Record<string, unknown>), // New state after toggle
+      },
+      expanded: !isRowExpanded(row),
     });
   }
 };
@@ -592,14 +611,8 @@ const handleToggleRow = (id: string | number, row: ExpandableRow, column: Column
 // No computed Map, no caching - just direct property access
 // This is the fastest possible approach for maximum resize performance
 
-// Direct property access - no overhead
-const isRowExpanded = (row: Record<string, unknown>): boolean => {
-  return (row.isExpanded as boolean) || false;
-};
-
-const hasRowChildren = (row: Record<string, unknown>): boolean => {
-  return (row.hasChildren as boolean) || false;
-};
+const isRowExpanded = (row: FlattenedRow): boolean => row.isExpanded;
+const hasRowChildren = (row: FlattenedRow): boolean => row.hasChildren;
 
 // ============================================
 // PERFORMANCE OPTIMIZATION: Unified Cell Metadata
@@ -616,12 +629,12 @@ interface CellMetadata {
   isExpandable: boolean
 }
 
-const cellMetadataCache = new WeakMap<Record<string, unknown>, Map<string, CellMetadata>>();
+const cellMetadataCache = new WeakMap<object, Map<string, CellMetadata>>();
 
 // UNIFIED cell data calculator - replaces 5 separate function calls
 const getCellMetadata = (
-  row: Record<string, unknown>,
-  column: Column,
+  row: TData & FlattenedRow,
+  column: Column<TData>,
   colIndex: number,
   rowIndex: number,
 ): CellMetadata => {
@@ -701,7 +714,7 @@ const getCellMetadata = (
 // Computed for final rows (considering virtualization)
 const rowsToRender = computed(() => {
   // If virtualization is disabled, render all data
-  if (!props.virtualized) {
+  if (!virtualized) {
     return displayData.value.map((row, index) => ({
       row,
       index,
@@ -729,7 +742,7 @@ const rowsToRender = computed(() => {
       index: virtualRow.index,
       // CRITICAL: Use row.id as key, not index! Index causes memory leaks
       // because Vue reuses components for different data at same index
-      key: (row?.id as string | number) || `row-${virtualRow.index}`,
+      key: (row.id as string | number) || `row-${virtualRow.index}`,
       isVirtual: true,
       virtualRow,
     };
@@ -740,21 +753,20 @@ const rowsToRender = computed(() => {
 const getRowStyles = (item: { isVirtual: boolean }) => {
   if (!item.isVirtual) return {};
   return {
-    height: `${props.rowHeight}px`,
-    minHeight: `${props.rowHeight}px`,
+    height: `${rowHeight}px`,
+    minHeight: `${rowHeight}px`,
   };
 };
 
-// Classes for table rows (custom styling based on row data)
-const getRowClasses = (row: ExpandableRow, index: number): string => {
-  if (!props.rowClassName) return "";
+const getRowClasses = (row: TData & FlattenedRow, index: number): string => {
+  if (!rowClassName) return "";
 
-  if (typeof props.rowClassName === "string") {
-    return props.rowClassName;
+  if (typeof rowClassName === "string") {
+    return rowClassName;
   }
 
-  if (typeof props.rowClassName === "function") {
-    return props.rowClassName(row, index);
+  if (typeof rowClassName === "function") {
+    return rowClassName(row, index);
   }
 
   return "";
@@ -975,7 +987,7 @@ onUnmounted(() => {
 
           <!-- Virtualization: spacer before -->
           <div
-            v-if="props.virtualized && virtualItems.length > 0 && virtualItems[0]"
+            v-if="virtualized && virtualItems.length > 0 && virtualItems[0]"
             :style="{ height: `${virtualItems[0].start}px` }"
             class="v-table-virtual-spacer"
           />
@@ -993,11 +1005,11 @@ onUnmounted(() => {
               :checked="selection.isRowSelected(item.row.id as string | number)"
               :class="getRowClasses(item.row, item.index)"
               :data-custom-row="getRowClasses(item.row, item.index) ? 'true' : undefined"
-              :disabled="!selection.isRowSelectable(item.row as ExpandableRow)"
+              :disabled="!selection.isRowSelectable(item.row)"
               :indeterminate="selection.isDependentMode.value &&
                 hasRowChildren(item.row) &&
-                selection.getParentCheckboxState(item.row as any) === 'indeterminate'"
-              @toggle="selection.toggleRow(item.row as any)"
+                selection.getParentCheckboxState(item.row) === 'indeterminate'"
+              @toggle="selection.toggleRow(item.row)"
             />
 
             <!-- Data cells -->
@@ -1061,7 +1073,7 @@ onUnmounted(() => {
 
           <!-- Virtualization: spacer after -->
           <div
-            v-if="props.virtualized && virtualItems.length > 0 &&
+            v-if="virtualized && virtualItems.length > 0 &&
               virtualItems[virtualItems.length - 1]"
             :style="{
               height: `${totalSize - virtualItems[virtualItems.length - 1].end}px`

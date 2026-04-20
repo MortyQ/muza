@@ -547,6 +547,6 @@ const handleReset = async () => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import "../../../styles/components/table/column-setup";
+<style lang="scss">
+@use "../../../styles/components/table/column-setup";
 </style>

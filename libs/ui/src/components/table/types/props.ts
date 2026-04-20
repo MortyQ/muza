@@ -1,20 +1,21 @@
 import type {
-  Column, ExpandableRow, MultiSelectConfig,
+  Column, MultiSelectConfig,
   SortConfig, SortItem, RequestPayload,
   FrontSortPayload, PaginationConfig, ToolbarConfig,
 } from "./index";
 
-export type RowClassNameFunction = (row: ExpandableRow, index: number) => string;
+export type RowClassNameFunction<TData = Record<string, unknown>>
+  = (row: TData, index: number) => string;
 
-export type TableProps = {
-  columns: Column[]
-  data: ExpandableRow[]
+export type TableProps<TData extends Record<string, unknown> = Record<string, unknown>> = {
+  columns: Column<TData>[]
+  data: TData[]
   loading?: boolean
   virtualized?: boolean
   rowHeight?: number
   height?: string | number // Table height (CSS value or number in px)
   totalRow?: Record<string, unknown> // Summary row (sticky bottom)
-  selectedRows?: ExpandableRow[] // Pre-selected rows (v-model support)
+  selectedRows?: TData[] // Pre-selected rows (v-model support)
   multiSelect?: MultiSelectConfig // Multi-select configuration
   /**
      * Expand behavior mode:
@@ -48,7 +49,7 @@ export type TableProps = {
      * // Function
      * :rowClassName="(row, index) => row.isModified ? 'bg-blue-100 dark:bg-blue-900' : ''"
      */
-  rowClassName?: string | RowClassNameFunction
+  rowClassName?: string | RowClassNameFunction<TData>
 };
 
 export type UseTableProps = {
@@ -56,20 +57,16 @@ export type UseTableProps = {
   data: Record<string, unknown>[]
 };
 
-export interface TableEmits {
-  "row-click": [row: Record<string, unknown>]
-  "update:selected-rows": [selectedRows: ExpandableRow[]]
-  "expand-click": [{ row: ExpandableRow, column: Column, callback: () => void, expanded: boolean }]
-
-  // Sorting & Pagination
-  "update:sort-state": [sortState: SortItem[]]
-  "update:page": [page: number]
-  request: [payload: RequestPayload] // Unified event for server-side operations (includes page, sort, etc)
-  sort: [payload: FrontSortPayload] // Frontend sort event
-
-  // Toolbar events
-  "update:search": [query: string]
-  "toolbar:refresh": []
-  "toolbar:reset-sort": []
-  "toolbar:export": [format?: string, selectedOnly?: boolean]
-}
+// Function intersection format (required for generic SFC emit cast — Vue compiler limitation)
+export type TableEmits<TData extends Record<string, unknown> = Record<string, unknown>>
+  = & ((e: "row-click", row: TData) => void)
+    & ((e: "update:selected-rows", selectedRows: TData[]) => void)
+    & ((e: "expand-click", payload: { row: TData, column: Column<TData>, callback: () => void, expanded: boolean }) => void)
+    & ((e: "update:sort-state", sortState: SortItem[]) => void)
+    & ((e: "update:page", page: number) => void)
+    & ((e: "request", payload: RequestPayload) => void)
+    & ((e: "sort", payload: FrontSortPayload) => void)
+    & ((e: "update:search", query: string) => void)
+    & ((e: "toolbar:refresh") => void)
+    & ((e: "toolbar:reset-sort") => void)
+    & ((e: "toolbar:export", format?: string, selectedOnly?: boolean) => void);
