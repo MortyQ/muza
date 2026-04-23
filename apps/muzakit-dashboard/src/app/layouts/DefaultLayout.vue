@@ -40,7 +40,7 @@ const contentMargin = computed(() => ({
 
 <template>
   <div
-    class="flex min-h-screen text-mainText overflow-x-hidden p-4"
+    class="flex min-h-screen text-mainText overflow-x-hidden p-4 bg-surface-sunken"
   >
     <NavigationSidebar
       :sidebar="sidebar"
@@ -65,7 +65,7 @@ const contentMargin = computed(() => ({
     <div
       :class="contentMargin"
       class="flex-1 flex flex-col transition-all duration-300
-      overflow-x-hidden rounded-xl shadow-lg bg-surface-sunken"
+      overflow-x-hidden rounded-xl shadow-lg bg-surface"
     >
       <header
         class="shadow-sm border-b flex-shrink-0 lg:hidden"

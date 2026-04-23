@@ -94,8 +94,8 @@
     --primary-subtle:     oklch(95% 0.06 280);
     --primary-muted:      oklch(89% 0.09 280);
 
-    --background:          oklch(96% 0.008 280);
-    --surface-sunken:      oklch(93% 0.010 280);
+    --background:          oklch(96% 0.015 280);
+    --surface-sunken:      oklch(93% 0.018 280);
     --surface:             oklch(99.5% 0.003 280);
     --surface-raised:      oklch(98% 0.005 280);
     --surface-overlay:     oklch(100% 0.002 280);

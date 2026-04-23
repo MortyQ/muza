@@ -34,8 +34,8 @@
     /* ╔══════════════════════════════════════════════════════════╗
        ║  SURFACES — PAGE & COMPONENT BACKGROUNDS                 ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-background:           var(--background, oklch(96% 0.008 280));
-    --ui-surface-sunken:       var(--surface-sunken, oklch(93% 0.010 280));
+    --ui-background:           var(--background, oklch(96% 0.015 280));
+    --ui-surface-sunken:       var(--surface-sunken, oklch(93% 0.018 280));
     --ui-surface:              var(--surface, oklch(99.5% 0.003 280));
     --ui-surface-raised:       var(--surface-raised, oklch(98% 0.005 280));
     --ui-surface-overlay:      var(--surface-overlay, oklch(100% 0.002 280));
