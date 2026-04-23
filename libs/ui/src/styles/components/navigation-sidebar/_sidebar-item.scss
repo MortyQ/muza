@@ -32,7 +32,7 @@
   }
 
   &:hover:not(&--disabled) {
-    background-color: var(--ui-primary-subtle);
+    background-color: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-surface));
     color: var(--ui-foreground);
   }
 
@@ -53,7 +53,7 @@
 
   // Active route
   &--active {
-    background-color: var(--ui-primary-muted);
+    background-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-surface));
     color: var(--ui-primary);
     font-weight: 600;
 
