@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
 /* ═══════════════════════════════════════════════════════════════════
-   NEUTRAL BLUE DESIGN SYSTEM
+   VIOLET/SLATE DESIGN SYSTEM
    Color space: OKLCH (perceptually uniform — equal L = equal brightness)
-   Strategy: hue 255 for all neutrals + primary. Low chroma = gray-blue.
-   High chroma = interactive blue.
+   Strategy: hue 280 for all neutrals + primary (violet). Low chroma = slate-gray.
+   High chroma = interactive violet.
 
    TOKEN NAMING RULES:
    --ui-[group]-[variant]
@@ -24,49 +24,51 @@
     /* ╔══════════════════════════════════════════════════════════╗
        ║  BRAND — PRIMARY                                         ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-primary: var(--primary, oklch(52% 0.22 255));
-    --ui-primary-hover: var(--primary-hover, oklch(47% 0.22 255));
-    --ui-primary-active: var(--primary-active, oklch(42% 0.22 255));
+    --ui-primary:            var(--primary, oklch(52% 0.27 280));
+    --ui-primary-hover:      var(--primary-hover, oklch(47% 0.27 280));
+    --ui-primary-active:     var(--primary-active, oklch(42% 0.27 280));
     --ui-primary-foreground: var(--primary-foreground, oklch(100% 0 0));
-    --ui-primary-subtle: var(--primary-subtle, oklch(94% 0.06 255));
-    --ui-primary-muted: var(--primary-muted, oklch(88% 0.08 255));
+    --ui-primary-subtle:     var(--primary-subtle, oklch(95% 0.06 280));
+    --ui-primary-muted:      var(--primary-muted, oklch(89% 0.09 280));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  SURFACES — PAGE & COMPONENT BACKGROUNDS                 ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-background: var(--background, oklch(96% 0.005 255));
-    --ui-surface-sunken: var(--surface-sunken, oklch(93% 0.006 255));
-    --ui-surface: var(--surface, oklch(100% 0 0));
-    --ui-surface-raised: var(--surface-raised, oklch(98% 0.003 255));
-    --ui-surface-overlay: var(--surface-overlay, oklch(100% 0 0));
-    --ui-surface-hover: var(--surface-hover, oklch(94% 0.005 255));
-    --ui-surface-active: var(--surface-active, oklch(91% 0.007 255));
+    --ui-background:           var(--background, oklch(96% 0.008 280));
+    --ui-surface-sunken:       var(--surface-sunken, oklch(93% 0.010 280));
+    --ui-surface:              var(--surface, oklch(99.5% 0.003 280));
+    --ui-surface-raised:       var(--surface-raised, oklch(98% 0.005 280));
+    --ui-surface-overlay:      var(--surface-overlay, oklch(100% 0.002 280));
+    --ui-surface-hover:        var(--surface-hover, oklch(94% 0.008 280));
+    --ui-surface-active:       var(--surface-active, oklch(91% 0.010 280));
+    --ui-surface-tinted:       var(--surface-tinted, oklch(96% 0.020 280));
+    --ui-surface-tinted-deep:  var(--surface-tinted-deep, oklch(93% 0.025 280));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  NAVIGATION                                              ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-nav: var(--nav, oklch(22% 0.03 255));
-    --ui-nav-hover: var(--nav-hover, oklch(27% 0.03 255));
-    --ui-nav-active: var(--nav-active, oklch(30% 0.03 255));
-    --ui-nav-border: var(--nav-border, oklch(28% 0.02 255));
+    --ui-nav:        var(--nav, oklch(22% 0.035 275));
+    --ui-nav-hover:  var(--nav-hover, oklch(27% 0.032 275));
+    --ui-nav-active: var(--nav-active, oklch(30% 0.030 275));
+    --ui-nav-border: var(--nav-border, oklch(28% 0.025 275));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  TEXT — FOREGROUND (5-level hierarchy)                   ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-foreground: var(--foreground, oklch(18% 0.01 255));
-    --ui-foreground-secondary: var(--foreground-secondary, oklch(38% 0.01 255));
-    --ui-foreground-muted: var(--foreground-muted, oklch(55% 0.007 255));
-    --ui-foreground-subtle: var(--foreground-subtle, oklch(70% 0.005 255));
-    --ui-foreground-disabled: var(--foreground-disabled, oklch(75% 0.004 255));
-    --ui-foreground-inverted: var(--foreground-inverted, oklch(100% 0 0));
+    --ui-foreground:           var(--foreground, oklch(16% 0.015 280));
+    --ui-foreground-secondary: var(--foreground-secondary, oklch(38% 0.012 280));
+    --ui-foreground-muted:     var(--foreground-muted, oklch(55% 0.008 280));
+    --ui-foreground-subtle:    var(--foreground-subtle, oklch(70% 0.005 280));
+    --ui-foreground-disabled:  var(--foreground-disabled, oklch(76% 0.004 280));
+    --ui-foreground-inverted:  var(--foreground-inverted, oklch(100% 0 0));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  BORDERS (4 weights: subtle → default → strong → focus)  ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-border-subtle: var(--border-subtle, oklch(92% 0.004 255));
-    --ui-border: var(--border, oklch(87% 0.005 255));
-    --ui-border-strong: var(--border-strong, oklch(76% 0.008 255));
-    --ui-border-focus: var(--border-focus, oklch(52% 0.22 255));
+    --ui-border-subtle: var(--border-subtle, oklch(92% 0.008 280));
+    --ui-border:        var(--border, oklch(87% 0.010 280));
+    --ui-border-strong: var(--border-strong, oklch(77% 0.013 280));
+    --ui-border-focus:  var(--border-focus, oklch(52% 0.27 280));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  OVERLAY & SCRIM                                         ║
@@ -99,25 +101,25 @@
     --ui-danger-subtle: var(--danger-subtle, oklch(95% 0.05 25));
     --ui-danger-muted: var(--danger-muted, oklch(90% 0.08 25));
 
-    /* Info — blue hue 220 */
-    --ui-info: var(--info, oklch(60% 0.15 220));
-    --ui-info-hover: var(--info-hover, oklch(54% 0.15 220));
+    /* Info — blue hue 240 (distinct from violet primary hue 280) */
+    --ui-info:            var(--info, oklch(57% 0.20 240));
+    --ui-info-hover:      var(--info-hover, oklch(51% 0.20 240));
     --ui-info-foreground: var(--info-foreground, oklch(100% 0 0));
-    --ui-info-subtle: var(--info-subtle, oklch(94% 0.05 220));
-    --ui-info-muted: var(--info-muted, oklch(88% 0.07 220));
+    --ui-info-subtle:     var(--info-subtle, oklch(94% 0.05 240));
+    --ui-info-muted:      var(--info-muted, oklch(88% 0.07 240));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  COMPONENT TOKENS — INPUT                                ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-input-bg: var(--input-bg, oklch(100% 0 0));
-    --ui-input-border: var(--input-border, oklch(87% 0.005 255));
-    --ui-input-placeholder: var(--input-placeholder, oklch(70% 0.005 255));
+    --ui-input-bg:          var(--input-bg, oklch(100% 0.002 280));
+    --ui-input-border:      var(--input-border, oklch(87% 0.010 280));
+    --ui-input-placeholder: var(--input-placeholder, oklch(70% 0.005 280));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  COMPONENT TOKENS — BADGE (neutral)                      ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-badge-neutral-bg: var(--badge-neutral-bg, oklch(91% 0.007 255));
-    --ui-badge-neutral-text: var(--badge-neutral-text, oklch(35% 0.01 255));
+    --ui-badge-neutral-bg:   var(--badge-neutral-bg, oklch(91% 0.008 280));
+    --ui-badge-neutral-text: var(--badge-neutral-text, oklch(35% 0.012 280));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  RADIUS                                                  ║
