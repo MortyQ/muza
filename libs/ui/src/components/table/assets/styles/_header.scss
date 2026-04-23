@@ -76,8 +76,8 @@
   // sticky also creates a containing block for the absolutely positioned resize handle
   background: linear-gradient(
     to bottom,
-    color-mix(in oklch, var(--ui-surface) 92%, var(--ui-primary) 8%),
-    color-mix(in oklch, var(--ui-surface) 85%, var(--ui-info) 15%)
+    color-mix(in srgb, var(--ui-surface) 92%, var(--ui-primary) 8%),
+    color-mix(in srgb, var(--ui-surface) 85%, var(--ui-info) 15%)
   );
   border-bottom: 1px solid color-mix(in oklch, var(--ui-primary) 25%, var(--ui-border) 75%);
   border-right: 1px solid var(--ui-border);

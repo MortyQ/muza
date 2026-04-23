@@ -15,3 +15,4 @@
 ## Skills
 
 @.agents/skills/use-api.skill.md
+@.agents/skills/vtable/SKILL.md

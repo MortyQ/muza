@@ -548,5 +548,5 @@ const handleReset = async () => {
 </template>
 
 <style lang="scss">
-@use "../../../styles/components/table/column-setup";
+@use "../assets/styles/column-setup";
 </style>
