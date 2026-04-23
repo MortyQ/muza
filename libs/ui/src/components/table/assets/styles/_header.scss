@@ -76,10 +76,10 @@
   // sticky also creates a containing block for the absolutely positioned resize handle
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--ui-surface) 92%, var(--ui-primary) 8%),
-    color-mix(in srgb, var(--ui-surface) 85%, var(--ui-info) 15%)
+    var(--ui-surface-tinted),
+    var(--ui-surface-tinted-deep)
   );
-  border-bottom: 1px solid color-mix(in oklch, var(--ui-primary) 25%, var(--ui-border) 75%);
+  border-bottom: 1px solid var(--ui-border-strong);
   border-right: 1px solid var(--ui-border);
   font-weight: $table-font-weight-semibold;
   font-size: $table-font-size-header;
