@@ -18,8 +18,15 @@ interface Props {
   size?: TagSize
   /** Icon to display (lucide format) */
   icon?: string
+  /** Which side the icon sits on */
+  iconPosition?: "left" | "right"
   /** Make tag rounded/pill shaped */
   rounded?: boolean
+  /**
+   * Name of a CSS custom property to tone the tag with, e.g. "--ui-info".
+   * Takes precedence over `color`, for palettes outside the TagColor set.
+   */
+  customColor?: string
 }
 
 const {
@@ -28,24 +35,37 @@ const {
   color = "primary",
   size = "sm",
   icon = undefined,
+  iconPosition = "left",
   rounded = false,
+  customColor = undefined,
 } = defineProps<Props>();
 
 const iconSize = computed(() => ({ xs: 12, sm: 14, md: 16, lg: 18 }[size]));
 
 const sizeClass = computed(() => `vtag--${size}`);
-const variantColorClass = computed(() => `vtag--${variant}-${color}`);
+
+// customColor swaps the whole variant/colour pair for the custom-* rules, which
+// read the tone from --_tag-color rather than a fixed token.
+const variantColorClass = computed(() =>
+  customColor ? `vtag--custom-${variant}` : `vtag--${variant}-${color}`,
+);
+
+const customStyle = computed(() =>
+  customColor ? { "--_tag-color": `var(${customColor})` } : undefined,
+);
+
 const roundedClass = computed(() => rounded ? "vtag--rounded" : "vtag--square");
 </script>
 
 <template>
   <span
     :class="[sizeClass, variantColorClass, roundedClass]"
+    :style="customStyle"
     class="vtag"
   >
     <slot name="icon-left">
       <VIcon
-        v-if="icon"
+        v-if="icon && iconPosition === 'left'"
         :icon="icon"
         :size="iconSize"
       />
@@ -53,7 +73,13 @@ const roundedClass = computed(() => rounded ? "vtag--rounded" : "vtag--square");
 
     <slot>{{ label }}</slot>
 
-    <slot name="icon-right" />
+    <slot name="icon-right">
+      <VIcon
+        v-if="icon && iconPosition === 'right'"
+        :icon="icon"
+        :size="iconSize"
+      />
+    </slot>
   </span>
 </template>
 

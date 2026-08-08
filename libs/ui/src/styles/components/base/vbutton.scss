@@ -106,6 +106,28 @@
   }
 }
 
+.v-button--secondary {
+  background-color: var(--ui-border-strong);
+  color: var(--ui-foreground-inverted);
+  border: 2px solid var(--ui-border-strong);
+
+  &:hover:not(:disabled) {
+    background-color: var(--ui-foreground-muted);
+    border-color: var(--ui-foreground-muted);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--ui-foreground-secondary);
+    border-color: var(--ui-foreground-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: 2px;
+  }
+}
+
 .v-button--link {
   background-color: transparent;
   color: var(--ui-primary);

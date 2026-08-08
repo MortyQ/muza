@@ -20,7 +20,7 @@ const {
   disabled?: boolean
   loading?: boolean
   icon?: string
-  variant?: "primary" | "positive" | "negative" | "warning" | "link"
+  variant?: "default" | "primary" | "secondary" | "positive" | "negative" | "warning" | "link"
   to?: RouteLocationRaw
   replace?: boolean
 }>();
@@ -31,7 +31,11 @@ const isIconOnly = computed(() => !text && !!icon && !slots.default);
 const isRouterLink = computed(() => !!to);
 const isDisabled = computed(() => disabled || loading);
 
-const variantClass = computed(() => `v-button--${variant}`);
+// "default" is an alias for the primary look, matching so-platform, where the
+// variant switch falls through to primary.
+const variantClass = computed(() =>
+  `v-button--${variant === "default" ? "primary" : variant}`,
+);
 
 const rootClass = computed(() => ({
   "v-button--icon-only": isIconOnly.value,

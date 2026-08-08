@@ -1,15 +1,20 @@
 <script lang="ts" setup>
 
+export type LoaderVariant = "primary" | "secondary" | "success" | "warning" | "danger" | "info";
+
 interface Props {
   size?: "sm" | "md" | "lg"
   message?: string
   fullscreen?: boolean
+  /** Spinner tone; defaults to primary */
+  variant?: LoaderVariant
 }
 
 const {
   size = "md",
   message = undefined,
   fullscreen = false,
+  variant = undefined,
 } = defineProps<Props>();
 </script>
 
@@ -21,7 +26,7 @@ const {
     role="status"
   >
     <div
-      :class="`v-loader--${size}`"
+      :class="[`v-loader--${size}`, variant && `v-loader--${variant}`]"
       class="v-loader"
     />
 

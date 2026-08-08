@@ -22,6 +22,16 @@ interface Props {
   closeOnClickOutside?: boolean
   offset?: number // gap between trigger & floating (default 8)
 
+  /**
+   * Additionally open on pointer/focus enter of the trigger (after
+   * `hoverDelay`) and close on leave — of the trigger AND the content, with a
+   * short grace delay so the pointer can travel between them. Click-to-toggle
+   * keeps working underneath; this is purely additive.
+   */
+  openOnHover?: boolean
+  /** Delay in ms before opening on hover. Ignored when openOnHover is false. */
+  hoverDelay?: number
+
   // Dropdown-specific props
   items?: FloatingItem[]
   disabled?: boolean
@@ -42,6 +52,8 @@ const {
   teleport = true,
   closeOnClickOutside = true,
   offset = 8,
+  openOnHover = false,
+  hoverDelay = 200,
   items = [] as FloatingItem[],
   disabled = false,
   closeOnSelect = true,
@@ -243,12 +255,98 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 };
 
+// ── Hover (additive, opt-in via `openOnHover`) ────────────────────────────
+// Gated on pointer capability: on a touch device a tap fires a synthetic
+// hover, which would leave the popover stuck open with no leave event.
+const HOVER_CLOSE_DELAY = 120;
+
+const isHoverCapable = typeof window !== "undefined"
+  && typeof window.matchMedia === "function"
+  && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+let hoverOpenTimer: ReturnType<typeof setTimeout> | null = null;
+let hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
+
+const clearHoverOpenTimer = () => {
+  if (hoverOpenTimer) {
+    clearTimeout(hoverOpenTimer);
+    hoverOpenTimer = null;
+  }
+};
+
+const clearHoverCloseTimer = () => {
+  if (hoverCloseTimer) {
+    clearTimeout(hoverCloseTimer);
+    hoverCloseTimer = null;
+  }
+};
+
+const clearHoverTimers = () => {
+  clearHoverOpenTimer();
+  clearHoverCloseTimer();
+};
+
+const scheduleHoverOpen = () => {
+  clearHoverCloseTimer();
+  if (isOpen.value) return;
+  clearHoverOpenTimer();
+  hoverOpenTimer = setTimeout(() => {
+    hoverOpenTimer = null;
+    open();
+  }, hoverDelay);
+};
+
+const scheduleHoverClose = () => {
+  clearHoverTimers();
+  hoverCloseTimer = setTimeout(() => {
+    hoverCloseTimer = null;
+    close();
+  }, HOVER_CLOSE_DELAY);
+};
+
+const handleTriggerPointerEnter = () => {
+  if (!openOnHover || !isHoverCapable) return;
+  scheduleHoverOpen();
+};
+
+const handleTriggerPointerLeave = () => {
+  if (!openOnHover || !isHoverCapable) return;
+  scheduleHoverClose();
+};
+
+// The content is teleported to body, so there is no DOM relationship to the
+// trigger — it needs its own enter/leave pair.
+const handleContentPointerEnter = () => {
+  if (!openOnHover || !isHoverCapable) return;
+  clearHoverCloseTimer();
+};
+
+const handleContentPointerLeave = () => {
+  if (!openOnHover || !isHoverCapable) return;
+  scheduleHoverClose();
+};
+
+// No delay on the focus path — a keyboard user tabbing to the trigger should
+// see the content at once, not after a hover-tuned lag.
+const handleTriggerFocusIn = () => {
+  if (!openOnHover) return;
+  clearHoverTimers();
+  open();
+};
+
+const handleTriggerFocusOut = () => {
+  if (!openOnHover) return;
+  clearHoverTimers();
+  close();
+};
+
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });
 onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);
   teardownAutoUpdate();
+  clearHoverTimers();
 });
 
 // Smooth position update on scroll/resize (Floating UI approach)
@@ -306,6 +404,10 @@ defineExpose({
       :class="{ 'v-floating-trigger--disabled': disabled }"
       class="v-floating-trigger"
       @click="toggle"
+      @focusin="handleTriggerFocusIn"
+      @focusout="handleTriggerFocusOut"
+      @pointerenter="handleTriggerPointerEnter"
+      @pointerleave="handleTriggerPointerLeave"
     >
       <slot
         :is-disabled="disabled"
@@ -324,6 +426,8 @@ defineExpose({
         :role="isDropdownMode ? 'listbox' : 'dialog'"
         :style="floatingStyles"
         class="v-floating-content text-foreground"
+        @pointerenter="handleContentPointerEnter"
+        @pointerleave="handleContentPointerLeave"
       >
         <slot name="content">
           <template v-if="isDropdownMode">

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, useSlots } from "vue";
 
 import Multiselect from "vue-multiselect";
 
@@ -27,6 +27,7 @@ const {
   teleportToBody = true,
   name = "",
   allowEmpty = false,
+  noResultsText = "No results found",
 } = defineProps<{
   modelValue?: SelectOption | SelectOption[] | null
   options?: SelectOption[]
@@ -46,6 +47,8 @@ const {
   /** Floating label text — also used as aria label */
   name?: string
   allowEmpty?: boolean
+  /** Empty-state text; override the `noResult` slot for richer content */
+  noResultsText?: string
 }>();
 
 const emit = defineEmits<{
@@ -78,6 +81,15 @@ const handleSearchChange = (query: string) => emit("search-change", query);
 
 // ── Floating dropdown (teleport to body) ──────────────────────────────────
 const msRef = ref<MultiselectInstance | null>(null);
+
+const slots = useSlots();
+
+// `noResult` is rendered by its own template below, which already wraps the
+// consumer's slot around the noResultsText fallback. Forwarding it again here
+// would declare the same slot twice.
+const forwardedSlotNames = computed(() =>
+  Object.keys(slots).filter(name => name !== "noResult"),
+);
 let dropdownEl: HTMLElement | null = null;
 let placeholderNode: Comment | null = null;
 let originalParent: HTMLElement | null = null;
@@ -218,9 +230,18 @@ onBeforeUnmount(() => disableFloating());
         </div>
       </template>
 
-      <!-- Forward any provided slots -->
+      <!-- Empty state: prop by default, overridable via the noResult slot -->
+      <template #noResult>
+        <slot name="noResult">
+          {{ noResultsText }}
+        </slot>
+      </template>
+
+      <!-- Forward any other provided slots. `noResult` is excluded because it
+           already has an explicit template above; declaring it twice would
+           make the later one silently replace the fallback. -->
       <template
-        v-for="(_, slotName) in $slots"
+        v-for="slotName in forwardedSlotNames"
         :key="slotName"
         #[slotName]="slotProps"
       >

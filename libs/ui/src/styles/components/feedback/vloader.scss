@@ -61,3 +61,30 @@
   color: currentColor;
   opacity: 0.75;
 }
+
+/* Tone variants. The dots are painted from currentColor, so a variant only has
+   to set `color`. The base .v-loader is already primary, so omitting the prop
+   keeps today's appearance. */
+.v-loader--primary {
+  color: var(--ui-primary);
+}
+
+.v-loader--secondary {
+  color: var(--ui-foreground-secondary);
+}
+
+.v-loader--success {
+  color: var(--ui-success);
+}
+
+.v-loader--warning {
+  color: var(--ui-warning);
+}
+
+.v-loader--danger {
+  color: var(--ui-danger);
+}
+
+.v-loader--info {
+  color: var(--ui-info);
+}

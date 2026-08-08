@@ -241,3 +241,30 @@
     background-color: color-mix(in oklch, var(--ui-foreground-muted) 10%, transparent);
   }
 }
+
+/* customColor variants — tone comes from --_tag-color, set inline by the
+   component, so any design-system token can drive a tag. */
+.vtag--custom-solid {
+  background-color: var(--_tag-color);
+  color: var(--ui-foreground-inverted);
+}
+
+.vtag--custom-soft {
+  background-color: color-mix(in oklch, var(--_tag-color) 12%, transparent);
+  color: var(--_tag-color);
+}
+
+.vtag--custom-outline {
+  border: 1px solid color-mix(in oklch, var(--_tag-color) 50%, transparent);
+  background-color: color-mix(in oklch, var(--_tag-color) 6%, transparent);
+  color: var(--_tag-color);
+}
+
+.vtag--custom-ghost {
+  background-color: transparent;
+  color: var(--_tag-color);
+
+  &:hover {
+    background-color: color-mix(in oklch, var(--_tag-color) 10%, transparent);
+  }
+}
