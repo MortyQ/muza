@@ -13,6 +13,7 @@
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius-lg);
   background-color: var(--ui-surface);
+  box-shadow: var(--ui-shadow-sm);
   overflow: hidden;
 
   &--sm {

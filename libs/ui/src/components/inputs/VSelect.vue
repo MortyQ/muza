@@ -82,12 +82,14 @@ const handleSearchChange = (query: string) => emit("search-change", query);
 // ── Floating dropdown (teleport to body) ──────────────────────────────────
 const msRef = ref<MultiselectInstance | null>(null);
 
-const slots = useSlots();
+// Explicit annotation: without it the slots type resolves through the
+// component's own type and TS collapses it to `any` (TS7022).
+const slots: ReturnType<typeof useSlots> = useSlots();
 
 // `noResult` is rendered by its own template below, which already wraps the
 // consumer's slot around the noResultsText fallback. Forwarding it again here
 // would declare the same slot twice.
-const forwardedSlotNames = computed(() =>
+const forwardedSlotNames = computed<string[]>(() =>
   Object.keys(slots).filter(name => name !== "noResult"),
 );
 let dropdownEl: HTMLElement | null = null;

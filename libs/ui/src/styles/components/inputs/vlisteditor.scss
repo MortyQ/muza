@@ -36,6 +36,7 @@
     border: 1px solid var(--ui-border);
     border-radius: var(--ui-radius-lg);
     background-color: color-mix(in oklch, var(--ui-surface-raised) 40%, transparent);
+    box-shadow: var(--ui-shadow-sm);
     transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
 
     /* Mirrors VInput's error treatment rather than inventing a second style. */
@@ -215,6 +216,7 @@
     border: 1px solid var(--ui-border);
     border-radius: var(--ui-radius-lg);
     background-color: color-mix(in oklch, var(--ui-surface-raised) 40%, transparent);
+    box-shadow: var(--ui-shadow-sm);
   }
 
   &__chip-remove {

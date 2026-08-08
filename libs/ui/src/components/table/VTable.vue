@@ -78,7 +78,9 @@ const emit = defineEmits([
   "update:search", "toolbar:refresh", "toolbar:reset-sort", "toolbar:export",
 ]) as unknown as TableEmits<TData>;
 
-const $slots = useSlots();
+// Explicit annotation: see VSelect — an unannotated useSlots() in a globally
+// registered component resolves through its own type and collapses to `any`.
+const $slots: ReturnType<typeof useSlots> = useSlots();
 
 // Interface for formatted cell values
 interface FormattedCell {
@@ -104,8 +106,8 @@ provide("tableSlots", {
 const searchModel = defineModel<string>("search", { default: "" });
 
 // Toolbar enabled check
-const toolbarEnabled = computed(() => {
-  return toolbar?.enabled || $slots.toolbar;
+const toolbarEnabled = computed<boolean>(() => {
+  return !!(toolbar?.enabled || $slots.toolbar);
 });
 
 // Toolbar event handlers
@@ -934,7 +936,7 @@ const headerColumnsData = computed<Column[] | HeaderCell[][]>(() => {
 // ── Fullscreen ──────────────────────────────────────────────────────────────
 // Opt-out, unlike the other toolbar actions: shown whenever the toolbar is on.
 const fullscreenEnabled = computed<boolean>(() =>
-  !!toolbarEnabled.value && toolbar?.actions?.fullscreen !== false,
+  toolbarEnabled.value && toolbar?.actions?.fullscreen !== false,
 );
 
 const {

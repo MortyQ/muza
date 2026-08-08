@@ -13,7 +13,12 @@
   // `clip` instead of `hidden`: the wrapper is not a scroll container (the inner
   // .v-table-scroll-container owns scrolling), so nothing is lost — and `clip`
   // accepts overflow-clip-margin, which lets the corner fullscreen toggle
-  // overhang the border while the corner radii still clip table content.
+  // overhang the top-right border.
+  //
+  // The margin is not directional, though, so it stops the wrapper clipping the
+  // bottom corners too. Whichever element ends up last therefore rounds its own
+  // bottom corners (see the :last-child rules below) — otherwise the final row
+  // runs straight through the curve.
   overflow: clip;
   overflow-clip-margin: 24px;
   display: flex;
@@ -26,6 +31,20 @@
       border-top-left-radius: 0;
       border-top-right-radius: 0;
     }
+  }
+
+  // Round whatever sits at the bottom, so row backgrounds, cell borders and the
+  // fixed-column divider are cut by the curve instead of running past it.
+  // .v-table-container-wrapper does not clip, so the radius has to reach the
+  // scroll container inside it — but only when no pagination follows.
+  > :last-child {
+    border-bottom-right-radius: inherit;
+    border-bottom-left-radius: inherit;
+  }
+
+  > .v-table-container-wrapper:last-child .v-table-scroll-container {
+    border-bottom-right-radius: inherit;
+    border-bottom-left-radius: inherit;
   }
 }
 

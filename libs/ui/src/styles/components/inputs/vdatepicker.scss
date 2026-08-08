@@ -109,7 +109,7 @@
   --dp-button-height: 2.75rem;
 
   /* Colors → --ui-* tokens */
-  --dp-background-color: var(--ui-surface-raised);
+  --dp-background-color: var(--ui-input-bg);
   --dp-text-color: var(--ui-foreground);
   --dp-hover-color: var(--ui-primary-subtle);
   --dp-hover-text-color: var(--ui-primary);
@@ -118,7 +118,7 @@
   --dp-primary-disabled-color: var(--ui-primary-muted);
   --dp-primary-text-color: var(--ui-primary-foreground);
   --dp-secondary-color: var(--ui-foreground-subtle);
-  --dp-border-color: var(--ui-border);
+  --dp-border-color: var(--ui-input-border);
   --dp-menu-border-color: var(--ui-border);
   --dp-border-color-hover: var(--ui-primary);
   --dp-border-color-focus: var(--ui-primary);
