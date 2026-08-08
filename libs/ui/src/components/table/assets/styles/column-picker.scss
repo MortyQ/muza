@@ -1,0 +1,702 @@
+// TableColumnPicker Styles
+// ============================================
+
+.column-picker {
+  width: 760px;
+  max-height: min(560px, 80vh);
+  display: flex;
+  flex-direction: column;
+  background: var(--ui-surface);
+  border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+// ── Header ──────────────────────────────────────────────────────
+
+.column-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+  background: var(--ui-surface);
+  border-radius: 12px 12px 0 0;
+  flex-shrink: 0;
+}
+
+.column-picker-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ui-foreground);
+  letter-spacing: -0.01em;
+}
+
+.column-picker-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ui-foreground-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+    color: var(--ui-foreground);
+  }
+}
+
+// ── Body: two panels ────────────────────────────────────────────
+
+.column-picker-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.column-picker-divider {
+  width: 1px;
+  background: color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+  flex-shrink: 0;
+}
+
+.column-picker-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--ui-surface);
+}
+
+// ── Panel header ─────────────────────────────────────────────────
+
+.column-picker-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 0;
+  flex-shrink: 0;
+}
+
+.column-picker-panel-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ui-foreground-secondary);
+  letter-spacing: -0.01em;
+
+  &--limit {
+    color: var(--ui-warning);
+  }
+}
+
+.column-picker-text-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ui-foreground-secondary);
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--ui-foreground);
+  }
+
+  &--danger {
+    &:hover {
+      color: var(--ui-danger);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}
+
+// ── Right panel search wrapper ───────────────────────────────────
+
+.column-picker-panel-search {
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+// ── Left panel toolbar (search + sort) ───────────────────────────
+
+.cp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  flex-shrink: 0;
+}
+
+.cp-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  flex: 1;
+  background: var(--ui-surface-raised);
+  border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
+  border-radius: 7px;
+  min-width: 0;
+  height: 28px;
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 11.5px;
+    color: var(--ui-foreground);
+    outline: none;
+    min-width: 0;
+
+    &::placeholder {
+      color: color-mix(in oklch, var(--ui-foreground-secondary) 45%, transparent);
+    }
+  }
+}
+
+.cp-sort-group {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  background: var(--ui-surface-raised);
+  border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
+  border-radius: 7px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cp-sort-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  height: 100%;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: transparent;
+  color: var(--ui-foreground-secondary);
+  transition: background 0.12s ease-out, color 0.12s ease-out;
+  white-space: nowrap;
+
+  &:hover:not(.cp-sort-btn--active) {
+    color: var(--ui-foreground);
+  }
+
+  &--active {
+    background: var(--ui-primary);
+    color: white;
+  }
+}
+
+.cp-sort-divider {
+  width: 1px;
+  background: color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+// ── Panel list ───────────────────────────────────────────────────
+
+.column-picker-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 8px;
+  min-height: 0;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ui-surface-hover);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+
+    &:hover {
+      background: var(--ui-border-strong);
+      background-clip: padding-box;
+    }
+  }
+}
+
+// ── Left panel section headers ───────────────────────────────────
+
+.cp-group-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px 5px;
+  margin-top: 3px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s ease-out;
+  user-select: none;
+
+  &:hover {
+    background: var(--ui-surface-raised);
+  }
+
+  &:hover .cp-group-select-btn {
+    opacity: 1;
+  }
+}
+
+.cp-group-label {
+  flex: 1;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in oklch, var(--ui-foreground-secondary) 45%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &--has-selection {
+    color: color-mix(in oklch, var(--ui-foreground-secondary) 75%, transparent);
+  }
+}
+
+.cp-group-select-btn {
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: none;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+  color: var(--ui-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.12s ease-out, background 0.12s ease-out;
+
+  &:hover {
+    background: color-mix(in oklch, var(--ui-primary) 18%, transparent);
+  }
+}
+
+.cp-group-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 9px;
+  flex-shrink: 0;
+
+  &--selected {
+    background: color-mix(in oklch, var(--ui-primary) 12%, transparent);
+    color: var(--ui-primary);
+  }
+
+  &--empty {
+    background: color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+    color: var(--ui-foreground-secondary);
+  }
+}
+
+.cp-group-chevron {
+  color: color-mix(in oklch, var(--ui-foreground-secondary) 30%, transparent);
+  transition: transform 0.15s ease-out;
+  flex-shrink: 0;
+
+  &--open {
+    transform: rotate(90deg);
+    color: color-mix(in oklch, var(--ui-foreground-secondary) 60%, transparent);
+  }
+}
+
+// ── Left panel items ──────────────────────────────────────────────
+
+.cp-available-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 8px 4px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-bottom: 1px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.1s ease-out;
+  animation: columnPickerFadeIn 0.15s ease backwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.015}s;
+    }
+  }
+
+  &:hover {
+    background: var(--ui-surface-raised);
+  }
+
+  &:hover .cp-available-item-toggle {
+    opacity: 1;
+  }
+
+  // Left accent line
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18%;
+    bottom: 18%;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    background: var(--cp-type-color);
+    transition: opacity 0.12s ease-out;
+  }
+
+  &:not(.cp-available-item--selected)::before {
+    opacity: 0.3;
+  }
+
+  &--selected::before {
+    opacity: 1;
+  }
+
+  &:not(.cp-available-item--selected) .cp-type-icon {
+    opacity: 0.4;
+  }
+
+  &--selected .cp-type-icon {
+    opacity: 1;
+  }
+}
+
+.cp-available-item-label {
+  flex: 1;
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.12s ease-out;
+}
+
+.cp-available-item--selected .cp-available-item-label {
+  color: var(--ui-foreground);
+  font-weight: 500;
+}
+
+.cp-available-item:not(.cp-available-item--selected) .cp-available-item-label {
+  color: color-mix(in oklch, var(--ui-foreground-secondary) 65%, transparent);
+}
+
+.cp-available-item-toggle {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
+  opacity: 0;
+  transition: opacity 0.12s ease-out, background 0.12s ease-out, color 0.12s ease-out;
+}
+
+.cp-available-item--selected .cp-available-item-toggle {
+  opacity: 1;
+  background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+  color: var(--ui-primary);
+}
+
+.cp-show-more-btn {
+  display: block;
+  width: 100%;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ui-primary);
+  text-align: left;
+  border-radius: 6px;
+  transition: background 0.1s ease-out;
+
+  &:hover {
+    background: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+  }
+}
+
+// ── By-type sub-headers (inside expanded sections) ───────────────
+
+.cp-type-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px 3px;
+}
+
+.cp-type-group-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.cp-type-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
+}
+
+// ── Right panel ──────────────────────────────────────────────────
+
+.column-picker-panel--right {
+  background: var(--ui-surface);
+}
+
+// Ghost row
+.cp-selected-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px 5px 14px;
+  border-radius: 7px;
+  background: transparent;
+  position: relative;
+  transition: background 0.12s ease-out;
+  animation: columnPickerFadeIn 0.2s ease backwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.02}s;
+    }
+  }
+
+  &:hover {
+    background: var(--ui-surface-raised);
+  }
+
+  &:hover .cp-selected-item-drag    { opacity: 0.5; }
+  &:hover .cp-selected-item-remove  { opacity: 1; }
+
+  // Left accent line (type color)
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18%;
+    bottom: 18%;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    background: var(--cp-type-color);
+  }
+
+  &--dragging {
+    opacity: 0.6;
+    cursor: grabbing;
+    transform: scale(1.02);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  &--drag-over {
+    background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+    box-shadow: 0 0 0 1px var(--ui-primary);
+  }
+
+  &--locked {
+    opacity: 0.7;
+    cursor: default;
+  }
+}
+
+.cp-selected-item-drag {
+  display: flex;
+  align-items: center;
+  color: var(--ui-foreground-secondary);
+  cursor: grab;
+  opacity: 0.2;
+  flex-shrink: 0;
+  transition: opacity 0.12s ease-out;
+
+  &:active { cursor: grabbing; }
+}
+
+.cp-selected-item--locked .cp-selected-item-drag,
+.cp-selected-item--locked:hover .cp-selected-item-drag {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.cp-selected-item-label {
+  flex: 1;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ui-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-selected-item-pin,
+.cp-selected-item-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ui-foreground-secondary);
+  cursor: pointer;
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.12s ease-out, color 0.12s ease-out, background 0.12s ease-out;
+}
+
+.cp-selected-item-pin {
+  opacity: 0.35;
+}
+
+.cp-selected-item-pin--active,
+.cp-selected-item:hover .cp-selected-item-pin {
+  opacity: 1;
+}
+
+.cp-selected-item-pin--active {
+  background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+  color: var(--ui-primary);
+}
+
+.cp-selected-item-pin:hover {
+  background: var(--ui-surface-raised);
+  color: var(--ui-primary);
+}
+
+.cp-selected-item-remove:hover {
+  color: var(--ui-danger);
+}
+
+
+
+.column-picker-empty {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ui-foreground-secondary);
+}
+
+// ── Loading skeleton ──────────────────────────────────────────────
+
+.column-picker-skeleton {
+  height: 36px;
+  border-radius: 7px;
+  background: var(--ui-surface-raised);
+  margin-bottom: 4px;
+  animation: columnPickerPulse 1.4s ease-in-out infinite;
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+      width: #{85 + ($i % 3) * 8}%;
+    }
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────
+
+.column-picker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+  background: var(--ui-surface);
+  border-radius: 0 0 12px 12px;
+  flex-shrink: 0;
+}
+
+.column-picker-footer-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  font-size: 11px;
+  color: var(--ui-foreground-secondary);
+  opacity: 0.7;
+
+  &--limit {
+    opacity: 1;
+    color: var(--ui-warning);
+  }
+}
+
+// ── Type indicator (shared: both panels) ─────────────────────────
+
+.cp-type-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: color-mix(in oklch, var(--cp-type-color) 12%, transparent);
+  color: var(--cp-type-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.12s ease-out;
+}
+
+// ── Animations ────────────────────────────────────────────────────
+
+@keyframes columnPickerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes columnPickerPulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}

@@ -1,18 +1,26 @@
 <script generic="TData extends Record<string, unknown> = Record<string, unknown>" lang="ts" setup>
-import { ref, computed, watch, onUnmounted, useSlots, provide, inject, type Component, type Ref } from "vue";
+import {
+  ref, computed, watch, onMounted, onUnmounted, useSlots, provide, inject,
+  type Component, type ComponentPublicInstance, type Ref,
+} from "vue";
 
 import type { VirtualItem } from "@tanstack/vue-virtual";
 
-import { VButton, VFloating, VIcon, VLoader } from "../../index";
+import { VButton, VFloating, VIcon } from "../../index";
 
+import TableBackdrop from "./components/TableBackdrop.vue";
 import TableCell from "./components/TableCell.vue";
 import TableCheckboxCell from "./components/TableCheckboxCell.vue";
+import TableColumnPicker from "./components/TableColumnPicker.vue";
 import TableColumnSetup from "./components/TableColumnSetup.vue";
 import TableEmptyState from "./components/TableEmptyState.vue";
+import TableFullscreenToggle from "./components/TableFullscreenToggle.vue";
 import TableHeaderCheckbox from "./components/TableHeaderCheckbox.vue";
 import TableHeaderGrouped from "./components/TableHeaderGrouped.vue";
 import TableHeaderSimple from "./components/TableHeaderSimple.vue";
+import TableLoadingOverlay from "./components/TableLoadingOverlay.vue";
 import TablePagination from "./components/TablePagination.vue";
+import TablePinButton from "./components/TablePinButton.vue";
 import TableRow from "./components/TableRow.vue";
 import TableToolbar from "./components/TableToolbar.vue";
 import { useColumnResize } from "./composables/useColumnResize";
@@ -20,6 +28,8 @@ import { useExpandableTable } from "./composables/useExpandableTable";
 import { useFixedColumns } from "./composables/useFixedColumns";
 import { useGroupedHeaders } from "./composables/useGroupedHeaders";
 import { useTableFormatters } from "./composables/useTableFormatters";
+import { useTableFullScreen } from "./composables/useTableFullScreen";
+import { normalizeHighlight, useTableHighlight } from "./composables/useTableHighlight";
 import { TABLE_PAGE_KEY } from "./composables/useTablePage";
 import { useTableSelection } from "./composables/useTableSelection";
 import { useTableSort } from "./composables/useTableSort";
@@ -29,6 +39,8 @@ import type {
   ExpandableRow,
   FlattenedRow,
   HeaderCell,
+  HighlightCoordinate,
+  TableHighlightState,
 } from "./types/index";
 import type { TableProps, TableEmits } from "./types/props";
 import tableStorage from "./utils/storage";
@@ -50,13 +62,17 @@ const {
   pagination,
   page,
   rowClassName,
-} = defineProps<TableProps>();
+  scrollSync,
+  highlight,
+  highlightState,
+  highlightSync,
+} = defineProps<TableProps<TData>>();
 
 // defineEmits with generic type params is broken in generic SFCs (Vue compiler limitation —
 // only the last overload is recognized). Workaround: runtime array + cast to TableEmits<TData>.
 const emit = defineEmits([
   "row-click", "update:selected-rows", "expand-click",
-  "update:sort-state", "update:page", "request", "sort",
+  "update:sort-state", "update:highlight-state", "update:page", "request", "sort",
   "update:search", "toolbar:refresh", "toolbar:reset-sort", "toolbar:export",
 ]) as unknown as TableEmits<TData>;
 
@@ -527,9 +543,18 @@ const selection = useTableSelection({
 // Virtualization with dynamic height for expand
 const scrollContainerRef = ref<HTMLElement | null>(null);
 
+// Fullscreen geometry targets. `wrapperRef` becomes the fixed panel;
+// `placeholderRef` holds the wrapper's original slot in the page while it is
+// out of flow; the chrome refs are measured to derive the content height.
+const wrapperRef = ref<HTMLElement | null>(null);
+const placeholderRef = ref<HTMLElement | null>(null);
+const toolbarSlotRef = ref<HTMLElement | null>(null);
+const paginationRef = ref<ComponentPublicInstance | null>(null);
+
 const {
   virtualItems,
   totalSize,
+  remeasure,
 } = useVirtualTable(
   scrollContainerRef,
   displayData,
@@ -711,6 +736,80 @@ const getCellMetadata = (
   return metadata;
 };
 
+// Lets TableCell resolve its own metadata instead of VTable calling
+// getCellMetadata up to 4x per cell in the template.
+provide("tableCellMetadata", getCellMetadata);
+
+// ── Highlight (pinned cross) ────────────────────────────────────────────────
+// The boolean | HighlightConfig union is flattened exactly once, here.
+// Nothing downstream branches on the prop's type.
+const highlightConfig = computed(() => normalizeHighlight(highlight));
+
+const buildHighlightState = (): TableHighlightState<TData> | null => {
+  const rowId = highlightApi.pinnedRowId.value;
+  const columnKey = highlightApi.pinnedColumnKey.value;
+  if (rowId === null && columnKey === null) return null;
+
+  const rowIndex = rowId === null
+    ? -1
+    : displayData.value.findIndex(r => r.id === rowId);
+  const row = rowIndex >= 0 ? displayData.value[rowIndex] : undefined;
+
+  // Resolved from columnsForData every time, so a column hidden via the column
+  // picker/setup reports as null without any watcher clearing it. Same path
+  // handles a key broadcast by a table whose column set differs from ours.
+  const column = columnKey === null
+    ? undefined
+    : columnsForData.value.find(c => c.key === columnKey);
+
+  const rowPart = row && rowId !== null ? { rowId, rowIndex, row } : null;
+  const columnPart = column && columnKey !== null ? { columnKey, column } : null;
+
+  let cellPart: TableHighlightState<TData>["cell"] = null;
+  if (rowPart && columnPart) {
+    const colIndex = columnsForData.value.indexOf(columnPart.column);
+    const meta = getCellMetadata(rowPart.row, columnPart.column, colIndex, rowPart.rowIndex);
+    cellPart = {
+      value: rowPart.row[columnPart.columnKey],
+      formattedValue: String(meta.formattedValue ?? ""),
+    };
+  }
+
+  return { row: rowPart, column: columnPart, cell: cellPart };
+};
+
+// Emitted imperatively from the places that can change it — no watcher, so
+// tables without highlight register nothing.
+const onHighlightChange = (coord: HighlightCoordinate): void => {
+  emit("update:highlight-state", buildHighlightState());
+  highlightSync?.broadcast(coord);
+};
+
+const highlightApi = useTableHighlight({
+  config: highlightConfig,
+  onChange: onHighlightChange,
+});
+
+const applyRemoteHighlight = (coord: HighlightCoordinate): void => {
+  highlightApi.applyRemote(coord);
+  // The receiving table reports its own resolved state — for one coordinate
+  // each table yields its own column's value.
+  emit("update:highlight-state", buildHighlightState());
+};
+
+// Called once per rendered row and once per rendered cell; both short-circuit
+// on a single null ref read when nothing is pinned.
+const isRowPinned = (id: unknown): boolean =>
+  highlightApi.isRowPinned(id as string | number | undefined);
+
+// Provided here rather than beside `tableSlots` because highlightConfig does
+// not exist yet at that point; provide only has to run during setup.
+provide("tableHighlight", {
+  columnEnabled: computed(() => highlightConfig.value.column),
+  isColumnPinned: highlightApi.isColumnPinned,
+  toggleColumn: highlightApi.toggleColumn,
+});
+
 // Computed for final rows (considering virtualization)
 const rowsToRender = computed(() => {
   // If virtualization is disabled, render all data
@@ -802,6 +901,12 @@ const getColumnClasses = (column: Column) => {
     }
   }
 
+  // One insertion covers all three call sites: header, data cells and the total
+  // row — so the vertical ribbon runs through the whole column.
+  if (highlightApi.isColumnPinned(column.key)) {
+    classes.push("v-table-cell--pinned-col");
+  }
+
   return classes;
 };
 
@@ -824,326 +929,478 @@ const headerColumnsData = computed<Column[] | HeaderCell[][]>(() => {
   return hasGroups.value ? headerLevels.value : columnsForData.value;
 });
 
+// ── Fullscreen ──────────────────────────────────────────────────────────────
+// Opt-out, unlike the other toolbar actions: shown whenever the toolbar is on.
+const fullscreenEnabled = computed<boolean>(() =>
+  !!toolbarEnabled.value && toolbar?.actions?.fullscreen !== false,
+);
+
+const {
+  isFullscreen,
+  zIndex: fullscreenZIndex,
+  placeholderStyle,
+  panelStyle: fullscreenPanelStyle,
+  contentHeight: fullscreenContentHeight,
+  toggle: toggleFullscreen,
+} = useTableFullScreen({
+  wrapperRef,
+  placeholderRef,
+  // Toolbar and pagination are already rendered and identical in both modes, so
+  // the composable measures them before `isFullscreen` flips — contentHeight is
+  // a final px value on the very first fullscreen render.
+  chromeRefs: [toolbarSlotRef, paginationRef],
+  isEnabled: fullscreenEnabled,
+  // The scroll container's height changed the instant the fullscreen class
+  // applied, so the virtualizer's cached rect is stale. Scroll position is not
+  // preserved across the toggle, so reset to top and force a remeasure rather
+  // than waiting for the user's next scroll to reveal rows.
+  onToggle: () => {
+    const el = scrollContainerRef.value;
+    if (el) {
+      el.scrollTop = 0;
+      el.scrollLeft = 0;
+    }
+    remeasure();
+  },
+});
+
+// ── Column picker ───────────────────────────────────────────────────────────
+const columnPickerConfig = computed(() => toolbar?.actions?.columnPicker || null);
+
+const columnPickerPopoverRef = ref<{ close: () => void } | null>(null);
+
+const handleColumnPickerClose = () => {
+  columnPickerPopoverRef.value?.close();
+};
+
+// ── Linked tables ───────────────────────────────────────────────────────────
+const onScrollContainerScroll = (event: Event) => {
+  if (!scrollSync) return;
+  const el = event.target as HTMLElement;
+  scrollSync.onScroll(el.scrollLeft, el.scrollTop);
+};
+
+onMounted(() => {
+  highlightSync?.register(applyRemoteHighlight);
+
+  if (scrollSync && scrollContainerRef.value) {
+    scrollSync.register(scrollContainerRef.value);
+  }
+});
+
+// Registered conditionally: a table created without `highlight` gets no watcher
+// at all. This is the documented caveat on the prop — the *input* direction of
+// v-model:highlight-state needs highlight enabled at creation, like scrollSync.
+if (highlightConfig.value.enabled) {
+  watch(() => highlightState, (state) => {
+    const rowId = state?.row?.rowId ?? null;
+    const columnKey = state?.column?.columnKey ?? null;
+    // Ignore the echo of our own emit
+    if (rowId === highlightApi.pinnedRowId.value
+      && columnKey === highlightApi.pinnedColumnKey.value) return;
+    highlightApi.setPin({ rowId, columnKey });
+  });
+
+  // `highlight` can flip at runtime (:highlight="isOn && cfg"), unlike
+  // scrollSync. A pin left behind would stay in highlightState with nothing
+  // on screen.
+  watch(highlightConfig, (cfg) => {
+    if (!cfg.enabled) {
+      highlightApi.clear();
+      return;
+    }
+    if (!cfg.row) highlightApi.unpinRow();
+    if (!cfg.column) highlightApi.unpinColumn();
+  });
+}
+
 // CRITICAL: Cleanup on unmount to prevent memory leaks
 onUnmounted(() => {
   // Clear expanded rows to free memory
   if (expandableLogic) {
     expandableLogic.collapseAll();
   }
+  scrollSync?.unregister();
+  highlightSync?.unregister();
   // Clear scroll container ref
   scrollContainerRef.value = null;
 });
 </script>
 
 <template>
+  <!-- Reserves the wrapper's original slot in the page while it is fixed and
+       teleported. Without it the surrounding layout collapses on enter and
+       exit has no stable target to animate back to. -->
   <div
-    :class="{ 'v-table-wrapper--with-toolbar': toolbarEnabled }"
-    class="v-table-wrapper"
+    v-if="placeholderStyle"
+    ref="placeholderRef"
+    :style="placeholderStyle"
+    aria-hidden="true"
+    class="v-table-fullscreen-placeholder"
+  />
+
+  <TableBackdrop
+    :active="isFullscreen"
+    :z-index="fullscreenZIndex - 1"
+    @click="toggleFullscreen"
+  />
+
+  <Teleport
+    :disabled="!isFullscreen"
+    to="body"
   >
-    <!-- Toolbar section -->
     <div
-      v-if="toolbarEnabled"
-      class="v-table-toolbar-slot"
+      ref="wrapperRef"
+      :class="{
+        'v-table-wrapper--with-toolbar': toolbarEnabled,
+        'v-table-wrapper--fullscreen': isFullscreen,
+      }"
+      :style="isFullscreen ? { ...fullscreenPanelStyle, zIndex: fullscreenZIndex } : undefined"
+      class="v-table-wrapper"
     >
-      <!-- Custom toolbar via slot -->
-      <slot
-        v-if="$slots.toolbar"
-        name="toolbar"
+      <TableFullscreenToggle
+        v-if="fullscreenEnabled"
+        :is-fullscreen="isFullscreen"
+        @toggle="toggleFullscreen"
       />
 
-      <!-- Props-based toolbar -->
-      <TableToolbar
-        v-else-if="toolbar?.enabled"
-        v-model:search="searchModel"
-        :config="toolbar"
-        @export="handleToolbarExport"
-        @refresh="handleToolbarRefresh"
-        @reset-sort="handleToolbarResetSort"
+      <!-- Toolbar section -->
+      <div
+        v-if="toolbarEnabled"
+        ref="toolbarSlotRef"
+        class="v-table-toolbar-slot"
       >
-        <!-- Column Setup Dropdown -->
-        <template
-          v-if="columnSetupEnabled"
-          #column-setup
+        <!-- Custom toolbar via slot -->
+        <slot
+          v-if="$slots.toolbar"
+          name="toolbar"
+        />
+
+        <!-- Props-based toolbar -->
+        <TableToolbar
+          v-else-if="toolbar?.enabled"
+          v-model:search="searchModel"
+          :config="toolbar"
+          @export="handleToolbarExport"
+          @refresh="handleToolbarRefresh"
+          @reset-sort="handleToolbarResetSort"
         >
-          <VFloating
-            ref="columnSetupPopoverRef"
-            :offset="8"
-            content-class="rounded-xl"
-            placement="bottom-right"
-            unstyled
-          >
-            <template #trigger>
-              <VButton
-                icon="lucide:table-2"
-                variant="link"
-              />
-            </template>
+          <!-- Column picker + column setup share the toolbar's single
+             #column-setup slot; the picker renders first, to its left. -->
+          <template #column-setup>
+            <VFloating
+              v-if="columnPickerConfig"
+              ref="columnPickerPopoverRef"
+              :offset="8"
+              content-class="rounded-xl"
+              placement="bottom-right"
+              unstyled
+            >
+              <template #trigger>
+                <VButton
+                  icon="lucide:columns"
+                  variant="link"
+                />
+              </template>
 
-            <template #content>
-              <TableColumnSetup
-                :columns="columns"
-                :config="columnSetupConfig"
-                @close="handleColumnSetupClose"
-                @update:visible-columns="handleVisibleColumnsUpdate"
-              />
-            </template>
-          </VFloating>
-        </template>
-      </TableToolbar>
-    </div>
+              <template #content>
+                <TableColumnPicker
+                  :columns="effectiveColumns"
+                  :groups="columnPickerConfig.groups"
+                  :loading="columnPickerConfig.loading"
+                  :original-columns="columns"
+                  :storage-key="columnPickerConfig.key"
+                  :storage-type="columnPickerConfig.type"
+                  @close="handleColumnPickerClose"
+                  @update:visible-columns="handleVisibleColumnsUpdate"
+                />
+              </template>
+            </VFloating>
 
-    <!-- Loading state -->
-    <div class="v-table-container-wrapper">
-      <!-- Empty State (positioned over scroll container) -->
-      <TableEmptyState
-        v-if="displayData.length === 0"
-        description="Try adjusting your filters or search criteria"
-        icon="lucide:inbox"
-        title="No data to display"
-      >
-        <slot name="empty-state" />
-      </TableEmptyState>
+            <VFloating
+              v-if="columnSetupEnabled"
+              ref="columnSetupPopoverRef"
+              :offset="8"
+              content-class="rounded-xl"
+              placement="bottom-right"
+              unstyled
+            >
+              <template #trigger>
+                <VButton
+                  icon="lucide:table-2"
+                  variant="link"
+                />
+              </template>
 
-      <!-- Loading Overlay -->
-      <Transition name="fade">
+              <template #content>
+                <TableColumnSetup
+                  :columns="columns"
+                  :config="columnSetupConfig"
+                  @close="handleColumnSetupClose"
+                  @update:visible-columns="handleVisibleColumnsUpdate"
+                />
+              </template>
+            </VFloating>
+          </template>
+        </TableToolbar>
+      </div>
+
+      <!-- Loading state -->
+      <div class="v-table-container-wrapper">
+        <!-- Empty State (positioned over scroll container) -->
+        <TableEmptyState
+          v-if="displayData.length === 0"
+          description="Try adjusting your filters or search criteria"
+          icon="lucide:inbox"
+          title="No data to display"
+        >
+          <slot name="empty-state" />
+        </TableEmptyState>
+
+        <!-- Loading Overlay -->
+        <TableLoadingOverlay :loading />
+
+        <!-- Scroll container -->
         <div
-          v-if="loading"
-          class="v-table-loading-overlay"
+          ref="scrollContainerRef"
+          :class="{ 'v-table-scroll-container--loading': loading }"
+          :style="{
+            height: isFullscreen ? fullscreenContentHeight : tableHeight,
+            overscrollBehavior: 'contain',
+          }"
+          class="v-table-scroll-container v-table-scrollbar-styled"
+          @scroll="onScrollContainerScroll"
         >
-          <div class="v-table-loading-backdrop" />
-          <div class="v-table-loading-spinner">
-            <VLoader
-              size="lg"
-              variant="primary"
+          <div
+            :class="{
+              'v-is-resizing': isResizing,
+              'v-table-grid--highlight': highlightConfig.enabled,
+            }"
+            :style="gridStyles"
+            class="v-table-grid"
+          >
+            <component
+              :is="headerComponent"
+              :columns="headerColumnsData"
+              :get-column-classes="getColumnClasses"
+              :get-fixed-styles="getFixedStyles"
+              :get-group-fixed-styles="getGroupFixedStyles"
+              :get-group-width="getGroupWidth"
+              :get-sort-state="getSortState"
+              :is-column-resizable="isColumnResizable"
+              @resize-start="startResize"
+              @resize-dblclick="autoFitColumn"
+              @sort-click="handleSortClick"
+            >
+              <!-- Checkbox header slot - always render when multi-select enabled -->
+              <template
+                v-if="selection.isEnabled.value"
+                #checkbox-header
+              >
+                <TableHeaderCheckbox
+                  v-if="multiSelectConfig?.showHeaderCheckbox !== false"
+                  :state="selection.getHeaderCheckboxState()"
+                  @toggle="selection.toggleAllRows"
+                />
+                <!-- Empty header cell when checkbox is hidden -->
+                <div
+                  v-else
+                  class="v-table-header-checkbox-cell v-table-header-checkbox-cell--empty"
+                />
+              </template>
+
+              <!-- Forward custom header icon slots -->
+              <template
+                v-for="column in columnsForData"
+                #[`header-icon-${column.key}`]="slotProps"
+              >
+                <slot
+                  :name="`header-icon-${column.key}`"
+                  v-bind="slotProps"
+                />
+              </template>
+
+              <!-- Forward custom header slots -->
+              <template
+                v-for="column in columnsForData"
+                #[`header-${column.key}`]="slotProps"
+              >
+                <slot
+                  :name="`header-${column.key}`"
+                  v-bind="slotProps"
+                />
+              </template>
+            </component>
+
+            <!-- Virtualization: spacer before -->
+            <div
+              v-if="virtualized && virtualItems.length > 0 && virtualItems[0]"
+              :style="{ height: `${virtualItems[0].start}px` }"
+              class="v-table-virtual-spacer"
             />
+
+            <!-- Table rows (universal rendering) -->
+            <TableRow
+              v-for="item in rowsToRender"
+              :key="item.key"
+              :class="{ 'v-table-row-wrapper--pinned': isRowPinned(item.row.id) }"
+              :style="getRowStyles(item)"
+              @click="onRowClick(item.row)"
+            >
+              <!-- Checkbox column (separate) -->
+              <TableCheckboxCell
+                v-if="selection.isEnabled.value"
+                :checked="selection.isRowSelected(item.row.id as string | number)"
+                :class="getRowClasses(item.row, item.index)"
+                :data-custom-row="getRowClasses(item.row, item.index) ? 'true' : undefined"
+                :disabled="!selection.isRowSelectable(item.row)"
+                :indeterminate="selection.isDependentMode.value &&
+                  hasRowChildren(item.row) &&
+                  selection.getParentCheckboxState(item.row) === 'indeterminate'"
+                @toggle="selection.toggleRow(item.row)"
+              />
+
+              <!-- Data cells -->
+              <TableCell
+                v-for="(column, colIndex) in columnsForData"
+                :key="`${item.key}-${column.key}`"
+                :align="column.align"
+                :class="[
+                  getColumnClasses(column),
+                  getCellMetadata(item.row, column, colIndex, item.index).cssClass,
+                  getRowClasses(item.row, item.index)
+                ]"
+                :data-custom-row="getRowClasses(item.row, item.index) ? 'true' : undefined"
+                :depth="(item.row.depth as number) || 0"
+                :style="{
+                  ...getFixedStyles(column),
+                  ...getCellMetadata(item.row, column, colIndex, item.index).customStyle
+                }"
+              >
+                <div
+                  :style="getCellMetadata(item.row, column, colIndex, item.index).indentStyle"
+                  class="v-table-cell-content"
+                >
+                  <TablePinButton
+                    v-if="highlightConfig.row && colIndex === 0"
+                    :pinned="isRowPinned(item.row.id)"
+                    label="row"
+                    @toggle="highlightApi.toggleRow(item.row.id as string | number)"
+                  />
+
+                  <!-- Expand button only for first column -->
+                  <button
+                    v-if="isExpandable &&
+                      getCellMetadata(item.row, column, colIndex, item.index).isExpandable"
+                    class="v-table-cell-expand-btn"
+                    @click.stop="handleToggleRow(item.row.id as string | number, item.row, column)"
+                  >
+                    <VIcon
+                      :icon="item.row.isExpanded ? 'mdi:chevron-down' : 'mdi:chevron-right'"
+                      :size="18"
+                    />
+                  </button>
+
+                  <!-- Column content (universal for all) -->
+                  <div
+                    :class="{ 'v-table-cell-text--truncate': !column.interactive }"
+                    class="v-table-cell-text"
+                  >
+                    <slot
+                      :column="column"
+                      :depth="item.row.depth || 0"
+                      :index="item.index"
+                      :name="`cell-${column.key}`"
+                      :row="item.row"
+                      :value="item.row[column.key]"
+                    >
+                      <!-- Default rendering with formatter -->
+                      <span
+                        :title="getCellMetadata(item.row, column, colIndex, item.index).titleText"
+                      >
+                        {{ getCellMetadata(item.row, column, colIndex, item.index).formattedValue }}
+                      </span>
+                    </slot>
+                  </div>
+                </div>
+              </TableCell>
+            </TableRow>
+
+            <!-- Virtualization: spacer after -->
+            <div
+              v-if="virtualized && virtualItems.length > 0 &&
+                virtualItems[virtualItems.length - 1]"
+              :style="{
+                height: `${totalSize - virtualItems[virtualItems.length - 1].end}px`
+              }"
+              class="v-table-virtual-spacer"
+            />
+
+            <!-- Total Row (sticky bottom inside grid) -->
+            <template v-if="shouldShowTotal && totalRow">
+              <!-- Empty checkbox cell for total row -->
+              <div
+                v-if="selection.isEnabled.value"
+                class="v-table-total-cell v-table-checkbox-cell"
+              />
+              <TableCell
+                v-for="(column, colIndex) in columnsForData"
+                :key="`total-${column.key}`"
+                :align="column.align"
+                :class="getColumnClasses(column)"
+                :style="getFixedStyles(column)"
+                class="v-table-total-cell"
+              >
+                <div class="v-table-total-content">
+                  <!-- Spacer instead of expand button for first column -->
+                  <div
+                    v-if="colIndex === 0 && isExpandable"
+                    class="v-table-total-spacer"
+                  />
+
+                  <!-- Total cell content -->
+                  <div
+                    :class="{ 'v-table-total-text--truncate': !column.interactive }"
+                    class="v-table-total-text"
+                  >
+                    <slot
+                      :column="column"
+                      :name="`total-cell-${column.key}`"
+                      :row="totalRow"
+                      :value="totalRow[column.key]"
+                    >
+                      <!-- Default rendering with formatter -->
+                      <span
+                        :class="getCellClass(totalRow[column.key], column, totalRow)"
+                        :title="!column.interactive
+                          ? String(getCellValue(totalRow[column.key], column, totalRow))
+                          : undefined"
+                      >
+                        {{ getCellValue(totalRow[column.key], column, totalRow) }}
+                      </span>
+                    </slot>
+                  </div>
+                </div>
+              </TableCell>
+            </template>
           </div>
         </div>
-      </Transition>
-
-      <!-- Scroll container -->
-      <div
-        ref="scrollContainerRef"
-        :class="{ 'v-table-scroll-container--loading': loading }"
-        :style="{ height: tableHeight, overscrollBehavior: 'contain' }"
-        class="v-table-scroll-container v-table-scrollbar-styled"
-      >
-        <div
-          :class="{ 'v-is-resizing': isResizing }"
-          :style="gridStyles"
-          class="v-table-grid"
-        >
-          <component
-            :is="headerComponent"
-            :columns="headerColumnsData"
-            :get-column-classes="getColumnClasses"
-            :get-fixed-styles="getFixedStyles"
-            :get-group-fixed-styles="getGroupFixedStyles"
-            :get-group-width="getGroupWidth"
-            :get-sort-state="getSortState"
-            :is-column-resizable="isColumnResizable"
-            @resize-start="startResize"
-            @resize-dblclick="autoFitColumn"
-            @sort-click="handleSortClick"
-          >
-            <!-- Checkbox header slot - always render when multi-select enabled -->
-            <template
-              v-if="selection.isEnabled.value"
-              #checkbox-header
-            >
-              <TableHeaderCheckbox
-                v-if="multiSelectConfig?.showHeaderCheckbox !== false"
-                :state="selection.getHeaderCheckboxState()"
-                @toggle="selection.toggleAllRows"
-              />
-              <!-- Empty header cell when checkbox is hidden -->
-              <div
-                v-else
-                class="v-table-header-checkbox-cell v-table-header-checkbox-cell--empty"
-              />
-            </template>
-
-            <!-- Forward custom header icon slots -->
-            <template
-              v-for="column in columnsForData"
-              #[`header-icon-${column.key}`]="slotProps"
-            >
-              <slot
-                :name="`header-icon-${column.key}`"
-                v-bind="slotProps"
-              />
-            </template>
-
-            <!-- Forward custom header slots -->
-            <template
-              v-for="column in columnsForData"
-              #[`header-${column.key}`]="slotProps"
-            >
-              <slot
-                :name="`header-${column.key}`"
-                v-bind="slotProps"
-              />
-            </template>
-          </component>
-
-          <!-- Virtualization: spacer before -->
-          <div
-            v-if="virtualized && virtualItems.length > 0 && virtualItems[0]"
-            :style="{ height: `${virtualItems[0].start}px` }"
-            class="v-table-virtual-spacer"
-          />
-
-          <!-- Table rows (universal rendering) -->
-          <TableRow
-            v-for="item in rowsToRender"
-            :key="item.key"
-            :style="getRowStyles(item)"
-            @click="onRowClick(item.row)"
-          >
-            <!-- Checkbox column (separate) -->
-            <TableCheckboxCell
-              v-if="selection.isEnabled.value"
-              :checked="selection.isRowSelected(item.row.id as string | number)"
-              :class="getRowClasses(item.row, item.index)"
-              :data-custom-row="getRowClasses(item.row, item.index) ? 'true' : undefined"
-              :disabled="!selection.isRowSelectable(item.row)"
-              :indeterminate="selection.isDependentMode.value &&
-                hasRowChildren(item.row) &&
-                selection.getParentCheckboxState(item.row) === 'indeterminate'"
-              @toggle="selection.toggleRow(item.row)"
-            />
-
-            <!-- Data cells -->
-            <TableCell
-              v-for="(column, colIndex) in columnsForData"
-              :key="`${item.key}-${column.key}`"
-              :align="column.align"
-              :class="[
-                getColumnClasses(column),
-                getCellMetadata(item.row, column, colIndex, item.index).cssClass,
-                getRowClasses(item.row, item.index)
-              ]"
-              :data-custom-row="getRowClasses(item.row, item.index) ? 'true' : undefined"
-              :depth="(item.row.depth as number) || 0"
-              :style="{
-                ...getFixedStyles(column),
-                ...getCellMetadata(item.row, column, colIndex, item.index).customStyle
-              }"
-            >
-              <div
-                :style="getCellMetadata(item.row, column, colIndex, item.index).indentStyle"
-                class="v-table-cell-content"
-              >
-                <!-- Expand button only for first column -->
-                <button
-                  v-if="isExpandable &&
-                    getCellMetadata(item.row, column, colIndex, item.index).isExpandable"
-                  class="v-table-cell-expand-btn"
-                  @click.stop="handleToggleRow(item.row.id as string | number, item.row, column)"
-                >
-                  <VIcon
-                    :icon="item.row.isExpanded ? 'mdi:chevron-down' : 'mdi:chevron-right'"
-                    :size="18"
-                  />
-                </button>
-
-                <!-- Column content (universal for all) -->
-                <div
-                  :class="{ 'v-table-cell-text--truncate': !column.interactive }"
-                  class="v-table-cell-text"
-                >
-                  <slot
-                    :column="column"
-                    :depth="item.row.depth || 0"
-                    :index="item.index"
-                    :name="`cell-${column.key}`"
-                    :row="item.row"
-                    :value="item.row[column.key]"
-                  >
-                    <!-- Default rendering with formatter -->
-                    <span
-                      :title="getCellMetadata(item.row, column, colIndex, item.index).titleText"
-                    >
-                      {{ getCellMetadata(item.row, column, colIndex, item.index).formattedValue }}
-                    </span>
-                  </slot>
-                </div>
-              </div>
-            </TableCell>
-          </TableRow>
-
-          <!-- Virtualization: spacer after -->
-          <div
-            v-if="virtualized && virtualItems.length > 0 &&
-              virtualItems[virtualItems.length - 1]"
-            :style="{
-              height: `${totalSize - virtualItems[virtualItems.length - 1].end}px`
-            }"
-            class="v-table-virtual-spacer"
-          />
-
-          <!-- Total Row (sticky bottom inside grid) -->
-          <template v-if="shouldShowTotal && totalRow">
-            <!-- Empty checkbox cell for total row -->
-            <div
-              v-if="selection.isEnabled.value"
-              class="v-table-total-cell v-table-checkbox-cell"
-            />
-            <TableCell
-              v-for="(column, colIndex) in columnsForData"
-              :key="`total-${column.key}`"
-              :align="column.align"
-              :class="getColumnClasses(column)"
-              :style="getFixedStyles(column)"
-              class="v-table-total-cell"
-            >
-              <div class="v-table-total-content">
-                <!-- Spacer instead of expand button for first column -->
-                <div
-                  v-if="colIndex === 0 && isExpandable"
-                  class="v-table-total-spacer"
-                />
-
-                <!-- Total cell content -->
-                <div
-                  :class="{ 'v-table-total-text--truncate': !column.interactive }"
-                  class="v-table-total-text"
-                >
-                  <slot
-                    :column="column"
-                    :name="`total-cell-${column.key}`"
-                    :row="totalRow"
-                    :value="totalRow[column.key]"
-                  >
-                    <!-- Default rendering with formatter -->
-                    <span
-                      :class="getCellClass(totalRow[column.key], column, totalRow)"
-                      :title="!column.interactive
-                        ? String(getCellValue(totalRow[column.key], column, totalRow))
-                        : undefined"
-                    >
-                      {{ getCellValue(totalRow[column.key], column, totalRow) }}
-                    </span>
-                  </slot>
-                </div>
-              </div>
-            </TableCell>
-          </template>
-        </div>
       </div>
-    </div>
 
-    <!-- Pagination (only for server-side) -->
-    <TablePagination
-      v-if="pagination"
-      :loading="loading"
-      :page="pageRef"
-      :page-size="pagination.pageSize"
-      :page-size-options="pagination.pageSizeOptions || [10, 25, 50, 100]"
-      :show-size-changer="pagination.showSizeChanger"
-      :total="pagination.total"
-      @page-change="handlePaginationChange"
-    />
-  </div>
+      <!-- Pagination (only for server-side) -->
+      <TablePagination
+        v-if="pagination"
+        ref="paginationRef"
+        :loading="loading"
+        :page="pageRef"
+        :page-size="pagination.pageSize"
+        :page-size-options="pagination.pageSizeOptions || [10, 25, 50, 100]"
+        :show-size-changer="pagination.showSizeChanger"
+        :total="pagination.total"
+        @page-change="handlePaginationChange"
+      />
+    </div>
+  </Teleport>
 </template>
 
 <style lang="scss">

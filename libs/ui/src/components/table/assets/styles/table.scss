@@ -17,7 +17,9 @@
 
 // 4. Features
 @use './fixed';
+@use './highlight';
 @use './pagination';
+@use './fullscreen';
 
 // 5. Utilities
 @use './utilities';

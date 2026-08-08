@@ -2,6 +2,8 @@ import type {
   Column, MultiSelectConfig,
   SortConfig, SortItem, RequestPayload,
   FrontSortPayload, PaginationConfig, ToolbarConfig,
+  ScrollSyncController, HighlightConfig, HighlightSyncController,
+  TableHighlightState,
 } from "./index";
 
 export type RowClassNameFunction<TData = Record<string, unknown>>
@@ -50,6 +52,39 @@ export type TableProps<TData extends Record<string, unknown> = Record<string, un
      * :rowClassName="(row, index) => row.isModified ? 'bg-blue-100 dark:bg-blue-900' : ''"
      */
   rowClassName?: string | RowClassNameFunction<TData>
+
+  /**
+     * Scroll sync controller from useLinkedTables. When present, this table
+     * participates in cross-table scroll and page sync. Pass the whole return
+     * value of useLinkedTables with v-bind — no manual wiring needed.
+     *
+     * Must be present at component creation; going from undefined to a value
+     * after mount has no effect.
+     */
+  scrollSync?: ScrollSyncController
+
+  /**
+     * Pinned-cross highlight. Off by default.
+     *
+     * - `highlight` / `:highlight="true"` — both axes with defaults
+     * - `:highlight="{ column: false }"` — row pin only
+     * - `:highlight="false"` / omitted — off, clearing any existing pin
+     *
+     * There is no `enabled` field inside the object: its presence means enabled.
+     */
+  highlight?: boolean | HighlightConfig
+
+  /**
+     * v-model:highlight-state — full readout of the current pin. Two-way:
+     * writing pins programmatically (restore from a URL, external toolbar).
+     *
+     * The input direction needs `highlight` to be truthy at component creation,
+     * same caveat as `scrollSync`. Output always works while highlight is on.
+     */
+  highlightState?: TableHighlightState<TData> | null
+
+  /** Highlight sync controller from useLinkedTables, delivered by `v-bind="link"`. */
+  highlightSync?: HighlightSyncController
 };
 
 export type UseTableProps = {
@@ -63,6 +98,7 @@ export type TableEmits<TData extends Record<string, unknown> = Record<string, un
     & ((e: "update:selected-rows", selectedRows: TData[]) => void)
     & ((e: "expand-click", payload: { row: TData, column: Column<TData>, callback: () => void, expanded: boolean }) => void)
     & ((e: "update:sort-state", sortState: SortItem[]) => void)
+    & ((e: "update:highlight-state", state: TableHighlightState<TData> | null) => void)
     & ((e: "update:page", page: number) => void)
     & ((e: "request", payload: RequestPayload) => void)
     & ((e: "sort", payload: FrontSortPayload) => void)

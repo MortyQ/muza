@@ -1,35 +1,13 @@
+import type { ComputedRef, MaybeRefOrGetter, Ref } from "vue";
+
+import type { ColumnFormatOptions } from "./format";
+
 // Export toolbar types
 export * from "./toolbar";
 
-// Formatter types
-export type CurrencyFormatter = "USD" | "EUR" | "GBP" | "UAH" | string;
-export type DateFormatter = "short" | "long" | "time" | "datetime" | string;
-export type NumberFormatter = "default" | "compact" | "percent" | "decimal";
-
-export interface ColumnFormatOptions {
-  // Currency formatting
-  // Usage: currency: true (defaults to USD), currency: "EUR", currency: { code: "GBP", decimals: 2 }
-  currency?: boolean | CurrencyFormatter | { code?: CurrencyFormatter, decimals?: number }
-
-  // Percentage formatting
-  percentage?: boolean | { decimals?: number, multiplier?: boolean }
-
-  // Number formatting
-  number?: NumberFormatter | { type?: NumberFormatter, decimals?: number }
-
-  // Date formatting
-  date?: DateFormatter | { format?: DateFormatter, locale?: string }
-
-  // Boolean formatting
-  boolean?: { trueText?: string, falseText?: string, colored?: boolean }
-
-  // File size formatting
-  fileSize?: boolean | { decimals?: number }
-
-  // Custom formatter function
-
-  formatter?: (value: unknown, row?: Record<string, unknown>) => string | number
-}
+// Formatter types live in their own module so toolbar.ts can import them
+// without importing this file back.
+export * from "./format";
 
 // Cell context for cellClass and cellStyle functions
 // Provides named parameters for better developer experience
@@ -60,6 +38,9 @@ export interface Column<TData = any> {
   children?: Column<TData>[] // Nested columns for grouped headers (AG-Grid style)
   sortable?: boolean // Enable sorting for this column
   sortValue?: (row: TData, key: string) => unknown
+
+  // Type icon badge, shown in the column picker (same values as ColumnPickerItem.icon)
+  icon?: string
 
   // Formatting options (mutually exclusive - only one should be used)
   format?: ColumnFormatOptions
@@ -196,3 +177,117 @@ export interface TableHeader {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TableRow = Record<string, any>;
+
+// ── Highlight (pinned cross) ─────────────────────────────────────────────────
+
+/**
+ * Per-axis switches for the pinned-cross highlight.
+ * The presence of this object already means "enabled" — there is deliberately
+ * no `enabled` field, unlike ToolbarConfig. Pass `highlight` / `:highlight="true"`
+ * for defaults, or `false` / omit the prop to disable.
+ */
+export interface HighlightConfig {
+  /** Row pin — button in the row's first cell. Defaults to true. */
+  row?: boolean
+  /** Column pin — button in the header cell. Defaults to true. */
+  column?: boolean
+}
+
+/** A pin is a coordinate: row-only, column-only, or both (the cross). */
+export interface HighlightCoordinate {
+  rowId: string | number | null
+  columnKey: string | null
+}
+
+/**
+ * Full readout of what is pinned, emitted via v-model:highlight-state.
+ * `cell` is populated only when both axes are pinned.
+ */
+export interface TableHighlightState<TData = Record<string, unknown>> {
+  row: {
+    rowId: string | number
+    rowIndex: number
+    row: TData
+  } | null
+  column: {
+    columnKey: string
+    column: Column<TData>
+  } | null
+  cell: {
+    value: unknown
+    formattedValue: string
+  } | null
+}
+
+/**
+ * Controller VTable uses to broadcast/receive pin coordinates across linked tables.
+ * Created internally by useLinkedTables — consumers never construct this directly.
+ */
+export interface HighlightSyncController {
+  register: (receive: (coord: HighlightCoordinate) => void) => void
+  unregister: () => void
+  broadcast: (coord: HighlightCoordinate) => void
+}
+
+/**
+ * provide/inject payload for the column pin button in TableHeader.
+ * Passing three fields as props through TableHeaderSimple/TableHeaderGrouped would be
+ * noise — the header already receives its slots the same way (`tableSlots`).
+ */
+export interface TableHighlightInjection {
+  columnEnabled: ComputedRef<boolean>
+  isColumnPinned: (key: string) => boolean
+  toggleColumn: (key: string) => void
+}
+
+// ── Linked Tables ────────────────────────────────────────────────────────────
+
+export type PaginationMode = "sync" | "independent" | "reset";
+
+/**
+ * Controller object VTable uses to participate in scroll synchronization.
+ * Created internally by useLinkedTables — consumers never construct this directly.
+ */
+export interface ScrollSyncController {
+  register: (el: HTMLElement) => void
+  unregister: () => void
+  onScroll: (x: number, y: number) => void
+  scrollPosition: Ref<{ x: number, y: number } | null>
+}
+
+/**
+ * Reactive object returned by useLinkedTables.
+ * Pass directly to VTable via v-bind: <VTable v-bind="link" />
+ */
+export interface LinkedTableBindings {
+  scrollSync: ScrollSyncController
+  highlightSync: HighlightSyncController
+  page: number
+  "onUpdate:page": (p: number) => void
+}
+
+/**
+ * Discriminated union — totalPages is required (and only valid) when paginationMode is 'sync'.
+ */
+export type LinkedTablesOptions
+  = | {
+    paginationMode: "sync"
+    /** Reactive total page count for this table. Used to clamp synced page. */
+    totalPages: Ref<number>
+    initialPage?: number
+    /** Prefix all registry keys — isolates groups that share ID names. */
+    namespace?: string
+    resetOn?: MaybeRefOrGetter<unknown>
+  }
+  | {
+    paginationMode?: "independent" | "reset"
+    totalPages?: never
+    initialPage?: number
+    namespace?: string
+    resetOn?: MaybeRefOrGetter<unknown>
+  };
+
+export interface UseLinkedTablesReturn {
+  link: LinkedTableBindings
+  resetState: (page?: number) => void
+}

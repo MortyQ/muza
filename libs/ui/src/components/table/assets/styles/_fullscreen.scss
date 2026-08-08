@@ -1,0 +1,91 @@
+// Table Fullscreen Panel Styles
+// ============================================
+@use './variables' as *;
+
+.v-table-wrapper--fullscreen {
+  // top/left/width/height are no longer set here — useTableFullScreen computes the
+  // panel's geometry synchronously from the viewport (see PANEL_INSET_RATIO) before
+  // `isFullscreen` flips, and VTable.vue binds it inline as explicit px via
+  // `panelStyle`. That also sidesteps the old over-constrained-box problem: mixing
+  // inset shorthand (top/left/right/bottom) with an explicit width/height on a
+  // fixed-position box made CSS ignore right/bottom in favor of width/height. Explicit
+  // top/left/width/height inline has no such ambiguity, so nothing needs resetting here.
+  position: fixed;
+  // Full-bleed panel (PANEL_INSET_RATIO = 0): rounded corners and a border would
+  // leave slivers of backdrop showing at the viewport corners/edges, and a drop
+  // shadow has nothing to fall onto. Restore both if the inset ratio goes above 0.
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+// Corner fullscreen expand/collapse toggle — always visible (not hover-gated),
+// half-overhanging the wrapper's top-right border. Relies on `overflow: clip` +
+// overflow-clip-margin on .v-table-wrapper (see _wrapper.scss) so the overhang
+// isn't cut off while the table content itself still clips to the border radius.
+.v-table-fullscreen-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 60; // above sticky header (15) and sticky toolbar (50)
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: color-mix(in oklch, var(--ui-surface) 100%, transparent);
+  border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
+  color: var(--ui-foreground-secondary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transform: translate(50%, -50%);
+  transition: color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+  border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+  box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1),
+  transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    color: var(--ui-primary-hover);
+    border-color: var(--ui-primary);
+    box-shadow: 0 3px 8px -2px color-mix(in oklch, var(--ui-primary) 28%, transparent);
+  }
+
+  &:active {
+    transform: translate(50%, -50%) scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 2px;
+  }
+
+  // Browsers without overflow-clip-margin support (e.g. Safari) would clip the
+  // overhanging half of the button — tuck it fully inside the corner instead.
+  @supports not (overflow-clip-margin: 24px) {
+    top: 9px;
+    right: 9px;
+    transform: none;
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+}
+
+// Fullscreen: no overhang, tuck inside the panel corner
+.v-table-fullscreen-toggle--active {
+  top: 12px;
+  right: 12px;
+  transform: none;
+
+  &:active {
+    transform: scale(0.94);
+  }
+}

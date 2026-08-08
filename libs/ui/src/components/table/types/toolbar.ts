@@ -2,6 +2,24 @@
  * Toolbar types for Table component
  */
 
+import type { ColumnFormatOptions } from "./format";
+
+export interface ColumnPickerItem {
+  key: string
+  label: string
+  /** Display icon badge: 'sys' | 'text' | 'number' | 'date' | any iconify name */
+  icon?: string
+  sortable?: boolean
+  /** Format applied to the Column when this item is added via the picker */
+  format?: ColumnFormatOptions
+}
+
+export interface ColumnPickerGroup {
+  key: string
+  label: string
+  items: ColumnPickerItem[]
+}
+
 export interface ToolbarConfig {
   /**
      * Enable toolbar
@@ -140,6 +158,54 @@ export interface ToolbarConfig {
              */
       initialVisible?: string[]
     }
+
+    /**
+         * Column picker — all available columns, grouped by category.
+         * Renders a second button left of the column-setup button.
+         * Only visible when this option is provided.
+         *
+         * @example
+         * columnPicker: {
+         *   groups: [
+         *     { key: 'system', label: 'System attributes', items: [{ key: 'sku', label: 'SKU', icon: 'sys' }] }
+         *   ]
+         * }
+         */
+    columnPicker?: false | {
+      /** All available column groups shown in the left panel */
+      groups: ColumnPickerGroup[]
+
+      /** Shows a skeleton in the left panel while groups are fetching */
+      loading?: boolean
+
+      /**
+             * Storage key. When set, the selection and order persist automatically
+             * (same storage as columnSetup).
+             */
+      key?: string
+
+      /**
+             * Storage type
+             * @default 'indexedDB'
+             */
+      type?: "indexedDB" | "localStorage" | "sessionStorage"
+
+      /**
+             * Whether columns added via the picker are sortable by default.
+             * Applied when rebuilding columns from saved state, e.g. when groups
+             * load asynchronously.
+             * @default false
+             */
+      defaultSortable?: boolean
+    }
+
+    /**
+         * Fullscreen expand button.
+         * Unlike the other actions this one is opt-out: it shows whenever the
+         * toolbar is enabled unless explicitly set to false.
+         * @default true
+         */
+    fullscreen?: boolean
   }
 }
 

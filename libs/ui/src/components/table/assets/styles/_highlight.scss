@@ -1,0 +1,234 @@
+// Table Highlight (pinned cross) Styles
+// ============================================
+// Everything here is scoped under .v-table-grid--highlight or --pinned so that
+// tables without the `highlight` prop match none of it.
+//
+// PERFORMANCE: the ribbons are box-shadow: inset, never border. A border changes
+// the box size and forces layout; an inset shadow paints inside the existing box.
+// Adjacent cells' insets stitch into one continuous ribbon.
+@use './variables' as *;
+
+$highlight-line: var(--ui-primary);
+$highlight-fill: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-surface));
+$highlight-transition: 300ms ease;
+
+// ── Transition ───────────────────────────────────────────────────────────────
+// Only inside a highlight-enabled grid: other tables keep their existing
+// `transition: background-color 0.15s ease` from _cell.scss untouched.
+// PERFORMANCE: the property list is scoped to the cells that can actually
+// change each property, not declared wholesale on the grid.
+//
+// One pin click toggles .v-table-grid--highlight on the grid, so whatever is
+// declared here starts animating on EVERY cell at once — thousands of them.
+// `opacity` is compositable and cheap at that scale; `box-shadow`,
+// `background-color` and `border-color` force a repaint per frame per element.
+// Those three only ever change on the cross itself (one row + one column), so
+// declaring them for the whole grid animated thousands of cells for nothing.
+.v-table-grid--highlight {
+  // The dimmed majority — opacity only.
+  .v-table-cell,
+  .v-table-header-cell {
+    transition: opacity $highlight-transition;
+  }
+
+  // Fixed cells are dimmed via `color` instead of opacity (_fixed.scss), and
+  // they carry their own background/border transition (_fixed.scss:20) which
+  // this (0,2,0) selector would otherwise replace — so restore both here.
+  .v-table-cell.v-table-fixed-column,
+  .v-table-header-cell.v-table-fixed-column {
+    transition:
+      opacity $highlight-transition,
+      color $highlight-transition,
+      background-color $highlight-transition,
+      border-color $highlight-transition;
+  }
+
+  // The cross itself — a couple of dozen cells. Full set, including the
+  // paint-heavy properties. Doubled class on --pinned-col so it out-specifies
+  // the fixed-column rule above for a column that is both pinned and fixed.
+  .v-table-row-wrapper--pinned > .v-table-cell,
+  .v-table-cell.v-table-cell--pinned-col,
+  .v-table-header-cell.v-table-cell--pinned-col,
+  .v-table-header-cell--pinned-col {
+    transition:
+      opacity $highlight-transition,
+      box-shadow $highlight-transition,
+      background-color $highlight-transition,
+      border-color $highlight-transition,
+      color $highlight-transition;
+  }
+}
+
+// ── Row ribbon ───────────────────────────────────────────────────────────────
+// Specificity note: this must beat `.v-table-row-wrapper:hover > .v-table-cell`
+// (0,2,1) for background-color. Equal specificity + later in the cascade is not
+// enough because _row.scss is @use'd before this file — hence the doubled class.
+.v-table-row-wrapper--pinned.v-table-row-wrapper > .v-table-cell {
+  box-shadow:
+    inset 0 1px 0 $highlight-line,
+    inset 0 -1px 0 $highlight-line;
+  background-color: $highlight-fill;
+  font-weight: $table-font-weight-medium;
+
+  // Left accent — inset, NOT border-left + padding compensation. The existing
+  // --selected block in _row.scss:66-83 does it the reflow way; not replicated.
+  &:first-child {
+    box-shadow:
+      inset 0 1px 0 $highlight-line,
+      inset 0 -1px 0 $highlight-line,
+      inset 3px 0 0 $highlight-line;
+  }
+
+  // rowClassName sets data-custom-row="true", which kills the default hover tint
+  // at 0,3,1. Match that specificity so the pinned fill still wins.
+  &[data-custom-row="true"] {
+    background-color: $highlight-fill;
+  }
+}
+
+// Date/heat cells carry an inline `background` (cellStyle in useHeatmapTableView),
+// which no class can override — and must not be overridden: the heat colour of the
+// pinned row has to stay exactly as it was. The ribbon is box-shadow, so no conflict.
+
+// ── Column ribbon ────────────────────────────────────────────────────────────
+.v-table-cell--pinned-col {
+  box-shadow:
+    inset 1px 0 0 $highlight-line,
+    inset -1px 0 0 $highlight-line;
+}
+
+.v-table-header-cell--pinned-col,
+.v-table-header-cell.v-table-cell--pinned-col {
+  box-shadow: inset 0 3px 0 $highlight-line;
+
+  .v-table-header-label {
+    color: var(--ui-primary-hover);
+    font-weight: $table-font-weight-bold;
+  }
+}
+
+// ── Intersection — the anchor of the cross ───────────────────────────────────
+// A closed frame instead of two crossing ribbons. Must come after both.
+.v-table-row-wrapper--pinned.v-table-row-wrapper > .v-table-cell--pinned-col,
+.v-table-row-wrapper--pinned.v-table-row-wrapper > .v-table-cell--pinned-col:first-child {
+  box-shadow: inset 0 0 0 2px $highlight-line;
+}
+
+// ── Dimming ("spotlight": highlighted means not dimmed) ──────────────────────
+// Scoped under the grid modifier on purpose: adding a second emphasis mode later
+// means adding rules next to these, not editing them.
+.v-table-grid--highlight {
+  .v-table-row-wrapper:not(.v-table-row-wrapper--pinned)
+    > .v-table-cell:not(.v-table-cell--pinned-col):not(.v-table-fixed-column) {
+    opacity: 0.38;
+  }
+}
+
+// Total row and header are never dimmed: the total renders outside TableRow
+// (VTable.vue:955+) and so does the header, so they simply don't match above.
+// That is intentional — the summary has to stay readable.
+
+// ── Pin button ───────────────────────────────────────────────────────────────
+// Mirrors .v-table-fullscreen-toggle (_fullscreen.scss:27-91): same easing,
+// same active scale, same focus ring.
+.v-table-pin-button {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
+  background: color-mix(in oklch, var(--ui-surface) 100%, transparent);
+  color: var(--ui-foreground-secondary);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition:
+    color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    color: var(--ui-primary-hover);
+    border-color: var(--ui-primary);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.94);
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 1px;
+  }
+
+  // Pinned — always visible, and it is now an X.
+  &--active {
+    opacity: 1;
+    pointer-events: auto;
+    color: var(--ui-primary-hover);
+    border-color: var(--ui-primary);
+  }
+}
+
+// Reveal on hover — pure CSS, no JS listeners.
+.v-table-row-wrapper:hover > .v-table-cell .v-table-pin-button,
+.v-table-header-cell:hover .v-table-pin-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+// The cell hosting the row pin button needs a positioning context.
+// `--pin-host` is set from the template on data column 0 whenever the row axis is
+// enabled, which is exactly when the button exists — three reasons it is not
+// `:first-child` under `.v-table-grid--highlight`:
+//
+// 1. The button is revealed on hover even with nothing pinned, but the
+//    `--highlight` marker only appears once something IS pinned. Gating on it
+//    left the button context-less until the first click.
+// 2. With multiSelect on, the row's first child is `.v-table-checkbox-cell`,
+//    which is not a `.v-table-cell` at all (TableCheckboxCell.vue:22) — so
+//    `.v-table-cell:first-child` matched nothing and the button escaped its cell.
+// 3. `:not(.v-table-fixed-column)` is load-bearing, not defensive: a fixed first
+//    column takes `position: sticky` from `.v-table-fixed-left` (_fixed.scss:27-29)
+//    at specificity (0,1,0). A `position: relative` here would out-specify it and
+//    the fixed column would scroll away the moment highlight applied.
+//
+// A fixed cell needs no help anyway — `position: sticky` is already a containing
+// block for absolute children.
+.v-table-cell--pin-host:not(.v-table-fixed-column) {
+  position: relative;
+}
+// .v-table-header-content is already position: relative (_header.scss:213) —
+// nothing to add for the column button.
+
+@media (prefers-reduced-motion: reduce) {
+  .v-table-grid--highlight {
+    .v-table-cell,
+    .v-table-header-cell {
+      transition: none;
+    }
+  }
+
+  // Keep the button's colour/opacity feedback, drop only the scale motion —
+  // reduced motion means less movement, not no feedback.
+  .v-table-pin-button {
+    transition:
+      color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+      border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+
+    &:active {
+      transform: translateY(-50%);
+    }
+  }
+}

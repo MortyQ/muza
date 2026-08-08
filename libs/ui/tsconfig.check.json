@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "composite": false, "noEmit": true, "tsBuildInfoFile": null },
+  "include": ["src/**/*", "src/**/*.vue"]
+}

@@ -60,6 +60,20 @@ export function useVirtualTable(
     }, 150);
   };
 
+  // Public recovery hook: forces the virtualizer to re-measure its scroll
+  // element (e.g. after its container's height changed outside of a scroll
+  // event, such as a fullscreen toggle) and dispatches a synthetic scroll event
+  // so listeners relying on scroll to reveal newly-visible rows still fire.
+  // Does NOT attach/detach scroll listeners — callers that also need the
+  // listener (re)attached must call setupScrollListener() themselves.
+  const remeasure = () => {
+    const el = scrollContainerRef.value;
+    if (!el || !virtualizer.value) return;
+
+    virtualizer.value.measure();
+    el.dispatchEvent(new Event("scroll", { bubbles: true }));
+  };
+
   const setupScrollListener = () => {
     const el = scrollContainerRef.value;
     if (el && !listenerAttached) {
@@ -91,12 +105,8 @@ export function useVirtualTable(
 
   onActivated(() => {
     requestAnimationFrame(() => {
-      const el = scrollContainerRef.value;
-      if (!el || !virtualizer.value) return;
-
-      virtualizer.value.measure();
+      remeasure();
       setupScrollListener();
-      el.dispatchEvent(new Event("scroll", { bubbles: true }));
     });
   });
 
@@ -113,5 +123,6 @@ export function useVirtualTable(
     virtualizer,
     virtualItems,
     totalSize,
+    remeasure,
   };
 }
