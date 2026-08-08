@@ -1,5 +1,17 @@
 @import "@muzakit/config/tailwind/theme.css";
-@import "@muzakit/ui/style.css";
+
+/*
+  Deliberately NOT importing "@muzakit/ui/style.css".
+
+  @muzakit/ui resolves "." to src/index.ts, so this app compiles the library
+  from source and every component brings its own styles with it — including
+  tokens.css, which src/index.ts imports. Pulling in dist/style.css as well
+  ships a second copy of every rule, and that copy is a build artifact that
+  goes stale the moment a style changes without a rebuild. Whichever copy the
+  bundler happens to inject last then wins.
+
+  dist/style.css stays exported for consumers of the built package.
+*/
 
 @layer base {
     body {
