@@ -15,6 +15,7 @@ const {
   disabled = false,
   helperText = "",
   validation = undefined,
+  error = undefined,
   icon = "",
   size = "md",
   id = undefined,
@@ -30,6 +31,8 @@ const {
   disabled?: boolean
   helperText?: string
   validation?: FieldValidation
+  /** Error message set directly, for cases with no validation object */
+  error?: string
   icon?: string
   size?: "sm" | "md" | "lg"
   id?: string
@@ -47,6 +50,11 @@ const {
 const emit = defineEmits<{ clear: [] }>();
 
 const model = defineModel<string | number | undefined>();
+
+const hasError = computed(() => !!(validation?.$error || error));
+const errorMessage = computed(() =>
+  String(validation?.$errors?.[0]?.$message ?? error ?? ""),
+);
 
 const slots: ReturnType<typeof useSlots> = useSlots();
 const generatedId = useId();
@@ -154,7 +162,7 @@ const computedPlaceholder = computed(() => {
           'v-label',
           {
             'v-label--active': isFocused || hasValue,
-            'v-label--error': validation?.$error,
+            'v-label--error': hasError,
             'v-label--with-icon': showLeftIcon && !(isFocused || hasValue),
             'v-label--textarea': textarea
           }
@@ -179,7 +187,7 @@ const computedPlaceholder = computed(() => {
           <VIcon
             v-if="leftIconName || loading"
             :class="{
-              'text-danger': validation?.$error
+              'text-danger': hasError
             }"
             :icon="leftIconName"
             :loading="loading"
@@ -193,9 +201,9 @@ const computedPlaceholder = computed(() => {
         :is="textarea ? 'textarea' : 'input'"
         :id="inputId"
         ref="inputRef"
-        :aria-describedby="validation?.$error ? `${inputId}-error`
+        :aria-describedby="hasError ? `${inputId}-error`
           : helperText ? `${inputId}-helper` : undefined"
-        :aria-invalid="validation?.$error || undefined"
+        :aria-invalid="hasError || undefined"
         :class="[
           'v-input-field',
           sizeClass,
@@ -266,7 +274,7 @@ const computedPlaceholder = computed(() => {
           'v-fieldset',
           {
             'v-fieldset--active': isFocused,
-            'v-fieldset--error': validation?.$error,
+            'v-fieldset--error': hasError,
             'v-fieldset--disabled': disabled
           }
         ]"
@@ -283,7 +291,7 @@ const computedPlaceholder = computed(() => {
     <!-- Helper Text -->
     <slot name="helper-text">
       <p
-        v-if="helperText && !validation?.$error"
+        v-if="helperText && !hasError"
         class="v-input-helper-text"
       >
         {{ helperText }}
@@ -297,10 +305,10 @@ const computedPlaceholder = computed(() => {
     >
       <slot name="error-message">
         <p
-          v-if="validation?.$error"
+          v-if="hasError"
           class="v-input-error-message"
         >
-          {{ String(validation?.$errors[0]?.$message ?? '') }}
+          {{ errorMessage }}
         </p>
       </slot>
     </transition>

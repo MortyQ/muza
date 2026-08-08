@@ -1,0 +1,8 @@
+.v-scroll-panel {
+  overflow-y: auto;
+  max-height: var(--v-scroll-panel-max-height, none);
+  padding: 0.625rem;
+  border-radius: var(--ui-radius-xl);
+  background-color: color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
+  box-shadow: var(--ui-shadow-inner);
+}
