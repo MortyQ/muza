@@ -6,7 +6,9 @@ import {
 
 import type { VirtualItem } from "@tanstack/vue-virtual";
 
-import { VButton, VFloating, VIcon } from "../../index";
+import VButton from "../base/VButton.vue";
+import VIcon from "../base/VIcon.vue";
+import VFloating from "../overlay/VFloating.vue";
 
 import TableBackdrop from "./components/TableBackdrop.vue";
 import TableCell from "./components/TableCell.vue";

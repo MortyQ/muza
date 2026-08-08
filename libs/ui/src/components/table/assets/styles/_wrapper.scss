@@ -9,7 +9,13 @@
   border: 1px solid var(--ui-border-subtle);
   border-radius: 1rem;
   background-color: var(--ui-surface);
-  overflow: hidden;
+
+  // `clip` instead of `hidden`: the wrapper is not a scroll container (the inner
+  // .v-table-scroll-container owns scrolling), so nothing is lost — and `clip`
+  // accepts overflow-clip-margin, which lets the corner fullscreen toggle
+  // overhang the border while the corner radii still clip table content.
+  overflow: clip;
+  overflow-clip-margin: 24px;
   display: flex;
   flex-direction: column;
   align-self: start;

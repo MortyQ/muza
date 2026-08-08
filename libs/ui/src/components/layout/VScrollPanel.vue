@@ -14,6 +14,6 @@ const { maxHeight = undefined } = defineProps<{
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/layout/vscrollpanel.scss";
 </style>

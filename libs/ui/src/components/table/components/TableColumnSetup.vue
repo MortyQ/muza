@@ -3,8 +3,8 @@ import { ref, computed, watch } from "vue";
 
 import VButton from "../../base/VButton.vue";
 import VIcon from "../../base/VIcon.vue";
-import VCheckbox from "../../inputs/VCheckbox.vue";
 import type { Column } from "../types";
+import { readColumnState, writeColumnState, type SavedColumnState } from "../utils/columnState";
 import tableStorage from "../utils/storage";
 
 interface ColumnSetupItem {
@@ -42,26 +42,11 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 // Load saved state from storage (async)
-const loadFromStorage = async (): Promise<{
-  visible: string[]
-  order: string[]
-  fixed?: Record<string, "left" | "right">
-} | null> => {
+const loadFromStorage = async (): Promise<SavedColumnState | null> => {
   if (!props.config?.key) return null;
 
   try {
-    // Set storage type if specified, otherwise use default (indexedDB)
-    if (props.config.type) {
-      tableStorage.setStorageType(props.config.type);
-    }
-
-    const saved = await tableStorage.getTableConfig<{
-      visible: string[]
-      order: string[]
-      fixed?: Record<string, "left" | "right">
-    }>(props.config.key);
-
-    return saved;
+    return await readColumnState(props.config.key, props.config.type);
   }
   catch (error) {
     console.error("Failed to load column setup from storage:", error);
@@ -82,13 +67,13 @@ const saveToStorage = async (setupItems: ColumnSetupItem[]) => {
       }
     });
 
-    const state = {
+    const state: SavedColumnState = {
       visible: setupItems.filter(item => item.visible).map(item => item.key),
       order: setupItems.map(item => item.key),
       fixed: Object.keys(fixed).length > 0 ? fixed : undefined, // Only save if there are fixed columns
     };
 
-    await tableStorage.setTableConfig(props.config.key, state);
+    await writeColumnState(props.config.key, state, props.config.type);
   }
   catch (error) {
     console.error("Failed to save column setup to storage:", error);
@@ -106,11 +91,7 @@ const flattenColumns = (columns: Column[]): Column[] => {
 };
 
 // Create setup items from columns
-const createSetupItems = (savedState?: {
-  visible: string[]
-  order: string[]
-  fixed?: Record<string, "left" | "right">
-} | null): ColumnSetupItem[] => {
+const createSetupItems = (savedState?: SavedColumnState | null): ColumnSetupItem[] => {
   const flatCols = flattenColumns(props.columns);
 
   // If we have saved state, use it
@@ -232,6 +213,7 @@ const handleApply = () => {
 const allVisible = computed(() => items.value.every(item => item.visible));
 const allHidden = computed(() => items.value.every(item => !item.visible));
 const someVisible = computed(() => !allVisible.value && !allHidden.value);
+const visibleCount = computed(() => items.value.filter(item => item.visible).length);
 
 // Drag state
 const draggedIndex = ref<number | null>(null);
@@ -423,32 +405,111 @@ const handleReset = async () => {
 
 <template>
   <div class="column-setup">
-    <!-- Header with actions -->
+    <!-- Header -->
     <div class="column-setup-header">
-      <div class="column-setup-title">
-        <VIcon
-          icon="lucide:table-2"
-          size="small"
-          variant="link"
-        />
-        <span>Column Settings</span>
-      </div>
-      <VButton
-        icon="mdi:refresh"
-        size="small"
-        variant="link"
+      <span class="column-setup-title">Column Settings</span>
+      <button
+        class="column-setup-reset-btn"
+        title="Reset to default"
         @click="handleReset"
-      />
+      >
+        <svg
+          fill="none"
+          height="13"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.3"
+          viewBox="0 0 24 24"
+          width="13"
+        >
+          <polyline points="1 4 1 10 7 10" />
+          <path d="M3.51 15a9 9 0 1 0 .49-4.5" />
+        </svg>
+      </button>
     </div>
 
-    <!-- Toggle all checkbox -->
-    <div class="column-setup-toggle-all">
-      <VCheckbox
-        :indeterminate="someVisible"
-        :model-value="allVisible"
-        label="Toggle All"
-        @update:model-value="handleToggleAll"
-      />
+    <!-- Toggle-all row -->
+    <div
+      class="column-setup-toggle-all"
+      @click="handleToggleAll"
+    >
+      <!-- 3-state eye: all visible / partial / none visible -->
+      <div
+        :class="{
+          'column-setup-toggle-eye--none': allHidden,
+        }"
+        class="column-setup-toggle-eye"
+      >
+        <!-- All visible: eye with circle pupil -->
+        <svg
+          v-if="allVisible"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.2"
+          viewBox="0 0 24 24"
+          width="14"
+        >
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle
+            cx="12"
+            cy="12"
+            r="3"
+          />
+        </svg>
+
+        <!-- Partial (indeterminate): eye outline with horizontal dash -->
+        <svg
+          v-else-if="someVisible"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.2"
+          viewBox="0 0 24 24"
+          width="14"
+        >
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <line
+            x1="9"
+            x2="15"
+            y1="12"
+            y2="12"
+          />
+        </svg>
+
+        <!-- None visible: eye-off -->
+        <svg
+          v-else
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.2"
+          viewBox="0 0 24 24"
+          width="14"
+        >
+          <path
+            d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94
+               M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19
+               m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+          />
+          <line
+            x1="1"
+            x2="23"
+            y1="1"
+            y2="23"
+          />
+        </svg>
+      </div>
+
+      <span class="column-setup-toggle-label">Show all columns</span>
+      <span class="column-setup-toggle-count">{{ visibleCount }} / {{ items.length }}</span>
     </div>
 
     <!-- Column list with drag-and-drop -->
@@ -462,7 +523,6 @@ const handleReset = async () => {
         :class="{
           'column-setup-item--dragging': draggedIndex === index,
           'column-setup-item--drag-over': dragOverIndex === index,
-          'column-setup-item--fixed': item.fixed,
           'column-setup-item--no-reorder': config?.allowReorder === false,
         }"
         :draggable="config?.allowReorder !== false"
@@ -473,31 +533,79 @@ const handleReset = async () => {
         @dragstart="handleDragStart(index, $event)"
         @drop="handleDrop(index, $event)"
       >
-        <!-- Drag handle -->
+        <!-- Drag handle — always visible at low opacity -->
         <div
           v-if="config?.allowReorder !== false"
           class="column-setup-item-drag"
         >
           <VIcon
-            icon="mdi:drag-vertical"
-            size="small"
+            :size="16"
+            icon="lucide:grip-vertical"
           />
         </div>
 
-        <!-- Checkbox -->
-        <div class="column-setup-item-checkbox">
-          <VCheckbox
-            :model-value="item.visible"
-            @update:model-value="handleToggle(item.key)"
-          />
-        </div>
+        <!-- Eye toggle button -->
+        <button
+          :class="item.visible ? 'column-setup-item-eye--visible' : 'column-setup-item-eye--hidden'"
+          :title="item.visible ? 'Hide column' : 'Show column'"
+          class="column-setup-item-eye"
+          @click.stop="handleToggle(item.key)"
+        >
+          <!-- Visible: eye open -->
+          <svg
+            v-if="item.visible"
+            fill="none"
+            height="14"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.2"
+            viewBox="0 0 24 24"
+            width="14"
+          >
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+            />
+          </svg>
 
-        <!-- Label -->
-        <div class="column-setup-item-label">
+          <!-- Hidden: eye-off -->
+          <svg
+            v-else
+            fill="none"
+            height="14"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.2"
+            viewBox="0 0 24 24"
+            width="14"
+          >
+            <path
+              d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94
+               M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19
+               m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+            />
+            <line
+              x1="1"
+              x2="23"
+              y1="1"
+              y2="23"
+            />
+          </svg>
+        </button>
+
+        <!-- Label — reduced opacity when hidden -->
+        <div
+          :class="{ 'column-setup-item-label--hidden': !item.visible }"
+          class="column-setup-item-label"
+        >
           {{ item.label }}
         </div>
 
-        <!-- Fixed toggle button (only for first 2 positions) -->
+        <!-- Pin button — opacity 0 by default, shown on row hover via CSS -->
         <button
           v-if="canBeFixed(index)"
           :class="{ 'column-setup-item-fixed-btn--active': isFixedLeft(item) }"
@@ -506,43 +614,43 @@ const handleReset = async () => {
           @click.stop="toggleFixed(index)"
         >
           <VIcon
-            :icon="isFixedLeft(item) ? 'mdi:pin' : 'mdi:pin-outline'"
+            :icon="isFixedLeft(item) ? 'lucide:pin' : 'lucide:pin-off'"
             :size="16"
           />
         </button>
 
-        <!-- Fixed indicator badge (when fixed but position > 1) -->
+        <!-- Warning badge: fixed column dragged out of first 2 positions -->
         <div
           v-if="item.fixed && !canBeFixed(index)"
           class="column-setup-item-badge column-setup-item-badge--warning"
-          title="Fixed will be removed - move to top 2 positions"
+          title="Fixed will be removed — move to top 2 positions"
         >
           <VIcon
-            icon="mdi:alert"
-            size="small"
+            :size="16"
+            icon="lucide:triangle-alert"
           />
         </div>
       </div>
     </div>
 
-    <!-- Footer with hint and apply button -->
+    <!-- Footer -->
     <div class="column-setup-footer">
       <span
         v-if="config?.allowReorder !== false"
         class="column-setup-hint"
       >
         <VIcon
-          icon="mdi:information-outline"
-          size="small"
+          :size="11"
+          icon="lucide:grip-vertical"
         />
-        Drag to reorder • Pin first 2 columns
+        Drag to reorder
       </span>
 
       <VButton
         :disabled="!hasUnsavedChanges"
-        size="small"
-        text="Apply Changes"
+        text="Apply"
         variant="primary"
+        class="h-[30px]"
         @click="handleApply"
       />
     </div>

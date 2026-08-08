@@ -170,6 +170,6 @@ const handleClose = (event: MouseEvent): void => {
   </span>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/base/vchip.scss";
 </style>

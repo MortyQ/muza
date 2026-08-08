@@ -203,6 +203,6 @@ defineExpose({ reset });
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/inputs/vfileupload.scss";
 </style>

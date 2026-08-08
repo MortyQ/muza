@@ -107,6 +107,6 @@ watch(isPending, (pending) => {
   </Teleport>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/overlay/navigationguardmodal.scss";
 </style>

@@ -101,6 +101,6 @@ const rootStyle = computed(() =>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/base/vavatar.scss";
 </style>

@@ -185,6 +185,6 @@ const toneClass = (value: NoticeTone = "primary"): string => `v-info-notice--ton
   </component>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/layout/vinfonotice.scss";
 </style>

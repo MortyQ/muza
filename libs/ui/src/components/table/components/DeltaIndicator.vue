@@ -142,6 +142,6 @@ const rootClass = computed(() => [
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../../styles/components/table/delta.scss";
 </style>

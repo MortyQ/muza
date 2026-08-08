@@ -83,7 +83,7 @@ withDefaults(defineProps<Props>(), {
   }
 
   &__icon {
-    @apply text-primary;
+    color: var(--ui-primary);
     flex-shrink: 0;
   }
 

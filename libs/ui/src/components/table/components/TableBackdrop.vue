@@ -22,7 +22,7 @@ const emit = defineEmits<{
   </Teleport>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .v-table-fullscreen-backdrop {
   position: fixed;
   inset: 0;

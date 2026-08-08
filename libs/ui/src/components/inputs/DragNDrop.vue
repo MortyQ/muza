@@ -301,6 +301,6 @@ defineExpose({ clearFiles });
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 @import "../../styles/components/inputs/dragndrop.scss";
 </style>

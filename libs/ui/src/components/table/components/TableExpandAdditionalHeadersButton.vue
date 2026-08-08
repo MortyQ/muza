@@ -46,8 +46,7 @@ const emit = defineEmits<{
   /* Modern rounded style */
   border-radius: 6px;
 
-  /* Colors using Tailwind theme */
-  @apply text-primary;
+  color: var(--ui-primary);
 
   /* Smooth transitions */
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -55,20 +54,21 @@ const emit = defineEmits<{
   /* Hover state - subtle background with primary color */
 
   &:hover {
-    @apply bg-primary/10;
+    background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
   }
 
   /* Active state - micro interaction */
 
   &:active {
     transform: scale(0.92);
-    @apply bg-primary/20;
+    background-color: color-mix(in oklch, var(--ui-primary) 20%, transparent);
   }
 
   /* Focus state - accessibility */
 
   &:focus-visible {
-    @apply outline-2 outline-primary outline-offset-2;
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 2px;
   }
 }
 
