@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed, inject, type Slot } from "vue";
 
-import { VIcon, VTooltip } from "../../../index";
+import VIcon from "../../base/VIcon.vue";
+import VTooltip from "../../overlay/VTooltip.vue";
 import type { Column, SortOrder } from "../types";
 
 const props = withDefaults(defineProps<Props>(), {

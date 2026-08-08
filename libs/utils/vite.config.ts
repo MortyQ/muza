@@ -11,8 +11,10 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["vue"],
+      external: ["vue", "vue-router", "luxon"],
     },
   },
-  plugins: [dts({ rollupTypes: true, tsconfigPath: "./tsconfig.json" })],
+  // No `rollupTypes` — api-extractor cannot resolve the entry under this
+  // tsconfig layout, and `types` points at source anyway. Matches libs/ui.
+  plugins: [dts({ tsconfigPath: "./tsconfig.json" })],
 });

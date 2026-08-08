@@ -1,0 +1,53 @@
+/* Shared tone + size scale for DeltaIndicator and DeltaValue. */
+
+.v-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  line-height: 1.25;
+  color: var(--ui-foreground);
+
+  &--sm {
+    font-size: 0.75rem;
+  }
+
+  &--default {
+    font-size: 0.875rem;
+  }
+
+  &--lg {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  &--positive {
+    color: var(--ui-success);
+  }
+
+  &--negative {
+    color: var(--ui-danger);
+  }
+
+  &--zero {
+    color: var(--ui-foreground-secondary);
+  }
+}
+
+.v-delta-value {
+  display: flex;
+  flex-direction: column;
+
+  &__main {
+    color: var(--ui-foreground);
+    font-size: 1rem;
+  }
+
+  &--sm &__main {
+    font-size: 0.875rem;
+  }
+
+  &--lg &__main {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+}

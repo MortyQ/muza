@@ -18,7 +18,14 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["vue", "vue-router", "@vueuse/core", "@iconify/vue"],
+      external: [
+        "vue",
+        "vue-router",
+        "@vueuse/core",
+        "@iconify/vue",
+        "@muzakit/utils",
+        "luxon",
+      ],
       output: {
         assetFileNames: "style.css",
       },

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import { VIcon } from "../../../index";
-import { formatNumber } from "../../../utils/formatters";
+import { formatNumber } from "@muzakit/utils";
+
+import VIcon from "../../base/VIcon.vue";
 
 interface Props {
   page: number // Current page (1-based)

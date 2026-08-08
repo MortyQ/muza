@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { VCheckbox } from "../../../index";
+import VCheckbox from "../../inputs/VCheckbox.vue";
 
 interface Props {
   checked: boolean

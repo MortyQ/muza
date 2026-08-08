@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import { VIcon } from "../../../index";
+import VIcon from "../../base/VIcon.vue";
 
 export interface DeltaValueProps {
   /**
@@ -53,48 +53,48 @@ export interface DeltaValueProps {
   showZeroDelta?: boolean
 }
 
-const props = withDefaults(defineProps<DeltaValueProps>(), {
-  value: undefined,
-  delta: undefined,
-  format: undefined,
-  deltaFormat: undefined,
-  deltaAsPercentage: true,
-  reverse: false,
-  size: "default",
-  showZeroDelta: true,
-});
+const {
+  value = undefined,
+  delta = undefined,
+  format = undefined,
+  deltaFormat = undefined,
+  deltaAsPercentage = true,
+  reverse = false,
+  size = "default",
+  showZeroDelta = true,
+} = defineProps<DeltaValueProps>();
 
 // Check if delta is positive
 const isPositive = computed(() => {
-  if (props.delta === null || props.delta === undefined) return null;
-  return props.reverse ? props.delta < 0 : props.delta > 0;
+  if (delta === null || delta === undefined) return null;
+  return reverse ? delta < 0 : delta > 0;
 });
 
 // Check if delta is negative
 const isNegative = computed(() => {
-  if (props.delta === null || props.delta === undefined) return null;
-  return props.reverse ? props.delta > 0 : props.delta < 0;
+  if (delta === null || delta === undefined) return null;
+  return reverse ? delta > 0 : delta < 0;
 });
 
 // Check if delta is zero
 const isZero = computed(() => {
-  return props.delta === 0;
+  return delta === 0;
 });
 
 // Should show delta
 const showDelta = computed(() => {
-  if (props.delta === null || props.delta === undefined) return false;
-  return props.showZeroDelta || props.delta !== 0;
+  if (delta === null || delta === undefined) return false;
+  return showZeroDelta || delta !== 0;
 });
 
 // Format delta value
 const formattedDelta = computed(() => {
-  if (props.delta === null || props.delta === undefined) return "";
+  if (delta === null || delta === undefined) return "";
 
-  const absValue = Math.abs(props.delta);
+  const absValue = Math.abs(delta);
 
-  if (props.deltaFormat) {
-    const { type = "number", decimals = 0, currencyCode = "USD" } = props.deltaFormat;
+  if (deltaFormat) {
+    const { type = "number", decimals = 0, currencyCode = "USD" } = deltaFormat;
 
     switch (type) {
       case "currency":
@@ -119,18 +119,18 @@ const formattedDelta = computed(() => {
     }
   }
 
-  const formatted = absValue.toFixed(props.format?.decimals ?? 0);
+  const formatted = absValue.toFixed(format?.decimals ?? 0);
 
-  return props.deltaAsPercentage ? `${formatted}%` : formatted;
+  return deltaAsPercentage ? `${formatted}%` : formatted;
 });
 
 // Format main value
 const formattedValue = computed(() => {
-  if (props.value === null || props.value === undefined) return null;
+  if (value === null || value === undefined) return null;
 
-  if (typeof props.value === "string") return props.value;
+  if (typeof value === "string") return value;
 
-  const { type = "number", decimals = 0, currencyCode = "USD" } = props.format || {};
+  const { type = "number", decimals = 0, currencyCode = "USD" } = format || {};
 
   switch (type) {
     case "currency":
@@ -139,94 +139,80 @@ const formattedValue = computed(() => {
         currency: currencyCode,
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
-      }).format(props.value);
+      }).format(value);
     case "percentage": {
       const formattedNumber = new Intl.NumberFormat("en-US", {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
-      }).format(props.value);
+      }).format(value);
       return `${formattedNumber}%`;
     }
     default:
       return new Intl.NumberFormat("en-US", {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
-      }).format(props.value);
+      }).format(value);
   }
 });
 
-// Size classes
-const sizeClasses = computed(() => {
-  switch (props.size) {
+const iconSize = computed(() => {
+  switch (size) {
     case "sm":
-      return {
-        value: "text-sm",
-        delta: "text-xs",
-        icon: 14,
-      };
+      return 14;
     case "lg":
-      return {
-        value: "text-lg font-semibold",
-        delta: "text-sm",
-        icon: 20,
-      };
+      return 20;
     default:
-      return {
-        value: "text-base",
-        delta: "text-sm",
-        icon: 16,
-      };
+      return 16;
   }
 });
+
+const deltaSize = computed(() => (size === "sm" ? "sm" : "default"));
+
+const toneIcon = computed<string | null>(() => {
+  if (isPositive.value) return "lucide:arrow-up";
+  if (isNegative.value) return "lucide:arrow-down";
+  if (isZero.value) return "lucide:minus";
+  return null;
+});
+
+const deltaClass = computed(() => [
+  `v-delta--${deltaSize.value}`,
+  {
+    "v-delta--positive": isPositive.value,
+    "v-delta--negative": isNegative.value,
+    "v-delta--zero": isZero.value,
+  },
+]);
 </script>
 
 <template>
-  <div class="delta-value flex flex-col">
-    <!-- Main value (optional) -->
+  <div
+    :class="`v-delta-value--${size}`"
+    class="v-delta-value"
+  >
     <span
       v-if="formattedValue !== null"
-      :class="sizeClasses.value"
-      class="text-mainText"
+      class="v-delta-value__main"
     >
       {{ formattedValue }}
     </span>
 
-    <!-- Delta row -->
     <div
       v-if="showDelta"
-      :class="sizeClasses.delta"
-      class="flex items-center gap-0.5"
+      :class="deltaClass"
+      class="v-delta"
     >
-      <!-- Arrow icon -->
       <VIcon
-        v-if="isPositive"
-        :size="sizeClasses.icon"
-        color="text-success"
-        icon="lucide:arrow-up"
-      />
-      <VIcon
-        v-else-if="isNegative"
-        :size="sizeClasses.icon"
-        color="text-negative"
-        icon="lucide:arrow-down"
-      />
-      <VIcon
-        v-else-if="isZero"
-        :size="sizeClasses.icon"
-        color="text-secondaryText"
-        icon="lucide:minus"
+        v-if="toneIcon"
+        :icon="toneIcon"
+        :size="iconSize"
       />
 
-      <!-- Delta value -->
-      <span
-        :class="{
-          'text-success': isPositive,
-          'text-negative': isNegative,
-          'text-secondaryText': isZero,
-        }"
-      >
-        {{ formattedDelta }}
-      </span>
+      <span class="v-delta__text">{{ formattedDelta }}</span>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@import "../../../styles/components/table/delta.scss";
+</style>

@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { computed, inject, type Slot } from "vue";
 
-import { VButton, VFloating, VInput } from "../../../index";
+import VButton from "../../base/VButton.vue";
+import VInput from "../../inputs/VInput.vue";
+import VFloating from "../../overlay/VFloating.vue";
 import type { ToolbarConfig } from "../types/toolbar";
 
 interface Props {

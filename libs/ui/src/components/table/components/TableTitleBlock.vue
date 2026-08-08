@@ -12,7 +12,7 @@
  * </TableTitleBlock>
  * ```
  */
-import { VIcon } from "../../../index";
+import VIcon from "../../base/VIcon.vue";
 
 interface Props {
   /** Block title */

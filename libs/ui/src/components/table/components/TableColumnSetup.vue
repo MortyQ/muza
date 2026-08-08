@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue";
 
-import { VButton, VCheckbox, VIcon } from "../../../index";
+import VButton from "../../base/VButton.vue";
+import VIcon from "../../base/VIcon.vue";
+import VCheckbox from "../../inputs/VCheckbox.vue";
 import type { Column } from "../types";
 import tableStorage from "../utils/storage";
 

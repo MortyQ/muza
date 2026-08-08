@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { VIcon } from "../../../index";
+import VIcon from "../../base/VIcon.vue";
 
 defineProps<{
   title?: string

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import { VIcon } from "../../../index";
-import { formatCurrency, formatNumber, formatPercentage } from "../../../utils/formatters";
+import { formatCurrency, formatNumber, formatPercentage } from "@muzakit/utils";
+
+import VIcon from "../../base/VIcon.vue";
 import type { ColumnFormatOptions } from "../types";
 
 export interface DeltaIndicatorProps {
@@ -97,53 +98,50 @@ const formattedValue = computed(() => {
   return String(value);
 });
 
-const sizeClasses = computed(() => {
+const iconSize = computed(() => {
   switch (size) {
     case "sm":
-      return { text: "text-xs", icon: 12 };
+      return 12;
     case "lg":
-      return { text: "text-sm font-semibold", icon: 18 };
+      return 18;
     default:
-      return { text: "text-sm", icon: 14 };
+      return 14;
   }
 });
+
+const toneIcon = computed<string | null>(() => {
+  if (isPositive.value) return "lucide:arrow-up";
+  if (isNegative.value) return "lucide:arrow-down";
+  if (isZero.value) return "lucide:minus";
+  return null;
+});
+
+const rootClass = computed(() => [
+  `v-delta--${size}`,
+  {
+    "v-delta--positive": isPositive.value,
+    "v-delta--negative": isNegative.value,
+    "v-delta--zero": isZero.value,
+  },
+]);
 </script>
 
 <template>
   <div
     v-if="shouldShow"
-    :class="sizeClasses.text"
-    class="flex items-center gap-0.5"
+    :class="rootClass"
+    class="v-delta"
   >
-    <template v-if="showIcon">
-      <VIcon
-        v-if="isPositive"
-        :size="sizeClasses.icon"
-        color="text-success"
-        icon="lucide:arrow-up"
-      />
-      <VIcon
-        v-else-if="isNegative"
-        :size="sizeClasses.icon"
-        color="text-negative"
-        icon="lucide:arrow-down"
-      />
-      <VIcon
-        v-else-if="isZero"
-        :size="sizeClasses.icon"
-        color="text-secondaryText"
-        icon="lucide:minus"
-      />
-    </template>
+    <VIcon
+      v-if="showIcon && toneIcon"
+      :icon="toneIcon"
+      :size="iconSize"
+    />
 
-    <span
-      :class="{
-        'text-success': isPositive,
-        'text-negative': isNegative,
-        'text-secondaryText': isZero,
-      }"
-    >
-      {{ formattedValue }}
-    </span>
+    <span class="v-delta__text">{{ formattedValue }}</span>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@import "../../../styles/components/table/delta.scss";
+</style>

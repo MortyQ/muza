@@ -5,7 +5,8 @@ import {
   formatFileSize,
   formatNumber,
   formatPercentage,
-} from "../../../utils/formatters";
+} from "@muzakit/utils";
+
 import type { Column, ColumnFormatOptions } from "../types";
 
 /**

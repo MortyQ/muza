@@ -17,7 +17,7 @@
  */
 import { toRef } from "vue";
 
-import { VSelect } from "../../../index";
+import VSelect from "../../inputs/VSelect.vue";
 import {
   useTablePeriodSelect,
   type PeriodOption,
