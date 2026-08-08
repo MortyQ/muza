@@ -178,34 +178,35 @@ export function useFixedColumns(
     return !!column.fixed;
   };
 
-  // Check if this is the last left fixed column (for shadow)
-  const isLastLeftFixed = (columnKey: string): boolean => {
-    if (leftFixedColumns.value.length === 0) return false;
-
-    // Find last left fixed column in original order
-    let lastLeftFixedKey: string | null = null;
+  // Both shadow checks are called once per header cell AND once per data cell,
+  // so N×M times per render. Resolving the key once per columns change turns
+  // each call into a string comparison instead of a full re-scan.
+  const lastLeftFixedKey = computed<string | null>(() => {
+    let key: string | null = null;
     for (const col of columns.value) {
       if (col.fixed === "left") {
-        lastLeftFixedKey = col.key;
+        key = col.key;
       }
     }
+    return key;
+  });
 
-    return lastLeftFixedKey === columnKey;
-  };
-
-  // Check if this is the first right fixed column (for shadow)
-  const isFirstRightFixed = (columnKey: string): boolean => {
-    if (rightFixedColumns.value.length === 0) return false;
-
-    // Find first right fixed column in original order
+  const firstRightFixedKey = computed<string | null>(() => {
     for (const col of columns.value) {
       if (col.fixed === "right") {
-        return col.key === columnKey;
+        return col.key;
       }
     }
+    return null;
+  });
 
-    return false;
-  };
+  // Check if this is the last left fixed column (for shadow)
+  const isLastLeftFixed = (columnKey: string): boolean =>
+    lastLeftFixedKey.value === columnKey;
+
+  // Check if this is the first right fixed column (for shadow)
+  const isFirstRightFixed = (columnKey: string): boolean =>
+    firstRightFixedKey.value === columnKey;
 
   return {
     leftFixedColumns,

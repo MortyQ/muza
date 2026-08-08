@@ -15,3 +15,8 @@ export { default as TablePeriodSelect, type PeriodChangePayload } from "./TableP
 export { default as TableRow } from "./TableRow.vue";
 export { default as TableTitleBlock } from "./TableTitleBlock.vue";
 export { default as TableToolbar } from "./TableToolbar.vue";
+export { default as TableBackdrop } from "./TableBackdrop.vue";
+export { default as TableColumnPicker } from "./TableColumnPicker.vue";
+export { default as TableFullscreenToggle } from "./TableFullscreenToggle.vue";
+export { default as TableLoadingOverlay } from "./TableLoadingOverlay.vue";
+export { default as TablePinButton } from "./TablePinButton.vue";

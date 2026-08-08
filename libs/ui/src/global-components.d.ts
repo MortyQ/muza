@@ -30,6 +30,12 @@ declare module "vue" {
     VToaster: typeof import("./components/feedback/VToaster.vue").default
     VLoader: typeof import("./components/feedback/VLoader.vue").default
     VProgressBar: typeof import("./components/feedback/VProgressBar.vue").default
+    VTablePagination: typeof import("./components/table/components/TablePagination.vue").default
+    TableTitleBlock: typeof import("./components/table/components/TableTitleBlock.vue").default
+    TableEmptyState: typeof import("./components/table/components/TableEmptyState.vue").default
+    TablePeriodSelect: typeof import("./components/table/components/TablePeriodSelect.vue").default
+    DeltaValue: typeof import("./components/table/components/DeltaValue.vue").default
+    DeltaIndicator: typeof import("./components/table/components/DeltaIndicator.vue").default
     VAccordion: typeof import("./components/layout/VAccordion.vue").default
     VInfoNotice: typeof import("./components/layout/VInfoNotice.vue").default
     VScrollPanel: typeof import("./components/layout/VScrollPanel.vue").default

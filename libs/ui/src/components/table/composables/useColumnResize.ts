@@ -21,6 +21,12 @@ export function useColumnResize(columns: Ref<Column[]>) {
     startWidth: 0,
   });
 
+  // rAF throttling for mousemove — collapses every move within a frame into a
+  // single (columnKey, width) commit to resizedWidths.
+  let resizeRafId: number | null = null;
+  let pendingColumnKey: string | null = null;
+  let pendingWidth = 0;
+
   // Check if column is resizable
   // width: "flex" = not resizable (flexible width)
   // width: undefined or "150px" etc = resizable
@@ -111,27 +117,49 @@ export function useColumnResize(columns: Ref<Column[]>) {
     document.body.style.userSelect = "none";
   };
 
-  // Resize process (mousemove)
+  // Commit the last pending pointer position. Runs at most once per frame,
+  // however many mousemove events fired in between.
+  const commitPendingWidth = () => {
+    resizeRafId = null;
+    if (pendingColumnKey === null) return;
+
+    // ⚡ IMPORTANT: Create a NEW Map instead of mutating the existing one
+    // Otherwise Vue won't detect changes (Map mutations are not tracked)
+    const newMap = new Map(resizedWidths.value);
+    newMap.set(pendingColumnKey, pendingWidth);
+    resizedWidths.value = newMap;
+  };
+
+  // Resize process (mousemove) — throttled to one commit per animation frame,
+  // so a fast drag does not rebuild the width Map on every pointer event.
   const handleMouseMove = (event: MouseEvent) => {
     if (!resizeState.value.isResizing || !resizeState.value.columnKey) {
       return;
     }
 
     const deltaX = event.clientX - resizeState.value.startX;
-    const newWidth = Math.max(
+
+    pendingColumnKey = resizeState.value.columnKey;
+    pendingWidth = Math.max(
       MIN_COLUMN_WIDTH,
       resizeState.value.startWidth + deltaX,
     );
 
-    // ⚡ IMPORTANT: Create a NEW Map instead of mutating the existing one
-    // Otherwise Vue won't detect changes (Map mutations are not tracked)
-    const newMap = new Map(resizedWidths.value);
-    newMap.set(resizeState.value.columnKey, newWidth);
-    resizedWidths.value = newMap;
+    if (resizeRafId === null) {
+      resizeRafId = requestAnimationFrame(commitPendingWidth);
+    }
   };
 
   // End resize (mouseup)
   const stopResize = () => {
+    // Flush the last pending position before tearing the state down, otherwise
+    // the final few pixels of the drag are lost.
+    if (resizeRafId !== null) {
+      cancelAnimationFrame(resizeRafId);
+      commitPendingWidth();
+    }
+    pendingColumnKey = null;
+
     resizeState.value = {
       isResizing: false,
       columnKey: null,

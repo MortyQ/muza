@@ -50,8 +50,88 @@ export { default as VToaster } from "./components/feedback/VToaster.vue";
 export { default as VLoader } from "./components/feedback/VLoader.vue";
 export { default as VProgressBar } from "./components/feedback/VProgressBar.vue";
 export { default as VTable } from "./components/table/VTable.vue";
-export type { Column, SortItem, PaginationConfig, ToolbarConfig, ExpandableRow } from "./components/table/types/index";
-export type { TableProps } from "./components/table/types/props";
+
+// ── Table: standalone subcomponents ─────────────────────────────────────────
+export {
+  DeltaValue, type DeltaValueProps,
+  DeltaIndicator, type DeltaIndicatorProps,
+  TableColumnPicker,
+  TableEmptyState,
+  TableExpandAdditionalHeadersButton,
+  TableFullscreenToggle,
+  TableLoadingOverlay,
+  TablePagination as VTablePagination,
+  TablePeriodSelect, type PeriodChangePayload,
+  TablePinButton,
+  TableTitleBlock,
+} from "./components/table/components/index";
+
+// ── Table: composables ──────────────────────────────────────────────────────
+export {
+  useTablePeriodSelect,
+  type PeriodGranularity,
+  type PeriodOption,
+  type PeriodDateRange,
+  type PeriodRequestParams,
+  type UseTablePeriodSelectOptions,
+} from "./components/table/composables/useTablePeriodSelect";
+export {
+  useTableFormatters,
+  formatCellValue,
+  type FormattedCellValue,
+} from "./components/table/composables/useTableFormatters";
+export { useLinkedTables } from "./components/table/composables/useLinkedTables";
+export { useTablePage, TABLE_PAGE_KEY } from "./components/table/composables/useTablePage";
+
+// ── Table: storage ──────────────────────────────────────────────────────────
+export {
+  default as tableStorage,
+  type StorageType,
+  type StorageAdapter,
+} from "./components/table/utils/storage";
+
+// ── Table: types ────────────────────────────────────────────────────────────
+export type {
+  Column,
+  ColumnFormatOptions,
+  CellContext,
+  HeaderContext,
+  HeaderCell,
+  ExpandableRow,
+  FlattenedRow,
+  SortOrder,
+  SortType,
+  SortItem,
+  SortConfig,
+  RequestPayload,
+  FrontSortPayload,
+  PaginationConfig,
+  PaginationMode,
+  PaginatedResponse,
+  MultiSelectConfig,
+  SelectionMode,
+  CheckboxState,
+  CurrencyFormatter,
+  DateFormatter,
+  NumberFormatter,
+  ToolbarConfig,
+  ExportFormat,
+  ColumnPickerItem,
+  ColumnPickerGroup,
+  ScrollSyncController,
+  LinkedTableBindings,
+  LinkedTablesOptions,
+  UseLinkedTablesReturn,
+  HighlightConfig,
+  HighlightCoordinate,
+  HighlightSyncController,
+  TableHighlightState,
+} from "./components/table/types/index";
+export type {
+  TableProps,
+  TableEmits,
+  RowClassNameFunction,
+} from "./components/table/types/props";
 
 export { useToast } from "./composables/useToast";
 export { useModal } from "./composables/useModal";
