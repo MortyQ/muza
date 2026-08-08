@@ -33,6 +33,19 @@ export default [
   },
 
   {
+    path: "/components-demo",
+    name: RouteNames.COMPONENTS_DEMO,
+    component: () => import("@/pages/ComponentsDemoPage.vue"),
+    meta: {
+      title: "Components Demo",
+      showInMenu: true,
+      menuTitle: "Components",
+      menuIcon: "lucide:component",
+      menuOrder: 5,
+      permissions: ["read:list"],
+    },
+  },
+  {
     path: "/table-demo",
     name: RouteNames.TABLE_DEMO,
     component: () => import("@/pages/TableDemoPage.vue"),

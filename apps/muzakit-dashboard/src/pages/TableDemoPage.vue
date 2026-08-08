@@ -1,7 +1,14 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-import { VTable, type Column, type ExpandableRow } from "@muzakit/ui";
+import {
+  VTable,
+  useLinkedTables,
+  type Column,
+  type ColumnPickerGroup,
+  type ExpandableRow,
+  type TableHighlightState,
+} from "@muzakit/ui";
 
 // ── Table 1: Column Setup + Sorting + Fixed columns ──────────────────────────
 
@@ -181,6 +188,37 @@ const salesTotal: Record<string, unknown> = {
 };
 
 const salesSort = ref([]);
+
+// ── Table 4: highlight, fullscreen, column picker ────────────────────────────
+
+const highlightState = ref<TableHighlightState | null>(null);
+
+const pickerGroups: ColumnPickerGroup[] = [
+  {
+    key: "system",
+    label: "System attributes",
+    items: [
+      { key: "region", label: "Region", icon: "sys" },
+      { key: "product", label: "Product", icon: "text" },
+      { key: "category", label: "Category", icon: "select" },
+    ],
+  },
+  {
+    key: "metrics",
+    label: "Metrics",
+    items: [
+      { key: "units", label: "Units", icon: "number", sortable: true },
+      { key: "revenue", label: "Revenue", icon: "number", sortable: true, format: { currency: "USD" } },
+      { key: "margin", label: "Margin %", icon: "decimal", sortable: true, format: { percentage: { decimals: 1 } } },
+    ],
+  },
+];
+
+// ── Table 5: linked tables ───────────────────────────────────────────────────
+// Both tables register under the same group id, so scrolling or pinning in one
+// is mirrored in the other.
+const linkA = useLinkedTables("demo-linked", ["demo-linked-b"]);
+const linkB = useLinkedTables("demo-linked-b", ["demo-linked"]);
 
 // ── Table 2: 2-level expand (Department → Employee) ──────────────────────────
 
@@ -448,6 +486,67 @@ const orgTotal: Record<string, unknown> = {
         }"
         :virtualized="false"
         expand-mode="auto"
+      />
+    </section>
+
+    <!-- ── Table 4: highlight + fullscreen + column picker ── -->
+    <section class="table-demo-page__section">
+      <h2 class="table-demo-page__title">
+        Pinned cross · Fullscreen · Column picker
+      </h2>
+      <p class="table-demo-page__desc">
+        Pin a row from its first cell and a column from its header to draw the cross.
+        The expand button sits in the table's top-right corner; the picker button is
+        left of the column-setup one in the toolbar.
+      </p>
+      <VTable
+        v-model:highlight-state="highlightState"
+        :columns="salesColumns"
+        :data="salesData"
+        :height="420"
+        :toolbar="{
+          enabled: true,
+          title: 'Pinned cross',
+          subtitle: 'Highlight, fullscreen and the column picker',
+          actions: {
+            columnSetup: { key: 'demo_hl_cols', type: 'sessionStorage' },
+            columnPicker: { groups: pickerGroups, key: 'demo_hl_picker', type: 'sessionStorage' },
+          },
+        }"
+        :virtualized="false"
+        highlight
+      />
+      <p class="table-demo-page__desc">
+        Pinned: <code>{{ highlightState?.row?.rowId ?? "—" }}</code> ·
+        <code>{{ highlightState?.column?.columnKey ?? "—" }}</code> ·
+        cell <code>{{ highlightState?.cell?.formattedValue ?? "—" }}</code>
+      </p>
+    </section>
+
+    <!-- ── Table 5: linked tables ── -->
+    <section class="table-demo-page__section">
+      <h2 class="table-demo-page__title">
+        Linked tables
+      </h2>
+      <p class="table-demo-page__desc">
+        Two tables in one group: scrolling either one scrolls the other, and a pin in
+        one is mirrored in the other.
+      </p>
+      <VTable
+        v-bind="linkA.link"
+        :columns="salesColumns"
+        :data="salesData"
+        :height="240"
+        :virtualized="false"
+        highlight
+      />
+      <VTable
+        v-bind="linkB.link"
+        :columns="salesColumns"
+        :data="salesData"
+        :height="240"
+        :virtualized="false"
+        highlight
       />
     </section>
 
