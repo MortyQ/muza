@@ -1,0 +1,50 @@
+name: Update visual baselines
+
+# Screenshot baselines are committed for Linux only, because that is what CI
+# compares against. Regenerating them locally on macOS would produce a set CI
+# can never match, so it happens here instead — run this workflow from the
+# Actions tab, on the branch whose baselines need refreshing.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    name: regenerate and commit
+    runs-on: ubuntu-latest
+    # Keep in step with the image in ci.yml and with the `playwright` version in
+    # pnpm-lock.yaml — a mismatch here silently bakes a different renderer into
+    # every baseline.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Regenerate baselines
+        run: pnpm --filter @muzakit/ui exec vitest run --project browser --update
+
+      - name: Commit whatever changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'libs/ui/tests/visual/**/__screenshots__/**'
+          if git diff --cached --quiet; then
+            echo "Baselines already match — nothing to commit."
+            exit 0
+          fi
+          git commit -m "test(ui): regenerate visual baselines"
+          git push origin HEAD:${{ github.ref_name }}

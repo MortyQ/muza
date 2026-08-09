@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: build, types, lint, unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The libs have to be built before the dashboard type-checks against them.
+      - run: pnpm build:libs
+
+      - name: Type-check the library
+        run: pnpm --filter @muzakit/ui type-check
+
+      - name: Type-check the dashboard
+        run: pnpm --filter @muzakit/dashboard exec vue-tsc --noEmit
+
+      - name: Lint
+        run: pnpm exec eslint libs apps
+
+      - name: Unit tests and coverage
+        run: pnpm --filter @muzakit/ui test:coverage
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: libs/ui/coverage
+          retention-days: 7
+
+  visual:
+    name: token contracts + pixel regression
+    runs-on: ubuntu-latest
+    # MUST match the `playwright` version in pnpm-lock.yaml. A different
+    # Chromium renders text differently and invalidates every baseline at once —
+    # bump this and the dependency in the same commit, then regenerate the
+    # baselines with the visual-baselines workflow.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Browser tests
+        run: pnpm --filter @muzakit/ui test:visual
+
+      # Without the diff images a failure here is unreadable: the log says two
+      # PNGs differ and nothing else.
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: visual-diffs
+          path: libs/ui/.vitest-attachments
+          retention-days: 7

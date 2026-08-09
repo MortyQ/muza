@@ -8,6 +8,7 @@
 @.agents/instructions/typescript.instructions.md
 @.agents/instructions/workflow.md
 @.agents/instructions/ui-component-migration.md
+@.agents/instructions/testing.md
 
 ## Agent behavior
 

@@ -78,6 +78,16 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       include: ["src/components/{base,feedback,inputs,layout,overlay}/**"],
       reporter: ["text", "html", "lcov"],
+      // Set just under what the suite currently reaches, so the number can only
+      // go up. Only the unit project is instrumented — the browser project runs
+      // the same components through a real engine and its coverage would double
+      // count. Raise these when a phase lands, not "on aspiration".
+      thresholds: {
+        statements: 78,
+        branches: 75,
+        functions: 78,
+        lines: 80,
+      },
     },
   },
 });
