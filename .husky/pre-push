@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+#
+# Nothing with failing tests leaves the machine.
+#
+# Scope is deliberate. The unit project (jsdom) and the convention guard run
+# here: together they are the bulk of the suite and finish in a couple of
+# seconds. The token contracts need a real browser, so they run only when one is
+# already installed — a missing Chromium is a setup gap, not a reason to block
+# a push with a confusing error.
+#
+# Pixel regression is CI's job. Its baselines are Linux-only, so running it here
+# would compare a macOS render against a Linux reference and fail every time.
+
+set -e
+
+echo "▸ unit tests + convention guard"
+pnpm --filter @muzakit/ui test:unit
+
+if pnpm --filter @muzakit/ui exec playwright install --dry-run chromium >/dev/null 2>&1; then
+  echo "▸ token contracts (both themes, real browser)"
+  pnpm --filter @muzakit/ui test:tokens
+else
+  echo "▸ token contracts skipped — no Chromium."
+  echo "  Install it with: pnpm --filter @muzakit/ui exec playwright install chromium"
+fi

@@ -187,7 +187,7 @@ const computedPlaceholder = computed(() => {
           <VIcon
             v-if="leftIconName || loading"
             :class="{
-              'text-danger': hasError
+              'v-input-icon-svg--error': hasError
             }"
             :icon="leftIconName"
             :loading="loading"

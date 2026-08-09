@@ -109,6 +109,12 @@ describe("component conventions", () => {
           "[pm][xytblr]?-[\\d.]+",
           "w-[\\w./]+", "h-[\\w./]+", "min-[wh]-[\\w./]+", "max-[wh]-[\\w./]+",
           "text-(?:xs|sm|base|lg|xl|left|center|right)",
+          // Colour utilities named after a design token. Easy to miss by eye
+          // and by a size-oriented pattern: `text-danger` sat in VInput's
+          // template for a whole phase before this line existed.
+          "(?:text|bg|border|fill|stroke|ring|from|via|to|decoration|outline|caret|accent|divide|placeholder)"
+          + "-(?:primary|danger|success|warning|info|foreground|surface|background|border|nav|scrim"
+          + "|overlay|muted|secondary|subtle|inverted|accent|input|badge|ring)[\\w./-]*",
           "font-(?:thin|light|normal|medium|semibold|bold)",
           "rounded(?:-[\\w]+)?", "border(?:-[\\w./]+)?", "shadow(?:-[\\w]+)?",
           "bg-[\\w./\\[\\]-]+", "z-\\d+", "overflow-[a-z]+", "truncate",

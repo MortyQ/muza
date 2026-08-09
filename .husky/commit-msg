@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Conventional Commits, enforced by @commitlint/config-conventional.
+# The config lives under "commitlint" in the root package.json.
+pnpm exec commitlint --edit "$1"
