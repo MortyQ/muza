@@ -23,11 +23,6 @@ interface ColumnSetupConfig {
   initialVisible?: string[]
 }
 
-interface Props {
-  columns: Column[]
-  config?: ColumnSetupConfig
-}
-
 interface Emits {
 
   (e: "update:visible-columns", columns: Column[]): void
@@ -35,18 +30,19 @@ interface Emits {
   (e: "close"): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  config: () => ({}),
-});
+const { columns, config = {} } = defineProps<{
+  columns: ReadonlyArray<Column>
+  config?: Readonly<ColumnSetupConfig>
+}>();
 
 const emit = defineEmits<Emits>();
 
 // Load saved state from storage (async)
 const loadFromStorage = async (): Promise<SavedColumnState | null> => {
-  if (!props.config?.key) return null;
+  if (!config?.key) return null;
 
   try {
-    return await readColumnState(props.config.key, props.config.type);
+    return await readColumnState(config.key, config.type);
   }
   catch (error) {
     console.error("Failed to load column setup from storage:", error);
@@ -56,7 +52,7 @@ const loadFromStorage = async (): Promise<SavedColumnState | null> => {
 
 // Save state to storage (async)
 const saveToStorage = async (setupItems: ColumnSetupItem[]) => {
-  if (!props.config?.key) return;
+  if (!config?.key) return;
 
   try {
     // Build fixed map (only save columns that are fixed)
@@ -73,7 +69,7 @@ const saveToStorage = async (setupItems: ColumnSetupItem[]) => {
       fixed: Object.keys(fixed).length > 0 ? fixed : undefined, // Only save if there are fixed columns
     };
 
-    await writeColumnState(props.config.key, state, props.config.type);
+    await writeColumnState(config.key, state, config.type);
   }
   catch (error) {
     console.error("Failed to save column setup to storage:", error);
@@ -81,8 +77,8 @@ const saveToStorage = async (setupItems: ColumnSetupItem[]) => {
 };
 
 // Flatten columns to handle grouped headers
-const flattenColumns = (columns: Column[]): Column[] => {
-  return columns.reduce((acc, col) => {
+const flattenColumns = (source: ReadonlyArray<Column>): Column[] => {
+  return source.reduce((acc, col) => {
     if (col.children && col.children.length > 0) {
       return [...acc, ...flattenColumns(col.children)];
     }
@@ -92,7 +88,7 @@ const flattenColumns = (columns: Column[]): Column[] => {
 
 // Create setup items from columns
 const createSetupItems = (savedState?: SavedColumnState | null): ColumnSetupItem[] => {
-  const flatCols = flattenColumns(props.columns);
+  const flatCols = flattenColumns(columns);
 
   // If we have saved state, use it
   if (savedState) {
@@ -134,7 +130,7 @@ const createSetupItems = (savedState?: SavedColumnState | null): ColumnSetupItem
   }
 
   // No saved state, use initial config or show all columns by default
-  const initialVisible = props.config?.initialVisible;
+  const initialVisible = config?.initialVisible;
 
   return flatCols.map((col, index) => ({
     key: col.key,
@@ -172,7 +168,7 @@ const hasUnsavedChanges = computed(() => {
 
 // Emit visible columns to parent
 const emitVisibleColumns = () => {
-  const flatCols = flattenColumns(props.columns);
+  const flatCols = flattenColumns(columns);
   const visibleItems = items.value.filter(item => item.visible).sort((a, b) => a.order - b.order);
 
   const visibleCols = visibleItems
@@ -268,7 +264,7 @@ const stopAutoScroll = () => {
 
 // Drag handlers
 const handleDragStart = (index: number, event: DragEvent) => {
-  if (props.config?.allowReorder === false) return;
+  if (config?.allowReorder === false) return;
 
   draggedIndex.value = index;
   if (event.dataTransfer) {
@@ -278,7 +274,7 @@ const handleDragStart = (index: number, event: DragEvent) => {
 };
 
 const handleDragOver = (index: number, event: DragEvent) => {
-  if (props.config?.allowReorder === false) return;
+  if (config?.allowReorder === false) return;
 
   event.preventDefault();
   if (event.dataTransfer) {
@@ -295,7 +291,7 @@ const handleDragLeave = () => {
 };
 
 const handleDrop = (toIndex: number, event: DragEvent) => {
-  if (props.config?.allowReorder === false) return;
+  if (config?.allowReorder === false) return;
 
   event.preventDefault();
   stopAutoScroll(); // Stop auto-scroll on drop
@@ -383,9 +379,9 @@ const validateFixedColumns = () => {
 
 const handleReset = async () => {
   // Clear storage on reset
-  if (props.config?.key) {
+  if (config?.key) {
     try {
-      await tableStorage.deleteTableConfig(props.config.key);
+      await tableStorage.deleteTableConfig(config.key);
     }
     catch (error) {
       console.error("Failed to clear storage:", error);

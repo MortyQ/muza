@@ -6,15 +6,10 @@ import VInput from "../../inputs/VInput.vue";
 import VFloating from "../../overlay/VFloating.vue";
 import type { ToolbarConfig } from "../types/toolbar";
 
-interface Props {
-  config?: ToolbarConfig
+const { config = undefined, search = "" } = defineProps<{
+  config?: Readonly<ToolbarConfig>
   search?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  config: undefined,
-  search: "",
-});
+}>();
 
 const emit = defineEmits<Emits>();
 
@@ -37,22 +32,22 @@ interface Emits {
 
 // Local search model for v-model
 const searchModel = computed({
-  get: () => props.search,
+  get: () => search,
   set: (value: string) => emit("update:search", value),
 });
 
 // Search configuration
 const searchConfig = computed(() => {
-  if (!props.config?.search) return null;
-  if (typeof props.config.search === "boolean") {
+  if (!config?.search) return null;
+  if (typeof config.search === "boolean") {
     return { placeholder: "Search..." };
   }
-  return props.config.search;
+  return config.search;
 });
 
 // Export configuration from toolbar.actions.export
 const exportConfig = computed(() => {
-  const exportAction = props.config?.actions?.export;
+  const exportAction = config?.actions?.export;
 
   // Disabled
   if (!exportAction || !exportAction) {

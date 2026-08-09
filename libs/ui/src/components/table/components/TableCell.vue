@@ -1,24 +1,25 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-interface Props {
+const {
+  align = "left",
+  depth = 0,
+  isFirstColumn = false,
+  // Renamed on the way out because nothing here reads it: the slot renders the
+  // content. Declared and defaulted so the prop's contract survives the
+  // withDefaults migration unchanged.
+  value: _value = undefined,
+} = defineProps<{
   value?: unknown
   align?: "left" | "center" | "right" | string
   depth?: number
   isFirstColumn?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  align: "left",
-  depth: 0,
-  isFirstColumn: false,
-  value: undefined,
-});
+}>();
 
 // Calculate padding for indent of nested rows
 const computedPaddingLeft = computed(() => {
-  if (props.isFirstColumn && props.depth > 0) {
-    return `${props.depth * 24 + 16}px`;
+  if (isFirstColumn && depth > 0) {
+    return `${depth * 24 + 16}px`;
   }
   return undefined;
 });

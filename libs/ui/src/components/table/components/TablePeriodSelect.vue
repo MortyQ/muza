@@ -15,7 +15,7 @@
  * />
  * ```
  */
-import { toRef } from "vue";
+import { computed } from "vue";
 
 import VSelect from "../../inputs/VSelect.vue";
 import {
@@ -39,7 +39,13 @@ export interface PeriodChangePayload {
 
 // ==================== Props ====================
 
-interface Props {
+const {
+  granularity,
+  dateRange,
+  includeSummary = false,
+  widthClass = "w-40",
+  placeholder = "Select period",
+} = defineProps<{
   /**
    * Current granularity (reactive).
    * Controls which period options are generated.
@@ -69,13 +75,7 @@ interface Props {
    * @default 'Select period'
    */
   placeholder?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  includeSummary: false,
-  widthClass: "w-40",
-  placeholder: "Select period",
-});
+}>();
 
 // ==================== Emits ====================
 
@@ -96,9 +96,12 @@ const {
   isGroupByDate,
   handlePeriodChange: internalHandlePeriodChange,
 } = useTablePeriodSelect({
-  granularity: toRef(props, "granularity"),
-  dateRange: toRef(props, "dateRange"),
-  includeSummary: props.includeSummary,
+  // Wrapped rather than passed raw: the composable's signature takes refs, and
+  // a destructured prop is a plain value at the call site even though reads of
+  // it stay reactive.
+  granularity: computed(() => granularity),
+  dateRange: computed(() => dateRange),
+  includeSummary,
   onPeriodChange: () => {
     emitChange();
   },

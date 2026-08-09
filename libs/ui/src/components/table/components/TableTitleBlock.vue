@@ -14,17 +14,12 @@
  */
 import VIcon from "../../base/VIcon.vue";
 
-interface Props {
+const { title = "", icon = "" } = defineProps<{
   /** Block title */
   title?: string
   /** Optional icon (lucide icon name) */
   icon?: string
-}
-
-withDefaults(defineProps<Props>(), {
-  title: "",
-  icon: "",
-});
+}>();
 </script>
 
 <template>

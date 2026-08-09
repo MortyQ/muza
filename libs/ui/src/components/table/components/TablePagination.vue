@@ -5,46 +5,47 @@ import { formatNumber } from "@muzakit/utils";
 
 import VIcon from "../../base/VIcon.vue";
 
-interface Props {
-  page: number // Current page (1-based)
-  pageSize: number // Items per page
-  total: number // Total items
-  pageSizeOptions?: number[] // Available page sizes
-  showSizeChanger?: boolean // Show page size selector
-  loading?: boolean // Loading state (disables all controls)
-}
-
 interface Emits {
 
   (e: "page-change", payload: { page: number, pageSize: number }): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  pageSizeOptions: () => [10, 25, 50, 100],
-  showSizeChanger: false,
-  loading: false,
-});
+const {
+  page,
+  pageSize,
+  total,
+  pageSizeOptions = [10, 25, 50, 100],
+  showSizeChanger = false,
+  loading = false,
+} = defineProps<{
+  page: number // Current page (1-based)
+  pageSize: number // Items per page
+  total: number // Total items
+  pageSizeOptions?: ReadonlyArray<number> // Available page sizes
+  showSizeChanger?: boolean // Show page size selector
+  loading?: boolean // Loading state (disables all controls)
+}>();
 
 const emit = defineEmits<Emits>();
 
 // Computed values
-const totalPages = computed(() => Math.ceil(props.total / props.pageSize));
+const totalPages = computed(() => Math.ceil(total / pageSize));
 
 const currentRangeStart = computed(() => {
-  if (props.total === 0) return 0;
-  return formatNumber((props.page - 1) * props.pageSize + 1);
+  if (total === 0) return 0;
+  return formatNumber((page - 1) * pageSize + 1);
 });
 
 const currentRangeEnd = computed(() => {
-  const end = props.page * props.pageSize;
-  return formatNumber(Math.min(end, props.total));
+  const end = page * pageSize;
+  return formatNumber(Math.min(end, total));
 });
 
 // Determine which page numbers to show
 const visiblePages = computed(() => {
   const pages: (number | "ellipsis")[] = [];
   const total = totalPages.value;
-  const current = props.page;
+  const current = page;
 
   if (total <= 7) {
     // Show all pages if 7 or less
@@ -80,37 +81,37 @@ const visiblePages = computed(() => {
 });
 
 // Handlers
-const goToPage = (page: number) => {
-  if (props.loading) return; // Prevent clicks during loading
-  if (page === props.page) return; // Same page
-  if (page < 1 || page > totalPages.value) return; // Invalid page
+const goToPage = (target: number) => {
+  if (loading) return; // Prevent clicks during loading
+  if (target === page) return; // Same page
+  if (target < 1 || target > totalPages.value) return; // Invalid page
 
-  emit("page-change", { page, pageSize: props.pageSize });
+  emit("page-change", { page: target, pageSize });
 };
 
 const goToPreviousPage = () => {
-  if (props.page > 1) {
-    goToPage(props.page - 1);
+  if (page > 1) {
+    goToPage(page - 1);
   }
 };
 
 const goToNextPage = () => {
-  if (props.page < totalPages.value) {
-    goToPage(props.page + 1);
+  if (page < totalPages.value) {
+    goToPage(page + 1);
   }
 };
 
 const changePageSize = (newSize: number) => {
-  if (props.loading) return; // Prevent changes during loading
-  if (newSize === props.pageSize) return; // Same size
+  if (loading) return; // Prevent changes during loading
+  if (newSize === pageSize) return; // Same size
 
   // When changing page size, reset to page 1
   emit("page-change", { page: 1, pageSize: newSize });
 };
 
 // Computed for disabled states
-const isPrevDisabled = computed(() => props.loading || props.page <= 1);
-const isNextDisabled = computed(() => props.loading || props.page >= totalPages.value);
+const isPrevDisabled = computed(() => loading || page <= 1);
+const isNextDisabled = computed(() => loading || page >= totalPages.value);
 </script>
 
 <template>

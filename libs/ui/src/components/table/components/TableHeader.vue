@@ -5,13 +5,28 @@ import VIcon from "../../base/VIcon.vue";
 import VTooltip from "../../overlay/VTooltip.vue";
 import type { Column, SortOrder } from "../types";
 
-const props = withDefaults(defineProps<Props>(), {
-  align: "left",
-  resizable: true,
-  isSorted: false,
-  sortOrder: null,
-  sortIndex: -1,
-});
+const {
+  column,
+  label,
+  columnKey,
+  align = "left",
+  resizable = true,
+  isSorted = false,
+  sortOrder = null,
+  // Renamed on the way out: the multi-sort rank badge this was added for does
+  // not exist in the template yet, so nothing reads it. Kept so the prop's
+  // contract survives the withDefaults migration unchanged.
+  sortIndex: _sortIndex = -1,
+} = defineProps<{
+  column: Column
+  label: string
+  align?: "left" | "center" | "right" | string
+  columnKey: string
+  resizable?: boolean // Whether column can be resized
+  isSorted?: boolean
+  sortOrder?: SortOrder | null
+  sortIndex?: number // For multi-sort indicator (0, 1, 2...)
+}>();
 
 const emit = defineEmits<{
   "sort-click": []
@@ -22,28 +37,17 @@ const emit = defineEmits<{
 // Inject slots from Table.vue (avoid prop drilling)
 const tableSlots = inject<{ headerCellCustomAction?: Slot }>("tableSlots", {});
 
-interface Props {
-  column: Column
-  label: string
-  align?: "left" | "center" | "right" | string
-  columnKey: string
-  resizable?: boolean // Whether column can be resized
-  isSorted?: boolean
-  sortOrder?: SortOrder | null
-  sortIndex?: number // For multi-sort indicator (0, 1, 2...)
-}
-
 const sortIcon = computed(() => {
-  if (!props.isSorted || !props.sortOrder) return "lucide:arrow-up-down";
-  return props.sortOrder === "asc" ? "lucide:arrow-up" : "lucide:arrow-down";
+  if (!isSorted || !sortOrder) return "lucide:arrow-up-down";
+  return sortOrder === "asc" ? "lucide:arrow-up" : "lucide:arrow-down";
 });
 
 const iconClass = computed(() => {
-  return props.isSorted ? "v-sort-icon v-sort-icon--active" : "v-sort-icon";
+  return isSorted ? "v-sort-icon v-sort-icon--active" : "v-sort-icon";
 });
 
 const handleSortClick = (event: MouseEvent) => {
-  if (props.column.sortable) {
+  if (column.sortable) {
     event.stopPropagation();
     emit("sort-click");
   }
@@ -52,27 +56,23 @@ const handleSortClick = (event: MouseEvent) => {
 const handleHeaderLabelClick = (event: MouseEvent) => {
   // Call custom header click callback if provided
   // This is separate from sort click - only triggers when clicking the label area
-  if (props.column.onHeaderClick) {
+  if (column.onHeaderClick) {
     event.stopPropagation(); // Prevent event bubbling
-    props.column.onHeaderClick({
-      column: props.column,
-      columnKey: props.columnKey,
-      event,
-    });
+    column.onHeaderClick({ column, columnKey, event });
   }
 };
 
 const handleResizeStart = (event: MouseEvent) => {
-  emit("resize-start", props.columnKey, event);
+  emit("resize-start", columnKey, event);
 };
 
 const handleResizeDblClick = () => {
-  emit("resize-dblclick", props.columnKey);
+  emit("resize-dblclick", columnKey);
 };
 
 // Keyboard accessibility for sort icon
 const handleSortKeyDown = (event: KeyboardEvent) => {
-  if (props.column.sortable && (event.key === "Enter" || event.key === " ")) {
+  if (column.sortable && (event.key === "Enter" || event.key === " ")) {
     event.preventDefault();
     emit("sort-click");
   }
