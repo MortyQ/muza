@@ -97,13 +97,19 @@ property:
 
 ## Step 4 — One scoped style block
 
-Exactly one block, containing exactly one import:
+Exactly one block, loading exactly one stylesheet — with `@use`, not `@import`:
 
 ```html
 <style lang="scss" scoped>
-@import "../../styles/components/inputs/vinput.scss";
+@use "../../styles/components/inputs/vinput.scss";
 </style>
 ```
+
+`@import` is deprecated in Dart Sass and goes away in 3.0. Inside a block marked
+`lang="scss"` it prints a warning on every dev-server start; `@use` compiles to
+the same CSS. (Older components use `<style scoped>` with no `lang`, where the
+`@import` is a plain CSS import that postcss resolves and Sass never sees — that
+is why they are quiet. New work uses the form above.)
 
 No second unscoped `<style>` block, and no `:where()` used to escape scoping.
 A rule that needs to reach a child component's internals uses `:deep()`; a rule
@@ -285,7 +291,7 @@ which surfaces as styles that revert for no visible reason.
 - [ ] `withDefaults` gone, defaults inline, no `props.x` anywhere
 - [ ] `FieldValidation` from `types/validation.ts`, not `@vuelidate/core`
 - [ ] Zero Tailwind classes and zero inline styles in the template
-- [ ] Exactly one `<style lang="scss" scoped>` holding one `@import`
+- [ ] Exactly one `<style lang="scss" scoped>` holding one `@use`
 - [ ] No `--_color-*` block, no `rgb(var(…) / a)`, no raw colour values
 - [ ] Every colour is `--ui-*`, every alpha is `color-mix(in oklch, …)`
 - [ ] `.scss` at `styles/components/{category}/{name}.scss`

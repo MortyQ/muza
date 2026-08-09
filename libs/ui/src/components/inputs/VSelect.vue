@@ -280,9 +280,9 @@ onBeforeUnmount(() => disableFloating());
   teleported: intentional exception to the one-scoped-block rule.
 -->
 <style lang="scss">
-@import "../../styles/components/inputs/vselect-floating.scss";
+@use "../../styles/components/inputs/vselect-floating.scss";
 </style>
 
 <style lang="scss" scoped>
-@import "../../styles/components/inputs/vselect.scss";
+@use "../../styles/components/inputs/vselect.scss";
 </style>

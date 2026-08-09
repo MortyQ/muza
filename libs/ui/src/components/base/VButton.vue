@@ -97,5 +97,5 @@ const rootAttrs = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "../../styles/components/base/vbutton.scss";
+@use "../../styles/components/base/vbutton.scss";
 </style>

@@ -145,5 +145,5 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "../../styles/components/layout/vanimatedbackground.scss";
+@use "../../styles/components/layout/vanimatedbackground.scss";
 </style>

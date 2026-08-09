@@ -275,5 +275,5 @@ const excludedSlots = [
 </template>
 
 <style lang="scss" scoped>
-@import "../../styles/components/inputs/vdatepicker.scss";
+@use "../../styles/components/inputs/vdatepicker.scss";
 </style>

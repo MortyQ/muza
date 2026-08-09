@@ -145,10 +145,24 @@ describe("component conventions", () => {
       expect(scoped[0]?.body ?? "").toContain(`${name.toLowerCase()}.scss`);
     });
 
-    it.runIf(expectsScss)("has a scoped block that contains nothing but the import", () => {
+    it.runIf(expectsScss)("has a scoped block that contains nothing but the load", () => {
       const body = (scoped[0]?.body ?? "").trim();
-      const withoutImports = body.replace(/@import\s+"[^"]+";?/g, "").trim();
-      expect(withoutImports, `${name} has rules inline instead of in its .scss`).toBe("");
+      const withoutLoads = body.replace(/@(?:use|import)\s+"[^"]+";?/g, "").trim();
+      expect(withoutLoads, `${name} has rules inline instead of in its .scss`).toBe("");
+    });
+
+    it("uses @use, not @import, in any block marked lang=\"scss\"", () => {
+      // Without `lang`, the `@import` is a CSS import that postcss resolves and
+      // Dart Sass never sees. With `lang="scss"` the same line goes through
+      // Sass, which deprecates `@import` and will drop it in 3.0 — so it prints
+      // a warning on every dev-server start. `@use` compiles to the same CSS.
+      for (const block of blocks) {
+        if (!block.attrs.includes("lang=\"scss\"")) continue;
+        expect(
+          block.body.includes("@import"),
+          `${name} has a lang="scss" block using @import; use @use instead`,
+        ).toBe(false);
+      }
     });
 
     it("is exported from index.ts", () => {
