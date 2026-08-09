@@ -5,3 +5,15 @@ dist/
 .env
 *.tsbuildinfo
 .idea
+
+# Coverage output
+coverage/
+
+# Vitest browser-mode run artifacts (diff images, traces)
+.vitest-attachments/
+
+# Screenshot baselines are committed for Linux only — that is what CI compares
+# against. macOS and Windows renders differ in font hinting and antialiasing, so
+# a local run creates its own throwaway set beside them.
+**/__screenshots__/**/*-darwin.png
+**/__screenshots__/**/*-win32.png

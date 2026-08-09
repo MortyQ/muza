@@ -1,0 +1,17 @@
+{
+  "extends": "@muzakit/config/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo",
+    "types": ["vitest/globals", "node"],
+    "paths": {
+      "@/*": ["../src/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "../src/**/*.ts",
+    "../src/**/*.vue"
+  ]
+}

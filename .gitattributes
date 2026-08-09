@@ -1,0 +1,3 @@
+# Screenshot baselines: never diffed as text, never touched by EOL conversion.
+*.png binary -diff
+*.woff2 binary -diff
