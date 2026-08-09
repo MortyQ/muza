@@ -274,14 +274,6 @@ const excludedSlots = [
   </div>
 </template>
 
-<style>
-@layer components {
-  :where(.v-datepicker-wrapper) {
-    width: fit-content;
-  }
-}
-</style>
-
-<style scoped>
+<style lang="scss" scoped>
 @import "../../styles/components/inputs/vdatepicker.scss";
 </style>

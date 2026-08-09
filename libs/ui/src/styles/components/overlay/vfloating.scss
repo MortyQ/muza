@@ -20,6 +20,7 @@
    ============================================ */
 .v-floating-content {
   background-color: var(--ui-surface-overlay);
+  color: var(--ui-foreground);
 
   &.v-floating--positioning {
     position: absolute;

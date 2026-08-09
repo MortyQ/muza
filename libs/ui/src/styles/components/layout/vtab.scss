@@ -149,6 +149,11 @@
   min-height: 0;
 }
 
+.v-tab-content-wrapper {
+  /* Was Tailwind's `pt-4` — 4 × the 0.25rem spacing step. */
+  padding-top: 1rem;
+}
+
 @keyframes v-tab-pulse {
   0%, 100% {
     opacity: 1;

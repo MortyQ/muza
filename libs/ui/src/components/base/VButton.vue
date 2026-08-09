@@ -69,7 +69,7 @@ const rootAttrs = computed(() => {
   >
     <span
       v-if="$slots.iconLeft || loading || icon"
-      class="inline-flex items-center justify-center"
+      class="v-button__icon v-button__icon--left"
     >
       <slot name="iconLeft">
         <VIcon
@@ -82,28 +82,20 @@ const rootAttrs = computed(() => {
 
     <span
       v-if="!isIconOnly"
-      class="inline-flex items-center justify-center gap-0.75"
+      class="v-button__label"
     >
       <slot>{{ text }}</slot>
     </span>
 
     <span
       v-if="$slots.iconRight"
-      class="inline-flex items-center justify-center"
+      class="v-button__icon v-button__icon--right"
     >
       <slot name="iconRight" />
     </span>
   </component>
 </template>
 
-<style>
-@layer components {
-  :where(.v-button) {
-    width: fit-content;
-  }
-}
-</style>
-
-<style scoped>
+<style lang="scss" scoped>
 @import "../../styles/components/base/vbutton.scss";
 </style>

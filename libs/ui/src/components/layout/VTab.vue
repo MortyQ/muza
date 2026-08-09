@@ -390,7 +390,7 @@ defineExpose({
       class="v-tab__panel"
       role="tabpanel"
     >
-      <div class="v-tab-content-wrapper pt-4">
+      <div class="v-tab-content-wrapper">
         <slot :name="`${currentTabId}`">
           <component
             :is="activeTab.component"

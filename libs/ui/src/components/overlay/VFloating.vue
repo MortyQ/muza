@@ -425,7 +425,7 @@ defineExpose({
         :class="[floatingClasses, { 'v-floating--positioning': !isPositioned }]"
         :role="isDropdownMode ? 'listbox' : 'dialog'"
         :style="floatingStyles"
-        class="v-floating-content text-foreground"
+        class="v-floating-content"
         @pointerenter="handleContentPointerEnter"
         @pointerleave="handleContentPointerLeave"
       >

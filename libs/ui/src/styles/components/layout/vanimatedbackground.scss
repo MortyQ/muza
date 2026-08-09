@@ -1,0 +1,28 @@
+/* Ported from Tailwind utilities that used to sit on the template:
+   `fixed inset-0 z-1 pointer-events-none` on the canvas and
+   `fixed inset-0 z-1 bg-linear-to-br from-primary/5 via-accent/5 to-info/5`
+   on the tint layer. */
+
+.v-animated-background__canvas,
+.v-animated-background__tint {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+.v-animated-background__canvas {
+  pointer-events: none;
+}
+
+.v-animated-background__tint {
+  /* The original had a third stop, `via-accent/5`, but `--color-accent` is
+     defined neither in theme.css's @theme block nor in either :root[data-theme]
+     block — the utility generated nothing and the gradient has always rendered
+     with two stops. Reproduced as-is rather than invented: restoring a middle
+     stop means picking a real token, which is a design decision, not a refactor. */
+  background-image: linear-gradient(
+      to bottom right,
+      color-mix(in oklch, var(--ui-primary) 5%, transparent),
+      color-mix(in oklch, var(--ui-info) 5%, transparent)
+  );
+}

@@ -156,3 +156,20 @@
     --ui-ring: var(--ui-primary);
     --ui-ring-offset: var(--ui-background);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   COMPONENT BASE RULES
+
+   A handful of components need one rule at zero specificity, so a consuming
+   app can override it with a single plain class and without !important.
+   `:where()` cannot do that from inside a scoped block — Vue's scoping adds a
+   data attribute that raises specificity — and an unscoped <style> block in an
+   SFC is banned. Genuinely global rules live here instead.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@layer components {
+    :where(.v-button),
+    :where(.v-datepicker-wrapper) {
+        width: fit-content;
+    }
+}

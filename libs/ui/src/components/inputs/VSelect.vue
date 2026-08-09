@@ -274,141 +274,15 @@ onBeforeUnmount(() => disableFloating());
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
 <!--
-  Global styles for the teleported floating dropdown (.v-ms-floating).
-  These must be unscoped — the content-wrapper is appended to <body>
-  and falls outside the component's scoped DOM tree.
+  Teleported dropdown styles. Unscoped because vue-multiselect appends the
+  content wrapper to <body>, which puts it outside this component's scoped
+  subtree — see the file header for the full reasoning.
+  teleported: intentional exception to the one-scoped-block rule.
 -->
-<style>
-/* Disable vue-multiselect's built-in open/close animation */
-.multiselect-enter-active,
-.multiselect-leave-active {
-  transition: none !important;
-}
-
-/* ── Floating dropdown container ───────────────────────────────────────── */
-.multiselect__content-wrapper.v-ms-floating {
-  background-color: var(--ui-input-bg);
-  border: 1px solid var(--ui-border-subtle);
-  border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-lg);
-  box-sizing: border-box;
-  position: fixed;
-  margin: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border-top: none;
-  z-index: 10000 !important;
-}
-
-.multiselect__content-wrapper.v-ms-floating.opened-above {
-  border-top: 1px solid var(--ui-border-subtle);
-  border-bottom: none;
-}
-
-.multiselect__content-wrapper.v-ms-floating .multiselect__content {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  min-width: 100%;
-  background: transparent;
-}
-
-/* ── Options ────────────────────────────────────────────────────────────── */
-.multiselect__content-wrapper.v-ms-floating .multiselect__option {
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
-  color: var(--ui-foreground);
-  font-weight: 400;
-  cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
-  background: transparent;
-}
-
-.multiselect__content-wrapper.v-ms-floating .multiselect__option:hover,
-.multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--highlight {
-  background-color: var(--ui-surface-hover);
-  color: var(--ui-foreground);
-}
-
-.multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected {
-  background-color: var(--ui-primary);
-  color: white;
-  font-weight: 500;
-}
-
-.multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected,
-.multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected * {
-  color: white !important;
-}
-
-/* Hovering a selected item = deselect indicator */
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--selected.multiselect__option--highlight {
-  background-color: var(--ui-danger-subtle);
-  color: var(--ui-danger);
-}
-
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--selected.multiselect__option--highlight,
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--selected.multiselect__option--highlight * {
-  color: var(--ui-danger) !important;
-}
-
-/* ── Grouped options ────────────────────────────────────────────────────── */
-.multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--group {
-  background-color: var(--ui-surface-sunken);
-  color: var(--ui-primary);
-  font-weight: 600;
-  cursor: pointer;
-  padding: 8px 16px;
-}
-
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--group:hover,
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--group.multiselect__option--highlight {
-  background-color: var(--ui-border-subtle);
-  color: var(--ui-primary);
-}
-
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--group.multiselect__option--selected {
-  background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
-  color: var(--ui-primary);
-}
-
-.multiselect__tag-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.multiselect__tag-icon::after {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px !important;
-  text-align: center;
-  margin-bottom: 2px;
-  margin-left: .5px;
-}
-
-/* ── Disabled options ───────────────────────────────────────────────────── */
-.multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-/* ── Remove vue-multiselect's "Press enter to..." labels ────────────────── */
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--highlight::after,
-.multiselect__content-wrapper.v-ms-floating
-.multiselect__option.multiselect__option--selected::after {
-  content: none !important;
-}
+<style lang="scss">
+@import "../../styles/components/inputs/vselect-floating.scss";
 </style>
 
-<style scoped>
+<style lang="scss" scoped>
 @import "../../styles/components/inputs/vselect.scss";
 </style>

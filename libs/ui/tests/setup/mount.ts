@@ -8,13 +8,15 @@ import { createMemoryHistory, createRouter, type Router } from "vue-router";
  * NavigationGuardModal). A stub would assert nothing about the resolved href,
  * and vue-router works standalone with memory history.
  */
+const RouteStub = defineComponent({ name: "RouteStub", template: "<div />" });
+
 export function createTestRouter(): Router {
   return createRouter({
     history: createMemoryHistory(),
     routes: [
-      { path: "/", name: "home", component: defineComponent({ template: "<div />" }) },
-      { path: "/target", name: "target", component: defineComponent({ template: "<div />" }) },
-      { path: "/:pathMatch(.*)*", name: "not-found", component: defineComponent({ template: "<div />" }) },
+      { path: "/", name: "home", component: RouteStub },
+      { path: "/target", name: "target", component: RouteStub },
+      { path: "/:pathMatch(.*)*", name: "not-found", component: RouteStub },
     ],
   });
 }

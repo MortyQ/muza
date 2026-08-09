@@ -139,9 +139,11 @@ onUnmounted(() => {
 <template>
   <canvas
     ref="canvasRef"
-    class="fixed inset-0 z-1 pointer-events-none"
+    class="v-animated-background__canvas"
   />
-  <div
-    class="fixed inset-0 z-1 bg-linear-to-br from-primary/5 via-accent/5 to-info/5"
-  />
+  <div class="v-animated-background__tint" />
 </template>
+
+<style lang="scss" scoped>
+@import "../../styles/components/layout/vanimatedbackground.scss";
+</style>
