@@ -262,9 +262,14 @@ modes: `sync` (clamped to each table's `totalPages`), `reset`, `independent`
 `setStorageType` mutates module-global state, which is why ordering matters.
 
 `utils/columnState.ts` — `readColumnState` / `writeColumnState` wrap the
-set-type-then-read ordering. Neither try/catches: the three call sites log
-differently and one falls through to a default. `SavedColumnState` is a superset
-— `TableColumnSetup` writes without `labels`, `TableColumnPicker` writes with.
+set-type-then-read ordering. Neither try/catches: the call sites log differently
+and one falls through to a default. `SavedColumnState` is a superset —
+`TableColumnSetup` writes without `labels`, `TableColumnPicker` writes with.
+
+The centralization is incomplete: only those two components use the helper.
+`VTable.vue` redeclares `SavedColumnState` locally and calls
+`tableStorage.getTableConfig` directly. The shapes agree today, and nothing
+enforces that they keep agreeing.
 
 ---
 
