@@ -2,19 +2,20 @@
 
 ## Metadata
 
-| Field          | Value                                                                                                                   |
-|----------------|-------------------------------------------------------------------------------------------------------------------------|
-| **name**       | `vtable`                                                                                                                |
+| Field           | Value                                                                                                                                                                         |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **name**        | `vtable`                                                                                                                                                                      |
 | **description** | Deep reference for developers extending VTable internals: adding subcomponents, composables, SCSS, or new prop/emit contracts. Not for consuming the table — for building it. |
-| **version**    | 1.0                                                                                                                     |
-| **applies_to** | `libs/ui/src/components/table/**`                                                                                       |
+| **version**     | 1.1                                                                                                                                                                           |
+| **applies_to**  | `libs/core/src/components/table/**`                                                                                                                                           |
 
 ## Auto-Activation Triggers
 
 Apply this skill automatically when any of the following is true:
 
-- Task involves editing any file inside `libs/ui/src/components/table/`
-- The user says "extend the table", "add a feature to VTable", "add column functionality", "новый composable для таблицы", "расширить таблицу", "добавить в таблицу"
+- Task involves editing any file inside `libs/core/src/components/table/`
+- The user says "extend the table", "add a feature to VTable", "add column functionality", "новый composable для
+  таблицы", "расширить таблицу", "добавить в таблицу"
 - The user wants to add a new prop or emit to `VTable.vue`
 - The user wants to add a new composable under `table/composables/`
 - The user wants to create a new subcomponent inside `table/components/`
@@ -25,12 +26,14 @@ Apply this skill automatically when any of the following is true:
 
 ## Role
 
-You are a senior Vue 3 / TypeScript frontend engineer maintaining and extending `VTable` — a generic, virtualized data table built for the `@muzakit/ui` component library.
+You are a senior Vue 3 / TypeScript frontend engineer maintaining and extending `VTable` — a generic, virtualized data
+table built for the `@app/core` component library.
 
 You optimize for:
+
 - Zero TypeScript errors (strict mode always on)
 - Performance (WeakMap cell caching, virtual rendering, display: contents rows)
-- Correct generic propagation (`TData extends Record<string, unknown>`)
+- Working with the non-generic `Column`, `TableProps`, `TableEmits` types as they actually are (see Invariant #1)
 - Clean separation: composables own logic, components own rendering
 
 ---
@@ -38,20 +41,23 @@ You optimize for:
 ## Architecture Overview
 
 ```
-VTable.vue (generic SFC, TData extends Record<string, unknown>)
+VTable.vue (non-generic SFC — Column, TableProps, TableEmits take no TData parameter)
 │
 ├── Composables (pure reactive logic, no DOM)
 │   ├── useColumnResize       → column width state + drag resize
 │   ├── useFixedColumns       → sticky column positions + z-index
 │   ├── useGroupedHeaders     → multi-level header tree → flat rows
-│   ├── useColumnSetup        → column visibility / reorder / storage
 │   ├── useExpandableTable    → tree data → FlattenedRow[] + toggle state
 │   ├── useTableFormatters    → value → display string (currency, %, date…)
+│   ├── useTableCellMetadata  → per-cell formatted value/class/style/indent (WeakMap cached)
+│   ├── useTableColumnConfig  → column setup/picker enablement, storage-restore, popover refs, effectiveColumns
 │   ├── useTableSelection     → multi-select + dependent mode
 │   ├── useTableSort          → sort state + front/server sort logic
 │   ├── useVirtualTable       → TanStack Virtual windowed rendering
 │   ├── useTablePage          → page ref + TABLE_PAGE_KEY provide/inject
-│   └── useTablePeriodSelect  → period dropdown → API params
+│   ├── useTableFullScreen    → FLIP-based fullscreen expand/collapse + z-index + Escape
+│   ├── useTablePeriodSelect  → period dropdown → API params
+│   └── useLinkedTables       → cross-table scroll + pagination sync via module registry
 │
 ├── Subcomponents (rendering only, receive computed values from VTable)
 │   ├── TableRow              → display: contents row wrapper
@@ -66,55 +72,76 @@ VTable.vue (generic SFC, TData extends Record<string, unknown>)
 │   ├── TableEmptyState       → centered empty overlay
 │   ├── TableToolbar          → top toolbar (search, actions, slots)
 │   ├── TableColumnSetup      → column visibility/reorder dialog
+│   ├── TableBackdrop         → fullscreen dim/blur layer, mount/unmount-driven (no state)
 │   ├── DeltaValue            → main value + delta with arrow
 │   ├── DeltaIndicator        → standalone delta arrow + value
 │   ├── TablePeriodSelect     → period selector dropdown
 │   └── TableTitleBlock       → section header block
 │
-├── Types (libs/ui/src/components/table/types/)
+├── Types (libs/core/src/components/table/types/)
 │   ├── index.ts      → Column, CellContext, ExpandableRow, FlattenedRow, SortItem, …
-│   ├── props.ts      → TableProps<TData>, TableEmits<TData>, RowClassNameFunction
+│   │                    PaginationMode, ScrollSyncController, LinkedTableBindings,
+│   │                    LinkedTablesOptions, UseLinkedTablesReturn
+│   ├── props.ts      → TableProps, TableEmits, RowClassNameFunction
+│   │                    (includes scrollSync?: ScrollSyncController)
 │   ├── selection.ts  → MultiSelectConfig, CheckboxState, SelectionMode
 │   └── toolbar.ts    → ToolbarConfig, ExportFormat, ColumnSetupConfig
 │
-└── Assets (libs/ui/src/components/table/assets/styles/)
-    ├── index.scss         → main layout: wrapper, grid, virtual spacer
-    ├── header.scss        → header cells, group headers, sort icons, resize handle
-    ├── rows.scss          → row wrappers, states (hover, selected, disabled, expanded)
-    ├── cells.scss         → data cells, indent, expand button, interactive
-    ├── pagination.scss    → pagination bar, buttons, size selector
-    ├── toolbar.scss       → toolbar layout, search, action buttons
-    ├── column-setup.scss  → column dialog, drag items, pin button, footer
-    └── loading.scss       → loading overlay, spinner, empty state
+├── Assets (libs/core/src/components/table/assets/styles/)
+│   ├── index.scss         → main layout: wrapper, grid, virtual spacer
+│   ├── header.scss        → header cells, group headers, sort icons, resize handle
+│   ├── rows.scss          → row wrappers, states (hover, selected, disabled, expanded)
+│   ├── cells.scss         → data cells, indent, expand button, interactive
+│   ├── pagination.scss    → pagination bar, buttons, size selector
+│   ├── toolbar.scss       → toolbar layout, search, action buttons
+│   ├── column-setup.scss  → column dialog, drag items, pin button, footer
+│   └── loading.scss       → loading overlay, spinner, empty state
+│
+└── Utils (libs/core/src/components/table/utils/)
+    ├── storage.ts      → indexedDB/localStorage/sessionStorage adapters + TableStorageManager singleton
+    └── columnState.ts  → SavedColumnState (shared contract) + readColumnState/writeColumnState,
+                           wrapping storage.ts's setStorageType()-then-read/write ordering. Read by
+                           VTable.vue, read+written by TableColumnSetup.vue and TableColumnPicker.vue.
 ```
 
 ---
 
 ## Key Invariants
 
-1. **`Column<TData = any>`** — `any` as default (AG Grid pattern) lets composables use `Column[]` with no explicit annotation. Typed usage `Column<User>[]` is assignable to `Column[]` because `any` bypasses variance checks. Never change the default from `any` to `Record<string, unknown>`.
+1. **VTable.vue is not generic** — despite an earlier version of this skill claiming
+   `generic="TData..."`, the current source has no `generic=` attribute, and `Column`,
+   `TableProps`, `TableEmits` (`types/props.ts`) are plain, non-generic types. `defineEmits` is
+   applied directly as `defineEmits<TableEmits>()` — the runtime-array-cast workaround this
+   skill used to describe (`defineEmits([...]) as unknown as TableEmits<TData>`) does not apply
+   here and should not be reintroduced without first confirming the component has actually
+   become generic again.
 
-2. **`defineEmits` in generic SFCs** — Vue SFC compiler resolves only the last overload when the component has `generic="TData..."`. Use the runtime array + cast workaround:
-   ```ts
-   const emit = defineEmits([
-     "row-click", "update:selected-rows", /* ... all events */
-   ]) as unknown as TableEmits<TData>
-   ```
-   `TableEmits<TData>` lives in `types/props.ts` as a function intersection type, not a Vue emit map.
+2. **`FlattenedRow` is a plain, non-generic extension of `ExpandableRow`** (`types/index.ts`) — rows going through
+   `useExpandableTable` become `FlattenedRow` (adds `depth`, `parentId`, `hasChildren`, `isExpanded` on top of
+   `ExpandableRow`'s `id`/`children`/index signature). There is no `TData` generic anywhere in this chain —
+   `ExpandableRow` already allows arbitrary extra fields via its `[key: string]: any` index signature, so no generic
+   parameter is needed to carry the caller's row shape through.
 
-3. **`TData & FlattenedRow`** — rows going through `useExpandableTable` become `FlattenedRow`. Methods that receive both the user's TData fields and the internal flatten fields use `TData & FlattenedRow` as the parameter type.
+3. **WeakMap cell metadata cache** — `new WeakMap<object, Map<string, CellMetadata>>()` prevents computing `cellClass`,
+   `cellStyle`, and other per-cell callbacks on every render cycle. Cache key is the row object. Reset when
+   `displayData` changes.
 
-4. **WeakMap cell metadata cache** — `new WeakMap<object, Map<string, CellMetadata>>()` prevents computing `cellClass`, `cellStyle`, and other per-cell callbacks on every render cycle. Cache key is the row object. Reset when `displayData` changes.
+4. **`VTable.vue` does NOT use Vue 3.5+ reactive prop destructuring** — despite that being the codebase-wide
+   convention (`vue-syntax.instructions.md` Rule 2), the actual current code is
+   `const props = withDefaults(defineProps<TableProps>(), {...})`, accessed via `props.x` throughout. This is existing,
+   established style in this specific large file — match it when editing `VTable.vue` itself; don't unilaterally convert
+   it to destructuring as an unrelated refactor. (`TableProps` is non-generic, per Invariant #1 — no `<TData>` here
+   either.)
 
-5. **Reactive prop destructuring (Vue 3.5+)** — VTable uses `const { data, ... } = defineProps<TableProps<TData>>()`. Props are reactive without `props.x`. For composables that need a reactive source, pass as getter: `() => data`.
-
-6. **No color tokens in table SCSS** — structural SCSS only (layout, grid, z-index, position, transitions). All colors come from CSS variables defined outside the table (design tokens). Never hard-code colors inside table SCSS files.
+5. **No color tokens in table SCSS** — structural SCSS only (layout, grid, z-index, position, transitions). All colors
+   come from CSS variables defined outside the table (design tokens). Never hard-code colors inside table SCSS files.
 
 ---
 
 ## Composables Reference
 
 ### `useColumnResize(columns: Ref<Column[]>)`
+
 ```
 Returns:
   gridTemplateColumns: ComputedRef<string>    — CSS grid-template-columns value
@@ -129,6 +156,7 @@ Returns:
 ```
 
 ### `useFixedColumns(columns: Ref<Column[]> | ComputedRef<Column[]>, columnWidths?: Ref<Map<string, number>>)`
+
 ```
 Returns:
   leftFixedColumns: ComputedRef<Column[]>
@@ -142,6 +170,7 @@ Returns:
 ```
 
 ### `useGroupedHeaders(columns: Ref<Column[]> | ComputedRef<Column[]>, columnWidths: Ref<Map<string, number>>)`
+
 ```
 Returns:
   hasGroups: ComputedRef<boolean>
@@ -152,22 +181,8 @@ Returns:
   isGroupFixed: (cell: HeaderCell) => boolean
 ```
 
-### `useColumnSetup(config: ColumnSetupConfig)`
-```
-Returns:
-  setupItems: Ref<ColumnSetupItem[]>
-  visibleColumns: ComputedRef<Column[]>
-  getSetupItem: (key) => ColumnSetupItem | undefined
-  toggleColumn: (key) => void
-  setColumnVisibility: (key, visible) => void
-  reorderColumns: (from, to) => void
-  reset: () => void
-  showAll: () => void
-  hideAll: () => void
-```
-Config shape: `{ key, columns, type: 'indexedDB' | 'localStorage' | 'sessionStorage', allowReorder, initialVisible }`
-
 ### `useExpandableTable(data: Ref<ExpandableRow[]>)`
+
 ```
 Returns:
   flattenedData: ComputedRef<FlattenedRow[]>  — depth-first flat array
@@ -179,6 +194,7 @@ Returns:
 ```
 
 ### `useTableFormatters()`
+
 ```
 Returns:
   formatCellValue: (value, column, row?) => string | number
@@ -189,9 +205,64 @@ Returns:
   formatBoolean: (value, opts) => string
   formatFileSize: (value, opts) => string
 ```
+
 Applies `column.format` options in order: custom formatter → currency → percentage → number → date → boolean → fileSize.
 
+### `useTableCellMetadata(options: UseTableCellMetadataOptions)`
+
+```
+Options:
+  isExpandable: MaybeRefOrGetter<boolean>       — whole-table "has any expandable rows" flag
+  isRowExpandable: (row: ExpandableRow) => boolean — per-row check (delegates to useExpandableTable)
+
+Returns:
+  getCellValue: (value, column, row) => unknown         — formatted display value (used for totalRow)
+  getCellClass: (value, column, row) => string | undefined — formatted class (used for totalRow)
+  getCellMetadata: (row, column, colIndex, rowIndex) => CellMetadata
+```
+
+`getCellMetadata` is the hot path for regular (non-total) rows: it computes `formattedValue`,
+`cssClass` (format class + `column.cellClass`), `titleText`, `indentStyle` (depth-based, first
+column only), `customStyle` (`column.cellStyle`), and `isExpandable` (first column only) in one
+pass, cached in a `WeakMap<row, WeakMap<column, CellMetadata>>` keyed by row/column object
+identity — new row or column objects naturally invalidate the cache, no manual reset needed.
+Owns its own `useTableFormatters()` call internally.
+
+### `useTableColumnConfig(options: UseTableColumnConfigOptions)`
+
+```
+Options:
+  columns:     MaybeRefOrGetter<Column[]>              — full column list (props.columns)
+  columnSetup: MaybeRefOrGetter<ColumnSetupAction>      — toolbar.actions.columnSetup (false | string | object)
+  columnPicker: MaybeRefOrGetter<ColumnPickerAction>    — toolbar.actions.columnPicker (false | object)
+
+Returns:
+  columnSetupEnabledBasic: ComputedRef<boolean>         — string/object action, WITHOUT the hasGroups gate
+  columnSetupConfig:       ComputedRef<ColumnSetupConfig>
+  columnSetupPopoverRef:   Ref<{ close: () => void } | null> — bind via VFloating's ref="columnSetupPopoverRef"
+  columnPickerPopoverRef:  Ref<{ close: () => void } | null> — bind via VFloating's ref="columnPickerPopoverRef"
+  handleVisibleColumnsUpdate: (columns: Column[]) => void
+  handleColumnSetupClose:  () => void
+  handleColumnPickerClose: () => void
+  columnPickerEnabled:     ComputedRef<boolean>
+  columnPickerConfig:      ComputedRef<ColumnPickerAction (object) | null>
+  effectiveColumns:        ComputedRef<Column[]>        — visible/ordered columns, fixed-left/right sorted to edges
+```
+
+Owns the async storage-restore of persisted column visibility/order (`readColumnState` from
+`utils/columnState.ts`, three-level fallback: `props.columns` → column-picker item → `saved.labels`)
+and the two column popover component refs. The eager `loadColumnsFromStorage().then(...)` call
+fires at composable-setup time (a deliberate, commented exception to the no-top-level-side-effects
+rule) — deferring it to `onMounted` would delay the restore by a tick and cause a visible flash of
+unfiltered columns before the persisted selection applies.
+
+**Does NOT own** `columnSetupEnabled` (the final gate combining `columnSetupEnabledBasic` with
+`hasGroups`) — that stays in `VTable.vue` because `hasGroups` comes from `useGroupedHeaders`, which
+is itself fed by this composable's `effectiveColumns`; folding the gate in here would create an
+import cycle between the two composables.
+
 ### `useTableSelection(options: UseTableSelectionOptions)`
+
 ```
 Options:
   config: Ref<MultiSelectConfig>
@@ -214,6 +285,7 @@ Returns:
 ```
 
 ### `useTableSort<T>(options: UseTableSortOptions<T>)`
+
 ```
 Options:
   data: Ref<T[]>
@@ -232,7 +304,9 @@ Returns:
   sortedData: ComputedRef<T[]>
 ```
 
-### `useVirtualTable(scrollContainerRef: Ref<HTMLElement | null>, data: Ref<Record<string, unknown>[]>, options?: VirtualTableOptions)`
+###
+`useVirtualTable(scrollContainerRef: Ref<HTMLElement | null>, data: Ref<Record<string, unknown>[]>, options?: VirtualTableOptions)`
+
 ```
 Options:
   estimateSize?: number   (default: 48)
@@ -243,16 +317,90 @@ Returns:
   virtualizer: Virtualizer
   virtualItems: ComputedRef<VirtualItem[]>
   totalSize: ComputedRef<number>
+  remeasure: () => void   — forces virtualizer.measure() + dispatches a synthetic
+                            scroll event; does NOT attach/detach scroll listeners.
+                            Use after the scroll element's own size changed outside
+                            of a real scroll event (e.g. a fullscreen toggle).
 ```
 
 ### `useTablePage(resetOn: WatchSource[] = [])`
+
 ```
 Returns: page Ref<number> (1-based)
 Side effect: provides TABLE_PAGE_KEY injection key
 Auto-resets page to 1 when any resetOn source changes.
 ```
 
+### `useTableFullScreen(options: UseTableFullScreenOptions)`
+
+```
+Options:
+  wrapperRef: Ref<HTMLElement | null>       — the `.v-table-wrapper` element to measure/transform
+  isEnabled: MaybeRefOrGetter<boolean>      — whether the toolbar button is shown
+  placeholderRef?: Ref<HTMLElement | null>  — element reserving the wrapper's original in-flow
+                                               slot while fullscreen is active; its live rect is
+                                               preferred over the cached open-time rect when
+                                               computing the exit FLIP target, so exit lands
+                                               correctly even if the page scrolled/resized/reflowed
+                                               while fullscreen was open
+  chromeRefs?: ReadonlyArray<Ref<HTMLElement | ComponentPublicInstance | null>>
+                                             — elements whose rendered height must be excluded
+                                               from the fullscreen panel's content area (e.g. a
+                                               toolbar, pagination). The composable stays
+                                               ignorant of the table's anatomy — it just sums
+                                               whatever heights it's handed and exposes the
+                                               result via `contentHeight`. A ref may hold a plain
+                                               HTMLElement or a component instance (its `$el` is
+                                               used). Measured before `isFullscreen` flips, inside
+                                               `enter()`, and re-measured on window `resize`
+  onToggle?: (isFullscreen: boolean) => void | Promise<void>
+
+Returns:
+  isFullscreen: Readonly<Ref<boolean>>
+  isEnabled: ComputedRef<boolean>
+  zIndex: ComputedRef<number>               — from the shared useModal registry
+  placeholderStyle: ComputedRef<{ width: string, height: string } | null>
+                                             — inline size for the placeholder element (both
+                                               dimensions, from the cached open rect); null when
+                                               not fullscreen (don't render the placeholder then)
+  panelStyle: ComputedRef<Record<string, string> | null>
+                                             — inline top/left/width/height (px) for the
+                                               fullscreen panel, computed arithmetically from
+                                               innerWidth/innerHeight (5%/90% inset split)
+                                               BEFORE isFullscreen flips, so the first fullscreen
+                                               render already has final geometry — never measured
+                                               from the DOM. null when not fullscreen. Bind onto
+                                               the wrapper element.
+  contentHeight: ComputedRef<number>        — ready-to-use scroll-area height in px: panel height
+                                               minus the summed height of `chromeRefs` elements
+                                               (0 when not fullscreen). Both inputs are measured/
+                                               computed before `isFullscreen` flips (see `enter()`),
+                                               so consumers just pick between this and their
+                                               normal-mode height — no arithmetic on the consumer
+                                               side, no provisional "100%" frame
+  toggle: () => void                        — called by the toolbar button; measures chromeRefs
+                                               and the panel geometry before flipping the flag —
+                                               do not bypass this by calling some other toggle
+                                               directly, or the first fullscreen render will use
+                                               stale/zero measurements
+  close: () => void                         — called by backdrop click / Escape
+```
+
+Geometry is computed, never measured: earlier revisions measured `wrapperRef.offsetHeight`
+via a ResizeObserver to size the panel — `offsetHeight` is border-box, and the wrapper has a
+1px border, so each observer tick added 2px and the panel grew without bound. The composable
+now derives the panel box purely from `window.innerWidth`/`innerHeight`, recomputed only on a
+`resize` listener (pure arithmetic, cannot feed back into layout).
+
+The chrome-height measurement (`chromeRefs` → `contentHeight`) and the panel-geometry
+computation happen together inside `enter()`, both before `isFullscreen.value = true` — this is
+what makes the first fullscreen render's FLIP animation measure a settled layout instead of a
+provisional one that changes size again a tick later. This ordering is structural (inside the
+composable), not a convention the consumer has to remember to uphold by calling a wrapper
+function before `toggle()`.
+
 ### `useTablePeriodSelect(options: UseTablePeriodSelectOptions)`
+
 ```
 Options:
   granularity: Ref<PeriodGranularity>  — 'month' | 'week' | 'day'
@@ -269,14 +417,108 @@ Returns:
   resetPeriod: () => void
 ```
 
+### `useLinkedTables(id, linkedIds, options?): UseLinkedTablesReturn`
+
+Links multiple VTable instances by string ID via a module-level registry. Synchronizes scroll position (X+Y) and
+pagination across all linked tables regardless of component tree position.
+
+```
+Parameters:
+  id:         string            — unique ID for this table in the registry
+  linkedIds:  string[]          — IDs of sibling tables to sync with (self-ID filtered automatically)
+  options?:   LinkedTablesOptions
+
+Options (discriminated union):
+  paginationMode: 'sync'        → totalPages: Ref<number> REQUIRED (TypeScript-enforced)
+  paginationMode: 'independent' → pagination not synced (default)
+  paginationMode: 'reset'       → linked tables reset to page 1 on navigation
+  initialPage?: number          — starting page (default: 1)
+  namespace?: string            — isolates registry keys, e.g. 'reports-page:table-a'
+  resetOn?: MaybeRefOrGetter<unknown> — auto-calls resetState() when value changes
+
+Returns: UseLinkedTablesReturn
+  link:        LinkedTableBindings   — spread onto VTable via v-bind (page, onUpdate:page, scrollSync)
+  resetState:  (page?: number) => void — resets page + scroll (X+Y) to zero for this table AND all linked tables
+```
+
+**Consumer pattern:**
+
+```ts
+const { link, resetState } = useLinkedTables("table-a", ["table-b"], {
+  paginationMode: "sync",
+  totalPages: computed(() => Math.ceil(total.value / PAGE_SIZE)),
+  resetOn: filters,        // auto-reset when filters change
+});
+
+// Manual reset (e.g. on route change):
+watch(route, () => resetState());
+```
+
+```vue
+<VTable v-bind="link" :columns :data />
+```
+
+**Architecture notes:**
+
+- Registry is a module-level `Map<string, LinkedTableEntry>` — shared across all component trees in the same JS module
+  instance. Instances in different files share the same registry as long as they import the same module.
+- `onScopeDispose` (not `onUnmounted`) handles cleanup — works in components and manual `effectScope()`.
+- Scroll loop prevention: `isReceivingScroll` plain boolean flag + `nextTick` reset. When table A scrolls → sets flag on
+  targets → watcher writes DOM → browser fires scroll event on target → flag is true → short-circuit.
+- Late mount: `register(el)` syncs scroll from first available sibling's current position.
+- `scrollSync` prop on VTable must be provided at component creation time — changing from `undefined` to a value after
+  mount has no effect (conditional watcher is created once at setup).
+- `resetState` is NOT included in `link` / `LinkedTableBindings` — it would otherwise be spread as an unknown prop via
+  `v-bind`. Always destructure it separately.
+
+**Pagination mode behavior:**
+
+| Mode          | Linked tables go to                             |
+|---------------|-------------------------------------------------|
+| `sync`        | Same page, clamped to each table's `totalPages` |
+| `reset`       | Page 1                                          |
+| `independent` | Unchanged                                       |
+
+---
+
+## Utils Reference
+
+### `readColumnState(key: string, type?: StorageType): Promise<SavedColumnState | null>`
+
+### `writeColumnState(key: string, state: SavedColumnState, type?: StorageType): Promise<void>`
+
+The single shared contract for the persisted column visibility/order/pin/label state. Both
+wrap `utils/storage.ts`'s `tableStorage` singleton, encapsulating its `setStorageType(type)`-
+then-read/write call ordering (the singleton mutates module-global state, so ordering matters
+when different tables use different storage types).
+
+```ts
+export interface SavedColumnState {
+  visible: string[]
+  order: string[]
+  fixed?: Record<string, "left" | "right">
+  labels?: Record<string, string>
+}
+```
+
+Neither function try/catches or logs — callers (`VTable.vue`, `TableColumnSetup.vue`,
+`TableColumnPicker.vue`) differ in error-handling detail (console.warn vs console.error,
+differing messages, some falling through to a no-saved-state default) and keep their own
+try/catch around the call. `VTable.vue` only reads (it doesn't write column state itself —
+the two dialog components own writing). `TableColumnSetup.vue` writes without `labels`;
+`TableColumnPicker.vue` writes with `labels` — `writeColumnState` doesn't force either shape,
+it persists exactly the `SavedColumnState` object it's given.
+
 ---
 
 ## Subcomponents Reference
 
 ### `TableRow`
+
 Wrapper that renders its slot with `display: contents`. No props beyond default slot.
 
 ### `TableCell`
+
 ```
 Props:
   value?:          unknown           — cell display value
@@ -288,6 +530,7 @@ Renders: padding, truncate, optional expand button slot, indent spacer.
 ```
 
 ### `TableCheckboxCell`
+
 ```
 Props:
   checked:       boolean
@@ -297,6 +540,7 @@ Emits: toggle
 ```
 
 ### `TableHeaderCheckbox`
+
 ```
 Props:
   state:    CheckboxState   — 'checked' | 'unchecked' | 'indeterminate'
@@ -305,6 +549,7 @@ Emits: toggle
 ```
 
 ### `TableHeaderSimple`
+
 ```
 Props:
   columns:           Column[]
@@ -316,6 +561,7 @@ Emits: resize-start, resize-dblclick, sort-click
 ```
 
 ### `TableHeaderGrouped`
+
 ```
 Props:
   columns:            HeaderCell[][]          — pre-computed from useGroupedHeaders
@@ -329,6 +575,7 @@ Emits: resize-start, resize-dblclick, sort-click
 ```
 
 ### `TableHeader`
+
 ```
 Props:
   column:      Column
@@ -343,6 +590,7 @@ Emits: sort-click(column), resize-start(key, event), resize-dblclick(key, event)
 ```
 
 ### `TableHeaderGroup`
+
 ```
 Props:
   cell:        HeaderCell
@@ -351,6 +599,7 @@ Renders: group label, non-interactive.
 ```
 
 ### `TablePagination`
+
 ```
 Props:
   page:              number
@@ -363,6 +612,7 @@ Emits: page-change({ page, pageSize })
 ```
 
 ### `TableEmptyState`
+
 ```
 Props:
   title?:       string
@@ -373,6 +623,7 @@ Position: absolute centered inside scroll container.
 ```
 
 ### `TableToolbar`
+
 ```
 Props:
   config?:  ToolbarConfig
@@ -382,6 +633,7 @@ Slot forwarding: title, search, actions, column-setup (via provide/inject "table
 ```
 
 ### `TableColumnSetup`
+
 ```
 Props:
   columns:  Column[]
@@ -390,7 +642,17 @@ Emits: update:visible-columns(Column[]), close
 Features: drag-and-drop reorder, pin-to-left (first 2 only), indexedDB/localStorage/sessionStorage persist.
 ```
 
+### `TableBackdrop`
+
+```
+Props:
+  active:   boolean          — mounts/unmounts the backdrop div (v-if + Transition)
+  zIndex:   number           — from useTableFullScreen's zIndex
+Emits: click
+```
+
 ### `DeltaValue`
+
 ```
 Props:
   value?:             unknown
@@ -404,6 +666,7 @@ Props:
 ```
 
 ### `DeltaIndicator`
+
 ```
 Props:
   value?:    number
@@ -415,6 +678,7 @@ Props:
 ```
 
 ### `TablePeriodSelect`
+
 ```
 Props:
   granularity:    PeriodGranularity
@@ -426,6 +690,7 @@ Emits: change({ selected, requestParams, isGroupByDate })
 ```
 
 ### `TableTitleBlock`
+
 ```
 Props:
   title?: string
@@ -438,6 +703,7 @@ Slot: default (toggle controls, actions)
 ## SCSS Class Inventory (Structural — No Color Tokens)
 
 ### Wrapper & Grid (`index.scss`)
+
 ```
 .v-table-wrapper               flex column, border-radius, box-shadow
 .v-table-wrapper--with-toolbar modifier for toolbar present
@@ -451,6 +717,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Header (`header.scss`)
+
 ```
 .v-table-header-row               display: contents
 .v-table-header-row-level-0       position: sticky; top: 0px
@@ -487,6 +754,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Rows (`rows.scss`)
+
 ```
 .v-table-row-wrapper              display: contents; cursor: pointer
 .v-table-row-wrapper:hover > .v-table-cell   hover: background, left-border, bottom-border change
@@ -500,6 +768,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Cells (`cells.scss`)
+
 ```
 .v-table-cell                     padding, min-height, border-bottom, border-right
 .v-table-cell--left               text-align: left
@@ -532,6 +801,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Pagination (`pagination.scss`)
+
 ```
 .v-table-pagination               display: flex; justify-content: space-between; gap: 1.5rem; border-top
 .v-table-pagination-info          info text
@@ -544,6 +814,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Toolbar (`toolbar.scss`)
+
 ```
 .v-table-toolbar                  display: flex; align-items: center; gap: 0.75rem; padding; border-bottom
 .v-table-toolbar-title            flex: 1; font-weight: 600
@@ -555,6 +826,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Column Setup Dialog (`column-setup.scss`)
+
 ```
 .column-setup                     max-width: 360px; max-height: min(500px, 70vh); display: flex flex-col; border-radius; box-shadow
 .column-setup-header              display: flex; justify-content: space-between; padding; border-bottom
@@ -577,6 +849,7 @@ Slot: default (toggle controls, actions)
 ```
 
 ### Loading & Empty State (`loading.scss`)
+
 ```
 .v-table-loading-overlay          position: absolute; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center
 .v-table-loading-backdrop         position: absolute; inset: 0; backdrop-filter: blur(1px)
@@ -594,17 +867,17 @@ Slot: default (toggle controls, actions)
 
 ### Adding a New Prop to VTable
 
-1. Add the prop to `TableProps<TData>` in `types/props.ts`
-2. Destructure it in `VTable.vue` via `defineProps<TableProps<TData>>()`
+1. Add the prop to `TableProps` in `types/props.ts`
+2. Destructure it in `VTable.vue` via `defineProps<TableProps>()`
 3. Pass it to the relevant subcomponent or composable
 
 ### Adding a New Emit
 
-1. Add to `TableEmits<TData>` in `types/props.ts` as a function intersection entry:
+1. Add to `TableEmits` in `types/props.ts` as a function intersection entry:
    ```ts
    & ((e: "my-event", payload: MyPayload) => void)
    ```
-2. Add the event string to the runtime `defineEmits([...])` array in `VTable.vue`
+2. Add the event to `defineEmits<TableEmits>()` in `VTable.vue`
 3. Call `emit("my-event", payload)` where needed
 
 ### Adding a New Composable
@@ -634,11 +907,17 @@ Slot: default (toggle controls, actions)
 
 ## Forbidden Patterns
 
-- `Column<Record<string, unknown>>` as default — always `Column<any>` (see Invariant #1)
-- `defineEmits<{ 'event': [arg] }>()` in VTable.vue — broken in generic SFCs, use runtime array + cast
+- Reintroducing a `generic="TData..."` attribute on `VTable.vue`, or the old runtime
+  `defineEmits([...]) as unknown as TableEmits<TData>` cast workaround, without first confirming the component has
+  actually become generic again (see Invariant #1)
 - Inline styles in subcomponents — use CSS variable binding or class binding
 - Hard-coded colors in table SCSS — all colors via CSS variables
-- `reactive()` return from composables — loses type inference on destructuring
+- `reactive()` return from composables — loses type inference on destructuring. Exception: `useLinkedTables`
+  intentionally returns `reactive({...})` as the `link` binding object because it is used with `v-bind` (not
+  destructured). This is the only case. **`scrollSync` inside is wrapped with `markRaw()`** — `reactive()` deep-wraps
+  nested objects and auto-unwraps their Refs, which would silently break `watch(props.scrollSync.scrollPosition, ...)`
+  in VTable (the watcher would receive a plain value instead of a Ref and never fire). `markRaw` prevents this proxy so
+  `scrollPosition` arrives as a real `Ref`.
 - `props.x` access after destructuring — banned by Vue 3.5+ rules
 - `any` in composable signatures (not default generics) — use `unknown` + type guards
 - Side effects at composable top level — put inside `onMounted` or watchers
