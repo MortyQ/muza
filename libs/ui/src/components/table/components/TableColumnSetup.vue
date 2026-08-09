@@ -657,6 +657,12 @@ const handleReset = async () => {
   </div>
 </template>
 
+<!--
+  teleported: this dialog is rendered inside VFloating's popover, which portals
+  its content to <body>. That puts the markup outside VTable's subtree, where a
+  scoped attribute selector no longer matches — the rules have to be global to
+  reach it at all.
+-->
 <style lang="scss">
 @use "../assets/styles/column-setup";
 </style>

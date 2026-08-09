@@ -4,12 +4,13 @@ import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import DeltaIndicator from "../../../../src/components/table/components/DeltaIndicator.vue";
+import TableColumnSetup from "../../../../src/components/table/components/TableColumnSetup.vue";
 import TableEmptyState from "../../../../src/components/table/components/TableEmptyState.vue";
 import TablePagination from "../../../../src/components/table/components/TablePagination.vue";
 import VTable from "../../../../src/components/table/VTable.vue";
 import { makeColumns, makeFixedColumns, makeRows, makeTotalRow } from "../../../setup/table";
 import { applyTheme, THEME_CASES } from "../../../setup/theme";
-import { tokenAsColor } from "../../../setup/tokens";
+import { tokenAsColor, tokenAsValue } from "../../../setup/tokens";
 
 /**
  * The table's SCSS is a partial set under `assets/styles/`, outside the
@@ -148,6 +149,27 @@ describe.each(THEME_CASES)("table tokens — %s theme", (theme) => {
 
       expect(getComputedStyle(button).color).toBe(tokenAsColor("--ui-primary-hover"));
       expect(getComputedStyle(button).borderTopColor).toBe(tokenAsColor("--ui-primary"));
+    });
+  });
+
+  describe("the column dialog", () => {
+    async function dialog(): Promise<HTMLElement> {
+      await applyTheme(theme);
+      const screen = render(TableColumnSetup, { props: { columns: makeColumns() } });
+      return screen.container.querySelector(".column-setup") as HTMLElement;
+    }
+
+    it("lifts itself on the shared elevation scale", async () => {
+      // It used to carry a hardcoded black drop shadow, which is invisible on a
+      // dark surface — the same defect VSwitch had. The elevation tokens are
+      // brand-tinted in the dark theme precisely for this.
+      expect(getComputedStyle(await dialog()).boxShadow)
+        .toBe(tokenAsValue("box-shadow", "--ui-shadow-lg"));
+    });
+
+    it("draws on the surface token", async () => {
+      expect(getComputedStyle(await dialog()).backgroundColor)
+        .toBe(tokenAsColor("--ui-surface"));
     });
   });
 

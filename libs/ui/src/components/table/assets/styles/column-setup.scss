@@ -10,9 +10,7 @@
     background: var(--ui-surface);
     border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
     border-radius: 12px;
-    box-shadow:
-        0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--ui-shadow-lg);
     overflow: hidden;
     position: relative;
     z-index: 1;
@@ -205,9 +203,7 @@
         opacity: 0.6;
         cursor: grabbing;
         transform: scale(1.02);
-        box-shadow:
-            0 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        box-shadow: var(--ui-shadow-md);
     }
 
     &--drag-over {

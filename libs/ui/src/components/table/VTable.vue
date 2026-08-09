@@ -1407,6 +1407,14 @@ onUnmounted(() => {
   </Teleport>
 </template>
 
+<!--
+  Unscoped on purpose. `table.scss` composes the partial set under
+  assets/styles/, and those rules have to reach elements this component does not
+  own: the cells rendered by TableCell, the header rendered by TableHeader, the
+  bar rendered by TablePagination. Scoping would attach VTable's data attribute
+  to none of them, and every subcomponent would render unstyled — which is also
+  why a screenshot of one of them in isolation needs this component imported.
+-->
 <style lang="scss">
 @use './assets/styles/table.scss';
 </style>

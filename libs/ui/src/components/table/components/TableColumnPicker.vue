@@ -809,6 +809,11 @@ function typeStyle(icon?: string): Record<string, string> {
   </div>
 </template>
 
+<!--
+  teleported: same as TableColumnSetup — VFloating portals this picker to
+  <body>, outside VTable's subtree, so a scoped attribute selector matches
+  nothing and the rules have to be global.
+-->
 <style lang="scss">
 @use "../assets/styles/column-picker";
 </style>
