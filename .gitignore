@@ -17,3 +17,6 @@ coverage/
 # a local run creates its own throwaway set beside them.
 **/__screenshots__/**/*-darwin.png
 **/__screenshots__/**/*-win32.png
+
+# Vitest browser failure captures (written beside the spec that failed)
+**/__failures__/

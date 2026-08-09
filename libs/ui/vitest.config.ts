@@ -42,10 +42,15 @@ export default defineConfig({
             enabled: true,
             provider: playwright(),
             headless: true,
-            // Failure captures are debugging output, not baselines. Left at the
-            // default they land in __screenshots__ beside the real references
-            // and get committed by an unwary `git add`.
-            screenshotDirectory: ".vitest-attachments/failures",
+            // Vitest's generic on-failure capture writes into __screenshots__
+            // under a name derived from the test title, mixing debris in with
+            // the real baselines. Redirecting it is not an option:
+            // `screenshotDirectory` is resolved against the project root and
+            // then joined onto the spec's directory, so any value builds an
+            // absolute-path-shaped tree inside tests/. Turned off instead —
+            // toMatchScreenshot writes its own -actual/-diff pair on failure,
+            // into .vitest-attachments, which is what you actually debug from.
+            screenshotFailures: false,
             instances: [
               {
                 browser: "chromium",
