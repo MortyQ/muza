@@ -99,7 +99,10 @@ export default defineConfig({
       // library by volume and starts at zero, so a single global number would
       // have to drop to ~27% — which would let the five finished categories
       // regress by fifty points without anything going red. The table's own bar
-      // rises phase by phase until it meets the rest.
+      // now sits alongside the rest. What keeps it off the others' numbers is
+      // VTable.vue itself: its virtualization and KeepAlive-handoff branches
+      // are unreachable without layout, and the browser project is not
+      // instrumented (it would double count).
       thresholds: {
         "src/components/{base,feedback,inputs,layout,overlay}/**": {
           statements: 78,
@@ -108,10 +111,10 @@ export default defineConfig({
           lines: 80,
         },
         "src/components/table/**": {
-          statements: 0,
-          branches: 0,
-          functions: 0,
-          lines: 0,
+          statements: 84,
+          branches: 78,
+          functions: 86,
+          lines: 85,
         },
       },
     },

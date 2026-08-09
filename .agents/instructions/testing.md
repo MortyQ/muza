@@ -15,7 +15,7 @@ either.
 ## Commands
 
 ```bash
-pnpm --filter @muzakit/ui test:unit            # jsdom, ~2s
+pnpm --filter @muzakit/ui test:unit            # jsdom, ~10s
 pnpm --filter @muzakit/ui test:tokens          # token contracts only, no baselines
 pnpm --filter @muzakit/ui test:visual          # + pixel regression
 pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
@@ -31,8 +31,11 @@ is installed. Pixel regression stays out of it — see below.
 `ui-component-migration.md` into assertions: one scoped style block per
 component holding nothing but its `@import`, a paired stylesheet at the
 conventional path, no Tailwind utilities in templates, no raw colours or
-`@apply`/`theme()` in SCSS, `color-mix` always in oklch. `VIcon` is the only
-component exempt from the paired-stylesheet rule; an unscoped `<style>` is
+`@apply`/`theme()` in SCSS, `color-mix` always in oklch. It walks
+`base`, `feedback`, `inputs`, `layout` and `overlay` only — `table/` owns a
+partial set under `assets/styles/` instead of a stylesheet per component, so the
+rule does not apply and its token bindings are covered by the browser layer
+instead. `VIcon` is the only component exempt from the paired-stylesheet rule; an unscoped `<style>` is
 allowed only where the element is teleported out of the component's subtree and
 the block says `teleported:`.
 
@@ -101,6 +104,61 @@ every baseline at once — bump them together, then regenerate.
 9. **`matchMedia` answers false to everything** in the unit setup, which
    disables anything gated on `(hover: hover)`. Override it in the spec, or the
    test passes by never doing anything.
+
+## The table
+
+`table/` is roughly half the library by volume and is covered along the same
+four layers, with two extra helpers and a handful of traps of its own.
+
+**Helpers.** `tests/setup/table.ts` holds every fixture — `makeColumns`,
+`makeRows`, `makeTreeRows`, `makeGroupedColumns`, `makeFixedColumns`,
+`makeTotalRow`. Unit specs and screenshots share them on purpose, so a failure
+in one can be read against the other. `tests/setup/scope.ts` gives `withScope()`,
+which runs a composable inside an `effectScope` instead of mounting a host: most
+of the table's logic never touches the DOM, and `onScopeDispose` cleanup (the
+`useLinkedTables` registry) needs the scope stopped afterwards.
+
+**Where each thing is tested.** Composables and utils in isolation
+(`tests/unit/table/composables`, `.../utils`), the 21 subcomponents in isolation
+(`tests/unit/table/components`), and `VTable` itself only at the wiring seams —
+one or two tests per prop → composable → subcomponent path, never the
+cross-product. Layout-dependent behaviour is in the browser project.
+
+**Traps:**
+
+10. **Any unit test of `VTable` must pass `virtualized: false`.** `rowsToRender`
+    returns nothing until the scroll container reports a size, and jsdom reports
+    zero for everything — so a virtualized table renders no rows at all, and the
+    virtualizer re-measures itself into "Maximum recursive updates exceeded"
+    while trying. Neither is a defect; both are the absence of layout.
+
+11. **In the browser project, render the table in place.** Moving the wrapper
+    into a sized host after mount invalidates the rect TanStack Virtual measured
+    on its first frame, and the window silently collapses to zero rows.
+
+12. **The table's subcomponents are only styled when `VTable` is imported.** Its
+    unscoped `<style>` is what pulls the partial set in, so a screenshot of
+    `TablePagination` on its own is a baseline of an unstyled component — which
+    looks plausible until someone compares it with the app.
+
+13. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
+    project). Its ESM build imports `./keyv-idb` with no extension, which Node's
+    resolver rejects, so the storage module cannot be imported at all otherwise.
+    `fake-indexeddb/auto` in the unit setup then makes the default IndexedDB
+    branch testable rather than skipped.
+
+14. **More module-level singletons**: the `useLinkedTables` registry, and
+    `tableStorage`, whose `setStorageType` mutates global state. Reset both in
+    `beforeEach` or the order of files starts to matter.
+
+15. **With both highlight axes on, the header's column pins come first** in DOM
+    order. An unscoped `.v-table-pin-button[0]` selects a column, not a row.
+
+16. **Several table styles are gradients**, so their colour is in
+    `background-image` and `backgroundColor` reads as transparent — the header,
+    the total row, and the active pagination button. A few values are literals
+    rather than tokens (the wrapper's `1rem` radius); those are pinned as
+    literals with a comment, not silently "fixed" in the test.
 
 ## Adding a component
 
