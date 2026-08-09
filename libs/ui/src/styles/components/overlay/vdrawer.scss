@@ -2,6 +2,8 @@
    BACKDROP
    ============================================ */
 .v-drawer__backdrop {
+  /* See VModal: registry-assigned stacking order, exposed as a variable. */
+  z-index: var(--v-drawer-z, 50);
   position: fixed;
   inset: 0;
   background: var(--ui-overlay);

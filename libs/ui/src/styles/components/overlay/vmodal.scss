@@ -2,6 +2,9 @@
    BACKDROP
    ============================================ */
 .v-modal__backdrop {
+  /* Stacking order comes from the shared useModal registry, handed in as a
+     custom property so a consumer can still layer something above it. */
+  z-index: var(--v-modal-z, 50);
   position: fixed;
   inset: 0;
   display: flex;

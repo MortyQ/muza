@@ -57,7 +57,7 @@ const excludedSlots = [
 <template>
   <div
     :class="`v-datepicker--${size}`"
-    :style="{ width }"
+    :style="{ '--v-datepicker-width': width }"
     class="v-datepicker-wrapper"
   >
     <!-- Label -->

@@ -87,9 +87,7 @@
   height: 16px;
   border-radius: 9999px;
   background-color: white;
-  box-shadow:
-    0 3px 8px 0 oklch(0% 0 0 / 0.15),
-    0 1px 4px 0 oklch(0% 0 0 / 0.10);
+  box-shadow: var(--ui-shadow-md);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;

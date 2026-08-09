@@ -55,7 +55,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         v-if="keepAlive ? true : isOpen"
         v-show="keepAlive ? isOpen : true"
         :class="backdropBlur !== 'none' ? `v-drawer__backdrop--blur-${backdropBlur}` : ''"
-        :style="{ zIndex }"
+        :style="{ '--v-drawer-z': zIndex }"
         class="v-drawer__backdrop"
         @click="handleBackdropClick"
         @keydown="handleKeydown"

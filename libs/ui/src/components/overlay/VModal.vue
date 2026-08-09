@@ -81,7 +81,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     >
       <div
         v-if="isOpen"
-        :style="{ zIndex }"
+        :style="{ '--v-modal-z': zIndex }"
         class="v-modal__backdrop"
         @click="handleBackdropClick"
         @keydown="handleKeydown"
