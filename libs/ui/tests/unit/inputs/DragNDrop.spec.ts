@@ -1,5 +1,3 @@
-import { defineComponent } from "vue";
-
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 
@@ -7,15 +5,9 @@ import VIcon from "../../../src/components/base/VIcon.vue";
 import DragNDrop from "../../../src/components/inputs/DragNDrop.vue";
 import { dropPayload, makeFile, setInputFiles } from "../../setup/files";
 
-const stubs = {
-  Icon: true,
-  VButton: true,
-  VLoader: true,
-  // The file list is a TransitionGroup. jsdom never finishes a CSS transition,
-  // so a removed row would sit in the DOM forever mid-leave and every count
-  // would be off by the number of files ever removed.
-  TransitionGroup: defineComponent({ name: "TransitionGroupStub", template: "<div><slot /></div>" }),
-};
+// The TransitionGroup around the file list is handled by the global setup,
+// which replaces it with a pass-through so removed rows really leave the DOM.
+const stubs = { Icon: true, VButton: true, VLoader: true };
 
 function dnd(props: Record<string, unknown> = {}) {
   return mount(DragNDrop, { props, global: { stubs } });

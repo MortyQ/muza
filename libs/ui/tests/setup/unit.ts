@@ -1,3 +1,5 @@
+import { defineComponent } from "vue";
+
 import { config } from "@vue/test-utils";
 import { beforeEach, vi } from "vitest";
 
@@ -28,14 +30,23 @@ vi.stubGlobal("matchMedia", (query: string) => ({
   dispatchEvent: () => false,
 }));
 
-// Teleported content lands outside the wrapper, so tests would have to reach
-// into document.body for it. Stubbing Teleport keeps it inline and assertable.
-// Overlay behaviour that genuinely depends on portalling belongs in the
-// browser project, not here.
+/**
+ * Transitions are replaced by pass-throughs rather than left alone. jsdom never
+ * fires `transitionend`, so a leaving element sits in the DOM forever: a closed
+ * modal still matches its selector, and a removed list row keeps being counted.
+ * The stubs render their slot, so an element that Vue removed is actually gone.
+ */
+const passThrough = (name: string) =>
+  defineComponent({ name, setup: (_, { slots }) => () => slots.default?.() });
+
 config.global.stubs = {
+  // Teleported content lands outside the wrapper, so tests would have to reach
+  // into document.body for it. Stubbing Teleport keeps it inline and
+  // assertable. Overlay behaviour that genuinely depends on portalling belongs
+  // in the browser project, not here.
   Teleport: true,
-  Transition: false,
-  TransitionGroup: false,
+  Transition: passThrough("TransitionStub"),
+  TransitionGroup: passThrough("TransitionGroupStub"),
 };
 
 beforeEach(() => {
