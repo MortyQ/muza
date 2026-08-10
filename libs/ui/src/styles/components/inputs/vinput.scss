@@ -47,7 +47,9 @@
   font-family: inherit;
   position: relative;
   z-index: 10;
-  transition: all 0.2s ease-in-out;
+  /* Not `all`: that animates background-color, which fights the 5000s
+     transition the autofill block below relies on. */
+  transition: color 0.2s ease-out, padding 0.2s ease-out;
   -webkit-appearance: none;
   appearance: none;
 
@@ -346,18 +348,62 @@
 /* ============================================
    AUTOFILL OVERRIDES
    ============================================ */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-textarea:-webkit-autofill:active {
-  transition: background-color 5000s ease-in-out 0s;
-  -webkit-text-fill-color: var(--ui-foreground) !important;
-  box-shadow: 0 0 0 1000px var(--ui-input-bg) inset !important;
+/* Scoped to .v-input-field, not to bare `input` / `textarea`: this stylesheet is
+   loaded by a library component, and the unscoped form restyled every autofilled
+   field in the consuming app. The class carries enough specificity to drop the
+   `!important`s along with it.
+
+   The inset fill masks the browser's yellow background; the 5000s background
+   transition keeps the UA style from ever landing. Elevation is unaffected —
+   it sits on .v-input-container, whose drop shadow paints outside the box. */
+.v-input-field:-webkit-autofill,
+.v-input-field:-webkit-autofill:hover,
+.v-input-field:-webkit-autofill:focus,
+.v-input-field:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--ui-foreground);
+  -webkit-box-shadow: 0 0 0 1000px var(--ui-input-bg) inset;
+  box-shadow: 0 0 0 1000px var(--ui-input-bg) inset;
   caret-color: var(--ui-foreground);
+  font-family: inherit;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Firefox marks the field without forcing a background there is anything to
+   mask, so it only needs the colour and the font back. */
+.v-input-field:autofill {
+  color: var(--ui-foreground);
+  font-family: inherit;
+}
+
+/* Autofill on page load does not reliably fire `input`, so localValue stays
+   empty, `hasValue` is false and the floating label would sit on top of the
+   value the browser just filled in. Drive the raised state from CSS instead. */
+.v-input-container:has(.v-input-field:-webkit-autofill) {
+  /* The field (z-10) paints above the fieldset, so the inset fill would swallow
+     the border. Raised only here: a permanent z-index would put the border over
+     the textarea's native resize grip, which is a visible 2px regression. Still
+     below the icons and the label (z-20). */
+  .v-fieldset {
+    z-index: 15;
+  }
+
+  .v-label {
+    top: 0;
+    left: 0.75rem;
+    transform: translateY(-50%) scale(0.75);
+    font-weight: 500;
+    color: var(--ui-primary);
+
+    &.v-label--error {
+      color: var(--ui-danger);
+    }
+  }
+
+  .v-legend {
+    max-width: 100%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
 }
 
 /* ============================================
