@@ -13,6 +13,7 @@ import { describe, expect, it } from "vitest";
  */
 
 const SRC = resolve(__dirname, "../src");
+const UNIT = resolve(__dirname, "unit");
 const CATEGORIES = ["base", "feedback", "inputs", "layout", "overlay"] as const;
 
 interface ComponentFile {
@@ -21,6 +22,7 @@ interface ComponentFile {
   path: string
   source: string
   scssPath: string
+  specPath: string
 }
 
 function collect(): ComponentFile[] {
@@ -36,6 +38,7 @@ function collect(): ComponentFile[] {
           path: join(dir, file),
           source: readFileSync(join(dir, file), "utf8"),
           scssPath: join(SRC, "styles/components", category, `${name.toLowerCase()}.scss`),
+          specPath: join(UNIT, category, `${name}.spec.ts`),
         };
       });
   });
@@ -59,6 +62,14 @@ const NO_EXTERNAL_SCSS = new Set(["VIcon"]);
  * an argued exception rather than a silent one.
  */
 const TELEPORT_MARKER = /teleported:/;
+
+/**
+ * Components deliberately left to the token and screenshot layers, with no
+ * unit spec of their own. An entry here is an argument, not an oversight —
+ * and the "has no stale entries" test below deletes the argument the moment
+ * the spec appears.
+ */
+const NO_UNIT_SPEC = new Set<string>([]);
 
 function templateOf(source: string): string {
   const match = source.match(/<template>([\s\S]*)<\/template>/);
@@ -168,6 +179,97 @@ describe("component conventions", () => {
     it("is exported from index.ts", () => {
       expect(INDEX).toContain(`${name}.vue`);
     });
+
+    it.runIf(!NO_UNIT_SPEC.has(name))("has a unit spec at the conventional path", () => {
+      // The whole point of a guard rather than a checklist: a component can
+      // land without tests only by writing itself into NO_UNIT_SPEC, where
+      // the omission is readable. Backfilling "later" does not survive
+      // contact with a deadline; a red test does.
+      expect(
+        existsSync(component.specPath),
+        `${name} has no unit spec — expected ${component.specPath}, or an entry in NO_UNIT_SPEC`,
+      ).toBe(true);
+    });
+  });
+
+  it("keeps no stale entries in NO_UNIT_SPEC", () => {
+    const stale = COMPONENTS
+      .filter(c => NO_UNIT_SPEC.has(c.name) && existsSync(c.specPath))
+      .map(c => c.name);
+    expect(stale, `these now have a spec and must leave NO_UNIT_SPEC: ${stale.join(", ")}`)
+      .toHaveLength(0);
+  });
+});
+
+/**
+ * `navigation-sidebar/` is outside CATEGORIES — it owns a nested structure and
+ * a partial stylesheet set, so the style rules above do not apply to it. The
+ * spec rule does, and it is the one zone of the library with no tests at all.
+ *
+ * Rather than exempt the whole folder and lose the rule where it is needed
+ * most, every untested unit is listed below by name. The list is debt made
+ * legible: anything added to the folder from now on needs a spec, and the
+ * staleness test forces each name out as its spec lands. When it is empty,
+ * delete it and the `.runIf`.
+ */
+const SIDEBAR_UNTESTED = new Set([
+  "NavigationSidebar",
+  "NavigationSidebarMobile",
+  "SidebarFooter",
+  "SidebarHeader",
+  "SidebarMenuFlyout",
+  "SidebarMenuFlyoutItem",
+  "SidebarMenuFlyoutParent",
+  "SidebarNav",
+  "SidebarNavItem",
+  "SidebarMobileFooter",
+  "SidebarMobileHeader",
+  "SidebarMobileNav",
+  "SidebarMobileNavItem",
+  "createSidebar",
+  "useNavItemTo",
+  "useNavigation",
+  "useSidebarState",
+  "buildMenuTree",
+]);
+
+describe("navigation-sidebar test debt", () => {
+  const ROOT = join(SRC, "components/navigation-sidebar");
+
+  const units = readdirSync(ROOT, { recursive: true, withFileTypes: true })
+    .filter(entry => entry.isFile())
+    .filter(entry => /\.(vue|ts)$/.test(entry.name))
+    // Barrels, type modules and injection keys hold no behaviour to test.
+    .filter(entry => !/^(index|injectionKeys|routeMeta)\./.test(entry.name))
+    .filter(entry => !entry.parentPath.includes("/types"))
+    .map(entry => ({
+      name: entry.name.replace(/\.(vue|ts)$/, ""),
+      specPath: join(UNIT, "navigation-sidebar", `${entry.name.replace(/\.(vue|ts)$/, "")}.spec.ts`),
+    }));
+
+  it("finds the units", () => {
+    expect(units.length).toBeGreaterThan(15);
+  });
+
+  describe.each(units)("$name", ({ name, specPath }) => {
+    it.runIf(!SIDEBAR_UNTESTED.has(name))("has a unit spec", () => {
+      expect(
+        existsSync(specPath),
+        `${name} has no unit spec — expected ${specPath}`,
+      ).toBe(true);
+    });
+  });
+
+  it("shrinks: no listed unit already has a spec", () => {
+    const done = units.filter(u => SIDEBAR_UNTESTED.has(u.name) && existsSync(u.specPath));
+    expect(done.map(u => u.name), "remove these from SIDEBAR_UNTESTED").toHaveLength(0);
+  });
+
+  it("lists nothing that no longer exists", () => {
+    const names = new Set(units.map(u => u.name));
+    const ghosts = [...SIDEBAR_UNTESTED].filter(n => !names.has(n));
+    expect(ghosts, `SIDEBAR_UNTESTED names units that are gone: ${ghosts.join(", ")}`)
+      .toHaveLength(0);
   });
 });
 

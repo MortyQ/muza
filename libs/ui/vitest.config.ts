@@ -88,7 +88,19 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
-      include: ["src/components/{base,feedback,inputs,layout,overlay,table}/**"],
+      // Everything shipped from index.ts, including the parts with no tests
+      // yet. A zone that is absent from `include` does not read as 0% — it
+      // does not appear at all, which makes the report look finished when it
+      // is not. `navigation-sidebar/` was invisible this way for its whole
+      // life. Uncovered is allowed; unmeasured is not.
+      include: ["src/components/**", "src/composables/**", "src/utils/**"],
+      // `exclude` replaces the provider's default list rather than extending
+      // it, which is harmless here only because `include` is already confined
+      // to src/. Two kinds of noise: the table's README, which the coverage
+      // provider tries to parse as a module and reports as a RollupError on
+      // every run, and type-only modules, which are erased at build time and
+      // sit at a permanent 0%.
+      exclude: ["**/*.md", "**/types/**", "**/*.d.ts", "**/injectionKeys.ts"],
       reporter: ["text", "html", "lcov"],
       // Set just under what the suite currently reaches, so the number can only
       // go up. Only the unit project is instrumented — the browser project runs
@@ -115,6 +127,33 @@ export default defineConfig({
           branches: 78,
           functions: 86,
           lines: 85,
+        },
+        // Zero on purpose, not by oversight: these three zones are in the
+        // report so the gap is visible and shrinks on its own schedule, but
+        // they gate nothing until tests actually exist. Raise each one to
+        // just under what it reaches the moment its first specs land —
+        // a bar of 0 that stays at 0 after the work is done is worse than
+        // no bar, because it reads as a decision already taken.
+        "src/components/navigation-sidebar/**": {
+          statements: 0,
+          branches: 0,
+          functions: 0,
+          lines: 0,
+        },
+        // useModal and useNavigationGuard are covered; useToast and
+        // useModalRegister are not, and the mix averages to a number worth
+        // seeing before pinning.
+        "src/composables/**": {
+          statements: 0,
+          branches: 0,
+          functions: 0,
+          lines: 0,
+        },
+        "src/utils/**": {
+          statements: 0,
+          branches: 0,
+          functions: 0,
+          lines: 0,
         },
       },
     },
