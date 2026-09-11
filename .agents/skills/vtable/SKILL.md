@@ -41,10 +41,12 @@ You optimize for:
 ## Architecture
 
 ```
-VTable.vue (1412 lines, generic SFC — see Invariant #1)
+VTable.vue (1184 lines, generic SFC — see Invariant #1)
 │
-├── Composables (13, pure reactive logic)
+├── Composables (15, pure reactive logic)
 │   ├── useColumnResize       → width state + rAF-throttled drag resize
+│   ├── useTableCellMetadata  → one resolution per cell, cached per row
+│   ├── useTableColumnConfig  → visibility/order + storage restore
 │   ├── useFixedColumns       → sticky offsets + z-index
 │   ├── useGroupedHeaders     → multi-level header tree → flat rows
 │   ├── useExpandableTable    → tree data → FlattenedRow[] + toggle state
@@ -58,7 +60,8 @@ VTable.vue (1412 lines, generic SFC — see Invariant #1)
 │   ├── useTablePeriodSelect  → period dropdown → API params
 │   └── useLinkedTables       → cross-table scroll/page/highlight sync
 │
-├── Subcomponents (21, rendering only)
+├── Subcomponents (21, rendering only — TableCell also resolves its own
+│                            metadata, see Extension Points)
 │   DeltaIndicator · DeltaValue · TableBackdrop · TableCell ·
 │   TableCheckboxCell · TableColumnPicker · TableColumnSetup ·
 │   TableEmptyState · TableExpandAdditionalHeadersButton ·
@@ -103,6 +106,12 @@ VTable.vue (1412 lines, generic SFC — see Invariant #1)
    `WeakMap<row, Map<cacheKey, CellMetadata>>`. The key includes
    `!!column.cellClass` / `!!column.cellStyle`. A new row object invalidates
    naturally; nothing resets it manually.
+
+   It lives in `useTableCellMetadata` and is reached through
+   `provide("tableCellMetadata", …)`, which `TableCell` injects. so-platform
+   keys the inner map by column identity instead; that was not adopted, because
+   a `columns` computed that rebuilds its objects each evaluation would defeat
+   an identity-keyed cache entirely rather than merely widen a string-keyed one.
 
 6. **No colour literals in table SCSS.** Structure only — layout, grid, z-index,
    position, transitions. Every colour is a `--ui-*` token. `_variables.scss`
@@ -266,14 +275,25 @@ set-type-then-read ordering. Neither try/catches: the call sites log differently
 and one falls through to a default. `SavedColumnState` is a superset —
 `TableColumnSetup` writes without `labels`, `TableColumnPicker` writes with.
 
-The centralization is incomplete: only those two components use the helper.
-`VTable.vue` redeclares `SavedColumnState` locally and calls
-`tableStorage.getTableConfig` directly. The shapes agree today, and nothing
-enforces that they keep agreeing.
+All three call sites now go through the helper — `VTable.vue`'s local
+`SavedColumnState` and its direct `tableStorage.getTableConfig` call are gone,
+replaced by `useTableColumnConfig`, which is also where the picker-key fallback
+and the fixed-to-the-edges sort live.
 
 ---
 
 ## Extension Points
+
+**A cell's rendering** → `TableCell.vue`, not `VTable.vue`'s template. Passing
+`row`/`column`/`colIndex`/`rowIndex` puts the cell in *metadata mode*: it injects
+the resolver, resolves once, and draws its own class, style, indent, title,
+expand button and value. Omit them (the total row does) and it falls back to a
+bare passthrough of its default slot. `VTable` hands down only the two things it
+alone knows — the row pin, through the `pin` slot, and the consumer's
+`#cell-<key>` override, through the default slot **guarded by
+`v-if="$slots[...]"`**. Passing that slot unconditionally hands `TableCell` an
+always-truthy slot function, which suppresses its fallback and takes the `title`
+attribute with it.
 
 **A new prop** → add to `TableProps` in `types/props.ts`, destructure it in
 `VTable.vue`'s `defineProps<TableProps<TData>>()`, pass it on.

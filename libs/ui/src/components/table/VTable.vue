@@ -7,7 +7,6 @@ import {
 import type { VirtualItem } from "@tanstack/vue-virtual";
 
 import VButton from "../base/VButton.vue";
-import VIcon from "../base/VIcon.vue";
 import VFloating from "../overlay/VFloating.vue";
 
 import TableBackdrop from "./components/TableBackdrop.vue";
@@ -29,6 +28,8 @@ import { useColumnResize } from "./composables/useColumnResize";
 import { useExpandableTable } from "./composables/useExpandableTable";
 import { useFixedColumns } from "./composables/useFixedColumns";
 import { useGroupedHeaders } from "./composables/useGroupedHeaders";
+import { useTableCellMetadata } from "./composables/useTableCellMetadata";
+import { useTableColumnConfig } from "./composables/useTableColumnConfig";
 import { useTableFormatters } from "./composables/useTableFormatters";
 import { useTableFullScreen } from "./composables/useTableFullScreen";
 import { normalizeHighlight, useTableHighlight } from "./composables/useTableHighlight";
@@ -45,7 +46,6 @@ import type {
   TableHighlightState,
 } from "./types/index";
 import type { TableProps, TableEmits } from "./types/props";
-import tableStorage from "./utils/storage";
 
 const {
   loading = false,
@@ -86,12 +86,6 @@ const $slots: ReturnType<typeof useSlots> = useSlots();
 interface FormattedCell {
   text?: unknown
   class?: string
-}
-
-interface SavedColumnState {
-  visible: string[]
-  order: string[]
-  fixed?: Record<string, "left" | "right">
 }
 
 // Provide slots to deeply nested components (avoid prop drilling)
@@ -165,141 +159,23 @@ const handleToolbarExport = (format: string, selectedOnly?: boolean) => {
   emit("toolbar:export", format, selectedOnly);
 };
 
-// Column Setup Logic - basic check without hasGroups (will be checked later)
-const columnSetupEnabledBasic = computed(() => {
-  const setup = toolbar?.actions?.columnSetup;
-  // Enabled if string or object (not false, not undefined)
-  return typeof setup === "string" || typeof setup === "object";
-});
-
-const columnSetupConfig = computed<{
-  key?: string
-  type?: "indexedDB" | "localStorage" | "sessionStorage"
-  allowReorder?: boolean
-  initialVisible?: string[]
-}>(() => {
-  const setup = toolbar?.actions?.columnSetup;
-
-  // String shorthand: use as storage key with defaults
-  if (typeof setup === "string") {
-    return {
-      key: setup,
-      type: "indexedDB" as const,
-      allowReorder: true,
-    };
-  }
-
-  // Object: use as-is, with type defaults
-  if (typeof setup === "object") {
-    return {
-      ...setup,
-      type: setup.type || "indexedDB", // Default to indexedDB
-    };
-  }
-
-  return {};
-});
-
-// Helper: Load saved column state from storage (async)
-const loadColumnsFromStorage = async (): Promise<Column<TData>[] | null> => {
-  if (!columnSetupEnabledBasic.value) return null;
-
-  const config = columnSetupConfig.value;
-
-  const hasStorageKey = !!config.key;
-  let loaded: SavedColumnState | null = null;
-
-  if (hasStorageKey) {
-    try {
-      // Set storage type if specified
-      if (config.type) {
-        tableStorage.setStorageType(config.type);
-      }
-      // Load from storage (IndexedDB by default)
-      loaded = await tableStorage.getTableConfig<SavedColumnState>(config.key!);
-    }
-    catch (e) {
-      console.warn("Failed to load stored column setup", e);
-    }
-  }
-
-  // If we have a persisted state – build columns from it
-  // If we have a persisted state – build columns from it
-  if (loaded) {
-    const flatten = (cols: Column<TData>[]): Column<TData>[] =>
-      cols.flatMap(c => (c.children && c.children.length ? flatten(c.children) : [c]));
-    const flat = flatten(columns);
-    const map = new Map<string, Column<TData>>(flat.map(c => [c.key, c]));
-    const result: Column<TData>[] = [];
-    const savedFixed = loaded.fixed;
-
-    loaded.order.forEach((key) => {
-      if (loaded!.visible.includes(key)) {
-        const col = map.get(key);
-        if (col) {
-          // Apply saved fixed state if exists
-          result.push({
-            ...col,
-            fixed: savedFixed?.[key] || col.fixed,
-          });
-        }
-      }
-    });
-    // Fallback: if for some reason result empty but visible list not empty, build from visible list
-    if (!result.length && loaded.visible.length) {
-      loaded.visible.forEach((key) => {
-        const col = map.get(key);
-        if (col) {
-          result.push({
-            ...col,
-            fixed: savedFixed?.[key] || col.fixed,
-          });
-        }
-      });
-    }
-    return result.length ? result : null;
-  }
-
-  // No persisted state: apply initialVisible if provided
-  const initial = Array.isArray(config.initialVisible) ? config.initialVisible : null;
-  if (initial) {
-    // Preserve original column order; ignore unknown keys
-    const filtered = columns.filter(c => initial.includes(c.key));
-    // If initialVisible is an empty array => return empty to hide all columns explicitly.
-    if (initial.length === 0) return [];
-    return filtered.length ? filtered : null; // null => fall back to all columns if none matched
-  }
-
-  return null; // use all columns by default
-};
-
-// Visible columns - managed by TableColumnSetup component
-// Initialize with saved state from storage if available
-const visibleColumns = ref<Column<TData>[] | null>(null);
-const columnSetupPopoverRef = ref<{ close: () => void } | null>(null);
-
-// Load columns from storage asynchronously
-loadColumnsFromStorage().then((columns) => {
-  if (columns !== null) {
-    visibleColumns.value = columns;
-  }
-});
-
-const handleVisibleColumnsUpdate = (cols: Column[]) => {
-  visibleColumns.value = [...cols]; // Create new array to trigger reactivity
-};
-
-const handleColumnSetupClose = () => {
-  columnSetupPopoverRef.value?.close();
-};
-
-// Use visible columns if column setup is enabled, otherwise use all columns
-const effectiveColumns = computed(() => {
-  if (!columnSetupEnabledBasic.value) {
-    return columns;
-  }
-  // If column setup is enabled but not yet initialized, use props.columns temporarily
-  return visibleColumns.value ?? columns;
+// ── Column visibility, order and persistence ────────────────────────────────
+// Storage plumbing, the picker/setup key fallback and the fixed-to-the-edges
+// sort all live in the composable; VTable only wires it to the toolbar config.
+const {
+  columnSetupEnabledBasic,
+  columnSetupConfig,
+  columnPickerConfig,
+  columnSetupPopoverRef,
+  columnPickerPopoverRef,
+  handleVisibleColumnsUpdate,
+  handleColumnSetupClose,
+  handleColumnPickerClose,
+  effectiveColumns,
+} = useTableColumnConfig<TData>({
+  columns: () => columns,
+  columnSetup: () => toolbar?.actions?.columnSetup,
+  columnPicker: () => toolbar?.actions?.columnPicker,
 });
 
 // Total row visibility - simply check for presence
@@ -643,105 +519,15 @@ const handleToggleRow = (id: string | number, row: TData & FlattenedRow, column:
 const isRowExpanded = (row: FlattenedRow): boolean => row.isExpanded;
 const hasRowChildren = (row: FlattenedRow): boolean => row.hasChildren;
 
-// ============================================
-// PERFORMANCE OPTIMIZATION: Unified Cell Metadata
-// ============================================
-// All cell-related calculations in ONE function to minimize overhead
-// Uses WeakMap for aggressive caching - calculated once per row
+// ── Cell metadata ───────────────────────────────────────────────────────────
+// One resolution per cell, cached per row. Provided rather than called from the
+// template: TableCell injects it and resolves its own, which is what replaced
+// the four calls per cell this template used to make.
+const { getCellMetadata } = useTableCellMetadata<TData & FlattenedRow>({
+  isExpandable: () => isExpandable.value,
+  isRowExpandable: row => expandableLogic.isExpandable(row),
+});
 
-interface CellMetadata {
-  formattedValue: unknown
-  cssClass: string | undefined
-  titleText: string | undefined
-  indentStyle: { paddingLeft: string } | null
-  customStyle: Record<string, string> | undefined
-  isExpandable: boolean
-}
-
-const cellMetadataCache = new WeakMap<object, Map<string, CellMetadata>>();
-
-// UNIFIED cell data calculator - replaces 5 separate function calls
-const getCellMetadata = (
-  row: TData & FlattenedRow,
-  column: Column<TData>,
-  colIndex: number,
-  rowIndex: number,
-): CellMetadata => {
-  // Get or create row cache
-  let rowCache = cellMetadataCache.get(row);
-  if (!rowCache) {
-    rowCache = new Map();
-    cellMetadataCache.set(row, rowCache);
-  }
-
-  // Check cache - include cellClass/cellStyle in cache key for proper invalidation
-  const cacheKey = `${column.key}-${!!column.cellClass}-${!!column.cellStyle}`;
-  const cached = rowCache.get(cacheKey);
-  if (cached) return cached;
-
-  // Calculate all metadata ONCE
-  const formatted = column.format
-    ? formatCellValue(row[column.key], column, row)
-    : row[column.key];
-
-  // Extract value and class from formatted result
-  let formattedValue = formatted;
-  let cssClass: string | undefined;
-
-  if (
-    formatted
-    && typeof formatted === "object"
-    && !Array.isArray(formatted)
-    && "text" in formatted
-  ) {
-    formattedValue = (formatted as FormattedCell).text;
-    cssClass = (formatted as FormattedCell).class;
-  }
-
-  // Custom cellClass from column definition (best practice)
-  if (column.cellClass) {
-    const customClass = column.cellClass({ value: row[column.key], row, rowIndex });
-    if (customClass) {
-      cssClass = cssClass ? `${cssClass} ${customClass}` : customClass;
-    }
-  }
-
-  // Custom cellStyle from column definition (best practice)
-  const customStyle = column.cellStyle
-    ? column.cellStyle({ value: row[column.key], row, rowIndex })
-    : undefined;
-
-  // Title for non-interactive cells
-  const titleText = !column.interactive ? String(formattedValue) : undefined;
-
-  // Indent style for first column with depth
-  const depth = (row.depth as number) || 0;
-  const indentStyle = colIndex === 0 && depth
-    ? { paddingLeft: `${depth * 24 + 16}px` }
-    : null;
-
-  // Check if row is expandable (only for first column)
-  const isExpandableRow = colIndex === 0 && isExpandable.value
-    ? expandableLogic.isExpandable(row as ExpandableRow)
-    : false;
-
-  const metadata: CellMetadata = {
-    formattedValue,
-    cssClass,
-    titleText,
-    indentStyle,
-    customStyle,
-    isExpandable: isExpandableRow,
-  };
-
-  // Cache it with the same key
-  rowCache.set(cacheKey, metadata);
-
-  return metadata;
-};
-
-// Lets TableCell resolve its own metadata instead of VTable calling
-// getCellMetadata up to 4x per cell in the template.
 provide("tableCellMetadata", getCellMetadata);
 
 // ── Highlight (pinned cross) ────────────────────────────────────────────────
@@ -967,15 +753,6 @@ const {
     remeasure();
   },
 });
-
-// ── Column picker ───────────────────────────────────────────────────────────
-const columnPickerConfig = computed(() => toolbar?.actions?.columnPicker || null);
-
-const columnPickerPopoverRef = ref<{ close: () => void } | null>(null);
-
-const handleColumnPickerClose = () => {
-  columnPickerPopoverRef.value?.close();
-};
 
 // ── Linked tables ───────────────────────────────────────────────────────────
 const onScrollContainerScroll = (event: Event) => {
@@ -1269,64 +1046,51 @@ onUnmounted(() => {
                 v-for="(column, colIndex) in columnsForData"
                 :key="`${item.key}-${column.key}`"
                 :align="column.align"
-                :class="[
-                  getColumnClasses(column),
-                  getCellMetadata(item.row, column, colIndex, item.index).cssClass,
-                  getRowClasses(item.row, item.index)
-                ]"
+                :class="[getColumnClasses(column), getRowClasses(item.row, item.index)]"
+                :col-index="colIndex"
+                :column
                 :data-custom-row="getRowClasses(item.row, item.index) ? 'true' : undefined"
                 :depth="(item.row.depth as number) || 0"
-                :style="{
-                  ...getFixedStyles(column),
-                  ...getCellMetadata(item.row, column, colIndex, item.index).customStyle
-                }"
+                :is-expanded="item.row.isExpanded"
+                :row="item.row"
+                :row-index="item.index"
+                :style="getFixedStyles(column)"
+                @toggle-expand="handleToggleRow(item.row.id as string | number, item.row, column)"
               >
-                <div
-                  :style="getCellMetadata(item.row, column, colIndex, item.index).indentStyle"
-                  class="v-table-cell-content"
-                >
+                <!--
+                  The cell resolves its own class, style, indent, title and value
+                  from the injected metadata — passing row/column is what puts it
+                  in that mode. Only the two things VTable alone knows are handed
+                  down: the row pin, and the consumer's `#cell-<key>` override.
+                -->
+                <template #pin>
                   <TablePinButton
                     v-if="highlightConfig.row && colIndex === 0"
                     :pinned="isRowPinned(item.row.id)"
                     label="row"
                     @toggle="highlightApi.toggleRow(item.row.id as string | number)"
                   />
+                </template>
 
-                  <!-- Expand button only for first column -->
-                  <button
-                    v-if="isExpandable &&
-                      getCellMetadata(item.row, column, colIndex, item.index).isExpandable"
-                    class="v-table-cell-expand-btn"
-                    @click.stop="handleToggleRow(item.row.id as string | number, item.row, column)"
-                  >
-                    <VIcon
-                      :icon="item.row.isExpanded ? 'mdi:chevron-down' : 'mdi:chevron-right'"
-                      :size="18"
-                    />
-                  </button>
-
-                  <!-- Column content (universal for all) -->
-                  <div
-                    :class="{ 'v-table-cell-text--truncate': !column.interactive }"
-                    class="v-table-cell-text"
-                  >
-                    <slot
-                      :column="column"
-                      :depth="item.row.depth || 0"
-                      :index="item.index"
-                      :name="`cell-${column.key}`"
-                      :row="item.row"
-                      :value="item.row[column.key]"
-                    >
-                      <!-- Default rendering with formatter -->
-                      <span
-                        :title="getCellMetadata(item.row, column, colIndex, item.index).titleText"
-                      >
-                        {{ getCellMetadata(item.row, column, colIndex, item.index).formattedValue }}
-                      </span>
-                    </slot>
-                  </div>
-                </div>
+                <!--
+                  Guarded so an absent override leaves TableCell's own default in
+                  place: passing the slot unconditionally would hand it an
+                  always-truthy slot function and suppress the fallback, taking
+                  the title attribute with it.
+                -->
+                <template
+                  v-if="$slots[`cell-${column.key}`]"
+                  #default
+                >
+                  <slot
+                    :column="column"
+                    :depth="item.row.depth || 0"
+                    :index="item.index"
+                    :name="`cell-${column.key}`"
+                    :row="item.row"
+                    :value="item.row[column.key]"
+                  />
+                </template>
               </TableCell>
             </TableRow>
 
