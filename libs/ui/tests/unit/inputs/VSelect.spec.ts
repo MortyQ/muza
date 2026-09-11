@@ -95,22 +95,37 @@ describe("VSelect", () => {
   });
 
   describe("floating label", () => {
+    // The label needs vertical room the 30px modern chrome does not have, so it
+    // only exists with `modern: false` — which is why every case here passes it.
+    const labelled = (props: Record<string, unknown> = {}) =>
+      select({ modern: false, name: "Marketplace", ...props });
+
     it("hides the placeholder while a label is showing and the field is unfocused", () => {
       // Otherwise the label and the placeholder say the same thing twice.
-      const w = select({ name: "Marketplace", placeholder: "Pick one" });
-      expect(inner(w).props().placeholder).toBe("");
+      expect(inner(labelled({ placeholder: "Pick one" })).props().placeholder).toBe("");
     });
 
     it("shows the placeholder when there is no label to clash with", () => {
-      const w = select({ placeholder: "Pick one" });
+      const w = select({ modern: false, placeholder: "Pick one" });
       expect(inner(w).props().placeholder).toBe("Pick one");
     });
 
     it("restores the placeholder on focus", async () => {
-      const w = select({ name: "Marketplace", placeholder: "Pick one" });
+      const w = labelled({ placeholder: "Pick one" });
       inner(w).vm.$emit("open");
       await w.vm.$nextTick();
       expect(inner(w).props().placeholder).toBe("Pick one");
+    });
+
+    it("renders the label element", () => {
+      expect(labelled().find(".v-select__label").text()).toBe("Marketplace");
+    });
+
+    it("marks the label active once focused", async () => {
+      const w = labelled();
+      inner(w).vm.$emit("open");
+      await w.vm.$nextTick();
+      expect(w.find(".v-select__label").classes()).toContain("v-select__label--active");
     });
 
     it("re-emits open and close", async () => {
@@ -120,6 +135,40 @@ describe("VSelect", () => {
       await w.vm.$nextTick();
       expect(w.emitted("open")).toHaveLength(1);
       expect(w.emitted("close")).toHaveLength(1);
+    });
+  });
+
+  describe("modern chrome", () => {
+    it("is what you get by default", () => {
+      // Matches VButton, where the modern chrome is also the default — a filter
+      // select and a neutral button in the same toolbar row are one family.
+      expect(select().classes()).toContain("v-select--modern");
+    });
+
+    it("steps back to the legacy chrome on request", () => {
+      expect(select({ modern: false }).classes()).not.toContain("v-select--modern");
+    });
+
+    it("drops the floating label, because the notch has no room at 30px", () => {
+      const w = select({ name: "Marketplace" });
+      expect(w.find(".v-select__label").exists()).toBe(false);
+    });
+
+    it("keeps the placeholder that a floating label would have suppressed", () => {
+      // `name` no longer hides it, so the control still says what it is for.
+      const w = select({ name: "Marketplace", placeholder: "Pick one" });
+      expect(inner(w).props().placeholder).toBe("Pick one");
+    });
+
+    it("leaves the legend hidden even with a value", () => {
+      const w = select({ name: "Marketplace", modelValue: OPTIONS[0] });
+      expect(w.find(".v-select__legend").classes())
+        .not.toContain("v-select__legend--visible");
+    });
+
+    it("shows the legend in the legacy chrome once there is a value", () => {
+      const w = select({ modern: false, name: "Marketplace", modelValue: OPTIONS[0] });
+      expect(w.find(".v-select__legend").classes()).toContain("v-select__legend--visible");
     });
   });
 

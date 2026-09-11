@@ -90,3 +90,42 @@
   }
 }
 
+
+/* ============================================
+   LOADING
+
+   The control keeps its size, its pill and its position while a selection is
+   being written. Only the selected segment says anything, and it says it by
+   swapping its own label for a spinner in the same box — the width does not
+   change, so the pill has nothing to slide to.
+   ============================================ */
+.v-segmented-control--loading .v-sc__item {
+  cursor: progress;
+}
+
+/* Not the `--disabled` treatment: dimming the whole control would say the
+   control is unavailable, when in fact it is busy with what was just asked of
+   it. The unselected segments only stop responding to hover. */
+.v-segmented-control--loading .v-sc__item:not(.v-sc__item--active) {
+  opacity: 0.55;
+}
+
+.v-sc__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: opacity 150ms ease-in-out;
+}
+
+.v-sc__item--pending .v-sc__label {
+  opacity: 0;
+}
+
+.v-sc__spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ui-foreground);
+}

@@ -6,6 +6,9 @@ import "./styles/tokens.css";
 
 export { default as VAvatar } from "./components/base/VAvatar.vue";
 export { default as VButton } from "./components/base/VButton.vue";
+export { default as VButtonGroup } from "./components/base/VButtonGroup.vue";
+export { BUTTON_GROUP_KEY } from "./components/base/injectionKeys";
+export { default as VDate } from "./components/base/VDate.vue";
 export {
   default as VChip, type ChipVariant, type ChipColor, type ChipSize,
 } from "./components/base/VChip.vue";
@@ -41,6 +44,7 @@ export {
   default as VInfoNotice, type NoticeTone, type NoticeFeature,
 } from "./components/layout/VInfoNotice.vue";
 export { default as VScrollPanel } from "./components/layout/VScrollPanel.vue";
+export { default as VCollapse } from "./components/layout/VCollapse.vue";
 export {
   default as VCard, type CardSize, type CardVariant, type CardRadius, type CardPadding,
 } from "./components/layout/VCard.vue";
@@ -49,6 +53,7 @@ export { default as VFloating } from "./components/overlay/VFloating.vue";
 export { default as VToaster } from "./components/feedback/VToaster.vue";
 export { default as VLoader } from "./components/feedback/VLoader.vue";
 export { default as VProgressBar } from "./components/feedback/VProgressBar.vue";
+export { default as VMeter } from "./components/feedback/VMeter.vue";
 export { default as VTable } from "./components/table/VTable.vue";
 
 // ── Table: standalone subcomponents ─────────────────────────────────────────

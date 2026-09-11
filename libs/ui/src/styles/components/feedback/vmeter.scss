@@ -1,0 +1,78 @@
+.v-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.v-meter__track {
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--ui-radius-full);
+  /* Translucent so the track reads the same on a card and on a hover fill one
+     step lighter. */
+  background-color: color-mix(in oklch, var(--ui-border) 60%, transparent);
+  overflow: hidden;
+}
+
+.v-meter__track--sm {
+  height: 4px;
+}
+
+.v-meter__track--md {
+  height: 6px;
+}
+
+.v-meter__fill {
+  height: 100%;
+  border-radius: inherit;
+  transform: scaleX(var(--v-meter-fill, 0));
+  transform-origin: left center;
+  /* Strong ease-out, under 300ms: the bar moves when a new measurement lands and
+     the eye is already on the number beside it, so it must arrive rather than
+     travel. */
+  transition: transform 250ms cubic-bezier(0.23, 1, 0.32, 1), background-color 250ms ease;
+}
+
+.v-meter__fill--met {
+  background-color: var(--ui-success);
+}
+
+.v-meter__fill--unmet {
+  background-color: var(--ui-warning);
+}
+
+.v-meter__icon--met {
+  color: var(--ui-success);
+}
+
+.v-meter__icon--unmet {
+  color: var(--ui-warning);
+}
+
+.v-meter__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-foreground-secondary);
+}
+
+.v-meter__value--help {
+  cursor: help;
+}
+
+/* Slightly recessed while measuring, so the settled value reads as the real one. */
+.v-meter__value--pending {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* Reduced motion means gentler, not none — the bar still lands on the new value,
+   it just stops being animated movement. */
+@media (prefers-reduced-motion: reduce) {
+  .v-meter__fill {
+    transition-duration: 1ms;
+  }
+}

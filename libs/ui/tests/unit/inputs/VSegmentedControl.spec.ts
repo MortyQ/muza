@@ -100,6 +100,67 @@ describe("VSegmentedControl", () => {
     });
   });
 
+  describe("loading", () => {
+    it("adds nothing when idle", () => {
+      const w = control();
+      expect(w.classes()).not.toContain("v-segmented-control--loading");
+      expect(w.find(".v-sc__spinner").exists()).toBe(false);
+    });
+
+    it("marks the control and the selected option", () => {
+      const w = control({ loading: true });
+      expect(w.classes()).toContain("v-segmented-control--loading");
+      expect(items(w)[0].classes()).toContain("v-sc__item--pending");
+    });
+
+    it("spins on the selected option only", () => {
+      // The consumer moves `modelValue` on click and rolls it back on failure,
+      // so the spinner sits on what was just clicked.
+      const w = control({ loading: true, modelValue: "week" });
+      expect(w.findAll(".v-sc__spinner")).toHaveLength(1);
+      expect(items(w)[1].classes()).toContain("v-sc__item--pending");
+      expect(items(w)[0].classes()).not.toContain("v-sc__item--pending");
+    });
+
+    it("shows no spinner when nothing matches the model", () => {
+      expect(control({ loading: true, modelValue: "year" }).find(".v-sc__spinner").exists())
+        .toBe(false);
+    });
+
+    it("announces the wait on the pending option", () => {
+      const w = control({ loading: true });
+      expect(items(w)[0].attributes("aria-busy")).toBe("true");
+      expect(items(w)[1].attributes("aria-busy")).toBeUndefined();
+    });
+
+    it("keeps the label mounted so the segment does not change width", () => {
+      // Pulling it out for the spinner would collapse the segment and drag the
+      // pill with it.
+      const w = control({ loading: true });
+      expect(items(w)[0].find(".v-sc__label").text()).toBe("Day");
+    });
+
+    it("blocks every option, not just the pending one", () => {
+      const w = control({ loading: true });
+      for (const item of items(w)) {
+        expect(item.attributes("disabled")).toBeDefined();
+      }
+    });
+
+    it("emits nothing on click", async () => {
+      const w = control({ loading: true });
+      await items(w)[1].trigger("click");
+      expect(w.emitted("update:modelValue")).toBeUndefined();
+    });
+
+    it("still emits once the write finishes", async () => {
+      const w = control({ loading: true });
+      await w.setProps({ loading: false });
+      await items(w)[1].trigger("click");
+      expect(w.emitted("update:modelValue")?.[0]).toEqual(["week"]);
+    });
+  });
+
   it("handles numeric values", async () => {
     const w = mount(VSegmentedControl, {
       props: { options: [{ label: "One", value: 1 }, { label: "Two", value: 2 }], modelValue: 1 },

@@ -1,8 +1,118 @@
 .v-scroll-panel {
+  --_ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
   overflow-y: auto;
   max-height: var(--v-scroll-panel-max-height, none);
   padding: 0.625rem;
   border-radius: var(--ui-radius-xl);
+  /* The depth is drawn inward, never as a drop shadow: this is a well, and its
+     content — cards, list rows — carries elevation of its own. A container that
+     also casts a shadow puts two competing light sources in one component. */
   background-color: color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
   box-shadow: var(--ui-shadow-inner);
+}
+
+.v-scroll-panel__copy {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.v-scroll-panel__copy-btn {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid color-mix(in oklch, var(--ui-border) 60%, transparent);
+  border-radius: var(--ui-radius-lg);
+  /* Translucent plus a blur: the button sits over the first line of content, and
+     an opaque chip would punch a hole in the text it is floating on. */
+  background-color: color-mix(in oklch, var(--ui-surface) 72%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--ui-foreground-secondary);
+  cursor: pointer;
+  transition:
+    transform 150ms var(--_ease-out),
+    opacity 150ms var(--_ease-out),
+    color 150ms ease,
+    border-color 150ms ease;
+
+  &:hover {
+    color: var(--ui-foreground);
+    border-color: var(--ui-border);
+  }
+
+  /* Instant feedback that the press registered — the clipboard write itself has
+     no visible latency to report. */
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklch, var(--ui-ring) 40%, transparent);
+    outline-offset: 2px;
+  }
+
+  &--copied {
+    color: var(--ui-success);
+    border-color: color-mix(in oklch, var(--ui-success) 50%, transparent);
+  }
+}
+
+/* Hover-revealed on pointer devices only: the button is chrome over someone
+   else's content, and it has no business sitting there permanently. Touch has no
+   hover, so it stays visible — and focus or a fresh copy brings it back
+   regardless. */
+@media (hover: hover) and (pointer: fine) {
+  .v-scroll-panel__copy-btn {
+    opacity: 0;
+  }
+
+  .v-scroll-panel:hover .v-scroll-panel__copy-btn,
+  .v-scroll-panel__copy-btn:focus-visible,
+  .v-scroll-panel__copy-btn--copied {
+    opacity: 1;
+  }
+}
+
+.v-scroll-panel__copy-glyph {
+  grid-area: 1 / 1;
+  display: flex;
+  transition: opacity 160ms var(--_ease-out), transform 160ms var(--_ease-out);
+
+  /* Starts small and turned rather than at zero — nothing in the world appears
+     out of nothing, and a check that snaps in at full size reads as a different
+     button, not the same one answering. */
+  &--check {
+    opacity: 0;
+    transform: scale(0.7) rotate(-12deg);
+  }
+}
+
+.v-scroll-panel__copy-btn--copied .v-scroll-panel__copy-glyph {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.v-scroll-panel__copy-btn--copied .v-scroll-panel__copy-glyph--check {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion means gentler, not none: the cross-fade and the reveal stay,
+   the movement behind them goes. */
+@media (prefers-reduced-motion: reduce) {
+  .v-scroll-panel__copy-btn:active {
+    transform: none;
+  }
+
+  .v-scroll-panel__copy-glyph,
+  .v-scroll-panel__copy-glyph--check,
+  .v-scroll-panel__copy-btn--copied .v-scroll-panel__copy-glyph {
+    transform: none;
+  }
 }

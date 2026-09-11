@@ -135,3 +135,45 @@
 .multiselect__option.multiselect__option--selected::after {
   content: none !important;
 }
+
+/* ============================================
+   THE TELEPORTED PANEL, MODERN CHROME
+
+   `v-ms-modern` is added alongside `v-ms-floating` by VSelect when `modern` is
+   on. The panel lives on <body>, so the chrome has to travel with the element as
+   a class — there is no selector from the component that reaches it.
+   ============================================ */
+.multiselect__content-wrapper.v-ms-modern {
+  border-radius: var(--ui-radius-lg);
+  padding: 0.1875rem;
+}
+
+/* See the `min-height: 0` note in vselect.scss — the library's 40px floor is why
+   an 18px row would otherwise render 40px tall with its text pinned to the top. */
+.multiselect__content-wrapper.v-ms-modern .multiselect__option {
+  font-size: 0.78125rem;
+  min-height: 0;
+  line-height: 1.125rem;
+  padding: 0.3125rem 0.5rem;
+  /* Rounded rows need the panel's own 3px padding above to keep the corners off
+     its border. */
+  border-radius: var(--ui-radius);
+}
+
+.multiselect__content-wrapper.v-ms-modern .multiselect__option.multiselect__option--group {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  min-height: 0;
+  line-height: 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--ui-radius);
+}
+
+/* The highlighted row of an already-selected option is the pressed step of the
+   same primary, which is what VButton does between its hover and active states. */
+.multiselect__content-wrapper.v-ms-modern
+.multiselect__option.multiselect__option--selected.multiselect__option--highlight {
+  background-color: var(--ui-primary-active);
+  color: var(--ui-primary-foreground);
+}
