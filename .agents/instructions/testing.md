@@ -105,6 +105,26 @@ every baseline at once — bump them together, then regenerate.
    disables anything gated on `(hover: hover)`. Override it in the spec, or the
    test passes by never doing anything.
 
+10. **The browser project kills every transition and animation** —
+    `tests/setup/browser.ts` writes a global `transition: none !important` so
+    screenshots are deterministic. A `transitionDuration` assertion there reads
+    `0s` no matter what the stylesheet says. Assert the custom property the
+    duration is derived from instead (`VCollapse`'s
+    `--v-collapse-duration`), and the end state each half of the pair lands on.
+
+11. **`useClipboard` needs two stubs and a tick**, none of them obvious.
+    `navigator.clipboard` has to be defined on the *real* `window.navigator`
+    with `Object.defineProperty` — @vueuse captures `defaultNavigator =
+    window.navigator` at module-evaluation time, so `vi.stubGlobal("navigator",
+    …)` arrives too late and `isSupported` stays false, which means the button
+    never renders and every assertion passes vacuously. `navigator.permissions`
+    is a second, separate gate: without a `query` resolving to a granted
+    `PermissionStatus` (an `EventTarget` — a bare `{ state }` throws on
+    `addEventListener`), `copy()` falls through to `document.execCommand`, which
+    jsdom does not implement. And the permission resolves asynchronously, so a
+    click in the mount tick still takes the fallback — let a macrotask pass
+    first. See `tests/unit/layout/VScrollPanel.spec.ts`.
+
 ## The table
 
 `table/` is roughly half the library by volume and is covered along the same
@@ -126,35 +146,35 @@ cross-product. Layout-dependent behaviour is in the browser project.
 
 **Traps:**
 
-10. **Any unit test of `VTable` must pass `virtualized: false`.** `rowsToRender`
+12. **Any unit test of `VTable` must pass `virtualized: false`.** `rowsToRender`
     returns nothing until the scroll container reports a size, and jsdom reports
     zero for everything — so a virtualized table renders no rows at all, and the
     virtualizer re-measures itself into "Maximum recursive updates exceeded"
     while trying. Neither is a defect; both are the absence of layout.
 
-11. **In the browser project, render the table in place.** Moving the wrapper
+13. **In the browser project, render the table in place.** Moving the wrapper
     into a sized host after mount invalidates the rect TanStack Virtual measured
     on its first frame, and the window silently collapses to zero rows.
 
-12. **The table's subcomponents are only styled when `VTable` is imported.** Its
+14. **The table's subcomponents are only styled when `VTable` is imported.** Its
     unscoped `<style>` is what pulls the partial set in, so a screenshot of
     `TablePagination` on its own is a baseline of an unstyled component — which
     looks plausible until someone compares it with the app.
 
-13. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
+15. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
     project). Its ESM build imports `./keyv-idb` with no extension, which Node's
     resolver rejects, so the storage module cannot be imported at all otherwise.
     `fake-indexeddb/auto` in the unit setup then makes the default IndexedDB
     branch testable rather than skipped.
 
-14. **More module-level singletons**: the `useLinkedTables` registry, and
+16. **More module-level singletons**: the `useLinkedTables` registry, and
     `tableStorage`, whose `setStorageType` mutates global state. Reset both in
     `beforeEach` or the order of files starts to matter.
 
-15. **With both highlight axes on, the header's column pins come first** in DOM
+17. **With both highlight axes on, the header's column pins come first** in DOM
     order. An unscoped `.v-table-pin-button[0]` selects a column, not a row.
 
-16. **Several table styles are gradients**, so their colour is in
+18. **Several table styles are gradients**, so their colour is in
     `background-image` and `backgroundColor` reads as transparent — the header,
     the total row, and the active pagination button. A few values are literals
     rather than tokens (the wrapper's `1rem` radius); those are pinned as

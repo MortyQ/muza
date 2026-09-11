@@ -373,3 +373,124 @@
   background-color: transparent;
   color: var(--ui-foreground-disabled);
 }
+
+/* ============================================
+   MODERN CHROME — the default, opt out with `:modern="false"`
+
+   `VButton`'s modern block, ported to a control that is not a button: 30px, 8px
+   radius, 1px hairline, 13.5px/510 type, the extra-small elevation and the tonal
+   neutral surface — so a filter select and a `variant="neutral"` button beside it
+   are one control family rather than two.
+
+   Every rule is nested under `.v-select--modern`, so it is one class more
+   specific than the legacy rule it overrides and the block is order-independent.
+   Nothing above it changes.
+   ============================================ */
+
+/* The border lives on the fieldset overlay, the fill cannot: the overlay is
+   painted after the value and would hide it. Hairline and elevation here, the
+   surface on the tags below. */
+.v-select--modern .v-select__fieldset {
+  border-color: color-mix(in oklch, var(--ui-foreground) 9%, transparent);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-xs);
+  padding: 0;
+
+  /* 1px, not the legacy 2px: at 30px a second pixel of border shifts the value
+     under the cursor on open. The ring carries the state change instead, outside
+     the box where it costs no layout. */
+  &--active {
+    border-width: 1px;
+    border-color: var(--ui-border-focus);
+    box-shadow: var(--ui-shadow-xs), 0 0 0 3px color-mix(in oklch, var(--ui-ring) 15%, transparent);
+  }
+}
+
+.v-select--modern {
+  /* `min-height`, never `height` — a multiple select has to be able to grow a
+     second row of chips instead of clipping them. */
+  :deep(.multiselect),
+  :deep(.multiselect__tags) {
+    min-height: 1.875rem;
+  }
+
+  :deep(.multiselect__tags) {
+    background-color: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
+    border-radius: var(--ui-radius-lg);
+    /* Right padding clears the caret box below; the vertical centring is the
+       line-height's job, so a 30px control needs no top padding to look
+       balanced. */
+    padding: 0.25rem 1.75rem 0.25rem 0.625rem;
+    transition: background-color 120ms ease;
+  }
+
+  :deep(.multiselect:hover:not(.multiselect--disabled)) .multiselect__tags {
+    background-color: color-mix(in oklch, var(--ui-foreground) 10%, transparent);
+  }
+
+  :deep(.multiselect__single),
+  :deep(.multiselect__placeholder),
+  :deep(.multiselect__input) {
+    font-size: 0.78125rem;
+    line-height: 1.375rem;
+    letter-spacing: -0.005em;
+    padding-top: 0;
+  }
+
+  :deep(.multiselect__single) {
+    font-weight: 510;
+  }
+
+  /* The caret was a 40px hit box on a 44px control. At 30px that box is the
+     control. */
+  :deep(.multiselect__select) {
+    right: 0.125rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .v-select__caret-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* Chips scaled to the row: no border (an outline reads as a nested control at
+     this size) and a tighter clear-button gutter. */
+  :deep(.multiselect__tag) {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.125rem;
+    border: none;
+    border-radius: var(--ui-radius-xs);
+    padding: 0 1.25rem 0 0.375rem;
+    margin-right: 0.25rem;
+  }
+
+  :deep(.multiselect__tag-icon) {
+    padding-left: 0;
+  }
+
+  :deep(.multiselect--disabled) .multiselect__tags {
+    background-color: var(--ui-surface-sunken);
+    border-radius: var(--ui-radius-lg);
+  }
+
+  /* The non-floating panel, for `teleport-to-body: false`. The floating one is
+     styled by class in vselect-floating.scss. */
+  :deep(.multiselect__content-wrapper) {
+    border-radius: var(--ui-radius-lg);
+    margin-top: 0.375rem;
+  }
+
+  /* `min-height: 0` is the load-bearing line. vue-multiselect ships
+     `.multiselect__option { min-height: 40px; line-height: 16px }`, which padding
+     cannot shrink: the row stays 40px, the 16px of text sits where the top
+     padding leaves it, and the rest of the box is dead space under every option.
+     Height comes from line-height + padding here instead. */
+  :deep(.multiselect__option) {
+    font-size: 0.78125rem;
+    min-height: 0;
+    line-height: 1.125rem;
+    padding: 0.3125rem 0.5rem;
+  }
+}

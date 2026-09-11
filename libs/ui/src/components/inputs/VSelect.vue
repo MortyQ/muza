@@ -28,6 +28,7 @@ const {
   name = "",
   allowEmpty = false,
   noResultsText = "No results found",
+  modern = true,
 } = defineProps<{
   modelValue?: SelectOption | SelectOption[] | null
   options?: SelectOption[]
@@ -49,6 +50,21 @@ const {
   allowEmpty?: boolean
   /** Empty-state text; override the `noResult` slot for richer content */
   noResultsText?: string
+  /**
+   * `VButton`'s modern chrome, and **the default**: 30px, 8px radius, 1px
+   * hairline, 13.5px/510 type and the tonal neutral surface a `variant="neutral"`
+   * modern button gets — so a filter select sits in a toolbar row with buttons
+   * instead of towering 14px over them.
+   *
+   * It changes only how the control is drawn. Every behaviour prop keeps its
+   * meaning, with one exception: **`name` (the MUI floating label) is ignored**,
+   * because the notch needs vertical room this height does not have. Use a
+   * `<label>` outside the component, or pass `:modern="false"`.
+   *
+   * so-platform ships this opt-in; here it matches `VButton`, where the modern
+   * chrome is also the default.
+   */
+  modern?: boolean
 }>();
 
 const emit = defineEmits<{
@@ -62,6 +78,9 @@ const emit = defineEmits<{
 
 const isFocused = ref(false);
 
+/** The floating label is the one thing `modern` drops, so the slot above is free for it. */
+const hasFloatingLabel = computed(() => !!name && !modern);
+
 const hasValue = computed(() => {
   if (Array.isArray(modelValue)) return modelValue.length > 0;
   if (modelValue && typeof modelValue === "object") return true;
@@ -70,7 +89,7 @@ const hasValue = computed(() => {
 
 // Hide placeholder when floating label is present and not focused (avoids duplication)
 const computedPlaceholder = computed(() => {
-  if (!name) return placeholder;
+  if (!hasFloatingLabel.value) return placeholder;
   return isFocused.value ? placeholder : "";
 });
 
@@ -139,7 +158,10 @@ const enableFloating = () => {
       document.body.appendChild(dropdownEl);
     }
 
+    // The panel is moved to `body`, so no scoped selector reaches it — the chrome
+    // has to travel with the element as its own class.
     dropdownEl.classList.add("v-ms-floating");
+    if (modern) dropdownEl.classList.add("v-ms-modern");
     updatePosition();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -153,7 +175,7 @@ const disableFloating = () => {
   window.removeEventListener("scroll", handleScroll);
   window.removeEventListener("resize", handleScroll);
 
-  dropdownEl.classList.remove("v-ms-floating", "opened-above");
+  dropdownEl.classList.remove("v-ms-floating", "v-ms-modern", "opened-above");
   dropdownEl.removeAttribute("style");
 
   if (placeholderNode && originalParent) {
@@ -183,11 +205,11 @@ onBeforeUnmount(() => disableFloating());
 <template>
   <div
     class="v-select"
-    :class="{ 'v-select--disabled': disabled }"
+    :class="{ 'v-select--disabled': disabled, 'v-select--modern': modern }"
   >
     <!-- Floating label -->
     <label
-      v-if="name"
+      v-if="hasFloatingLabel"
       :class="{ 'v-select__label--active': isFocused || hasValue }"
       class="v-select__label"
     >
@@ -261,7 +283,7 @@ onBeforeUnmount(() => disableFloating());
       class="v-select__fieldset"
     >
       <legend
-        :class="{ 'v-select__legend--visible': name && (hasValue || isFocused) }"
+        :class="{ 'v-select__legend--visible': hasFloatingLabel && (hasValue || isFocused) }"
         class="v-select__legend"
       >
         <span>{{ name }}</span>
