@@ -9,6 +9,10 @@ import { tokenAsColor } from "../../../setup/tokens";
  * Which token each variant is contractually bound to. If a variant is
  * re-pointed at a different token, or at a literal colour, this table is what
  * catches it — nothing in the type system can.
+ *
+ * These are the **legacy** chrome's bindings, reached with `modern: false`.
+ * Under the default chrome the status variants are tonal mixes rather than
+ * fills, and `VButtonModern.tokens.spec.ts` holds that contract instead.
  */
 const VARIANT_BACKGROUND = {
   primary: "--ui-primary",
@@ -18,10 +22,10 @@ const VARIANT_BACKGROUND = {
   warning: "--ui-warning",
 } as const;
 
-describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
+describe.each(THEME_CASES)("VButton legacy tokens — %s theme", (theme) => {
   async function renderButton(props: Record<string, unknown>): Promise<HTMLElement> {
     await applyTheme(theme);
-    const screen = render(VButton, { props: { text: "Label", ...props } });
+    const screen = render(VButton, { props: { text: "Label", modern: false, ...props } });
     return screen.container.firstElementChild as HTMLElement;
   }
 
@@ -76,6 +80,10 @@ describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
       expect(seen.has(bg), `${variant} shares a background with ${seen.get(bg)}`).toBe(false);
       seen.set(bg, variant);
     }
+  });
+
+  it("stands 40px tall, which is the whole reason the modern chrome exists", async () => {
+    expect(getComputedStyle(await renderButton({ variant: "primary" })).height).toBe("40px");
   });
 });
 

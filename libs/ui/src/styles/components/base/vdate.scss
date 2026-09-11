@@ -1,0 +1,11 @@
+.v-date {
+  /* Timestamps are read in columns far more often than in prose, and a column of
+     proportional digits will not align. Costs nothing where it is prose. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* The em dash is the absence, not the value — one step back in the text
+   hierarchy so a column of them does not compete with the real timestamps. */
+.v-date__empty {
+  color: var(--ui-foreground-secondary);
+}
