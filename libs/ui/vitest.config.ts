@@ -128,18 +128,29 @@ export default defineConfig({
           functions: 86,
           lines: 85,
         },
-        // Zero on purpose, not by oversight: these three zones are in the
-        // report so the gap is visible and shrinks on its own schedule, but
-        // they gate nothing until tests actually exist. Raise each one to
-        // just under what it reaches the moment its first specs land —
-        // a bar of 0 that stays at 0 after the work is done is worse than
-        // no bar, because it reads as a decision already taken.
-        "src/components/navigation-sidebar/**": {
-          statements: 0,
-          branches: 0,
-          functions: 0,
-          lines: 0,
+        // The sidebar's four logic units are covered; its thirteen components
+        // are not. A single folder-wide bar would therefore have to sit at ~30,
+        // which is low enough that the composables could lose every test
+        // without going red — so the finished part carries its own bar and the
+        // folder keeps the loose one underneath it.
+        "src/components/navigation-sidebar/composables/**": {
+          statements: 95,
+          branches: 90,
+          functions: 100,
+          lines: 95,
         },
+        "src/components/navigation-sidebar/**": {
+          statements: 30,
+          branches: 18,
+          functions: 27,
+          lines: 30,
+        },
+        // Zero on purpose, not by oversight: both zones are in the report so
+        // the gap is visible and shrinks on its own schedule, but they gate
+        // nothing until tests actually exist. Raise each one to just under
+        // what it reaches the moment its first specs land — a bar of 0 that
+        // stays at 0 after the work is done is worse than no bar, because it
+        // reads as a decision already taken.
         // useModal and useNavigationGuard are covered; useToast and
         // useModalRegister are not, and the mix averages to a number worth
         // seeing before pinning.

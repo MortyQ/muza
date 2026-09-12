@@ -227,9 +227,6 @@ const SIDEBAR_UNTESTED = new Set([
   "SidebarMobileNav",
   "SidebarMobileNavItem",
   "createSidebar",
-  "useNavItemTo",
-  "useNavigation",
-  "useSidebarState",
   "buildMenuTree",
 ]);
 
