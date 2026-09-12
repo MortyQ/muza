@@ -204,33 +204,13 @@ describe("component conventions", () => {
 /**
  * `navigation-sidebar/` is outside CATEGORIES — it owns a nested structure and
  * a partial stylesheet set, so the style rules above do not apply to it. The
- * spec rule does, and it is the one zone of the library with no tests at all.
+ * spec rule does, and it applies to every unit in the folder without exception.
  *
- * Rather than exempt the whole folder and lose the rule where it is needed
- * most, every untested unit is listed below by name. The list is debt made
- * legible: anything added to the folder from now on needs a spec, and the
- * staleness test forces each name out as its spec lands. When it is empty,
- * delete it and the `.runIf`.
+ * There was a SIDEBAR_UNTESTED list here naming the eighteen units that had no
+ * spec. It is gone because it reached zero, which is the only way it was ever
+ * meant to end. Do not reintroduce it: a new file in this folder gets a spec.
  */
-const SIDEBAR_UNTESTED = new Set([
-  "NavigationSidebar",
-  "NavigationSidebarMobile",
-  "SidebarFooter",
-  "SidebarHeader",
-  "SidebarMenuFlyout",
-  "SidebarMenuFlyoutItem",
-  "SidebarMenuFlyoutParent",
-  "SidebarNav",
-  "SidebarNavItem",
-  "SidebarMobileFooter",
-  "SidebarMobileHeader",
-  "SidebarMobileNav",
-  "SidebarMobileNavItem",
-  "createSidebar",
-  "buildMenuTree",
-]);
-
-describe("navigation-sidebar test debt", () => {
+describe("navigation-sidebar specs", () => {
   const ROOT = join(SRC, "components/navigation-sidebar");
 
   const units = readdirSync(ROOT, { recursive: true, withFileTypes: true })
@@ -249,24 +229,12 @@ describe("navigation-sidebar test debt", () => {
   });
 
   describe.each(units)("$name", ({ name, specPath }) => {
-    it.runIf(!SIDEBAR_UNTESTED.has(name))("has a unit spec", () => {
+    it("has a unit spec", () => {
       expect(
         existsSync(specPath),
         `${name} has no unit spec — expected ${specPath}`,
       ).toBe(true);
     });
-  });
-
-  it("shrinks: no listed unit already has a spec", () => {
-    const done = units.filter(u => SIDEBAR_UNTESTED.has(u.name) && existsSync(u.specPath));
-    expect(done.map(u => u.name), "remove these from SIDEBAR_UNTESTED").toHaveLength(0);
-  });
-
-  it("lists nothing that no longer exists", () => {
-    const names = new Set(units.map(u => u.name));
-    const ghosts = [...SIDEBAR_UNTESTED].filter(n => !names.has(n));
-    expect(ghosts, `SIDEBAR_UNTESTED names units that are gone: ${ghosts.join(", ")}`)
-      .toHaveLength(0);
   });
 });
 

@@ -128,22 +128,16 @@ export default defineConfig({
           functions: 86,
           lines: 85,
         },
-        // The sidebar's four logic units are covered; its thirteen components
-        // are not. A single folder-wide bar would therefore have to sit at ~30,
-        // which is low enough that the composables could lose every test
-        // without going red — so the finished part carries its own bar and the
-        // folder keeps the loose one underneath it.
-        "src/components/navigation-sidebar/composables/**": {
-          statements: 95,
-          branches: 90,
-          functions: 100,
-          lines: 95,
-        },
+        // The whole folder is covered now — four logic units and thirteen
+        // components — so it carries the library's highest bar rather than the
+        // split one it had while the components were still outstanding. What
+        // keeps it off 100 is geometry: the flyout's position is computed from
+        // `getBoundingClientRect`, which jsdom answers with zeroes.
         "src/components/navigation-sidebar/**": {
-          statements: 30,
-          branches: 18,
-          functions: 27,
-          lines: 30,
+          statements: 95,
+          branches: 93,
+          functions: 97,
+          lines: 95,
         },
         // Zero on purpose, not by oversight: both zones are in the report so
         // the gap is visible and shrinks on its own schedule, but they gate
