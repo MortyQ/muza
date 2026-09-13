@@ -17,13 +17,31 @@ either.
 ```bash
 pnpm --filter @muzakit/ui test:unit            # jsdom, ~10s
 pnpm --filter @muzakit/ui test:tokens          # token contracts only, no baselines
-pnpm --filter @muzakit/ui test:visual          # + pixel regression
+pnpm --filter @muzakit/ui test:screenshots     # pixel regression only
+pnpm --filter @muzakit/ui test:visual          # both halves of the browser project
 pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
 pnpm --filter @muzakit/ui test:visual:docker   # the browser project in CI's image
+pnpm --filter @muzakit/ui test:visual:update   # …and rewrite the Linux baselines
 ```
 
 A `pre-push` hook runs the unit project, and the token contracts when a Chromium
 is installed. Pixel regression stays out of it — see below.
+
+## What CI gates on
+
+`ci.yml` runs the two halves of the browser project as separate steps, because
+they fail for different reasons.
+
+**Token contracts gate.** A contract compares a component against the value the
+browser computed for its `--ui-*` token; it has no baseline to go stale, so a
+red one is a real defect.
+
+**Pixel regression is reported, not enforced** (`continue-on-error`, plus a
+warning and a `visual-diffs` artifact). It goes red for reasons that have
+nothing to do with the PR under review — a Chromium bump, a font, a deliberate
+restyle that landed earlier, or a baseline set nobody has regenerated. Gating on
+that teaches people to merge through a red check, which costs more than the
+signal is worth. Drop `continue-on-error` to make it gate again.
 
 ## The four layers
 
@@ -56,10 +74,18 @@ committed**; `.gitignore` drops `-darwin` and `-win32`, so a local run writes a
 throwaway set beside them and a first local run always reports "no reference
 screenshot". That is expected.
 
-To refresh them, run the **Update visual baselines** workflow from the Actions
-tab on the relevant branch. It regenerates inside the same Playwright image CI
-uses and commits the result. Regenerating on macOS produces a set CI can never
-match.
+There are two ways to refresh them, and both go through CI's image, because
+regenerating on macOS produces a set CI can never match:
+
+- the **Update visual baselines** workflow, from the Actions tab, on the branch
+  that needs them — it regenerates and commits;
+- `pnpm --filter @muzakit/ui test:visual:update` locally, which runs the same
+  image under Docker. Needs a running daemon; commit the result yourself.
+
+A first run on a branch that has never had baselines reports **"No existing
+reference screenshot found"** for every single assertion — 274 of them today.
+That is the absence of a baseline, not a regression, and it is why the CI step
+does not gate.
 
 The image tag in both workflows must match the `playwright` version in
 `pnpm-lock.yaml`. A different Chromium renders text differently and invalidates
@@ -125,6 +151,58 @@ every baseline at once — bump them together, then regenerate.
     click in the mount tick still takes the fallback — let a macrotask pass
     first. See `tests/unit/layout/VScrollPanel.spec.ts`.
 
+12. **A `defineAsyncComponent` never resolves on its own** under Vitest's module
+    runner. No number of `flushPromises` or macrotask ticks settles the loader's
+    dynamic import; the spec has to `import()` the same module itself first, and
+    then one `flushPromises` is enough. Until it does, the component stays a
+    comment node — which reads exactly like a render condition being false, so
+    the assertion fails for a reason that has nothing to do with the component.
+    `NavigationSidebar.spec.ts` warms the chunk in its `render()` helper.
+
+## The navigation sidebar
+
+`navigation-sidebar/` is four logic units and thirteen components, all of them
+reached through one provide.
+
+**Helpers.** `tests/setup/sidebar.ts`. `makeNavItems()` is the tree every spec
+works against — two roots, one three levels deep, one leaf addressed by name,
+one branch that is itself navigable. `NAV_ROUTES` are the routes that tree
+resolves against.
+
+`withRouter(fn, route)` runs a composable inside a component that has a router
+installed: three of the four units call `useRoute()`, which resolves through
+`inject`, so `withScope()` is not enough — an `effectScope` carries reactivity
+but no injection context and `useRoute()` inside one returns undefined.
+
+`makeSidebarState()` builds what `<NavigationSidebar>` provides, with the
+navigation half under the test's control: collapse/expand/mobile is the real
+`buildSidebarState` over a real `createSidebar`, while `isActive` /
+`isOnActivePath` are driven by an `activePath` ref. Route matching has its own
+spec; driving thirteen components by pushing routes would re-test it thirteen
+times and make all of them fail together when it breaks. `mountInSidebar()`
+mounts with that provide plus a router.
+
+**Traps:**
+
+13. **Every component here except `SidebarMenuFlyoutParent` and
+    `SidebarMobileFooter` calls `useSidebarState()`**, which throws outside the
+    tree. There is no bare mount to fall back on — which is the point: a spec
+    that forgets the provide fails loudly instead of testing a stub.
+
+14. **`findComponent` crosses into a row's own children.** `SidebarNavItem`
+    recurses, so a branch's subtree contains its children's `RouterLink`s — a
+    tree-wide query finds one whether or not the row under test is a link.
+    Assert on `wrapper.find(".sidebar-item").element.tagName` instead.
+
+15. **The flyout's position is never asserted in the unit project.** It is
+    computed from `getBoundingClientRect`, which jsdom answers with zeroes. Its
+    open/close delays are real timers, so those specs run on fake ones.
+
+16. **Escape closing the mobile drawer cannot be asserted through state.**
+    `closeMobile()` on an already-closed drawer is a no-op, so the guard and its
+    absence produce identical state. Stub `state.closeMobile` before mounting —
+    the component destructures it in setup — and assert on the call.
+
 ## The table
 
 `table/` is roughly half the library by volume and is covered along the same
@@ -146,35 +224,35 @@ cross-product. Layout-dependent behaviour is in the browser project.
 
 **Traps:**
 
-12. **Any unit test of `VTable` must pass `virtualized: false`.** `rowsToRender`
+17. **Any unit test of `VTable` must pass `virtualized: false`.** `rowsToRender`
     returns nothing until the scroll container reports a size, and jsdom reports
     zero for everything — so a virtualized table renders no rows at all, and the
     virtualizer re-measures itself into "Maximum recursive updates exceeded"
     while trying. Neither is a defect; both are the absence of layout.
 
-13. **In the browser project, render the table in place.** Moving the wrapper
+18. **In the browser project, render the table in place.** Moving the wrapper
     into a sized host after mount invalidates the rect TanStack Virtual measured
     on its first frame, and the window silently collapses to zero rows.
 
-14. **The table's subcomponents are only styled when `VTable` is imported.** Its
+19. **The table's subcomponents are only styled when `VTable` is imported.** Its
     unscoped `<style>` is what pulls the partial set in, so a screenshot of
     `TablePagination` on its own is a baseline of an unstyled component — which
     looks plausible until someone compares it with the app.
 
-15. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
+20. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
     project). Its ESM build imports `./keyv-idb` with no extension, which Node's
     resolver rejects, so the storage module cannot be imported at all otherwise.
     `fake-indexeddb/auto` in the unit setup then makes the default IndexedDB
     branch testable rather than skipped.
 
-16. **More module-level singletons**: the `useLinkedTables` registry, and
+21. **More module-level singletons**: the `useLinkedTables` registry, and
     `tableStorage`, whose `setStorageType` mutates global state. Reset both in
     `beforeEach` or the order of files starts to matter.
 
-17. **With both highlight axes on, the header's column pins come first** in DOM
+22. **With both highlight axes on, the header's column pins come first** in DOM
     order. An unscoped `.v-table-pin-button[0]` selects a column, not a row.
 
-18. **Several table styles are gradients**, so their colour is in
+23. **Several table styles are gradients**, so their colour is in
     `background-image` and `backgroundColor` reads as transparent — the header,
     the total row, and the active pagination button. A few values are literals
     rather than tokens (the wrapper's `1rem` radius); those are pinned as

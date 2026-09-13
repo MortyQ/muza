@@ -13,6 +13,7 @@ import { describe, expect, it } from "vitest";
  */
 
 const SRC = resolve(__dirname, "../src");
+const UNIT = resolve(__dirname, "unit");
 const CATEGORIES = ["base", "feedback", "inputs", "layout", "overlay"] as const;
 
 interface ComponentFile {
@@ -21,6 +22,7 @@ interface ComponentFile {
   path: string
   source: string
   scssPath: string
+  specPath: string
 }
 
 function collect(): ComponentFile[] {
@@ -36,6 +38,7 @@ function collect(): ComponentFile[] {
           path: join(dir, file),
           source: readFileSync(join(dir, file), "utf8"),
           scssPath: join(SRC, "styles/components", category, `${name.toLowerCase()}.scss`),
+          specPath: join(UNIT, category, `${name}.spec.ts`),
         };
       });
   });
@@ -59,6 +62,14 @@ const NO_EXTERNAL_SCSS = new Set(["VIcon"]);
  * an argued exception rather than a silent one.
  */
 const TELEPORT_MARKER = /teleported:/;
+
+/**
+ * Components deliberately left to the token and screenshot layers, with no
+ * unit spec of their own. An entry here is an argument, not an oversight —
+ * and the "has no stale entries" test below deletes the argument the moment
+ * the spec appears.
+ */
+const NO_UNIT_SPEC = new Set<string>([]);
 
 function templateOf(source: string): string {
   const match = source.match(/<template>([\s\S]*)<\/template>/);
@@ -167,6 +178,62 @@ describe("component conventions", () => {
 
     it("is exported from index.ts", () => {
       expect(INDEX).toContain(`${name}.vue`);
+    });
+
+    it.runIf(!NO_UNIT_SPEC.has(name))("has a unit spec at the conventional path", () => {
+      // The whole point of a guard rather than a checklist: a component can
+      // land without tests only by writing itself into NO_UNIT_SPEC, where
+      // the omission is readable. Backfilling "later" does not survive
+      // contact with a deadline; a red test does.
+      expect(
+        existsSync(component.specPath),
+        `${name} has no unit spec — expected ${component.specPath}, or an entry in NO_UNIT_SPEC`,
+      ).toBe(true);
+    });
+  });
+
+  it("keeps no stale entries in NO_UNIT_SPEC", () => {
+    const stale = COMPONENTS
+      .filter(c => NO_UNIT_SPEC.has(c.name) && existsSync(c.specPath))
+      .map(c => c.name);
+    expect(stale, `these now have a spec and must leave NO_UNIT_SPEC: ${stale.join(", ")}`)
+      .toHaveLength(0);
+  });
+});
+
+/**
+ * `navigation-sidebar/` is outside CATEGORIES — it owns a nested structure and
+ * a partial stylesheet set, so the style rules above do not apply to it. The
+ * spec rule does, and it applies to every unit in the folder without exception.
+ *
+ * There was a SIDEBAR_UNTESTED list here naming the eighteen units that had no
+ * spec. It is gone because it reached zero, which is the only way it was ever
+ * meant to end. Do not reintroduce it: a new file in this folder gets a spec.
+ */
+describe("navigation-sidebar specs", () => {
+  const ROOT = join(SRC, "components/navigation-sidebar");
+
+  const units = readdirSync(ROOT, { recursive: true, withFileTypes: true })
+    .filter(entry => entry.isFile())
+    .filter(entry => /\.(vue|ts)$/.test(entry.name))
+    // Barrels, type modules and injection keys hold no behaviour to test.
+    .filter(entry => !/^(index|injectionKeys|routeMeta)\./.test(entry.name))
+    .filter(entry => !entry.parentPath.includes("/types"))
+    .map(entry => ({
+      name: entry.name.replace(/\.(vue|ts)$/, ""),
+      specPath: join(UNIT, "navigation-sidebar", `${entry.name.replace(/\.(vue|ts)$/, "")}.spec.ts`),
+    }));
+
+  it("finds the units", () => {
+    expect(units.length).toBeGreaterThan(15);
+  });
+
+  describe.each(units)("$name", ({ name, specPath }) => {
+    it("has a unit spec", () => {
+      expect(
+        existsSync(specPath),
+        `${name} has no unit spec — expected ${specPath}`,
+      ).toBe(true);
     });
   });
 });

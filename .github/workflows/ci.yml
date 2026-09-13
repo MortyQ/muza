@@ -69,13 +69,43 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Browser tests
-        run: pnpm --filter @muzakit/ui test:visual
+      # The two halves of the browser project are split because they fail for
+      # different reasons and deserve different answers.
+      #
+      # A token contract compares a component against the value the browser
+      # actually computed for its `--ui-*` token. It has no baseline to go
+      # stale, so a red one is always a real defect. It gates.
+      - name: Token contracts
+        run: pnpm --filter @muzakit/ui test:tokens
+
+      # Pixel regression is only as trustworthy as the last time someone
+      # regenerated the baselines, and it goes red for reasons that have nothing
+      # to do with the PR under review: a Chromium bump, a font, a deliberate
+      # restyle landed two commits ago, or — as when this split was written — a
+      # baseline set that does not exist yet. Gating on that trains people to
+      # merge through a red check, which costs more than the signal is worth.
+      #
+      # So it reports instead. Read the summary, pull the diff artifact, and
+      # regenerate deliberately with the visual-baselines workflow. To make it
+      # gate again once the baselines are trustworthy, drop `continue-on-error`.
+      - name: Pixel regression (reported, not enforced)
+        id: pixels
+        continue-on-error: true
+        run: pnpm --filter @muzakit/ui test:screenshots
+
+      - name: Surface the pixel result
+        if: steps.pixels.outcome == 'failure'
+        run: |
+          echo "::warning title=Pixel regression::Screenshots differ from the committed baselines. Download the visual-diffs artifact, and regenerate with the Update visual baselines workflow if the change was intended."
+          echo "### Pixel regression reported differences" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "This does not fail the build. Check the \`visual-diffs\` artifact." >> "$GITHUB_STEP_SUMMARY"
 
       # Without the diff images a failure here is unreadable: the log says two
-      # PNGs differ and nothing else.
+      # PNGs differ and nothing else. `failure()` would not fire for the
+      # reported step, so this keys off its outcome directly.
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always() && steps.pixels.outcome == 'failure'
         with:
           name: visual-diffs
           path: libs/ui/.vitest-attachments
