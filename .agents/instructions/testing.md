@@ -17,13 +17,31 @@ either.
 ```bash
 pnpm --filter @muzakit/ui test:unit            # jsdom, ~10s
 pnpm --filter @muzakit/ui test:tokens          # token contracts only, no baselines
-pnpm --filter @muzakit/ui test:visual          # + pixel regression
+pnpm --filter @muzakit/ui test:screenshots     # pixel regression only
+pnpm --filter @muzakit/ui test:visual          # both halves of the browser project
 pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
 pnpm --filter @muzakit/ui test:visual:docker   # the browser project in CI's image
+pnpm --filter @muzakit/ui test:visual:update   # …and rewrite the Linux baselines
 ```
 
 A `pre-push` hook runs the unit project, and the token contracts when a Chromium
 is installed. Pixel regression stays out of it — see below.
+
+## What CI gates on
+
+`ci.yml` runs the two halves of the browser project as separate steps, because
+they fail for different reasons.
+
+**Token contracts gate.** A contract compares a component against the value the
+browser computed for its `--ui-*` token; it has no baseline to go stale, so a
+red one is a real defect.
+
+**Pixel regression is reported, not enforced** (`continue-on-error`, plus a
+warning and a `visual-diffs` artifact). It goes red for reasons that have
+nothing to do with the PR under review — a Chromium bump, a font, a deliberate
+restyle that landed earlier, or a baseline set nobody has regenerated. Gating on
+that teaches people to merge through a red check, which costs more than the
+signal is worth. Drop `continue-on-error` to make it gate again.
 
 ## The four layers
 
@@ -56,10 +74,18 @@ committed**; `.gitignore` drops `-darwin` and `-win32`, so a local run writes a
 throwaway set beside them and a first local run always reports "no reference
 screenshot". That is expected.
 
-To refresh them, run the **Update visual baselines** workflow from the Actions
-tab on the relevant branch. It regenerates inside the same Playwright image CI
-uses and commits the result. Regenerating on macOS produces a set CI can never
-match.
+There are two ways to refresh them, and both go through CI's image, because
+regenerating on macOS produces a set CI can never match:
+
+- the **Update visual baselines** workflow, from the Actions tab, on the branch
+  that needs them — it regenerates and commits;
+- `pnpm --filter @muzakit/ui test:visual:update` locally, which runs the same
+  image under Docker. Needs a running daemon; commit the result yourself.
+
+A first run on a branch that has never had baselines reports **"No existing
+reference screenshot found"** for every single assertion — 274 of them today.
+That is the absence of a baseline, not a regression, and it is why the CI step
+does not gate.
 
 The image tag in both workflows must match the `playwright` version in
 `pnpm-lock.yaml`. A different Chromium renders text differently and invalidates
