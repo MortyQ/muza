@@ -33,8 +33,8 @@ const sidebar = createSidebar({
 });
 
 const contentMargin = computed(() => ({
-  "lg:ml-64": !sidebar.isCollapsed.value,
-  "lg:ml-20": sidebar.isCollapsed.value,
+  "lg:ml-60": !sidebar.isCollapsed.value,
+  "lg:ml-14": sidebar.isCollapsed.value,
 }));
 </script>
 
@@ -52,11 +52,13 @@ const contentMargin = computed(() => ({
           :themes="THEMES"
           :variant="sidebar.isCollapsed.value ? 'cycle' : 'segment'"
           class="w-full justify-center"
-          size="lg"
         />
 
         <VButton
-          text="logout"
+          :text="sidebar.isCollapsed.value ? undefined : 'Log out'"
+          class="w-full"
+          icon="lucide:log-out"
+          variant="neutral"
           @click="authStore.logout"
         />
       </template>
