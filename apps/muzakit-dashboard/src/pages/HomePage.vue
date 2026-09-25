@@ -3,24 +3,76 @@ import { ref } from "vue";
 
 import {
   VButton,
+  VButtonGroup,
   VCheckbox,
   VDrawer,
+  VIcon,
   VInput,
   VModal,
+  VSegmentedControl,
   VSelect,
   VSwitch,
   VTable,
-  VToggleGroup,
   VTooltip,
   useModal,
   type Column,
+  type SegmentOption,
   type SelectOption,
-  type ToggleOption,
 } from "@muzakit/ui";
 
+// ── VButton showcase ────────────────────────────────────────────────────────
+type ButtonVariant
+  = | "primary" | "secondary" | "neutral" | "info"
+    | "positive" | "warning" | "negative" | "link";
+
+/** Every variant, with the one-line reason it exists. */
+const BUTTON_VARIANTS: { variant: ButtonVariant, note: string }[] = [
+  { variant: "primary", note: "the main action on a row" },
+  { variant: "secondary", note: "the one filled tier" },
+  { variant: "neutral", note: "quiet — toolbars, cancel" },
+  { variant: "info", note: "informational accent" },
+  { variant: "positive", note: "confirm, approve" },
+  { variant: "warning", note: "reversible but risky" },
+  { variant: "negative", note: "destructive" },
+  { variant: "link", note: "inline, not a surface" },
+];
+
+/** The columns of the matrix: one state each, applied to every variant. */
+const BUTTON_STATES = [
+  { key: "text", label: "Text" },
+  { key: "left", label: "Icon left" },
+  { key: "right", label: "Icon right" },
+  { key: "icon", label: "Icon only" },
+  { key: "loading", label: "Loading" },
+  { key: "disabled", label: "Disabled" },
+] as const;
+
+const BUTTON_SIZES = [
+  { size: "sm", label: "sm · 28px" },
+  { size: undefined, label: "default · 30px" },
+  { size: "md", label: "md · 32px" },
+  { size: "lg", label: "lg · 40px" },
+] as const;
+
+// Page-wide overrides, so every button on the showcase can be flipped at once
+// and compared in one state instead of hunting for the matrix column.
+const forceLoading = ref(false);
+const forceDisabled = ref(false);
+
+// A real async action: click and the button carries `loading` until the fake
+// request settles, which is the case the prop is actually for.
+const pendingAction = ref<string | null>(null);
+const runAction = (id: string) => {
+  pendingAction.value = id;
+  setTimeout(() => {
+    if (pendingAction.value === id) pendingAction.value = null;
+  }, 1500);
+};
+
+// ── VSegmentedControl ───────────────────────────────────────────────────────
 const granularity = ref<"DAY" | "WEEK" | "MONTH">("WEEK");
 
-const granularityOptions: ToggleOption<"DAY" | "WEEK" | "MONTH">[] = [
+const granularityOptions: SegmentOption<"DAY" | "WEEK" | "MONTH">[] = [
   { label: "Day", value: "DAY", icon: "lucide:calendar", tooltip: "Group by day" },
   { label: "Week", value: "WEEK", icon: "lucide:calendar-range", tooltip: "Group by week" },
   { label: "Month", value: "MONTH", icon: "lucide:calendar-days", tooltip: "Group by month" },
@@ -152,20 +204,329 @@ const handleConfirm = () => {
       Component Demo
     </h1>
 
-    <!-- VToggleGroup -->
+    <!-- VButton -->
     <section class="home-page__section">
       <h2 class="home-page__section-title">
-        VToggleGroup
+        VButton
       </h2>
+
       <div class="home-page__row">
-        <VToggleGroup
+        <VSwitch
+          v-model="forceLoading"
+          true-label="All loading"
+          false-label="All loading"
+        />
+        <VSwitch
+          v-model="forceDisabled"
+          true-label="All disabled"
+          false-label="All disabled"
+        />
+      </div>
+
+      <!-- Variants: the plain row, to read the palette at a glance -->
+      <h3 class="home-page__subtitle">
+        Variants
+      </h3>
+      <div class="home-page__row">
+        <VButton
+          v-for="{ variant } in BUTTON_VARIANTS"
+          :key="variant"
+          :disabled="forceDisabled"
+          :loading="forceLoading"
+          :text="variant"
+          :variant
+        />
+      </div>
+
+      <!-- Variant × state: every combination, one row per variant -->
+      <h3 class="home-page__subtitle">
+        Variant × state
+      </h3>
+      <div class="home-page__matrix">
+        <span />
+        <span
+          v-for="state in BUTTON_STATES"
+          :key="state.key"
+          class="home-page__matrix-head"
+        >{{ state.label }}</span>
+
+        <template
+          v-for="{ variant, note } in BUTTON_VARIANTS"
+          :key="variant"
+        >
+          <span class="home-page__matrix-label">
+            <strong>{{ variant }}</strong>
+            <small>{{ note }}</small>
+          </span>
+          <span
+            v-for="state in BUTTON_STATES"
+            :key="state.key"
+            class="home-page__matrix-cell"
+          >
+            <VButton
+              v-if="state.key === 'right'"
+              :disabled="forceDisabled"
+              :loading="forceLoading"
+              :variant
+              text="Next"
+            >
+              <template #iconRight>
+                <VIcon
+                  :size="15"
+                  icon="lucide:arrow-right"
+                />
+              </template>
+            </VButton>
+            <VButton
+              v-else
+              :aria-label="state.key === 'icon' ? `${variant} action` : undefined"
+              :disabled="forceDisabled || state.key === 'disabled'"
+              :icon="['left', 'icon', 'loading'].includes(state.key) ? 'lucide:plus' : undefined"
+              :loading="forceLoading || state.key === 'loading'"
+              :text="state.key === 'icon' ? '' : 'Create'"
+              :variant
+            />
+          </span>
+        </template>
+      </div>
+
+      <!-- Sizes: height is the only thing a size changes -->
+      <h3 class="home-page__subtitle">
+        Sizes — height only; padding and type belong to the chrome
+      </h3>
+      <div
+        v-for="{ size, label } in BUTTON_SIZES"
+        :key="label"
+        class="home-page__row"
+      >
+        <span class="home-page__size-label">{{ label }}</span>
+        <VButton
+          :disabled="forceDisabled"
+          :loading="forceLoading"
+          :size
+          text="Save"
+        />
+        <VButton
+          :disabled="forceDisabled"
+          :loading="forceLoading"
+          :size
+          icon="lucide:download"
+          text="Export"
+          variant="neutral"
+        />
+        <VButton
+          :disabled="forceDisabled"
+          :loading="forceLoading"
+          :size
+          aria-label="Settings"
+          icon="lucide:settings"
+          variant="neutral"
+        />
+        <VButton
+          :disabled="forceDisabled"
+          :loading="forceLoading"
+          :size
+          icon="lucide:trash-2"
+          text="Delete"
+          variant="negative"
+        />
+      </div>
+
+      <!-- Loading on a real async action -->
+      <h3 class="home-page__subtitle">
+        Loading on a real action — click to run a 1.5s request
+      </h3>
+      <div class="home-page__row">
+        <VButton
+          :loading="pendingAction === 'save'"
+          icon="lucide:save"
+          text="Save changes"
+          @click="runAction('save')"
+        />
+        <VButton
+          :loading="pendingAction === 'sync'"
+          icon="lucide:refresh-cw"
+          text="Sync"
+          variant="neutral"
+          @click="runAction('sync')"
+        />
+        <VButton
+          :loading="pendingAction === 'approve'"
+          icon="lucide:check"
+          text="Approve"
+          variant="positive"
+          @click="runAction('approve')"
+        />
+        <VButton
+          :loading="pendingAction === 'remove'"
+          icon="lucide:trash-2"
+          text="Remove"
+          variant="negative"
+          @click="runAction('remove')"
+        />
+        <VButton
+          :loading="pendingAction === 'refresh'"
+          aria-label="Refresh"
+          icon="lucide:rotate-cw"
+          variant="neutral"
+          @click="runAction('refresh')"
+        />
+      </div>
+
+      <!-- As a router link -->
+      <h3 class="home-page__subtitle">
+        As a router link — pass <code>to</code>
+      </h3>
+      <div class="home-page__row">
+        <VButton
+          icon="lucide:layout-grid"
+          text="Components demo"
+          to="/components-demo"
+          variant="neutral"
+        />
+        <VButton
+          icon="lucide:table"
+          text="Table demo"
+          to="/table-demo"
+          variant="info"
+        />
+        <VButton
+          text="Read the docs"
+          to="/components-demo"
+          variant="link"
+        />
+        <VButton
+          disabled
+          icon="lucide:lock"
+          text="Disabled link"
+          to="/components-demo"
+          variant="neutral"
+        />
+      </div>
+
+      <!-- Groups -->
+      <h3 class="home-page__subtitle">
+        VButtonGroup — several separate actions, one track
+      </h3>
+      <div class="home-page__row">
+        <VButtonGroup aria-label="Open in">
+          <VButton
+            icon="lucide:external-link"
+            text="Seller Central"
+            variant="neutral"
+          />
+          <VButton
+            text="Slack"
+            variant="neutral"
+          />
+          <VButton
+            text="Jira"
+            variant="neutral"
+          />
+        </VButtonGroup>
+
+        <VButtonGroup aria-label="Text formatting">
+          <VButton
+            aria-label="Bold"
+            icon="lucide:bold"
+            variant="neutral"
+          />
+          <VButton
+            aria-label="Italic"
+            icon="lucide:italic"
+            variant="neutral"
+          />
+          <VButton
+            aria-label="Underline"
+            icon="lucide:underline"
+            variant="neutral"
+          />
+        </VButtonGroup>
+
+        <VButtonGroup aria-label="Review">
+          <VButton
+            icon="lucide:check"
+            text="Approve"
+            variant="positive"
+          />
+          <VButton
+            icon="lucide:clock"
+            text="Defer"
+            variant="warning"
+          />
+          <VButton
+            icon="lucide:x"
+            text="Reject"
+            variant="negative"
+          />
+        </VButtonGroup>
+      </div>
+
+      <!-- The toolbar row: the reason the control scale exists -->
+      <h3 class="home-page__subtitle">
+        In a toolbar row — every control at one height
+      </h3>
+      <div class="home-page__toolbar">
+        <!-- Wrapped, not classed: VInput is `inheritAttrs: false` and hands
+             every attribute, `class` included, to its inner <input>, so a
+             width set on the component lands on the field and never reaches
+             the `width: 100%` wrapper around it. -->
+        <div class="home-page__toolbar-search">
+          <VInput
+            v-model="inputSearch"
+            icon="lucide:search"
+            placeholder="Search…"
+            type="search"
+          />
+        </div>
+        <VSelect
+          v-model="selectSingle"
+          :options="frameworkOptions"
+          class="home-page__toolbar-select"
+          placeholder="Framework"
+        />
+        <VSegmentedControl
           v-model="granularity"
           :options="granularityOptions"
-          size="lg"
+        />
+        <span class="home-page__toolbar-spacer" />
+        <VButtonGroup aria-label="View">
+          <VButton
+            aria-label="List view"
+            icon="lucide:list"
+            variant="neutral"
+          />
+          <VButton
+            aria-label="Grid view"
+            icon="lucide:layout-grid"
+            variant="neutral"
+          />
+        </VButtonGroup>
+        <VButton
+          icon="lucide:download"
+          text="Export"
+          variant="neutral"
+        />
+        <VButton
+          icon="lucide:plus"
+          text="New report"
+        />
+      </div>
+    </section>
+
+    <!-- VSegmentedControl -->
+    <section class="home-page__section">
+      <h2 class="home-page__section-title">
+        VSegmentedControl
+      </h2>
+      <div class="home-page__row">
+        <VSegmentedControl
+          v-model="granularity"
+          :options="granularityOptions"
         />
       </div>
       <p class="home-page__caption">
-        Selected: <strong>{{ granularity }}</strong>
+        Selected: <strong>{{ granularity }}</strong> — hover a segment for its tooltip.
       </p>
     </section>
 
@@ -576,8 +937,102 @@ const handleConfirm = () => {
 }
 
 .home-page__caption {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
+}
+
+.home-page__subtitle {
+  margin-top: var(--ui-space-md);
+  font-size: var(--ui-text-sm);
+  font-weight: 600;
+  color: var(--ui-foreground-secondary);
+
+  code {
+    padding: 0 var(--ui-space-xs);
+    border-radius: var(--ui-radius-xs);
+    background: var(--ui-surface-sunken);
+    font-size: var(--ui-text-xs);
+  }
+}
+
+/* One row per variant, one column per state — the label column sized to its
+   content and the rest sharing what is left. */
+.home-page__matrix {
+  display: grid;
+  grid-template-columns: max-content repeat(6, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--ui-space-md) var(--ui-space-lg);
+  padding: var(--ui-space-lg);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-xl);
+  background: var(--ui-surface);
+  overflow-x: auto;
+}
+
+.home-page__matrix-head {
+  font-size: var(--ui-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ui-foreground-muted);
+}
+
+.home-page__matrix-label {
+  display: flex;
+  flex-direction: column;
+  padding-right: var(--ui-space-lg);
+
+  strong {
+    font-size: var(--ui-text-base);
+    font-weight: 600;
+    color: var(--ui-foreground);
+  }
+
+  small {
+    font-size: var(--ui-text-xs);
+    color: var(--ui-foreground-muted);
+  }
+}
+
+.home-page__matrix-cell {
+  display: flex;
+  align-items: center;
+}
+
+.home-page__size-label {
+  width: 7.5rem;
+  font-size: var(--ui-text-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-foreground-muted);
+}
+
+/* A real toolbar: one line, the search growing, the actions pushed right. */
+.home-page__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-space-md);
+  padding: var(--ui-space-md);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-xl);
+  background: var(--ui-surface);
+  flex-wrap: wrap;
+}
+
+.home-page__toolbar-search {
+  flex: 0 0 14rem;
+}
+
+/* Scoped under the toolbar on purpose: VSelect sets `width: 100%` on its own
+   root, and a single class here ties with that on specificity and loses on load
+   order. */
+
+.home-page__toolbar .home-page__toolbar-select {
+  flex: 0 0 11rem;
+  width: 11rem;
+}
+
+.home-page__toolbar-spacer {
+  flex: 1;
 }
 
 .home-page__select-grid {
