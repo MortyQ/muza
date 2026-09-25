@@ -3,15 +3,12 @@ import { computed } from "vue";
 
 import { RouterView, useRouter } from "vue-router";
 
-import { VButton, NavigationSidebar, createSidebar, VIcon, VThemeSwitcher, type ThemeOption } from "@muzakit/ui";
+import { NavigationSidebar, createSidebar, VIcon, VThemeSwitcher, type ThemeOption } from "@muzakit/ui";
 import { useTheme, prefetchRoute } from "@muzakit/utils";
 
 import { useMenu } from "@/app/routes/composables/useMenu";
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
-import GlobalFiltersWrapper from "@/widgets/global-filters/GlobalFiltersWrapper.vue";
-
-const authStore = useAuthStore();
+import AppTopbar from "@/widgets/app-topbar/AppTopbar.vue";
 
 const { menuItems } = useMenu();
 const router = useRouter();
@@ -50,16 +47,8 @@ const contentMargin = computed(() => ({
         <VThemeSwitcher
           v-model="theme"
           :themes="THEMES"
-          :variant="sidebar.isCollapsed.value ? 'cycle' : 'segment'"
-          class="w-full justify-center"
-        />
-
-        <VButton
-          :text="sidebar.isCollapsed.value ? undefined : 'Log out'"
-          class="w-full"
-          icon="lucide:log-out"
-          variant="neutral"
-          @click="authStore.logout"
+          :vertical="sidebar.isCollapsed.value"
+          variant="toggle"
         />
       </template>
     </NavigationSidebar>
@@ -95,15 +84,8 @@ const contentMargin = computed(() => ({
         v-if="globalFiltersStore.isInitialized"
         class="flex-1 flex flex-col overflow-x-hidden"
       >
-        <div class="flex-1 py-4 px-4 sm:px-6 flex flex-col min-w-0">
-          <!-- Page Header -->
-          <header
-            class="min-h-fit xl:justify-between
-         flex flex-wrap items-center gap-3"
-          >
-            Headers
-            <GlobalFiltersWrapper />
-          </header>
+        <div class="flex-1 pb-4 px-4 sm:px-6 flex flex-col min-w-0">
+          <AppTopbar />
           <!-- Page Content -->
           <RouterView v-slot="{ Component, route }">
             <component
