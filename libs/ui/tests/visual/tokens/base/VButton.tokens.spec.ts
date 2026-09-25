@@ -137,18 +137,29 @@ describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
     expect(warning).toBe(primary);
   });
 
-  it("stands at 30px, and lets an explicit size override that", async () => {
-    expect(getComputedStyle(await renderButton()).height).toBe("30px");
-    expect(getComputedStyle(await renderButton({ size: "sm" })).height).toBe("28px");
-    expect(getComputedStyle(await renderButton({ size: "md" })).height).toBe("32px");
-    expect(getComputedStyle(await renderButton({ size: "lg" })).height).toBe("40px");
+  it("takes its height from the control scale, not a literal", async () => {
+    // Asserted through the token rather than against "30px": the number is
+    // allowed to change, a component quietly opting out of the scale is not.
+    expect(getComputedStyle(await renderButton()).height)
+      .toBe(tokenAsValue("height", "--ui-control-h"));
+
+    for (const size of ["sm", "md", "lg"] as const) {
+      expect(getComputedStyle(await renderButton({ size })).height)
+        .toBe(tokenAsValue("height", `--ui-control-h-${size}`));
+    }
+  });
+
+  it("sets its type from the scale's base step", async () => {
+    const style = getComputedStyle(await renderButton());
+    expect(style.fontSize).toBe(tokenAsValue("font-size", "--ui-text-base"));
   });
 
   it("squares an icon-only cell rather than letting it size to its glyph", async () => {
     const el = await renderButton({ text: "", icon: "lucide:plus" });
     const style = getComputedStyle(el);
-    expect(style.width).toBe("30px");
-    expect(style.height).toBe("30px");
+    const side = tokenAsValue("width", "--ui-control-h");
+    expect(style.width).toBe(side);
+    expect(style.height).toBe(side);
   });
 });
 

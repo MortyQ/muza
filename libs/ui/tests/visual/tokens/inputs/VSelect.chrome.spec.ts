@@ -54,9 +54,16 @@ describe.each(THEME_CASES)("VSelect chrome — %s theme", (theme) => {
     expect(getComputedStyle(find(el, ".multiselect__tags")).borderRadius).toBe(radius);
   });
 
-  it("stands 30px tall, matching the button beside it", async () => {
+  it("takes its height from the control scale, not a literal", async () => {
     const el = await renderSelect();
-    expect(getComputedStyle(find(el, ".multiselect__tags")).minHeight).toBe("30px");
+    expect(getComputedStyle(find(el, ".multiselect__tags")).minHeight)
+      .toBe(tokenAsValue("min-height", "--ui-control-h"));
+  });
+
+  it("sets its type from the scale's base step", async () => {
+    const el = await renderSelect();
+    expect(getComputedStyle(find(el, ".multiselect__placeholder")).fontSize)
+      .toBe(tokenAsValue("font-size", "--ui-text-base"));
   });
 
   it("matches VButton's height exactly, asserted from both sides", async () => {

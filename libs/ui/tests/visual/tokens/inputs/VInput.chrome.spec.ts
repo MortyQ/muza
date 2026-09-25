@@ -61,11 +61,23 @@ describe.each(THEME_CASES)("VInput chrome — %s theme", (theme) => {
     expect(getComputedStyle(find(el, ".v-fieldset")).borderRadius).toBe(radius);
   });
 
-  it("lets an explicit size override the natural height", async () => {
-    for (const [size, height] of [["sm", "28px"], ["md", "32px"], ["lg", "40px"]] as const) {
+  it("takes its height from the control scale, not a literal", async () => {
+    expect(getComputedStyle(find(await renderInput(), ".v-input-field")).height)
+      .toBe(tokenAsValue("height", "--ui-control-h"));
+
+    for (const size of ["sm", "md", "lg"] as const) {
       const field = find(await renderInput({ size }), ".v-input-field");
-      expect(getComputedStyle(field).height).toBe(height);
+      expect(getComputedStyle(field).height)
+        .toBe(tokenAsValue("height", `--ui-control-h-${size}`));
     }
+  });
+
+  it("sets its type from the scale's base step, and the label from the 2xs one", async () => {
+    const el = await renderInput({ name: "Marketplace", modelValue: "Amazon" });
+    expect(getComputedStyle(find(el, ".v-input-field")).fontSize)
+      .toBe(tokenAsValue("font-size", "--ui-text-base"));
+    expect(getComputedStyle(find(el, ".v-label")).fontSize)
+      .toBe(tokenAsValue("font-size", "--ui-text-2xs"));
   });
 
   it("renders the floating label and opens the notch on a value", async () => {

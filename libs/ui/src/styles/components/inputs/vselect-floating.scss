@@ -151,7 +151,7 @@
 /* See the `min-height: 0` note in vselect.scss — the library's 40px floor is why
    an 18px row would otherwise render 40px tall with its text pinned to the top. */
 .multiselect__content-wrapper.v-ms-floating .multiselect__option {
-  font-size: 0.8125rem;
+  font-size: var(--ui-text-base);
   min-height: 0;
   line-height: 1.125rem;
   padding: 0.3125rem 0.5rem;
@@ -161,7 +161,7 @@
 }
 
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--group {
-  font-size: 0.6875rem;
+  font-size: var(--ui-text-xs);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   min-height: 0;

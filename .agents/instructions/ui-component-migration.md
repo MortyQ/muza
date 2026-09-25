@@ -164,7 +164,26 @@ Badge       --ui-badge-neutral-bg  --ui-badge-neutral-text
 Radius      --ui-radius-xs  --ui-radius  -lg  -xl  -2xl  -full
 Shadow      --ui-shadow-xs  -sm  -md  -lg  -xl  -inner
 Focus ring  --ui-ring  --ui-ring-offset
+Type        --ui-text-2xs  -xs  -sm  -base  -lg  -xl
+            --ui-leading-2xs  -xs  -sm  -base  -lg  -xl
+Control     --ui-control-h  -sm  -md  -lg   --ui-control-px  --ui-control-gap
+Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl
 ```
+
+The last three groups are not colours, and the rule for them is the same: a
+`font-size`, a control height or a gap written as a literal under
+`styles/components/` is the same defect a raw `oklch()` is — it reads as a
+decision when it is a value nobody has revisited.
+
+`--ui-text-base` is 13px, which is what the button, the field and the select
+stand at. **14px is deliberately not a step**: it is the size the system is
+moving off, so a component still asking for `0.875rem` is one that has not been
+converted yet, not one that chose 14.
+
+`--ui-control-h` is the height of anything that can stand beside another control
+in a toolbar row. `-sm`/`-md`/`-lg` are height-only overrides — the horizontal
+padding and the type belong to the chrome, not to the size, so two sizes of one
+control differ in exactly one dimension.
 
 The status colour is `--ui-danger`, not `--ui-error` or `text-negative`.
 

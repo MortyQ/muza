@@ -11,12 +11,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  height: 1.875rem;
-  padding: 0 0.625rem;
+  gap: var(--ui-control-gap);
+  height: var(--ui-control-h);
+  padding: 0 var(--ui-control-px);
   border: 1px solid transparent;
   border-radius: var(--ui-radius-lg);
-  font-size: 0.8125rem;
+  font-size: var(--ui-text-base);
   font-weight: 450;
   letter-spacing: -0.005em;
   text-decoration: none;
@@ -45,7 +45,7 @@
 }
 
 .v-button--icon-only {
-  width: 1.875rem;
+  width: var(--ui-control-h);
   padding: 0;
 }
 
@@ -175,7 +175,7 @@
    and elevation rather than restating them. */
 .v-button--link {
   height: auto;
-  padding: 0 0.5rem;
+  padding: 0 var(--ui-space-md);
   min-width: unset;
   position: relative;
   background-color: transparent;
@@ -283,25 +283,25 @@
    Height only — the horizontal padding and type scale belong to the chrome, not
    to the size. */
 .v-button--sm {
-  height: 1.75rem;
+  height: var(--ui-control-h-sm);
 
   &.v-button--icon-only {
-    width: 1.75rem;
+    width: var(--ui-control-h-sm);
   }
 }
 
 .v-button--md {
-  height: 2rem;
+  height: var(--ui-control-h-md);
 
   &.v-button--icon-only {
-    width: 2rem;
+    width: var(--ui-control-h-md);
   }
 }
 
 .v-button--lg {
-  height: 2.5rem;
+  height: var(--ui-control-h-lg);
 
   &.v-button--icon-only {
-    width: 2.5rem;
+    width: var(--ui-control-h-lg);
   }
 }
