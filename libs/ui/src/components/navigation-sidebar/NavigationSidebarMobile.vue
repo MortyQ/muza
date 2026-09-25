@@ -29,6 +29,12 @@ useEventListener(document, "keydown", (e: KeyboardEvent) => {
       class="sidebar-mobile"
     >
       <SidebarMobileHeader />
+      <div
+        v-if="$slots.context"
+        class="sidebar-mobile-context"
+      >
+        <slot name="context" />
+      </div>
       <SidebarMobileNav />
       <SidebarMobileFooter :items="footerItems">
         <template

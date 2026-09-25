@@ -205,6 +205,31 @@ describe("NavigationSidebar", () => {
       expect(wrapper.findAll(".user-menu").length).toBe(2);
     });
 
+    it("places #subtitle-block between the header and the menu", async () => {
+      const { wrapper } = await render({
+        slots: { "subtitle-block": "<div class=\"workspace\">W</div>" },
+      });
+      const aside = wrapper.find("aside.sidebar");
+      const children = [...aside.element.children].map(el => el.className);
+      const context = children.findIndex(c => c.includes("sidebar-context"));
+      expect(context).toBeGreaterThan(children.findIndex(c => c.includes("sidebar-header")));
+      expect(context).toBeLessThan(children.findIndex(c => c.includes("sidebar-nav")));
+      expect(aside.find(".sidebar-context .workspace").exists()).toBe(true);
+    });
+
+    it("gives #subtitle-block to the mobile drawer too", async () => {
+      const { wrapper } = await render({
+        slots: { "subtitle-block": "<div class=\"workspace\">W</div>" },
+      });
+      expect(wrapper.find(".sidebar-mobile-context .workspace").exists()).toBe(true);
+    });
+
+    it("renders no context wrapper without #subtitle-block", async () => {
+      const { wrapper } = await render();
+      expect(wrapper.find(".sidebar-context").exists()).toBe(false);
+      expect(wrapper.find(".sidebar-mobile-context").exists()).toBe(false);
+    });
+
     it("passes no slot the caller did not give", async () => {
       const { wrapper } = await render();
       expect(wrapper.findComponent(SidebarFooter).find(".v-sidebar-footer__slot").exists())

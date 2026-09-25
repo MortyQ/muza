@@ -67,6 +67,14 @@ const isCollapsed = computed(() => sidebar.isCollapsed.value);
         </template>
       </SidebarHeader>
 
+      <!-- #subtitle-block — context between the brand and the menu (workspace, account) -->
+      <div
+        v-if="$slots['subtitle-block']"
+        class="sidebar-context"
+      >
+        <slot name="subtitle-block" />
+      </div>
+
       <SidebarNav />
 
       <SidebarFooter>
@@ -87,6 +95,12 @@ const isCollapsed = computed(() => sidebar.isCollapsed.value);
 
     <!-- Mobile sidebar (lazy loaded — desktop users don't download this) -->
     <SidebarMobile>
+      <template
+        v-if="$slots['subtitle-block']"
+        #context
+      >
+        <slot name="subtitle-block" />
+      </template>
       <template
         v-if="$slots['footer-start']"
         #start
