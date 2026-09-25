@@ -19,7 +19,7 @@
   &--outlined {
     .v-accordion__panel {
       overflow: hidden;
-      margin-bottom: var(--ui-space-md);
+      margin-bottom: var(--ui-space-sm);
       border: 1px solid var(--ui-border);
       border-radius: var(--ui-radius-lg);
 
@@ -30,12 +30,12 @@
   }
 
   &--inset {
-    padding-right: var(--ui-space-md);
-    padding-left: var(--ui-space-md);
+    padding-right: var(--ui-space-sm);
+    padding-left: var(--ui-space-sm);
 
     .v-accordion__panel {
       overflow: hidden;
-      margin-bottom: var(--ui-space-md);
+      margin-bottom: var(--ui-space-sm);
       border: 1px solid var(--ui-border);
       border-radius: var(--ui-radius-lg);
       box-shadow: var(--ui-shadow-xs);
@@ -49,7 +49,7 @@
   &--popout {
     display: flex;
     flex-direction: column;
-    gap: var(--ui-space-md);
+    gap: var(--ui-space-sm);
 
     .v-accordion__panel {
       overflow: hidden;
@@ -101,9 +101,9 @@
   &__header {
     display: flex;
     align-items: center;
-    gap: var(--ui-space-md);
+    gap: var(--ui-control-gap);
     width: 100%;
-    padding: var(--ui-space-lg) var(--ui-space-xl);
+    padding: var(--ui-space-md) var(--ui-control-px);
     border: 0;
     background-color: transparent;
     color: inherit;
@@ -152,7 +152,6 @@
   }
 
   &__subtitle {
-    margin-top: var(--ui-space-2xs);
     font-size: var(--ui-text-sm);
     line-height: var(--ui-leading-sm);
     color: var(--ui-foreground-muted);
@@ -175,7 +174,12 @@
   }
 
   &__content-inner {
-    padding: 0 var(--ui-space-xl) var(--ui-space-lg);
+    padding: 0 var(--ui-control-px) var(--ui-space-md);
+  }
+
+  /* With a leading icon the body starts under the title, not under the icon. */
+  &__panel:has(.v-accordion__leading-icon) &__content-inner {
+    padding-left: calc(var(--ui-control-px) + 1rem + var(--ui-control-gap));
   }
 
   &__text {
