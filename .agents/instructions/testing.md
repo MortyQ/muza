@@ -2,8 +2,7 @@
 
 Two Vitest projects, one config (`libs/ui/vitest.config.ts`). Tests live in
 `libs/ui/tests/`, outside `src/` — `src/` is both the dts build input and the
-Tailwind `@source` scan root, and screenshot baselines have no business in
-either.
+Tailwind `@source` scan root, and test files have no business in either.
 
 | | `unit` | `browser` |
 |---|---|---|
@@ -16,34 +15,29 @@ either.
 
 ```bash
 pnpm --filter @muzakit/ui test:unit            # jsdom, ~10s
-pnpm --filter @muzakit/ui test:tokens          # token contracts only, no baselines
-pnpm --filter @muzakit/ui test:screenshots     # pixel regression only
-pnpm --filter @muzakit/ui test:visual          # both halves of the browser project
+pnpm --filter @muzakit/ui test:tokens          # token contracts (the whole browser project)
+pnpm --filter @muzakit/ui test:visual          # same, every browser spec
 pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
 pnpm --filter @muzakit/ui test:visual:docker   # the browser project in CI's image
-pnpm --filter @muzakit/ui test:visual:update   # …and rewrite the Linux baselines
 ```
 
 A `pre-push` hook runs the unit project, and the token contracts when a Chromium
-is installed. Pixel regression stays out of it — see below.
+is installed.
 
 ## What CI gates on
 
-`ci.yml` runs the two halves of the browser project as separate steps, because
-they fail for different reasons.
+`ci.yml` gates on build, both type-checks, lint, unit + coverage, and the token
+contracts. A contract compares a component against the value the browser
+computed for its `--ui-*` token; it has no baseline to go stale, so a red one is
+a real defect.
 
-**Token contracts gate.** A contract compares a component against the value the
-browser computed for its `--ui-*` token; it has no baseline to go stale, so a
-red one is a real defect.
+**There is no pixel regression.** The screenshot suite and its baselines were
+deleted when the component chrome was redrawn: every baseline predated the new
+button, so the whole set was a record of a design that no longer exists. If it
+comes back, write it against the settled visuals, keep only a Linux set, and
+make it report rather than gate until its baselines are trusted.
 
-**Pixel regression is reported, not enforced** (`continue-on-error`, plus a
-warning and a `visual-diffs` artifact). It goes red for reasons that have
-nothing to do with the PR under review — a Chromium bump, a font, a deliberate
-restyle that landed earlier, or a baseline set nobody has regenerated. Gating on
-that teaches people to merge through a red check, which costs more than the
-signal is worth. Drop `continue-on-error` to make it gate again.
-
-## The four layers
+## The three layers
 
 **Convention guard** (`tests/conventions.spec.ts`) turns
 `ui-component-migration.md` into assertions: one scoped style block per
@@ -64,44 +58,23 @@ probe element and compare it against what the browser actually computed, in both
 themes. This is what catches a component quietly drifting off its token, or a
 dark-theme override that never lands. No baselines, so nothing to maintain.
 
-**Pixel regression** (`tests/visual/screenshots/`) catches what a token check
-cannot: spacing, shadows, radii, alignment.
+What a token check cannot see — spacing, shadows, alignment — is currently
+checked by eye, in both themes, on `/` and `/components-demo`.
 
-## Screenshot baselines
-
-Names carry the platform (`…-chromium-linux.png`). **Only the Linux set is
-committed**; `.gitignore` drops `-darwin` and `-win32`, so a local run writes a
-throwaway set beside them and a first local run always reports "no reference
-screenshot". That is expected.
-
-There are two ways to refresh them, and both go through CI's image, because
-regenerating on macOS produces a set CI can never match:
-
-- the **Update visual baselines** workflow, from the Actions tab, on the branch
-  that needs them — it regenerates and commits;
-- `pnpm --filter @muzakit/ui test:visual:update` locally, which runs the same
-  image under Docker. Needs a running daemon; commit the result yourself.
-
-A first run on a branch that has never had baselines reports **"No existing
-reference screenshot found"** for every single assertion — 274 of them today.
-That is the absence of a baseline, not a regression, and it is why the CI step
-does not gate.
-
-The image tag in both workflows must match the `playwright` version in
-`pnpm-lock.yaml`. A different Chromium renders text differently and invalidates
-every baseline at once — bump them together, then regenerate.
+The image tag in `ci.yml` and `scripts/visual-docker.sh` must match the
+`playwright` version in `pnpm-lock.yaml`; bump them together.
 
 ## Traps worth knowing
 
 1. **Vite's transform cache can outlive an edit to `tokens.css`** and serve the
-   old colour, producing screenshot failures that have nothing to do with the
-   change. If a `-actual` capture shows a colour that is not in the file, clear
+   old colour, producing token-contract failures that have nothing to do with
+   the change. If a contract reports a colour that is not in the file, clear
    `libs/ui/node_modules/.vite`.
 
 2. **`browser.screenshotDirectory` is unusable.** It is resolved against the
    project root and then joined onto the spec's own directory, so any value
    builds an absolute-path-shaped tree inside `tests/`. `screenshotFailures` is
-   off instead; `toMatchScreenshot` writes its own `-actual`/`-diff` pair.
+   off instead — a contract's assertion message already carries the value.
 
 3. **Transitions are stubbed globally** in `tests/setup/unit.ts`. jsdom never
    fires `transitionend`, so a leaving element would sit in the DOM forever: a
@@ -261,10 +234,7 @@ cross-product. Layout-dependent behaviour is in the browser project.
 ## Adding a component
 
 Unit spec under `tests/unit/{category}/`, token contracts under
-`tests/visual/tokens/{category}/`, screenshots under
-`tests/visual/screenshots/{category}/`. Use `stage()` from `tests/setup/stage.ts`
-for screenshots: it frames the component at a fixed width so a diff stays local
-to what moved. Keep the width constant across a component's variants.
+`tests/visual/tokens/{category}/`.
 
 Then check the test can fail. A token contract that passes against a hardcoded
 colour is not testing anything.

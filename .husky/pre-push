@@ -7,9 +7,6 @@
 # seconds. The token contracts need a real browser, so they run only when one is
 # already installed — a missing Chromium is a setup gap, not a reason to block
 # a push with a confusing error.
-#
-# Pixel regression is CI's job. Its baselines are Linux-only, so running it here
-# would compare a macOS render against a Linux reference and fail every time.
 
 set -e
 

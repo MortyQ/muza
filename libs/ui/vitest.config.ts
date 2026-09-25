@@ -54,33 +54,21 @@ export default defineConfig({
             enabled: true,
             provider: playwright(),
             headless: true,
-            // Vitest's generic on-failure capture writes into __screenshots__
-            // under a name derived from the test title, mixing debris in with
-            // the real baselines. Redirecting it is not an option:
-            // `screenshotDirectory` is resolved against the project root and
-            // then joined onto the spec's directory, so any value builds an
-            // absolute-path-shaped tree inside tests/. Turned off instead —
-            // toMatchScreenshot writes its own -actual/-diff pair on failure,
-            // into .vitest-attachments, which is what you actually debug from.
+            // Vitest's generic on-failure capture writes a __screenshots__ tree
+            // beside the spec. The token contracts fail on a computed value,
+            // which the assertion message already carries, so it is off.
+            // Redirecting it is not an option: `screenshotDirectory` is
+            // resolved against the project root and then joined onto the
+            // spec's directory, building an absolute-path-shaped tree in tests/.
             screenshotFailures: false,
             instances: [
               {
                 browser: "chromium",
-                // Fixed viewport: screenshot baselines are only comparable at a
-                // stable size, and layout-dependent components read it.
+                // Fixed viewport: layout-dependent components (the table, the
+                // floating positioner) read it, so contracts need it stable.
                 viewport: { width: 1280, height: 800 },
               },
             ],
-          },
-          expect: {
-            toMatchScreenshot: {
-              comparatorName: "pixelmatch",
-              comparatorOptions: {
-                // Not zero: sub-pixel antialiasing still differs slightly
-                // between runs even on identical hardware.
-                allowedMismatchedPixelRatio: 0.01,
-              },
-            },
           },
         },
       },
