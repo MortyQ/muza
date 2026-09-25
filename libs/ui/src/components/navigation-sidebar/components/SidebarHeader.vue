@@ -3,6 +3,8 @@ import VIcon from "../../base/VIcon.vue";
 import { useSidebarState } from "../composables/useSidebarState";
 
 const { isCollapsed, toggleCollapse, options } = useSidebarState();
+
+const brandInitial = options.brandName.charAt(0).toUpperCase();
 </script>
 
 <template>
@@ -32,6 +34,11 @@ const { isCollapsed, toggleCollapse, options } = useSidebarState();
             :src="options.logoUrl"
           >
         </div>
+        <span
+          v-else-if="brandInitial"
+          aria-hidden="true"
+          class="sidebar-header__mark"
+        >{{ brandInitial }}</span>
         <span class="sidebar-header__name">{{ options.brandName }}</span>
       </div>
     </Transition>
@@ -46,8 +53,8 @@ const { isCollapsed, toggleCollapse, options } = useSidebarState();
         @click="toggleCollapse"
       >
         <VIcon
-          :icon="isCollapsed ? 'lucide:menu' : 'lucide:chevron-left'"
-          :size="18"
+          :icon="isCollapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close'"
+          :size="15"
         />
       </button>
     </div>

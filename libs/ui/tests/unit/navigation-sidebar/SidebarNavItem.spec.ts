@@ -60,7 +60,7 @@ describe("SidebarNavItem", () => {
       const { wrapper } = await render({ ...LEAF, icon: "lucide:package" });
       const icon = wrapper.findComponent(VIcon);
       expect(icon.props("icon")).toBe("lucide:package");
-      expect(icon.props("size")).toBe(18);
+      expect(icon.props("size")).toBe(15);
     });
 
     it("shows a badge", async () => {
@@ -160,10 +160,12 @@ describe("SidebarNavItem", () => {
       const chevron = () => wrapper.findAllComponents(VIcon)
         .find(c => c.classes().includes("sidebar-item__chevron"));
 
-      expect(chevron()?.props("icon")).toBe("mdi:chevron-down");
+      // One glyph, rotated by a class, so the turn can be animated
+      expect(chevron()?.props("icon")).toBe("lucide:chevron-right");
+      expect(chevron()?.classes()).not.toContain("sidebar-item__chevron--open");
       harness.state.toggleExpanded("catalog");
       await wrapper.vm.$nextTick();
-      expect(chevron()?.props("icon")).toBe("mdi:chevron-up");
+      expect(chevron()?.classes()).toContain("sidebar-item__chevron--open");
     });
 
     it("renders its children as nested items one level deeper", async () => {

@@ -140,6 +140,7 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 
           <div
             ref="flyoutRef"
+            :class="{ 'sidebar-flyout-content--left': showOnLeft }"
             class="sidebar-flyout-content"
           >
             <div class="sidebar-flyout">
@@ -204,16 +205,24 @@ const handleLinkClick = (child: SidebarNavItem): void => {
   /* WebKit: GPU compositing for smooth flyout animation */
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+  /* Grows out of the rail it is anchored to */
+  transform-origin: left top;
+}
+
+.sidebar-flyout-content--left {
+  transform-origin: right top;
 }
 
 /* Transition classes */
 .sidebar-flyout-enter-active {
-  transition: opacity 200ms ease-out, transform 200ms ease-out;
+  transition:
+    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .sidebar-flyout-enter-from {
   opacity: 0;
-  transform: scale(0.95) translateX(-4px);
+  transform: scale(0.97) translateX(-4px);
 }
 
 .sidebar-flyout-enter-to {
@@ -222,7 +231,7 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 }
 
 .sidebar-flyout-leave-active {
-  transition: opacity 150ms ease-in, transform 150ms ease-in;
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
 }
 
 .sidebar-flyout-leave-from {
@@ -232,6 +241,6 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 
 .sidebar-flyout-leave-to {
   opacity: 0;
-  transform: scale(0.95) translateX(-4px);
+  transform: scale(0.97) translateX(-4px);
 }
 </style>

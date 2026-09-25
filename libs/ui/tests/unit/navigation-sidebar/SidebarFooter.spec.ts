@@ -65,7 +65,7 @@ describe("SidebarFooter", () => {
         { items: ITEMS },
         { end: "<div class=\"theme\">T</div>" },
       );
-      const end = wrapper.find(".sidebar-footer__slot");
+      const end = wrapper.find(".v-sidebar-footer__slot--end");
       expect(end.find(".theme").exists()).toBe(true);
 
       const children = [...wrapper.element.children];
@@ -76,7 +76,7 @@ describe("SidebarFooter", () => {
     it("renders no wrapper for a slot that was not passed", async () => {
       const { wrapper } = await render();
       expect(wrapper.find(".v-sidebar-footer__slot").exists()).toBe(false);
-      expect(wrapper.find(".sidebar-footer__slot").exists()).toBe(false);
+      expect(wrapper.find(".v-sidebar-footer__slot--end").exists()).toBe(false);
     });
 
     it("renders both together", async () => {

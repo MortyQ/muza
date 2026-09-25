@@ -89,15 +89,15 @@ describe("SidebarHeader", () => {
       expect(toggle(wrapper).attributes("aria-label")).toBe("Expand sidebar");
     });
 
-    it("swaps the chevron for a menu glyph when collapsed", async () => {
+    it("swaps the panel glyph to point the way the rail will move", async () => {
       const harness = makeSidebarState(BRAND);
       const { wrapper } = await mountInSidebar(SidebarHeader, { harness });
       const glyph = () => wrapper.findComponent(VIcon).props("icon");
-      expect(glyph()).toBe("lucide:chevron-left");
+      expect(glyph()).toBe("lucide:panel-left-close");
 
       harness.state.isCollapsed.value = true;
       await wrapper.vm.$nextTick();
-      expect(glyph()).toBe("lucide:menu");
+      expect(glyph()).toBe("lucide:panel-left-open");
     });
   });
 

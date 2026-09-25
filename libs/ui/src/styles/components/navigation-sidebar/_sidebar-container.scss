@@ -4,9 +4,13 @@
 $sidebar-mobile-breakpoint: 1024px;
 
 .sidebar {
-  --sidebar-width: 16rem;
-  --sidebar-collapsed-width: 4.5rem;
+  --sidebar-width: 15rem;
+  --sidebar-collapsed-width: 3.5rem;
   --sidebar-transition: 300ms ease-in-out;
+  // VButton's glyph size
+  --sidebar-icon-size: 0.9375rem;
+  --sidebar-guide-gap: var(--ui-space-sm);
+  --sidebar-guide-color: color-mix(in oklch, var(--ui-foreground) 14%, transparent);
 
   position: fixed;
   top: 0;
@@ -66,7 +70,6 @@ $sidebar-mobile-breakpoint: 1024px;
 // Hide desktop sidebar on mobile — mobile sidebar takes over
 @media (max-width: #{$sidebar-mobile-breakpoint - 1px}) {
   .sidebar {
-    border: 2px solid red;
     display: none !important;
   }
 }

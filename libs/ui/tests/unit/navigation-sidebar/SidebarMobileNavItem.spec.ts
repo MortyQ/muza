@@ -112,12 +112,12 @@ describe("SidebarMobileNavItem", () => {
       const harness = makeSidebarState();
       const { wrapper } = await render(BRANCH, { harness });
       const chevron = () => wrapper.findAllComponents(VIcon)
-        .find(c => c.classes().includes("sidebar-item__chevron"))?.props("icon");
+        .find(c => c.classes().includes("sidebar-item__chevron"));
 
-      expect(chevron()).toBe("mdi:chevron-down");
+      expect(chevron()?.classes()).not.toContain("sidebar-item__chevron--open");
       harness.state.toggleExpanded("catalog");
       await wrapper.vm.$nextTick();
-      expect(chevron()).toBe("mdi:chevron-up");
+      expect(chevron()?.classes()).toContain("sidebar-item__chevron--open");
     });
 
     it("nests its children one level deeper", async () => {
