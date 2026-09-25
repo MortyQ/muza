@@ -81,7 +81,7 @@ const isSelected = computed(() => {
   return isSameModelValue(model.value, value, valueComparator);
 });
 
-const iconSize = computed(() => ({ sm: 14, md: 16, lg: 18 }[size]));
+const iconSize = computed(() => ({ sm: 13, md: 15, lg: 16 }[size]));
 
 /** "default" borrows selectedColor once selected, so the resting state stays neutral */
 const activeColor = computed<Exclude<ChipColor, "default"> | "default">(() =>
