@@ -173,7 +173,7 @@ const handleSingleExport = () => {
       <VButton
         v-if="config?.actions?.refresh"
         icon="lucide:refresh-cw"
-        variant="link"
+        variant="primary"
         @click="handleRefresh"
       />
 
@@ -182,7 +182,7 @@ const handleSingleExport = () => {
         v-if="config?.actions?.resetSort"
         icon="lucide:arrow-up-down"
         text="Reset Sort"
-        variant="link"
+        variant="primary"
         @click="handleResetSort"
       />
 

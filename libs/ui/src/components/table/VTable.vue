@@ -873,7 +873,7 @@ onUnmounted(() => {
               <template #trigger>
                 <VButton
                   icon="lucide:columns"
-                  variant="link"
+                  variant="primary"
                 />
               </template>
 
@@ -902,7 +902,7 @@ onUnmounted(() => {
               <template #trigger>
                 <VButton
                   icon="lucide:table-2"
-                  variant="link"
+                  variant="primary"
                 />
               </template>
 
