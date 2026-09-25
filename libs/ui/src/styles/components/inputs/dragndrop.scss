@@ -108,7 +108,7 @@
   }
 
   &__title {
-    font-size: 1rem;
+    font-size: var(--ui-text-lg);
     font-weight: 500;
     color: var(--ui-foreground);
 
@@ -118,7 +118,7 @@
   }
 
   &__hint {
-    font-size: 0.875rem;
+    font-size: var(--ui-text-sm);
     color: var(--ui-foreground-secondary);
   }
 
@@ -155,8 +155,8 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface-hover);
     color: var(--ui-primary);
@@ -169,7 +169,7 @@
 
   &__file-name {
     overflow: hidden;
-    font-size: 0.875rem;
+    font-size: var(--ui-text-base);
     font-weight: 500;
     color: var(--ui-foreground);
     text-overflow: ellipsis;
@@ -177,7 +177,7 @@
   }
 
   &__file-size {
-    font-size: 0.75rem;
+    font-size: var(--ui-text-sm);
     color: var(--ui-foreground-secondary);
   }
 

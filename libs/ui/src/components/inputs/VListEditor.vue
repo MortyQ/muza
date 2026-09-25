@@ -8,7 +8,7 @@ import VTooltip from "../overlay/VTooltip.vue";
 
 import VInput from "./VInput.vue";
 import { listEditorToTextList, type ListEditorItem } from "./VListEditor.utils";
-import VToggleGroup, { type ToggleOption } from "./VToggleGroup.vue";
+import VSegmentedControl, { type SegmentOption } from "./VSegmentedControl.vue";
 
 type ListEditorMode = "manual" | "bulk";
 
@@ -54,7 +54,7 @@ const showModeToggle = modes === "both";
 const mode = ref<ListEditorMode>(modes === "bulk" ? "bulk" : "manual");
 const bulkText = ref("");
 
-const MODE_OPTIONS: ToggleOption<ListEditorMode>[] = [
+const MODE_OPTIONS: SegmentOption<ListEditorMode>[] = [
   { value: "manual", label: "Manual", icon: "lucide:plus" },
   { value: "bulk", label: "Bulk", icon: "lucide:list" },
 ];
@@ -274,7 +274,7 @@ defineExpose({ focusRow });
           </button>
         </VTooltip>
 
-        <VToggleGroup
+        <VSegmentedControl
           v-if="showModeToggle"
           :model-value="mode"
           :options="MODE_OPTIONS"

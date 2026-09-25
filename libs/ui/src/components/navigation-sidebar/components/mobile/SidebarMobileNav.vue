@@ -14,7 +14,7 @@ const { resolvedItems, expandedItems, activeItemId } = useSidebarState();
     <SidebarMobileNavItem
       v-for="item in resolvedItems"
       :key="item.id"
-      v-memo="[activeItemId, expandedItems.size, item.id]"
+      v-memo="[activeItemId, expandedItems, item.id]"
       :item="item"
       :level="0"
     />

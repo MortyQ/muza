@@ -5,7 +5,6 @@ import VCheckbox from "../../../../src/components/inputs/VCheckbox.vue";
 import VInput from "../../../../src/components/inputs/VInput.vue";
 import VSegmentedControl from "../../../../src/components/inputs/VSegmentedControl.vue";
 import VSwitch from "../../../../src/components/inputs/VSwitch.vue";
-import VToggleGroup from "../../../../src/components/inputs/VToggleGroup.vue";
 import { applyTheme, THEME_CASES } from "../../../setup/theme";
 import { computed as computedValue, tokenAsColor } from "../../../setup/tokens";
 
@@ -125,11 +124,97 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
   });
 
   describe("VSegmentedControl", () => {
-    it("distinguishes the active segment", async () => {
-      const el = await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" });
-      const [active, idle] = [...el.querySelectorAll(".v-sc__item")] as HTMLElement[];
-      expect(getComputedStyle(active).backgroundColor)
-        .not.toBe(getComputedStyle(idle).backgroundColor);
+    it("fills the track's height with each segment, through the tooltip wrapper", async () => {
+      // Every segment sits inside a VTooltip div. If that wrapper did not
+      // stretch, the track would still measure 30px — so the row spec would
+      // pass — while the segments inside it came up short.
+      const el = await mountIt(VSegmentedControl, {
+        options: [{ label: "Day", value: "day", tooltip: "Group by day" }, ...SEGMENTS.slice(1)],
+        modelValue: "day",
+      });
+      const track = el.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      const inner = track.height
+        - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+        - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
+
+      for (const item of el.querySelectorAll<HTMLElement>(".v-sc__item")) {
+        expect(Math.round(item.getBoundingClientRect().height)).toBe(Math.round(inner));
+      }
+    });
+
+    describe("the sliding pill", () => {
+      // Segments are transparent when active; the pill is the active surface.
+      // So the geometry that matters is the pill's against the chosen segment,
+      // measured in the same coordinate space.
+      const THREE = [...SEGMENTS, { label: "Month", value: "month" }];
+      const frame = () => new Promise(r => requestAnimationFrame(() => r(null)));
+
+      async function mountPill(modelValue: string | null = "day") {
+        await applyTheme(theme);
+        const screen = render(VSegmentedControl as never, {
+          props: { options: THREE, modelValue },
+        });
+        await frame();
+        const el = screen.container.firstElementChild as HTMLElement;
+        return { screen, el, pill: el.querySelector<HTMLElement>(".v-sc__pill")! };
+      }
+
+      const box = (el: HTMLElement) => el.getBoundingClientRect();
+      const segment = (el: HTMLElement, i: number) =>
+        el.querySelectorAll<HTMLElement>(".v-sc__item")[i];
+
+      it("sits exactly over the selected segment", async () => {
+        const { el, pill } = await mountPill("week");
+        const target = segment(el, 1);
+        expect(Math.round(box(pill).left)).toBe(Math.round(box(target).left));
+        expect(Math.round(box(pill).width)).toBe(Math.round(box(target).width));
+      });
+
+      it("moves to a new selection, and takes the new segment's width", async () => {
+        const { screen, el, pill } = await mountPill("day");
+        await screen.rerender({ options: THREE, modelValue: "month" });
+        await frame();
+        const target = segment(el, 2);
+        expect(Math.round(box(pill).left)).toBe(Math.round(box(target).left));
+        expect(Math.round(box(pill).width)).toBe(Math.round(box(target).width));
+      });
+
+      it("is the active surface, drawn from the surface token", async () => {
+        const { el, pill } = await mountPill("day");
+        expect(getComputedStyle(pill).backgroundColor).toBe(tokenAsColor("--ui-surface"));
+        // Which is why the segment itself must not paint one: it would cut to
+        // it instantly and the slide would be invisible underneath.
+        expect(getComputedStyle(segment(el, 0)).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+      });
+
+      it("hides when nothing is selected, rather than being left behind", async () => {
+        const { pill } = await mountPill(null);
+        expect(pill.classList.contains("v-sc__pill--visible")).toBe(false);
+        expect(getComputedStyle(pill).opacity).toBe("0");
+      });
+
+      it("arms its transition only after it has been placed once", async () => {
+        // Without this the first placement animates too, and the pill slides in
+        // from the track's left edge on every page load. The duration itself is
+        // not asserted — the browser setup zeroes every transition (trap 10).
+        await applyTheme(theme);
+        const screen = render(VSegmentedControl as never, {
+          props: { options: THREE, modelValue: "month" },
+        });
+        const pill = screen.container.querySelector<HTMLElement>(".v-sc__pill")!;
+        expect(pill.classList.contains("v-sc__pill--ready")).toBe(false);
+        await frame();
+        await frame();
+        expect(pill.classList.contains("v-sc__pill--ready")).toBe(true);
+      });
+
+      it("sits above nothing it should not — segments stay clickable over it", async () => {
+        const { el, pill } = await mountPill("day");
+        expect(getComputedStyle(pill).pointerEvents).toBe("none");
+        expect(Number(getComputedStyle(segment(el, 0)).zIndex))
+          .toBeGreaterThan(Number(getComputedStyle(pill).zIndex) || 0);
+      });
     });
 
     it("every size resolves to a different height", async () => {
@@ -148,18 +233,6 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
       });
       expect(parseFloat(getComputedStyle(full).width))
         .toBeGreaterThan(parseFloat(getComputedStyle(normal).width));
-    });
-  });
-
-  describe("VToggleGroup", () => {
-    it("distinguishes the active item", async () => {
-      const el = await mountIt(VToggleGroup, {
-        options: [{ label: "List", value: "list" }, { label: "Grid", value: "grid" }],
-        modelValue: "list",
-      });
-      const [active, idle] = [...el.querySelectorAll(".v-tg__item")] as HTMLElement[];
-      expect(getComputedStyle(active).backgroundColor)
-        .not.toBe(getComputedStyle(idle).backgroundColor);
     });
   });
 });

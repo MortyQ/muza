@@ -182,7 +182,7 @@ describe("VChip", () => {
     });
 
     it("scales with the chip size", () => {
-      const expected = { sm: 14, md: 16, lg: 18 } as const;
+      const expected = { sm: 13, md: 15, lg: 16 } as const;
       for (const size of SIZES) {
         const w = chip({ icon: "lucide:star", size });
         expect(w.findComponent(VIcon).props().size).toBe(expected[size]);
@@ -192,7 +192,7 @@ describe("VChip", () => {
     it("shrinks the close icon relative to the chip icon", () => {
       const w = chip({ icon: "lucide:star", closable: true, size: "md" });
       const sizes = w.findAllComponents(VIcon).map(i => i.props().size);
-      expect(sizes).toEqual([16, 14]);
+      expect(sizes).toEqual([15, 13]);
     });
   });
 });

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import VIcon from "../../../src/components/base/VIcon.vue";
 import VSegmentedControl, { type SegmentOption } from "../../../src/components/inputs/VSegmentedControl.vue";
+import VTooltip from "../../../src/components/overlay/VTooltip.vue";
 
 const OPTIONS: SegmentOption[] = [
   { label: "Day", value: "day", icon: "lucide:sun" },
@@ -95,6 +96,14 @@ describe("VSegmentedControl", () => {
       expect(control({ size }).findComponent(VIcon).props().size).toBe(expected);
     });
 
+    it("carries no size modifier and a 15px icon when size is unset", () => {
+      // Unset is the chrome's natural 30px — the height every other control in
+      // a toolbar row stands at. `md` is an explicit 32px override, not the default.
+      const w = control();
+      expect(w.classes().some(c => /^v-segmented-control--(sm|md|lg)$/.test(c))).toBe(false);
+      expect(w.findComponent(VIcon).props().size).toBe(15);
+    });
+
     it("renders an icon only for options that declare one", () => {
       expect(control().findAllComponents(VIcon)).toHaveLength(1);
     });
@@ -158,6 +167,36 @@ describe("VSegmentedControl", () => {
       await w.setProps({ loading: false });
       await items(w)[1].trigger("click");
       expect(w.emitted("update:modelValue")?.[0]).toEqual(["week"]);
+    });
+  });
+
+  // Carried over from VToggleGroup, which this component absorbed: the tooltip
+  // was the one thing the toggle group had that the segmented control did not.
+  describe("tooltips", () => {
+    const WITH_TOOLTIP: SegmentOption[] = [
+      { label: "List", value: "list", tooltip: "List view" },
+      { label: "Grid", value: "grid" },
+    ];
+    const withTips = () => control({ options: WITH_TOOLTIP, modelValue: "list" });
+
+    it("wraps every option, but only enables the ones with text", () => {
+      // Uniform children keep the track's geometry to one shape.
+      const tooltips = withTips().findAllComponents(VTooltip);
+      expect(tooltips).toHaveLength(2);
+      expect(tooltips[0].props().disabled).toBe(false);
+      expect(tooltips[1].props().disabled).toBe(true);
+    });
+
+    it("passes the tooltip text through", () => {
+      expect(withTips().findAllComponents(VTooltip)[0].props().text).toBe("List view");
+    });
+
+    it("falls back to an empty string rather than undefined", () => {
+      expect(withTips().findAllComponents(VTooltip)[1].props().text).toBe("");
+    });
+
+    it("still renders every segment inside its wrapper", () => {
+      expect(items(withTips())).toHaveLength(2);
     });
   });
 

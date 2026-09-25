@@ -24,8 +24,8 @@ import { BUTTON_GROUP_KEY } from "./injectionKeys";
  *
  * ```vue
  * <VButtonGroup aria-label="Incident links">
- *   <VButton modern text="Seller Central" variant="neutral" />
- *   <VButton modern text="Slack" variant="neutral" />
+ *   <VButton text="Seller Central" variant="neutral" />
+ *   <VButton text="Slack" variant="neutral" />
  * </VButtonGroup>
  * ```
  *

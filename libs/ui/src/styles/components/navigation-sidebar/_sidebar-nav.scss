@@ -4,7 +4,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1rem 0.75rem;
+  padding: var(--ui-space-sm) var(--ui-space-lg) var(--ui-space-lg);
 
   // P18: Paint constraint
   contain: layout style;
@@ -32,15 +32,15 @@
   }
 
   &--collapsed {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: var(--ui-space-lg);
+    padding-right: var(--ui-space-lg);
   }
 }
 
 .sidebar-nav__list {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--ui-space-2xs);
 }
 
 

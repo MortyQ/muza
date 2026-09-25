@@ -3,21 +3,27 @@
 .v-sidebar-footer {
   flex-shrink: 0;
   margin-top: auto;
-  padding: 0.5rem;
-  //padding: 8px !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-md);
+  padding: var(--ui-space-lg);
   border-top: 1px solid var(--ui-border-subtle);
-  min-height: 5rem;
 }
 
 .v-sidebar-footer__slot {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--ui-space-sm);
 }
 
 .v-sidebar-footer__nav {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-top: 0.25rem;
+  gap: var(--ui-space-2xs);
+}
+
+// Collapsed, the footer is narrower than a full-width control; centre whatever
+// the slot holds on the same axis as the icon-only rows above it.
+.v-sidebar-footer--collapsed .v-sidebar-footer__slot {
+  align-items: center;
 }

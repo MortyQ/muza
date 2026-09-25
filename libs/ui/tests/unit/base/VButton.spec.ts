@@ -6,7 +6,7 @@ import VIcon from "../../../src/components/base/VIcon.vue";
 import { mountWithRouter } from "../../setup/mount";
 
 const VARIANTS = [
-  "primary", "secondary", "positive", "negative", "warning", "link", "neutral",
+  "primary", "secondary", "positive", "negative", "warning", "link", "neutral", "info",
 ] as const;
 
 describe("VButton", () => {
@@ -55,11 +55,24 @@ describe("VButton", () => {
       expect(w.classes()).toContain("v-button--disabled");
     });
 
-    it("also disables while loading, and exposes aria-busy", () => {
+    it("blocks input while loading, and exposes aria-busy", () => {
       const w = mount(VButton, { props: { loading: true } });
       expect(w.attributes("disabled")).toBeDefined();
       expect(w.attributes("aria-busy")).toBe("true");
+    });
+
+    it("marks loading as busy, not as disabled", () => {
+      // Both block input; only `disabled` dims. A loading button is busy with
+      // what was just asked of it, and dimming it would hide the spinner.
+      const w = mount(VButton, { props: { loading: true } });
+      expect(w.classes()).toContain("v-button--loading");
+      expect(w.classes()).not.toContain("v-button--disabled");
+    });
+
+    it("lets disabled win when both are set", () => {
+      const w = mount(VButton, { props: { loading: true, disabled: true } });
       expect(w.classes()).toContain("v-button--disabled");
+      expect(w.classes()).not.toContain("v-button--loading");
     });
 
     it("does not set aria-busy when idle", () => {
@@ -101,37 +114,19 @@ describe("VButton", () => {
     });
   });
 
-  describe("modern chrome", () => {
-    it("is what you get by default", () => {
-      // Diverges from so-platform, where the flag is opt-in: this library has no
-      // screens designed against the legacy chrome to preserve.
-      expect(mount(VButton, {}).classes()).toContain("v-button--modern");
-    });
-
-    it("steps back to the legacy chrome on request", () => {
-      expect(mount(VButton, { props: { modern: false } }).classes())
-        .not.toContain("v-button--modern");
-    });
-
-    it("changes how a variant is drawn, not which one", () => {
-      const w = mount(VButton, { props: { variant: "default" } });
-      expect(w.classes()).toContain("v-button--modern");
-      // The whole point of the flag: `default` is still the primary fill.
-      expect(w.classes()).toContain("v-button--primary");
-    });
-
+  describe("the chrome", () => {
+    // There is one chrome and no prop to choose another, so what is left to
+    // assert is the icon size it implies — the rest is scoped SCSS that jsdom
+    // never applies.
     it("sizes the icon to fit the 30px track", () => {
-      const modern = mount(VButton, { props: { icon: "lucide:plus" } });
-      expect(modern.findComponent(VIcon).props("size")).toBe(16);
-
-      const legacy = mount(VButton, { props: { icon: "lucide:plus", modern: false } });
-      expect(legacy.findComponent(VIcon).props("size")).toBe(24);
+      const w = mount(VButton, { props: { icon: "lucide:plus" } });
+      expect(w.findComponent(VIcon).props("size")).toBe(15);
     });
 
     it("hands the same size to the spinner it hands to the icon", () => {
       const w = mount(VButton, { props: { loading: true } });
       const icon = w.findComponent(VIcon);
-      expect(icon.props("size")).toBe(16);
+      expect(icon.props("size")).toBe(15);
       expect(icon.props("loading")).toBe(true);
     });
   });

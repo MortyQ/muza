@@ -7,7 +7,7 @@ import { type ListEditorItem } from "../../../src/components/inputs/VListEditor.
 import VListEditor from "../../../src/components/inputs/VListEditor.vue";
 
 /**
- * VTooltip must keep rendering its slot: VToggleGroup wraps every button in
+ * VTooltip must keep rendering its slot: VSegmentedControl wraps every button in
  * one, so a plain `true` stub would swallow the whole mode toggle.
  */
 const stubs = {
@@ -42,7 +42,7 @@ const rows = (w: ReturnType<typeof editor>) => w.findAll(".v-input-field");
 const currentModel = (w: ReturnType<typeof editor>) => w.model.value;
 
 async function toBulk(w: ReturnType<typeof editor>) {
-  await w.findAll(".v-tg__item")[1].trigger("click");
+  await w.findAll(".v-sc__item")[1].trigger("click");
   await flushPromises();
 }
 
@@ -199,9 +199,9 @@ describe("VListEditor", () => {
 
   describe("mode toggle", () => {
     it("is shown only when both modes are allowed", () => {
-      expect(editor().findAll(".v-tg__item").length).toBeGreaterThan(0);
-      expect(editor({ modes: "manual" }).findAll(".v-tg__item")).toHaveLength(0);
-      expect(editor({ modes: "bulk" }).findAll(".v-tg__item")).toHaveLength(0);
+      expect(editor().findAll(".v-sc__item").length).toBeGreaterThan(0);
+      expect(editor({ modes: "manual" }).findAll(".v-sc__item")).toHaveLength(0);
+      expect(editor({ modes: "bulk" }).findAll(".v-sc__item")).toHaveLength(0);
     });
 
     it("locks to bulk when that is the only mode", () => {
@@ -212,7 +212,7 @@ describe("VListEditor", () => {
       const w = editor({ modelValue: [{ text: "one" }] });
       await toBulk(w);
       await w.find("textarea").setValue("");
-      await w.findAll(".v-tg__item")[0].trigger("click");
+      await w.findAll(".v-sc__item")[0].trigger("click");
       await flushPromises();
 
       expect(currentModel(w)).toEqual([{ text: "" }]);

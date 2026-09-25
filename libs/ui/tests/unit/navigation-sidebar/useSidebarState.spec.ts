@@ -119,6 +119,31 @@ describe("buildSidebarState", () => {
       expect(open.value).toEqual(["catalog"]);
     });
 
+    it("expandMany opens every id given and leaves the rest open", () => {
+      const { result } = state();
+      result.toggleExpanded("reports");
+      result.expandMany(["catalog", "media"]);
+      expect([...result.expandedItems.value].sort()).toEqual(["catalog", "media", "reports"]);
+    });
+
+    it("expandMany never closes a branch that is already open", () => {
+      // Add-only by contract: the route watcher calls it on every navigation,
+      // and a toggle there would shut the branch the reader is standing in.
+      const { result } = state();
+      result.toggleExpanded("catalog");
+      result.expandMany(["catalog"]);
+      expect(result.isExpanded("catalog")).toBe(true);
+    });
+
+    it("expandMany reassigns once per batch, and not at all for an empty one", () => {
+      const { result } = state();
+      const before = result.expandedItems.value;
+      result.expandMany([]);
+      expect(result.expandedItems.value).toBe(before);
+      result.expandMany(["catalog", "media"]);
+      expect(result.expandedItems.value).not.toBe(before);
+    });
+
     it("expands an id that is in no menu, without complaint", () => {
       // The state is a set of strings; it does not know the tree. Validating
       // against it here would duplicate a check the components already make by

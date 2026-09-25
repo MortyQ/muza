@@ -50,8 +50,8 @@ describe("VButtonGroup", () => {
     const w = mount(VButtonGroup, {
       slots: {
         default: () => [
-          h(VButton, { text: "A", variant: "warning", modern: true }),
-          h(VButton, { text: "B", variant: "neutral", modern: true }),
+          h(VButton, { text: "A", variant: "warning" }),
+          h(VButton, { text: "B", variant: "neutral" }),
         ],
       },
     });

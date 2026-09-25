@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 #
-# Run the browser test project inside the same Playwright image CI uses, so the
-# screenshot baselines it writes are the ones CI will compare against.
+# Run the browser test project inside the same Playwright image CI uses, so a
+# token contract that is red in CI can be reproduced on a Mac.
 #
-# The image tag MUST match the `playwright` version in pnpm-lock.yaml. A newer
-# Chromium renders text differently and invalidates every baseline at once.
+# The image tag MUST match the `playwright` version in pnpm-lock.yaml.
 set -euo pipefail
 
 IMAGE="mcr.microsoft.com/playwright:v1.62.1-noble"

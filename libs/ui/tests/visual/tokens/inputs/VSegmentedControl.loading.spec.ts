@@ -80,8 +80,11 @@ describe.each(THEME_CASES)("VSegmentedControl loading — %s theme", (theme) => 
   });
 
   it("still paints the active pill while busy", async () => {
+    // The pill is its own element now, not the active segment's background —
+    // so this reads it directly. Busy must not hide the option just picked.
     const busy = await renderControl({ loading: true });
-    expect(getComputedStyle(items(busy)[0]).backgroundColor)
-      .toBe(tokenAsColor("--ui-surface"));
+    const pill = busy.querySelector<HTMLElement>(".v-sc__pill")!;
+    expect(getComputedStyle(pill).backgroundColor).toBe(tokenAsColor("--ui-surface"));
+    expect(getComputedStyle(pill).opacity).toBe("1");
   });
 });

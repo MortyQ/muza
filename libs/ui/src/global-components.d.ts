@@ -15,13 +15,13 @@ declare module "vue" {
     VIcon: typeof import("./components/base/VIcon.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
     VThemeSwitcher: typeof import("./components/base/VThemeSwitcher.vue").default
+    VComposer: typeof import("./components/inputs/VComposer.vue").default
     VInput: typeof import("./components/inputs/VInput.vue").default
     VDatepicker: typeof import("./components/inputs/VDatepicker.vue").default
     VCheckbox: typeof import("./components/inputs/VCheckbox.vue").default
     VSwitch: typeof import("./components/inputs/VSwitch.vue").default
     VSelect: typeof import("./components/inputs/VSelect.vue").default
     VSegmentedControl: typeof import("./components/inputs/VSegmentedControl.vue").default
-    VToggleGroup: typeof import("./components/inputs/VToggleGroup.vue").default
     VTooltip: typeof import("./components/overlay/VTooltip.vue").default
     VDrawer: typeof import("./components/overlay/VDrawer.vue").default
     VModal: typeof import("./components/overlay/VModal.vue").default

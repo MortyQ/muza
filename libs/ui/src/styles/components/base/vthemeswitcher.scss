@@ -45,6 +45,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* Square, like an icon-only button — the two are the same control at the same
+     height, and both take it from the scale rather than stating it. */
+  width: var(--ui-control-h);
+  height: var(--ui-control-h);
   overflow: hidden;
   border-radius: var(--ui-radius);
   border: 1px solid var(--ui-border);
@@ -79,8 +83,9 @@
 .v-theme-switcher--segment {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem;
-  gap: 0.125rem;
+  height: var(--ui-control-h);
+  padding: var(--ui-space-2xs);
+  gap: var(--ui-space-2xs);
   border-radius: var(--ui-radius-lg);
   background: var(--ui-surface-sunken);
   border: 1px solid var(--ui-border);
@@ -92,7 +97,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
+  height: 100%;
+  padding: 0 var(--ui-control-px);
+  gap: var(--ui-control-gap);
+  font-size: var(--ui-text-base);
   border-radius: calc(var(--ui-radius-lg) - 2px);
   font-weight: 500;
   font-family: inherit;
@@ -123,46 +131,117 @@
   }
 }
 
-/* ── Sizes ───────────────────────────────────────────────── */
+/* ── Toggle variant ──────────────────────────────────────
+   A tinted track with one surface-coloured thumb that slides under the active
+   icon. The thumb is sized from the option count, so it needs no measuring. */
 
-// cycle height must equal segment total: items-height + (2 × 0.25rem wrapper padding)
+.v-theme-switcher--toggle {
+  --v-ts-inset: var(--ui-space-2xs);
+
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: var(--ui-control-h);
+  padding: var(--v-ts-inset);
+  border-radius: var(--ui-radius-lg);
+  background-color: color-mix(in oklch, var(--ui-foreground) 6%, transparent);
+
+  &.v-theme-switcher--vertical {
+    flex-direction: column;
+    width: var(--ui-control-h);
+    height: auto;
+
+    .v-ts__option {
+      flex: none;
+      height: calc(var(--ui-control-h) - 2 * var(--v-ts-inset));
+    }
+
+    .v-ts__thumb {
+      width: calc(100% - 2 * var(--v-ts-inset));
+      height: calc((100% - 2 * var(--v-ts-inset)) / var(--v-ts-count));
+      transform: translateY(calc(var(--v-ts-index) * 100%));
+    }
+  }
+}
+
+.v-ts__thumb {
+  position: absolute;
+  top: var(--v-ts-inset);
+  left: var(--v-ts-inset);
+  width: calc((100% - 2 * var(--v-ts-inset)) / var(--v-ts-count));
+  height: calc(100% - 2 * var(--v-ts-inset));
+  border-radius: calc(var(--ui-radius-lg) - 2px);
+  background-color: var(--ui-surface);
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--ui-foreground) 18%, transparent);
+  transform: translateX(calc(var(--v-ts-index) * 100%));
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.v-ts__option {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--ui-radius-lg) - 2px);
+  background: transparent;
+  color: var(--ui-foreground-muted);
+  cursor: pointer;
+  transition: color 150ms ease;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground-secondary);
+    }
+  }
+
+  &--active,
+  &--active:hover {
+    color: var(--ui-foreground);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: -2px;
+  }
+}
+
+/* ── Sizes ─────────────────────────────────────────────────
+   Both variants take the same step, so the cycle button and the segment strip
+   are the same height by construction. They used to be kept level by hand —
+   a comment reading "cycle height must equal segment total: items-height +
+   (2 × 0.25rem wrapper padding)" — which is the arithmetic the segments'
+   `height: 100%` now does on its own. */
 
 .v-theme-switcher--sm {
+  height: var(--ui-control-h-sm);
+
   &.v-theme-switcher--cycle {
-    width: 2.25rem; // 1.75rem items + 0.5rem wrapper padding
-    height: 2.25rem;
-  }
-  
-  .v-ts__item {
-    height: 1.75rem;
-    font-size: 0.75rem;
-    padding: 0 0.5rem;
+    width: var(--ui-control-h-sm);
   }
 }
 
 .v-theme-switcher--md {
-  &.v-theme-switcher--cycle {
-    width: 2.5rem; // 2rem items + 0.5rem wrapper padding
-    height: 2.5rem;
-  }
+  height: var(--ui-control-h-md);
 
-  .v-ts__item {
-    height: 2rem;
-    font-size: 0.875rem;
-    padding: 0 0.75rem;
+  &.v-theme-switcher--cycle {
+    width: var(--ui-control-h-md);
   }
 }
 
 .v-theme-switcher--lg {
-  &.v-theme-switcher--cycle {
-    width: 3rem; // 2.5rem items + 0.5rem wrapper padding
-    height: 3rem;
-  }
+  height: var(--ui-control-h-lg);
 
-  .v-ts__item {
-    height: 2.5rem;
-    font-size: 1rem;
-    padding: 0 1rem;
+  &.v-theme-switcher--cycle {
+    width: var(--ui-control-h-lg);
   }
 }
 

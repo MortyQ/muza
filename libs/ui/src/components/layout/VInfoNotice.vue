@@ -20,7 +20,7 @@ const {
   title = undefined,
   subtitle = undefined,
   card = true,
-  size = 50,
+  size = 20,
   features = undefined,
   hint = undefined,
 } = defineProps<{
@@ -65,7 +65,7 @@ const toneClass = (value: NoticeTone = "primary"): string => `v-info-notice--ton
           >
             <VIcon
               :icon="icon"
-              :size="24"
+              :size="20"
             />
           </span>
         </slot>
@@ -102,7 +102,7 @@ const toneClass = (value: NoticeTone = "primary"): string => `v-info-notice--ton
           >
             <VIcon
               :icon="feature.icon"
-              :size="20"
+              :size="16"
             />
           </span>
 
@@ -125,7 +125,7 @@ const toneClass = (value: NoticeTone = "primary"): string => `v-info-notice--ton
         class="v-info-notice__hint"
       >
         <VIcon
-          :size="16"
+          :size="14"
           icon="lucide:info"
         />
         <span><slot name="hint">{{ hint }}</slot></span>

@@ -68,12 +68,12 @@ const inputId = computed(() => id || generatedId);
             <VIcon
               v-if="model && trueIcon"
               :icon="trueIcon"
-              :size="16"
+              :size="10"
             />
             <VIcon
               v-else-if="!model && falseIcon"
               :icon="falseIcon"
-              :size="16"
+              :size="10"
             />
           </template>
         </span>

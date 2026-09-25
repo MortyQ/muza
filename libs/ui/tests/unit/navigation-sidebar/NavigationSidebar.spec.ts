@@ -153,7 +153,48 @@ describe("NavigationSidebar", () => {
 
       state.toggleCollapse();
       expect(instance.isCollapsed.value).toBe(true);
-      state.toggleExpanded("catalog");
+      // `media` is off the active path, so the route watcher has not opened it.
+      state.toggleExpanded("media");
+      expect(instance.expandedItems.value.has("media")).toBe(true);
+    });
+  });
+
+  describe("revealing the active route", () => {
+    const fresh = () => createSidebar({ items: makeNavItems(), persistCollapse: false });
+
+    it("lands a deep link with every ancestor open", async () => {
+      const { instance } = await render({ instance: fresh(), route: "/catalog/media/images" });
+      expect([...instance.expandedItems.value].sort()).toEqual(["catalog", "images", "media"]);
+    });
+
+    it("opens the branch of a route navigated to later", async () => {
+      const { instance, router } = await render({ instance: fresh(), route: "/" });
+      expect(instance.expandedItems.value.has("catalog")).toBe(false);
+
+      await router.push("/catalog/products");
+      await flushPromises();
+      expect(instance.expandedItems.value.has("catalog")).toBe(true);
+    });
+
+    it("lets the reader close the active branch, until the path changes", async () => {
+      const { instance, router } = await render({ instance: fresh(), route: "/catalog/products" });
+
+      // What a click on the chevron does: a new Set without the branch.
+      instance.expandedItems.value = new Set(
+        [...instance.expandedItems.value].filter(id => id !== "catalog"),
+      );
+      await flushPromises();
+      expect(instance.expandedItems.value.has("catalog")).toBe(false);
+
+      await router.push("/catalog/media/images");
+      await flushPromises();
+      expect(instance.expandedItems.value.has("catalog")).toBe(true);
+    });
+
+    it("leaves branches the reader opened alone when the route moves on", async () => {
+      const { instance, router } = await render({ instance: fresh(), route: "/catalog/products" });
+      await router.push("/");
+      await flushPromises();
       expect(instance.expandedItems.value.has("catalog")).toBe(true);
     });
   });
@@ -203,6 +244,31 @@ describe("NavigationSidebar", () => {
         slots: { "footer-start": "<div class=\"user-menu\">U</div>" },
       });
       expect(wrapper.findAll(".user-menu").length).toBe(2);
+    });
+
+    it("places #subtitle-block between the header and the menu", async () => {
+      const { wrapper } = await render({
+        slots: { "subtitle-block": "<div class=\"workspace\">W</div>" },
+      });
+      const aside = wrapper.find("aside.sidebar");
+      const children = [...aside.element.children].map(el => el.className);
+      const context = children.findIndex(c => c.includes("sidebar-context"));
+      expect(context).toBeGreaterThan(children.findIndex(c => c.includes("sidebar-header")));
+      expect(context).toBeLessThan(children.findIndex(c => c.includes("sidebar-nav")));
+      expect(aside.find(".sidebar-context .workspace").exists()).toBe(true);
+    });
+
+    it("gives #subtitle-block to the mobile drawer too", async () => {
+      const { wrapper } = await render({
+        slots: { "subtitle-block": "<div class=\"workspace\">W</div>" },
+      });
+      expect(wrapper.find(".sidebar-mobile-context .workspace").exists()).toBe(true);
+    });
+
+    it("renders no context wrapper without #subtitle-block", async () => {
+      const { wrapper } = await render();
+      expect(wrapper.find(".sidebar-context").exists()).toBe(false);
+      expect(wrapper.find(".sidebar-mobile-context").exists()).toBe(false);
     });
 
     it("passes no slot the caller did not give", async () => {

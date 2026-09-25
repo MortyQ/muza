@@ -15,7 +15,7 @@ const { item } = defineProps<{
     <VIcon
       v-if="item.icon"
       :icon="item.icon"
-      :size="16"
+      :size="15"
       class="sidebar-flyout__item-icon"
     />
     <span class="sidebar-flyout__item-label">{{ item.label }}</span>

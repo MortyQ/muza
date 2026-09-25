@@ -22,15 +22,16 @@
 .v-tooltip__body {
   background: var(--ui-surface);
   color: var(--ui-foreground);
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.375rem 0.75rem;
+  font-size: var(--ui-text-sm);
+  line-height: var(--ui-leading-sm);
+  font-weight: 450;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow-lg);
   border: 1px solid var(--ui-border);
   word-break: break-word;
   width: fit-content;
-  min-width: 200px;
+  max-width: 20rem;
 }
 
 /* ============================================

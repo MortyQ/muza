@@ -3,6 +3,8 @@ import VIcon from "../../../base/VIcon.vue";
 import { useSidebarState } from "../../composables/useSidebarState";
 
 const { closeMobile, options } = useSidebarState();
+
+const brandInitial = options.brandName.charAt(0).toUpperCase();
 </script>
 
 <template>
@@ -16,6 +18,11 @@ const { closeMobile, options } = useSidebarState();
         :src="options.logoUrl"
       >
     </div>
+    <span
+      v-else-if="brandInitial"
+      aria-hidden="true"
+      class="sidebar-mobile-header__mark"
+    >{{ brandInitial }}</span>
 
     <h1
       v-if="options.brandName"
@@ -31,7 +38,7 @@ const { closeMobile, options } = useSidebarState();
       @click="closeMobile"
     >
       <VIcon
-        :size="20"
+        :size="15"
         icon="lucide:x"
       />
     </button>

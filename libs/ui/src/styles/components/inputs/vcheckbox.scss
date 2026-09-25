@@ -4,7 +4,7 @@
 .v-checkbox {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ui-space-md);
   width: fit-content;
   user-select: none;
 }
@@ -13,10 +13,10 @@
    INPUT
    ============================================ */
 .v-checkbox__input {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  border: 2px solid var(--ui-border-strong);
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--ui-radius-xs);
+  border: 1.5px solid var(--ui-border-strong);
   background: var(--ui-input-bg);
   transition:
     border-color 0.18s cubic-bezier(0.4, 0, 0.2, 1),
@@ -42,10 +42,10 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 7px;
-    height: 13px;
+    width: 5px;
+    height: 9px;
     border: solid var(--ui-primary-foreground);
-    border-width: 0 2.5px 2.5px 0;
+    border-width: 0 2px 2px 0;
     border-radius: 1px;
     transform: translate(-50%, -60%) rotate(45deg);
     box-sizing: border-box;
@@ -62,8 +62,8 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 10px;
-    height: 3px;
+    width: 8px;
+    height: 2px;
     background: var(--ui-primary-foreground);
     border-radius: 2px;
     transform: translate(-50%, -50%);
@@ -108,12 +108,12 @@
    LABEL
    ============================================ */
 .v-checkbox__label {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--ui-text-base);
+  line-height: var(--ui-leading-base);
   color: var(--ui-foreground-secondary);
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ui-space-md);
   cursor: pointer;
 
   &--disabled {

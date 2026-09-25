@@ -112,7 +112,7 @@ const rootClass = computed(() => [
             <VIcon
               v-if="item.icon"
               :icon="item.icon"
-              :size="20"
+              :size="16"
               class="v-accordion__leading-icon"
             />
 
@@ -127,7 +127,7 @@ const rootClass = computed(() => [
             </span>
 
             <VIcon
-              :size="20"
+              :size="16"
               class="v-accordion__expand-icon"
               icon="lucide:chevron-down"
             />

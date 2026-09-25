@@ -24,7 +24,6 @@ const handleClose = () => {
     :time-config="{ enableTimePicker: false }"
     clearable
     range
-    size="md"
     width="300px"
     @closed="handleClose"
   >

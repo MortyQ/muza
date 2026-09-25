@@ -27,6 +27,19 @@ function switcher(props: Record<string, unknown>) {
 const root = (w: ReturnType<typeof switcher>) => w.find(".v-theme-switcher");
 
 describe("VThemeSwitcher", () => {
+  it("carries no size modifier and a 15px icon when size is unset", () => {
+    // Unset is the chrome's natural 30px — the height every other control in
+    // a toolbar row stands at. `md` is an explicit 32px override, not the default.
+    const w = switcher({ modelValue: "light" });
+    expect(root(w).classes().some(c => /^v-theme-switcher--(sm|md|lg)$/.test(c))).toBe(false);
+    expect(w.findComponent(VIcon).props().size).toBe(15);
+  });
+
+  it("adds the modifier for an explicit size", () => {
+    expect(root(switcher({ modelValue: "light", size: "sm" })).classes())
+      .toContain("v-theme-switcher--sm");
+  });
+
   describe("cycle variant", () => {
     it("renders a single button", () => {
       const w = switcher({ modelValue: "light" });
@@ -110,6 +123,56 @@ describe("VThemeSwitcher", () => {
       const w = switcher({ modelValue: "auto", variant: "segment" });
       const active = w.findAll(".v-ts__item").map(b => b.classes().includes("v-ts__item--active"));
       expect(active).toEqual([false, false, true]);
+    });
+  });
+
+  describe("toggle variant", () => {
+    it("renders a radio per theme behind one thumb", () => {
+      const w = switcher({ modelValue: "light", variant: "toggle" });
+      expect(root(w).attributes("role")).toBe("radiogroup");
+      expect(w.findAll(".v-ts__option")).toHaveLength(THEMES.length);
+      expect(w.findAll(".v-ts__thumb")).toHaveLength(1);
+    });
+
+    it("checks only the active theme", () => {
+      const w = switcher({ modelValue: "dark", variant: "toggle" });
+      const checked = w.findAll(".v-ts__option").map(b => b.attributes("aria-checked"));
+      expect(checked).toEqual(["false", "true", "false"]);
+    });
+
+    it("hands the thumb its position as custom properties", () => {
+      const style = root(switcher({ modelValue: "auto", variant: "toggle" })).attributes("style");
+      expect(style).toContain("--v-ts-count: 3");
+      expect(style).toContain("--v-ts-index: 2");
+    });
+
+    it("parks the thumb on the first option for an unknown model", () => {
+      const style = root(switcher({ modelValue: "sepia", variant: "toggle" })).attributes("style");
+      expect(style).toContain("--v-ts-index: 0");
+    });
+
+    it("selects the clicked theme", async () => {
+      const w = switcher({ modelValue: "light", variant: "toggle" });
+      await w.findAll(".v-ts__option")[1].trigger("click");
+      expect(w.emitted("update:modelValue")?.[0]).toEqual(["dark"]);
+    });
+
+    it("labels icon-only options for assistive tech", () => {
+      const w = switcher({ modelValue: "light", variant: "toggle" });
+      expect(w.findAll(".v-ts__option").map(b => b.attributes("aria-label")))
+        .toEqual(["Light", "Dark", "Auto"]);
+    });
+
+    it("stacks only when vertical is set", () => {
+      expect(root(switcher({ modelValue: "light", variant: "toggle" })).classes())
+        .not.toContain("v-theme-switcher--vertical");
+      expect(root(switcher({ modelValue: "light", variant: "toggle", vertical: true })).classes())
+        .toContain("v-theme-switcher--vertical");
+    });
+
+    it("ignores vertical on the other variants", () => {
+      expect(root(switcher({ modelValue: "light", variant: "segment", vertical: true })).classes())
+        .not.toContain("v-theme-switcher--vertical");
     });
   });
 

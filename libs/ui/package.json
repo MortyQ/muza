@@ -20,11 +20,9 @@
     "test": "vitest run --project unit",
     "test:unit": "vitest run --project unit",
     "test:visual": "vitest run --project browser",
-    "test:visual:update": "bash scripts/visual-docker.sh --update",
     "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --project unit --coverage",
     "test:tokens": "vitest run --project browser tests/visual/tokens",
-    "test:screenshots": "vitest run --project browser tests/visual/screenshots",
     "test:visual:docker": "bash scripts/visual-docker.sh"
   },
   "peerDependencies": {

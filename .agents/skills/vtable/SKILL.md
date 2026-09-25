@@ -1,349 +1,206 @@
-# Skill: VTable Developer — Extending VTable Functionality
+---
+name: vtable
+description: Use when rendering, configuring or debugging a VTable from @app/core in any app — defining columns, cell slots, pagination, sorting, selection, row actions, empty/loading states — or when hitting TS4104 / "readonly array" / "not assignable to ExpandableRow[]" on the data prop, or pages not syncing. Also the entry point when modifying VTable itself under libs/core/src/components/table.
+---
 
-## Metadata
+# VTable
 
-| Field | Value |
+`VTable` is the shared data table in `@app/core`, used by every app. This skill covers **consuming**
+it. Changing the component itself is a different job — see [Extending VTable](#extending-vtable).
+
+Source of truth for the contract: `libs/core/src/components/table/types/props.ts` (`TableProps`,
+`TableEmits`) and `types/index.ts` (`Column`, `PaginationConfig`). Read those before inventing a prop.
+
+## Quick reference
+
+| Need | How |
 |---|---|
-| **name** | `vtable` |
-| **description** | Deep reference for developers extending VTable internals: adding subcomponents, composables, SCSS, or new prop/emit contracts. Not for consuming the table — for building it. |
-| **version** | 2.0 |
-| **applies_to** | `libs/ui/src/components/table/**` |
+| Columns | `:columns="Column[]"` — `{ key, label, width?, align?, sortable?, format?, fixed? }` |
+| Rows | `:data="ExpandableRow[]"` — **mutable array, see gotcha below** |
+| Custom cell | `<template #cell-<columnKey>="{ value, row, rowIndex }">` |
+| Row click | `@row-click="(row) => …"` — payload is `Record<string, unknown>`, cast at the boundary |
+| Loading | `:loading="true"` — renders the built-in overlay; don't hand-roll one |
+| Empty state | built in (`TableEmptyState`) — don't wrap the table in your own `v-if="!rows.length"` |
+| Fixed column | `fixed: "left" | "right"` on the column |
+| Actions column | a normal column with `width: "flex"` + a `#cell-actions` slot |
+| Selection | `v-model:selected-rows` + `:multi-select="MultiSelectConfig"` |
+| Sorting | `:sort="{ type: 'front' | 'server', multiple }"`, `v-model:sort-state` |
+| Page size | `v-model:page-size` — bind when the size *is* a request `limit` |
+| Toolbar search | `toolbar.search` + `v-model:search` — the built-in input debounces itself |
 
-## Auto-Activation Triggers
+Defaults worth knowing: `virtualized: true`, `rowHeight: 50`, and **`sort` defaults to
+`{ type: "server", multiple: true }`** — a table that "doesn't sort" is usually one that expected
+client sorting but never got `sort: { type: "front" }`.
 
-Apply this skill automatically when any of the following is true:
+## Gotcha 1 — `data` is a mutable array
 
-- Task involves editing any file inside `libs/ui/src/components/table/`
-- The user says "extend the table", "add a feature to VTable", "add column
-  functionality", "новый composable для таблицы", "расширить таблицу",
-  "добавить в таблицу"
-- The user wants to add a new prop or emit to `VTable.vue`
-- The user wants to add a new composable under `table/composables/`
-- The user wants to create a new subcomponent inside `table/components/`
-- The user wants to add a new SCSS file or class under `table/assets/styles/`
-- The user is debugging behavior inside the table rendering pipeline
-
----
-
-## Role
-
-You are a senior Vue 3 / TypeScript frontend engineer maintaining and extending
-`VTable` — a generic, virtualized data table in `@muzakit/ui`.
-
-You optimize for:
-
-- Zero TypeScript errors (strict mode always on)
-- Performance (WeakMap cell caching, virtual rendering, `display: contents` rows)
-- Clean separation: composables own logic, components own rendering
-
----
-
-## Architecture
+`TableProps.data` is `ExpandableRow[]`. Passing a readonly prop straight through fails:
 
 ```
-VTable.vue (1184 lines, generic SFC — see Invariant #1)
-│
-├── Composables (15, pure reactive logic)
-│   ├── useColumnResize       → width state + rAF-throttled drag resize
-│   ├── useTableCellMetadata  → one resolution per cell, cached per row
-│   ├── useTableColumnConfig  → visibility/order + storage restore
-│   ├── useFixedColumns       → sticky offsets + z-index
-│   ├── useGroupedHeaders     → multi-level header tree → flat rows
-│   ├── useExpandableTable    → tree data → FlattenedRow[] + toggle state
-│   ├── useTableFormatters    → value → display string (dispatcher only)
-│   ├── useTableHighlight     → the pinned cross (one row, one column)
-│   ├── useTableSelection     → multi-select + dependent mode
-│   ├── useTableSort          → sort state + front/server routing
-│   ├── useVirtualTable       → TanStack Virtual windowed rendering
-│   ├── useTablePage          → page ref + TABLE_PAGE_KEY provide/inject
-│   ├── useTableFullScreen    → FLIP expand/collapse + z-index + Escape
-│   ├── useTablePeriodSelect  → period dropdown → API params
-│   └── useLinkedTables       → cross-table scroll/page/highlight sync
-│
-├── Subcomponents (21, rendering only — TableCell also resolves its own
-│                            metadata, see Extension Points)
-│   DeltaIndicator · DeltaValue · TableBackdrop · TableCell ·
-│   TableCheckboxCell · TableColumnPicker · TableColumnSetup ·
-│   TableEmptyState · TableExpandAdditionalHeadersButton ·
-│   TableFullscreenToggle · TableHeader · TableHeaderCheckbox ·
-│   TableHeaderGroup · TableHeaderGrouped · TableHeaderSimple ·
-│   TableLoadingOverlay · TablePagination · TablePeriodSelect ·
-│   TablePinButton · TableRow · TableTitleBlock · TableToolbar
-│
-├── types/  index.ts · props.ts · selection.ts · toolbar.ts · format.ts
-├── utils/  storage.ts · columnState.ts
-└── assets/styles/  16 partials + column-setup.scss + column-picker.scss,
-                    composed by table.scss
+TS4104: The type 'readonly EmailDelivery[]' is 'readonly' and cannot be assigned to the mutable type 'ExpandableRow[]'
 ```
 
----
+Do **not** "fix" this by widening your own prop away from `ReadonlyArray` — props stay readonly
+(TypeScript Rule 15). Copy into a `computed` instead:
 
-## Key Invariants
+```ts
+// ✅ correct — prop stays readonly, VTable gets its mutable array
+const { deliveries } = defineProps<{ deliveries: ReadonlyArray<EmailDelivery> }>();
 
-1. **`VTable.vue` IS generic.** The SFC carries
-   `generic="TData extends Record<string, unknown> = Record<string, unknown>"`,
-   and `Column`, `TableProps`, `TableEmits` all take a `TData` parameter.
-   *(Version 1.x of this skill claimed the opposite. It was wrong.)*
-
-2. **`defineEmits` is a runtime array with a cast.** `defineEmits<TableEmits<TData>>()`
-   does not work in a generic SFC — the compiler only recognizes the last
-   overload of a function-intersection type. The workaround is deliberate:
-
-   ```ts
-   const emit = defineEmits([...]) as unknown as TableEmits<TData>;
-   ```
-
-   Do not "fix" this. The typing of every emit depends on the cast.
-
-3. **`VTable.vue` uses Vue 3.5 reactive destructuring**, like the rest of the
-   library. There is no `withDefaults` anywhere under `table/` any more.
-
-4. **`FlattenedRow` is non-generic.** It extends `ExpandableRow`, which already
-   carries an index signature, so the caller's row shape rides through without a
-   type parameter.
-
-5. **WeakMap cell metadata cache.** `getCellMetadata` caches per row object in a
-   `WeakMap<row, Map<cacheKey, CellMetadata>>`. The key includes
-   `!!column.cellClass` / `!!column.cellStyle`. A new row object invalidates
-   naturally; nothing resets it manually.
-
-   It lives in `useTableCellMetadata` and is reached through
-   `provide("tableCellMetadata", …)`, which `TableCell` injects. so-platform
-   keys the inner map by column identity instead; that was not adopted, because
-   a `columns` computed that rebuilds its objects each evaluation would defeat
-   an identity-keyed cache entirely rather than merely widen a string-keyed one.
-
-6. **No colour literals in table SCSS.** Structure only — layout, grid, z-index,
-   position, transitions. Every colour is a `--ui-*` token. `_variables.scss`
-   holds `$`-variables for sizes exclusively.
-
-7. **Three unscoped `<style>` blocks, all justified in a comment above them.**
-   `VTable.vue`'s rules have to reach elements its subcomponents render;
-   `TableColumnSetup` and `TableColumnPicker` are portalled to `<body>` by
-   VFloating, where a scoped attribute selector matches nothing.
-
----
-
-## Composables Reference
-
-Signatures below are the real ones. Where an older note disagrees, the code wins.
-
-### `useColumnResize(columns: Ref<Column[]>)`
-
-```
-gridTemplateColumns: ComputedRef<string>
-getGridTemplateWithCheckbox: (checkboxWidth?: number) => string
-resizedWidths: Ref<Map<string, number>>
-isResizing: ComputedRef<boolean>
-isColumnResizable: (col: Column) => boolean      // false only for width: "flex"
-startResize: (columnKey: string, event: MouseEvent) => void
-autoFitColumn: (columnKey: string) => void       // drops the override
-getColumnWidth: (columnKey: string) => number | string
-resetWidths: () => void
+const rows = computed(() => [...deliveries]);
 ```
 
-The drag is rAF-throttled: `mousemove` stores a pending width and one commit
-happens per frame. `stopResize` flushes a pending frame before tearing down, or
-the last few pixels of a fast drag are lost. Every write replaces the Map —
-mutating it in place is invisible to Vue.
-
-### `useFixedColumns(columns, columnWidths?)`
-
-```
-leftFixedColumns / rightFixedColumns / normalColumns: ComputedRef<Column[]>
-getFixedStyles: (col: Column) => Record<string, string>   // { left } or { right }
-isFixed: (col: Column) => boolean
-isLastLeftFixed: (columnKey: string) => boolean           // takes a KEY
-isFirstRightFixed: (columnKey: string) => boolean         // takes a KEY
-getZIndex: (columnKey: string, column: Column) => number
+```vue
+<VTable :columns :data="rows" :loading />
 ```
 
-Offsets accumulate in declaration order; a resized width wins over the declared
-one, and a non-px width falls back to 150.
+`ExpandableRow` carries an index signature (`[key: string]: any`), so most row shapes assign to it
+without a cast. Going the other way — the `row-click` payload back to your type — does need one,
+because `Record<string, unknown>` doesn't structurally overlap enough for a single `as`:
 
-### `useGroupedHeaders(columns, columnWidths)`
-
-```
-hasGroups: ComputedRef<boolean>
-flatColumns: ComputedRef<Column[]>          // leaves only
-headerLevels: ComputedRef<HeaderCell[][]>   // one array per depth
-getGroupWidth: (col: Column) => number      // a NUMBER, not a CSS string
-getColspan: (col: Column) => number
-isGroupFixed: (col: Column) => "left" | "right" | null
+```ts
+const onRowClick = (row: Record<string, unknown>): void => {
+  emit("select", row as unknown as EmailDelivery);
+};
 ```
 
-A leaf on level 0 gets `rowspan = maxDepth`; everything deeper gets 1.
+## Gotcha 2 — every row needs a stable `id`
 
-### `useExpandableTable(data: Ref<ExpandableRow[]>)`
+Rows are keyed by `row.id`, never by index: index keys make Vue reuse components across different
+rows at the same position and leak state. VTable auto-assigns an `id` to rows missing one, but if
+your rows already have a natural id, make sure it lands on the `id` field.
 
-```
-flattenedData: ComputedRef<FlattenedRow[]>   // depth-first
-expandedRows: Ref<Set<string | number>>
-toggleRow / expandAll / collapseAll
-isExpandable: (row) => boolean               // children?.length || row.expandable
-```
+## Gotcha 3 — pagination is built for the server
 
-`hasChildren` on a flattened row and `isExpandable` deliberately disagree:
-`hasChildren` needs `children.length` or `expandable && expandedContent`, while
-`isExpandable` accepts `expandable` alone.
+`pagination?: PaginationConfig` is documented in the source as **server-side only**. `total` is its
+only required field: `page` and `pageSize` are outranked whenever an owner exists (`v-model:page` /
+`useTablePage()` for the page, `v-model:page-size` for the size), so passing them there is dead
+weight. `showSizeChanger` defaults to whether `pageSizeOptions` was passed — hand it the options
+and the changer appears.
 
-### `useTableFormatters()`
+There are three coexisting page modes — pick one deliberately, mixing them breaks sync:
 
-Returns `formatCellValue` plus the six formatters re-exported from
-`@muzakit/utils`. `formatCellValue` is a **dispatcher**, in this order:
-`formatter` → `currency` → `percentage` → `number` → `date` → `boolean` →
-`fileSize`. Note the asymmetry: `currency: false` falls through, `percentage:
-false` still formats (the guards were written differently).
+| Mode | Wiring | Use when |
+|---|---|---|
+| 1 | `@request` only, no `page` prop; display driven by `props.pagination` | server pagination, table owns the page |
+| 2 | `v-model:page` | you own the page ref |
+| 3 | `useTablePage()` injection via `TABLE_PAGE_KEY` | linked tables (`useLinkedTables`) |
 
-### `useTableHighlight({ config, onChange? })`
+**There is no built-in client-side pagination mode.** When the endpoint has no `page`/`offset`, ask
+what its `limit` means before writing anything — the answer picks the pattern, and the wrong one
+ships a pager that lies.
 
-Plus the standalone `normalizeHighlight(boolean | HighlightConfig | undefined)`.
-`applyRemote` never calls `onChange` — that is what stops two linked tables
-ping-ponging. `setPin` does.
+### Case A — `limit` caps the newest N, older rows are unreachable
 
-### `useTableSelection({ config, flattenedData, selectedRows, onSelectionChange })`
+Do not paginate. Bind `v-model:page-size` to the `limit`, and the pagination bar's size changer
+*becomes* the limit control: one fetch, one page, and the "Showing 1–50 of 50" line is the whole
+truth. A pager offering "page 2 of 3" over 50 fetched rows implies a page 2 on the server; there
+isn't one.
 
-`isRowSelected` takes an **id**, not a row. `selectChildren` / `selectParent`
-are documented as defaulting to true but are read as plain truthy fields, so
-omitting them behaves as false. With `selectOnlyVisible`, the walk starts with
-`parentExpanded` hardcoded true, so the first level below a collapsed row still
-counts as visible.
+Reference: `features/admin/communication/deliveries/` — `useDeliveries.ts` plus
+`components/DeliveriesTable.vue`.
 
-### `useTableSort({ sort?, sortState?, columns, page?, pageSize?, data?, onRequest?, onSort?, onUpdateSortState? })`
-
-```
-sortState: Ref<SortItem[]>
-sortConfig: ComputedRef<Required<SortConfig>>     // default { server, multiple }
-getSortState: (columnKey) => { isSorted, order, index }
-handleSortClick: (column: Column) => void
-hasSortedColumns: ComputedRef<boolean>
-resetSort: () => void
-sortedData: ComputedRef<T[]>                      // front mode only
+```ts
+// constants.ts — one number is both the request limit and the page size
+export const DEFAULT_LIMIT = 50;
+export const LIMIT_OPTIONS = [25, DEFAULT_LIMIT, 100, 200];
 ```
 
-A sort click always requests page 1; `resetSort` keeps the current page.
-
-### `useVirtualTable(scrollContainerRef, data, options?)`
-
-`{ virtualizer, virtualItems, totalSize, remeasure }`. Defaults:
-`estimateSize: 50`, `overscan: 3`, `measureElement: false`. `remeasure` measures
-and dispatches a synthetic scroll event; it does **not** touch listeners.
-
-### `useTablePage(resetOn?: WatchSource[])`
-
-Returns the page ref and provides it under `TABLE_PAGE_KEY`. On a reset it uses
-`triggerRef` when already on page 1 — so read `page.value` inside an effect. A
-value-comparing `watch` drops that notification.
-
-### `useTableFullScreen({ wrapperRef, isEnabled, placeholderRef?, chromeRefs?, onToggle? })`
-
-```
-isFullscreen: Readonly<Ref<boolean>>   isEnabled: ComputedRef<boolean>
-zIndex: ComputedRef<number>            placeholderStyle / panelStyle / contentHeight
-toggle() / close()
+```ts
+// the table component — no @request handler, the model carries size changes
+const limit = defineModel<number>("limit", { required: true });
 ```
 
-Panel geometry is **computed from `window.inner*`, never measured** —
-`PANEL_INSET_RATIO` is currently `0`, so the panel is full-bleed. Measuring the
-wrapper is what caused the old unbounded-growth bug (`offsetHeight` is
-border-box and the wrapper has a 1px border). `enter()` computes the geometry
-and measures the chrome *before* flipping the flag, so the first fullscreen
-render is already final.
+```vue
+<VTable
+  v-model:page-size="limit"
+  :data="rows"
+  :pagination="{ total, pageSizeOptions: LIMIT_OPTIONS }"
+/>
+```
 
-### `useLinkedTables(id, linkedIds, options?)`
+`page`, `pageSize` and `showSizeChanger` are all absent on purpose — see Gotcha 3.
 
-`{ link, resetState }`. `link` is `reactive({ scrollSync, highlightSync, page,
-"onUpdate:page" })` — the only sanctioned `reactive()` return in the library,
-because it is spread with `v-bind`. **Both controllers are `markRaw`'d**:
-`reactive()` would unwrap `scrollPosition` into a plain value and VTable's
-`watch` on it would never fire.
+### Case B — the endpoint returns the whole set and `limit` is a safety valve
 
-The registry is a module-level Map cleaned up by `onScopeDispose`. Pagination
-modes: `sync` (clamped to each table's `totalPages`), `reset`, `independent`
-(default). `resetState` ignores the mode — a manual reset moves everything.
+Then paging in memory is real, and it is **mode 3**: `useTablePage` owns the page, the slice is a
+computed. Do not reach for mode 1 — `@request` plus a local `ref(1)` plus a reset watcher is three
+copies of what `useTablePage` does in one line (Rule 11 in `composables.instructions.md`).
 
----
+The page lives in the composable, beside the filters that reset it:
 
-## Utils Reference
+```ts
+const total = computed<number>(() => orders.value?.length ?? 0);
 
-`utils/storage.ts` — three adapters behind one async interface, plus the
-`tableStorage` singleton. Default backend is IndexedDB via `keyv-browser`;
-`setStorageType` mutates module-global state, which is why ordering matters.
+// `total` belongs in resetOn: a refetch returning a shorter list would otherwise leave the page
+// pointing past its end. A refresh returning the same count keeps the reader where they were.
+const page = useTablePage([status, brandShortName, total]);
 
-`utils/columnState.ts` — `readColumnState` / `writeColumnState` wrap the
-set-type-then-read ordering. Neither try/catches: the call sites log differently
-and one falls through to a default. `SavedColumnState` is a superset —
-`TableColumnSetup` writes without `labels`, `TableColumnPicker` writes with.
+const rows = computed<Order[]>(() => {
+  const start = (page.value - 1) * PAGE_SIZE;
+  return (orders.value ?? []).slice(start, start + PAGE_SIZE);
+});
+```
 
-All three call sites now go through the helper — `VTable.vue`'s local
-`SavedColumnState` and its direct `tableStorage.getTableConfig` call are gone,
-replaced by `useTableColumnConfig`, which is also where the picker-key fallback
-and the fixed-to-the-edges sort live.
+```vue
+<!-- No `page` in the config — the injected ref outranks it (`pageRef`, VTable.vue:358) -->
+<VTable
+  :columns
+  :data="rows"
+  :pagination="{ total, pageSize: PAGE_SIZE }"
+/>
+```
 
----
+`useTablePage` calls `provide()`, so the composable holding it is callable only from a component's
+setup, and the VTable must be a descendant of that component.
 
-## Extension Points
+Bonus: `.slice()` on a `ReadonlyArray` returns a mutable `T[]`, so this also resolves Gotcha 1 with
+no extra copy.
 
-**A cell's rendering** → `TableCell.vue`, not `VTable.vue`'s template. Passing
-`row`/`column`/`colIndex`/`rowIndex` puts the cell in *metadata mode*: it injects
-the resolver, resolves once, and draws its own class, style, indent, title,
-expand button and value. Omit them (the total row does) and it falls back to a
-bare passthrough of its default slot. `VTable` hands down only the two things it
-alone knows — the row pin, through the `pin` slot, and the consumer's
-`#cell-<key>` override, through the default slot **guarded by
-`v-if="$slots[...]"`**. Passing that slot unconditionally hands `TableCell` an
-always-truthy slot function, which suppresses its fallback and takes the `title`
-attribute with it.
+Be honest in the UI when a `limit` caps the result set — rows past the cap are invisible, and a
+pager reading "page 1 of 10" hides that there was ever an 11th page. Case A exists precisely so
+that sentence has nothing left to warn about.
 
-**A new prop** → add to `TableProps` in `types/props.ts`, destructure it in
-`VTable.vue`'s `defineProps<TableProps<TData>>()`, pass it on.
+## Emits
 
-**A new emit** → add a function-intersection entry to `TableEmits`, add the
-event name to the runtime array in `defineEmits`, call `emit(...)`.
+`row-click`, `update:selected-rows`, `expand-click`, `update:sort-state`, `update:page`,
+`update:pageSize`, `update:search`, `update:highlight-state`, `request` (unified server-side
+payload: page, sort, …), `sort` (client sort), and toolbar events `toolbar:refresh`,
+`toolbar:reset-sort`, `toolbar:export`.
 
-**A new composable** → `composables/useMyFeature.ts`, inputs as
-`MaybeRefOrGetter<T>` + `toValue()`, explicit return type, cleanup registered
-inside.
+Use `request` for server-side operations — it carries page and sort together, so you don't need to
+listen to `update:page` and `update:sort-state` separately and race them. What it is *not* for is
+anything a model already carries: with `v-model:page-size` bound, a `@request` handler that reads
+`payload.pageSize` is a second path to the same state.
 
-**A new subcomponent** → `components/MyComponent.vue`, script → template →
-style, typed `defineProps<{…}>()` with reactive destructuring,
-`ReadonlyArray<T>` for array props.
+## Common mistakes
 
-**A new SCSS file** → `assets/styles/_my-feature.scss`, `@use`d from
-`table.scss`, structural rules only, `.v-table-` prefix.
+| Mistake | Fix |
+|---|---|
+| Widening a prop to `ExpandableRow[]` to silence TS4104 | Keep the prop readonly, spread into a `computed` |
+| Custom empty state wrapper around the table | VTable already renders one |
+| Custom loading spinner beside the table | Pass `:loading` |
+| Raw `<span>` badge for a status cell | `VTag` in a `#cell-<key>` slot, `variant="outline"` in tables |
+| Expecting client sort out of the box | `sort` defaults to `server` — pass `{ type: "front" }` |
+| Mixing `v-model:page` with `@request` paging | Pick one page mode |
+| `@request` handler reading `payload.pageSize` next to `v-model:page-size` | Drop the handler — the model already carries it |
+| Own debounce around the toolbar search box | The built-in `VInput` debounces (800 ms) |
+| Index as row key | Rows key on `row.id` |
 
----
+## Extending VTable
 
-## Testing
+Only when editing files under `libs/core/src/components/table/**` — adding a prop, emit, composable,
+subcomponent or SCSS partial. **Read `internals.md` in this skill directory** for the component and
+composable contracts, extension points and forbidden patterns.
 
-Full coverage lives in `libs/ui/tests/`; see `.agents/instructions/testing.md`
-for the layers and the table-specific traps. The short version:
+Do not load `internals.md` merely to render a table in an app — it is ~850 lines of internals and
+answers none of the questions above.
 
-- Composables are tested through `withScope()` from `tests/setup/scope.ts`, not
-  by mounting a host component.
-- Fixtures come from `tests/setup/table.ts` — `makeColumns`, `makeRows`,
-  `makeTreeRows`, `makeGroupedColumns`, `makeFixedColumns`, `makeTotalRow`.
-- **Anything unit-testing VTable must pass `virtualized: false`.** jsdom reports
-  zero for every measurement, so a virtualized table renders no rows at all —
-  and the virtualizer re-measures itself into "Maximum recursive updates
-  exceeded" while trying.
-- Virtualization, sticky offsets, drag-resize and FLIP geometry belong to the
-  browser project.
+Two caveats when you do:
+- `internals.md`'s SCSS file list is stale. `libs/core/src/components/table/README.md` has the
+  current filenames; use `internals.md` for composable and component contracts.
+- `VTable.vue` is **not** generic — `Column`, `TableProps`, `TableEmits` take no `TData`. Adding one
+  is a real architecture change, not a bug fix; confirm intent with the user first.
 
----
-
-## Forbidden Patterns
-
-- Removing the `generic=` attribute, or the `defineEmits([...]) as unknown as
-  TableEmits<TData>` cast (Invariants #1 and #2)
-- `withDefaults` — the whole directory is on reactive destructuring
-- `props.x` after destructuring
-- Inline styles in subcomponents — bind a CSS custom property instead
-- Hard-coded colours in table SCSS
-- `reactive()` returns from composables, except `useLinkedTables`'s `link`
-- Mutating `resizedWidths` / `expandedRows` / `selectedIds` in place — every
-  writer replaces the Map or Set
-- `any` in composable signatures — `unknown` plus a type guard
-- Side effects at a composable's top level. The one exception is
-  `TableColumnSetup`'s eager storage restore, which is commented as such:
-  deferring it to `onMounted` costs a visible flash of unfiltered columns.
+For visual and interaction changes to the table, also apply the `emil-design-eng` skill, per
+`.agents/claude/behavior.md`.

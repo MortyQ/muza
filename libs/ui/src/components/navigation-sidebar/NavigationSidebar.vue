@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, provide } from "vue";
+import { computed, defineAsyncComponent, provide, watch } from "vue";
 
 import type { RouteLocationRaw } from "vue-router";
 
@@ -48,6 +48,16 @@ provide(SIDEBAR_STATE_KEY, {
 });
 
 const isCollapsed = computed(() => sidebar.isCollapsed.value);
+
+// Reveal where you are: open every ancestor of the active route. A side effect
+// on a route change, not a synchroniser — expandMany only adds, so collapsing
+// the active parent by hand sticks until the active path itself changes.
+// `immediate` is what makes a deep link to a nested page land with its branch open.
+watch(
+  activePathIds,
+  (ids) => { state.expandMany([...ids]); },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -66,6 +76,14 @@ const isCollapsed = computed(() => sidebar.isCollapsed.value);
           <slot name="header-end" />
         </template>
       </SidebarHeader>
+
+      <!-- #subtitle-block — context between the brand and the menu (workspace, account) -->
+      <div
+        v-if="$slots['subtitle-block']"
+        class="sidebar-context"
+      >
+        <slot name="subtitle-block" />
+      </div>
 
       <SidebarNav />
 
@@ -87,6 +105,12 @@ const isCollapsed = computed(() => sidebar.isCollapsed.value);
 
     <!-- Mobile sidebar (lazy loaded — desktop users don't download this) -->
     <SidebarMobile>
+      <template
+        v-if="$slots['subtitle-block']"
+        #context
+      >
+        <slot name="subtitle-block" />
+      </template>
       <template
         v-if="$slots['footer-start']"
         #start

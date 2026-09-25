@@ -49,7 +49,7 @@ const { isCollapsed } = useSidebarState();
     -->
     <div
       v-if="$slots.end"
-      class="sidebar-footer__slot"
+      class="v-sidebar-footer__slot v-sidebar-footer__slot--end"
     >
       <slot name="end" />
     </div>

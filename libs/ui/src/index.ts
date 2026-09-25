@@ -15,6 +15,7 @@ export {
 export { default as VIcon } from "./components/base/VIcon.vue";
 export { default as VTag, type TagVariant, type TagColor, type TagSize } from "./components/base/VTag.vue";
 export { default as VThemeSwitcher, type ThemeOption } from "./components/base/VThemeSwitcher.vue";
+export { default as VComposer, type VComposerStatus } from "./components/inputs/VComposer.vue";
 export { default as VInput } from "./components/inputs/VInput.vue";
 export { default as DragNDrop } from "./components/inputs/DragNDrop.vue";
 export { default as VFileUpload } from "./components/inputs/VFileUpload.vue";
@@ -29,7 +30,6 @@ export { default as VCheckbox, type CheckboxValue, type CheckboxModelValue } fro
 export { default as VSwitch } from "./components/inputs/VSwitch.vue";
 export { default as VSelect } from "./components/inputs/VSelect.vue";
 export { default as VSegmentedControl, type SegmentOption } from "./components/inputs/VSegmentedControl.vue";
-export { default as VToggleGroup, type ToggleOption } from "./components/inputs/VToggleGroup.vue";
 export { default as VTooltip } from "./components/overlay/VTooltip.vue";
 export { default as VDrawer } from "./components/overlay/VDrawer.vue";
 export { default as VModal } from "./components/overlay/VModal.vue";

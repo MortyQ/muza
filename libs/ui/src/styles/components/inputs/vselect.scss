@@ -8,30 +8,37 @@
   /* Same field surface as VInput — the two sit next to each other in forms. */
   background: var(--ui-input-bg);
   border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-sm);
+  box-shadow: var(--ui-shadow-xs);
 }
 
 /* ============================================
    FLOATING LABEL
    ============================================ */
+/* `top` + `translateY(-50%)` rather than a fixed px `translate()`: the label
+   centres on the wrapper whatever its height — resting on its middle, active on
+   the fieldset's top border — so nothing here is tuned to one control size. */
 .v-select__label {
   position: absolute;
-  left: 0.75rem;
-  top: 0;
+  left: var(--ui-control-px);
+  top: 50%;
   color: var(--ui-foreground-muted);
-  font-size: 0.875rem;
-  transition: transform 200ms ease, color 200ms ease, font-weight 200ms ease;
+  font-size: var(--ui-text-base);
+  line-height: var(--ui-leading-base);
+  transition: top 200ms ease, font-size 200ms ease, color 200ms ease, font-weight 200ms ease;
   pointer-events: none;
-  transform-origin: top left;
-  transform: translate(0, 12px) scale(1);
+  transform: translateY(-50%);
   z-index: 20;
   max-width: calc(100% - 24px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
+  /* Declared at 10px, not a 13px label under `scale(0.75)`: 9.75px renders
+     blurry at subpixel sizes where a declared 10px is drawn crisp. */
   &--active {
-    transform: translate(0, -9px) scale(0.75);
+    top: 0;
+    font-size: var(--ui-text-2xs);
+    line-height: var(--ui-leading-2xs);
     color: var(--ui-primary);
     font-weight: 500;
   }
@@ -47,10 +54,19 @@
   pointer-events: none;
   transition: border-color 200ms ease, border-width 200ms ease;
   border: 1px solid var(--ui-input-border);
+  box-shadow: var(--ui-shadow-xs);
   margin: 0;
-  padding: 0 8px;
+  /* The legend is laid out from the fieldset's content box, so the text inside
+     it starts at `padding-left + legend padding-left` — 7px + 3px — which is
+     exactly the `left: 0.625rem` the active label sits at. */
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
   top: 0;
 
+  /* 2px, and no spread ring: a `box-shadow` ring is drawn around the whole
+     rectangle and knows nothing about the notch, so it paints a coloured halo
+     straight through the label. A thicker border has no such problem — the notch
+     cuts it. The width costs no layout either, since this is an `inset: 0`
+     overlay the multiselect is a sibling of, not a child. */
   &--active {
     border-color: var(--ui-border-focus);
     border-width: 2px;
@@ -59,7 +75,11 @@
 
 .v-select__legend {
   height: 0;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-2xs);
+  line-height: var(--ui-leading-2xs);
+  /* Set in the same face as the label it makes room for. Left at 400 against a
+     500 label it measures narrower, and the border closes over the last glyph. */
+  font-weight: 500;
   transition: max-width 200ms ease, padding 200ms ease;
   border: none;
   padding: 0;
@@ -75,8 +95,8 @@
 
   &--visible {
     max-width: 100%;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    padding-left: 0.1875rem;
+    padding-right: 0.1875rem;
   }
 }
 
@@ -84,8 +104,8 @@
    CARET / LOADER ICON
    ============================================ */
 .v-select__caret-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 0.875rem;
+  height: 0.875rem;
   color: var(--ui-foreground-muted);
   transition: transform 200ms ease, color 200ms ease;
 }
@@ -99,7 +119,7 @@
    MULTISELECT ROOT
    ============================================ */
 :deep(.multiselect) {
-  min-height: 44px;
+  min-height: var(--ui-control-h);
   position: relative;
   box-shadow: none !important;
   background: transparent !important;
@@ -113,9 +133,12 @@
   border: none !important;
   box-shadow: none !important;
   color: var(--ui-foreground);
+  border-radius: var(--ui-radius-lg);
   transition: all 200ms;
-  min-height: 44px;
-  padding: 0.5rem 0.75rem;
+  min-height: var(--ui-control-h);
+  /* Right padding clears the caret box; the vertical centring is the
+     line-height's job, so a 30px control needs no top padding to look balanced. */
+  padding: var(--ui-space-xs) 1.75rem var(--ui-space-xs) var(--ui-control-px);
 }
 
 :deep(.multiselect__tags:hover) {
@@ -128,11 +151,12 @@
 :deep(.multiselect__single) {
   background-color: transparent;
   color: var(--ui-foreground);
-  font-size: 0.875rem;
-  font-weight: 400;
+  font-size: var(--ui-text-base);
+  font-weight: 450;
+  letter-spacing: -0.005em;
   margin-bottom: 0;
-  line-height: 1.25rem;
-  padding-top: 0.25rem;
+  line-height: 1.375rem;
+  padding-top: 0;
   border: none !important;
   padding-left: 0;
 }
@@ -143,12 +167,14 @@
 :deep(.multiselect__input) {
   background-color: transparent;
   color: var(--ui-foreground);
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
+  line-height: 1.375rem;
+  letter-spacing: -0.005em;
   border: none;
   outline: none;
   box-shadow: none;
   margin-bottom: 0;
-  padding-top: 0.25rem;
+  padding-top: 0;
   padding-left: 0;
   padding-right: 0;
 }
@@ -161,10 +187,12 @@
    PLACEHOLDER
    ============================================ */
 :deep(.multiselect__placeholder) {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
+  line-height: 1.375rem;
+  letter-spacing: -0.005em;
   font-weight: 400;
   margin-bottom: 0;
-  padding-top: 0.25rem;
+  padding-top: 0;
   color: var(--ui-input-placeholder);
 }
 
@@ -173,11 +201,11 @@
    ============================================ */
 :deep(.multiselect__select) {
   position: absolute;
-  right: 0.25rem;
+  right: 0.125rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,16 +260,16 @@
 :deep(.multiselect__tag) {
   background-color: var(--ui-primary);
   color: white;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-xs);
   font-weight: 500;
-  border-radius: var(--ui-radius);
+  line-height: var(--ui-leading-base);
+  border-radius: var(--ui-radius-xs);
   margin-bottom: 0;
-  margin-right: 0.5rem;
+  margin-right: 0.25rem;
   display: inline-flex;
   align-items: center;
-  border: 2px solid var(--ui-border);
-  padding: 4px 28px 4px 12px;
-  gap: 0.5rem;
+  border: none;
+  padding: 0 1.25rem 0 0.375rem;
 }
 
 :deep(.multiselect__tag-icon) {
@@ -291,7 +319,7 @@
   border: 1px solid var(--ui-border-subtle);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow-lg);
-  margin-top: 0.25rem;
+  margin-top: 0.375rem;
   overflow-y: auto;
   overflow-x: hidden;
   border-top: none !important;
@@ -306,9 +334,11 @@
    ============================================ */
 :deep(.multiselect__option) {
   color: var(--ui-foreground);
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   font-weight: 400;
-  padding: 0.625rem 1rem;
+  min-height: 0;
+  line-height: var(--ui-leading-base);
+  padding: 0.3125rem 0.5rem;
   transition: color 150ms ease, background-color 150ms ease;
   cursor: pointer;
   background-color: transparent;
@@ -351,7 +381,7 @@
   color: var(--ui-primary);
   font-weight: 600;
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 0.3125rem 0.5rem;
 }
 
 :deep(.multiselect__option.multiselect__option--group:hover),
@@ -372,125 +402,4 @@
   cursor: not-allowed;
   background-color: transparent;
   color: var(--ui-foreground-disabled);
-}
-
-/* ============================================
-   MODERN CHROME — the default, opt out with `:modern="false"`
-
-   `VButton`'s modern block, ported to a control that is not a button: 30px, 8px
-   radius, 1px hairline, 13.5px/510 type, the extra-small elevation and the tonal
-   neutral surface — so a filter select and a `variant="neutral"` button beside it
-   are one control family rather than two.
-
-   Every rule is nested under `.v-select--modern`, so it is one class more
-   specific than the legacy rule it overrides and the block is order-independent.
-   Nothing above it changes.
-   ============================================ */
-
-/* The border lives on the fieldset overlay, the fill cannot: the overlay is
-   painted after the value and would hide it. Hairline and elevation here, the
-   surface on the tags below. */
-.v-select--modern .v-select__fieldset {
-  border-color: color-mix(in oklch, var(--ui-foreground) 9%, transparent);
-  border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-xs);
-  padding: 0;
-
-  /* 1px, not the legacy 2px: at 30px a second pixel of border shifts the value
-     under the cursor on open. The ring carries the state change instead, outside
-     the box where it costs no layout. */
-  &--active {
-    border-width: 1px;
-    border-color: var(--ui-border-focus);
-    box-shadow: var(--ui-shadow-xs), 0 0 0 3px color-mix(in oklch, var(--ui-ring) 15%, transparent);
-  }
-}
-
-.v-select--modern {
-  /* `min-height`, never `height` — a multiple select has to be able to grow a
-     second row of chips instead of clipping them. */
-  :deep(.multiselect),
-  :deep(.multiselect__tags) {
-    min-height: 1.875rem;
-  }
-
-  :deep(.multiselect__tags) {
-    background-color: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
-    border-radius: var(--ui-radius-lg);
-    /* Right padding clears the caret box below; the vertical centring is the
-       line-height's job, so a 30px control needs no top padding to look
-       balanced. */
-    padding: 0.25rem 1.75rem 0.25rem 0.625rem;
-    transition: background-color 120ms ease;
-  }
-
-  :deep(.multiselect:hover:not(.multiselect--disabled)) .multiselect__tags {
-    background-color: color-mix(in oklch, var(--ui-foreground) 10%, transparent);
-  }
-
-  :deep(.multiselect__single),
-  :deep(.multiselect__placeholder),
-  :deep(.multiselect__input) {
-    font-size: 0.78125rem;
-    line-height: 1.375rem;
-    letter-spacing: -0.005em;
-    padding-top: 0;
-  }
-
-  :deep(.multiselect__single) {
-    font-weight: 510;
-  }
-
-  /* The caret was a 40px hit box on a 44px control. At 30px that box is the
-     control. */
-  :deep(.multiselect__select) {
-    right: 0.125rem;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .v-select__caret-icon {
-    width: 0.875rem;
-    height: 0.875rem;
-  }
-
-  /* Chips scaled to the row: no border (an outline reads as a nested control at
-     this size) and a tighter clear-button gutter. */
-  :deep(.multiselect__tag) {
-    font-size: 0.6875rem;
-    font-weight: 500;
-    line-height: 1.125rem;
-    border: none;
-    border-radius: var(--ui-radius-xs);
-    padding: 0 1.25rem 0 0.375rem;
-    margin-right: 0.25rem;
-  }
-
-  :deep(.multiselect__tag-icon) {
-    padding-left: 0;
-  }
-
-  :deep(.multiselect--disabled) .multiselect__tags {
-    background-color: var(--ui-surface-sunken);
-    border-radius: var(--ui-radius-lg);
-  }
-
-  /* The non-floating panel, for `teleport-to-body: false`. The floating one is
-     styled by class in vselect-floating.scss. */
-  :deep(.multiselect__content-wrapper) {
-    border-radius: var(--ui-radius-lg);
-    margin-top: 0.375rem;
-  }
-
-  /* `min-height: 0` is the load-bearing line. vue-multiselect ships
-     `.multiselect__option { min-height: 40px; line-height: 16px }`, which padding
-     cannot shrink: the row stays 40px, the 16px of text sits where the top
-     padding leaves it, and the rest of the box is dead space under every option.
-     Height comes from line-height + padding here instead. */
-  :deep(.multiselect__option) {
-    font-size: 0.78125rem;
-    min-height: 0;
-    line-height: 1.125rem;
-    padding: 0.3125rem 0.5rem;
-  }
 }
