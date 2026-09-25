@@ -99,12 +99,26 @@ describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
     expect(style.boxShadow).toBe("none");
   });
 
-  it("disabled state dims through the disabled foreground token", async () => {
-    const el = await renderButton({ disabled: true, variant: "primary" });
-    const style = getComputedStyle(el);
-    expect(style.color).toBe(tokenAsColor("--ui-foreground-disabled"));
-    expect(style.opacity).toBe("0.6");
-    expect(style.pointerEvents).toBe("none");
+  it("dims a disabled button by opacity alone, keeping its variant's colours", async () => {
+    // It used to recolour to `--ui-foreground-disabled` on top of the opacity,
+    // which dimmed twice: on the filled secondary the text vanished into its
+    // own fill, and in dark every disabled button was close to unreadable.
+    for (const variant of ["primary", "secondary", "negative"] as const) {
+      const enabled = getComputedStyle(await renderButton({ variant }));
+      const disabled = getComputedStyle(await renderButton({ variant, disabled: true }));
+      expect(disabled.color, variant).toBe(enabled.color);
+      expect(disabled.backgroundColor, variant).toBe(enabled.backgroundColor);
+      expect(disabled.opacity, variant).toBe("0.5");
+      expect(disabled.pointerEvents, variant).toBe("none");
+    }
+  });
+
+  it("does not dim a loading button — busy is not unavailable", async () => {
+    const enabled = getComputedStyle(await renderButton({ variant: "primary" }));
+    const loading = getComputedStyle(await renderButton({ variant: "primary", loading: true }));
+    expect(loading.opacity).toBe("1");
+    expect(loading.color).toBe(enabled.color);
+    expect(loading.cursor).toBe("progress");
   });
 
   it("every variant resolves to a distinct background", async () => {

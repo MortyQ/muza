@@ -55,11 +55,24 @@ describe("VButton", () => {
       expect(w.classes()).toContain("v-button--disabled");
     });
 
-    it("also disables while loading, and exposes aria-busy", () => {
+    it("blocks input while loading, and exposes aria-busy", () => {
       const w = mount(VButton, { props: { loading: true } });
       expect(w.attributes("disabled")).toBeDefined();
       expect(w.attributes("aria-busy")).toBe("true");
+    });
+
+    it("marks loading as busy, not as disabled", () => {
+      // Both block input; only `disabled` dims. A loading button is busy with
+      // what was just asked of it, and dimming it would hide the spinner.
+      const w = mount(VButton, { props: { loading: true } });
+      expect(w.classes()).toContain("v-button--loading");
+      expect(w.classes()).not.toContain("v-button--disabled");
+    });
+
+    it("lets disabled win when both are set", () => {
+      const w = mount(VButton, { props: { loading: true, disabled: true } });
       expect(w.classes()).toContain("v-button--disabled");
+      expect(w.classes()).not.toContain("v-button--loading");
     });
 
     it("does not set aria-busy when idle", () => {

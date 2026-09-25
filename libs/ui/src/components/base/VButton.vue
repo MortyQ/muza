@@ -62,7 +62,10 @@ const iconSize = 15;
 const rootClass = computed(() => ({
   "v-button--icon-only": isIconOnly.value,
   [variantClass.value]: true,
-  "v-button--disabled": isDisabled.value,
+  // Two classes, not one: both block input, but only `disabled` dims. A
+  // loading button is busy with what was just asked of it, not unavailable.
+  "v-button--disabled": disabled,
+  "v-button--loading": loading && !disabled,
   "v-button--grouped": isGrouped,
   ...(size ? { [`v-button--${size}`]: true } : {}),
 }));

@@ -49,12 +49,27 @@
   padding: 0;
 }
 
-.v-button--disabled,
-.v-button:disabled {
-  color: var(--ui-foreground-disabled);
-  opacity: 0.6;
+/* Opacity only — the variant keeps its own colours. This used to recolour the
+   text to `--ui-foreground-disabled` *and* drop the opacity, which dimmed twice:
+   on the filled `secondary` the text vanished into its own fill, and in the
+   dark theme, where that token is L 35% on a dark surface, every disabled
+   button came out close to unreadable.
+
+   Keyed on the class, not on `:disabled`. The native attribute is also set
+   while loading — it is what blocks the click — so a `:disabled` rule would
+   dim a loading button too. */
+.v-button--disabled {
+  opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+  box-shadow: none;
+}
+
+/* Busy, not unavailable: full colour so the spinner is legible, input blocked
+   by the native `disabled` attribute the component sets. The same reasoning
+   VSegmentedControl's loading state is built on. */
+.v-button--loading {
+  cursor: progress;
 }
 
 .v-button:focus-visible {
@@ -222,10 +237,10 @@
     outline-offset: 2px;
   }
 
-  &:disabled {
+  /* The class, not `:disabled` — see the base disabled rule. */
+  &.v-button--disabled {
     color: var(--ui-foreground-muted);
     background: transparent;
-    opacity: 0.5;
   }
 }
 
