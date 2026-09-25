@@ -5,6 +5,7 @@ import {
   VButton,
   VButtonGroup,
   VCheckbox,
+  VDatepicker,
   VDrawer,
   VIcon,
   VInput,
@@ -71,6 +72,9 @@ const runAction = (id: string) => {
 
 // ── VSegmentedControl ───────────────────────────────────────────────────────
 const granularity = ref<"DAY" | "WEEK" | "MONTH">("WEEK");
+
+// The toolbar row's date range — the datepicker sits there to be compared.
+const toolbarRange = ref<Date[]>([new Date(2026, 8, 1), new Date(2026, 8, 25)]);
 
 const granularityOptions: SegmentOption<"DAY" | "WEEK" | "MONTH">[] = [
   { label: "Day", value: "DAY", icon: "lucide:calendar", tooltip: "Group by day" },
@@ -484,6 +488,12 @@ const handleConfirm = () => {
           :options="frameworkOptions"
           class="home-page__toolbar-select"
           placeholder="Framework"
+        />
+        <VDatepicker
+          v-model="toolbarRange"
+          :time-config="{ enableTimePicker: false }"
+          range
+          width="15rem"
         />
         <VSegmentedControl
           v-model="granularity"
