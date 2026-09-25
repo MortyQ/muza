@@ -153,7 +153,48 @@ describe("NavigationSidebar", () => {
 
       state.toggleCollapse();
       expect(instance.isCollapsed.value).toBe(true);
-      state.toggleExpanded("catalog");
+      // `media` is off the active path, so the route watcher has not opened it.
+      state.toggleExpanded("media");
+      expect(instance.expandedItems.value.has("media")).toBe(true);
+    });
+  });
+
+  describe("revealing the active route", () => {
+    const fresh = () => createSidebar({ items: makeNavItems(), persistCollapse: false });
+
+    it("lands a deep link with every ancestor open", async () => {
+      const { instance } = await render({ instance: fresh(), route: "/catalog/media/images" });
+      expect([...instance.expandedItems.value].sort()).toEqual(["catalog", "images", "media"]);
+    });
+
+    it("opens the branch of a route navigated to later", async () => {
+      const { instance, router } = await render({ instance: fresh(), route: "/" });
+      expect(instance.expandedItems.value.has("catalog")).toBe(false);
+
+      await router.push("/catalog/products");
+      await flushPromises();
+      expect(instance.expandedItems.value.has("catalog")).toBe(true);
+    });
+
+    it("lets the reader close the active branch, until the path changes", async () => {
+      const { instance, router } = await render({ instance: fresh(), route: "/catalog/products" });
+
+      // What a click on the chevron does: a new Set without the branch.
+      instance.expandedItems.value = new Set(
+        [...instance.expandedItems.value].filter(id => id !== "catalog"),
+      );
+      await flushPromises();
+      expect(instance.expandedItems.value.has("catalog")).toBe(false);
+
+      await router.push("/catalog/media/images");
+      await flushPromises();
+      expect(instance.expandedItems.value.has("catalog")).toBe(true);
+    });
+
+    it("leaves branches the reader opened alone when the route moves on", async () => {
+      const { instance, router } = await render({ instance: fresh(), route: "/catalog/products" });
+      await router.push("/");
+      await flushPromises();
       expect(instance.expandedItems.value.has("catalog")).toBe(true);
     });
   });

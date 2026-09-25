@@ -18,13 +18,15 @@ const {
   >
     <div class="sidebar-nav__list">
       <!--
-        v-memo: only primitive values — fixes broken array-in-array issue.
-        Items re-render only when active route, expand state or collapse changes.
+        v-memo: items re-render only when active route, expand state or collapse
+        changes. Keyed on the Set itself, not its size — toggleExpanded and
+        expandMany reassign a new Set on every change, whereas `size` stays equal
+        when one branch opens and another closes in the same tick.
       -->
       <SidebarNavItem
         v-for="item in resolvedItems"
         :key="item.id"
-        v-memo="[activeItemId, expandedItems.size, isCollapsed, item.id]"
+        v-memo="[activeItemId, expandedItems, isCollapsed, item.id]"
         :item="item"
         :level="0"
       />

@@ -16,6 +16,8 @@ export interface SidebarStateBase {
   options: SidebarInstance["options"]
   toggleCollapse: () => void
   toggleExpanded: (id: string) => void
+  /** Open every id given, leaving the rest as they are */
+  expandMany: (ids: readonly string[]) => void
   isExpanded: (id: string) => boolean
   openMobile: () => void
   closeMobile: () => void
@@ -64,6 +66,15 @@ export function buildSidebarState(instance: SidebarInstance): SidebarStateBase {
     instance.expandedItems.value = new Set(set);
   };
 
+  // Add-only, and one Set reassignment for the whole batch rather than one per id.
+  const expandMany = (ids: readonly string[]): void => {
+    if (!ids.length) return;
+
+    const set = new Set(instance.expandedItems.value);
+    ids.forEach(id => set.add(id));
+    instance.expandedItems.value = set;
+  };
+
   const isExpanded = (id: string): boolean => instance.expandedItems.value.has(id);
 
   const openMobile = (): void => {
@@ -86,6 +97,7 @@ export function buildSidebarState(instance: SidebarInstance): SidebarStateBase {
     options: instance.options,
     toggleCollapse,
     toggleExpanded,
+    expandMany,
     isExpanded,
     openMobile,
     closeMobile,
