@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 
 import {
   VButton,
   VButtonGroup,
   VCheckbox,
+  VComposer,
   VDatepicker,
   VDrawer,
   VIcon,
@@ -17,6 +18,7 @@ import {
   VTooltip,
   useModal,
   type Column,
+  type VComposerStatus,
   type SegmentOption,
   type SelectOption,
 } from "@muzakit/ui";
@@ -75,6 +77,29 @@ const granularity = ref<"DAY" | "WEEK" | "MONTH">("WEEK");
 
 // The toolbar row's date range — the datepicker sits there to be compared.
 const toolbarRange = ref<Date[]>([new Date(2026, 8, 1), new Date(2026, 8, 25)]);
+
+// ── VComposer demos ─────────────────────────────────────────────────────────
+// No endpoint behind them: each send is a timer standing in for the request.
+const COMPOSER_SEND_MS = 1200;
+
+const composerNote = ref("");
+const composerNoteStatus = ref<VComposerStatus>("idle");
+
+const REPLY_TEMPLATE = "Hi Jane,\n\nThanks for the report — we have shipped a fix and it goes live tomorrow.";
+const composerReply = ref(REPLY_TEMPLATE);
+
+const composerFailing = ref("This one always fails to send.");
+const composerFailingStatus = ref<VComposerStatus>("idle");
+
+const fakeSend = (status: Ref<VComposerStatus>, outcome: "sent" | "error"): void => {
+  status.value = "sending";
+  setTimeout(() => {
+    status.value = outcome;
+  }, COMPOSER_SEND_MS);
+};
+
+const sendNote = (): void => fakeSend(composerNoteStatus, "sent");
+const sendFailing = (): void => fakeSend(composerFailingStatus, "error");
 
 const granularityOptions: SegmentOption<"DAY" | "WEEK" | "MONTH">[] = [
   { label: "Day", value: "DAY", icon: "lucide:calendar", tooltip: "Group by day" },
@@ -783,6 +808,38 @@ const handleConfirm = () => {
       </div>
     </section>
 
+    <!-- VComposer -->
+    <section class="home-page__section">
+      <h2 class="home-page__section-title">
+        VComposer
+      </h2>
+      <div class="home-page__composer-stack">
+        <VComposer
+          v-model="composerNote"
+          :status="composerNoteStatus"
+          helper-text="Collapses once the note is sent."
+          open-label="Write a note"
+          placeholder="Leave a note for the team…"
+          @submit="sendNote"
+        />
+        <VComposer
+          v-model="composerReply"
+          :initial-value="REPLY_TEMPLATE"
+          copyable
+          open-label="Edit reply"
+          preview="Reply to Jane Doe"
+          submit-label="Send reply"
+        />
+        <VComposer
+          v-model="composerFailing"
+          :status="composerFailingStatus"
+          open-label="Try sending"
+          preview="A send that fails — shows Retry"
+          @submit="sendFailing"
+        />
+      </div>
+    </section>
+
     <!-- VDrawer -->
     <section class="home-page__section">
       <h2 class="home-page__section-title">
@@ -1038,6 +1095,13 @@ const handleConfirm = () => {
 /* Scoped under the toolbar on purpose: VSelect sets `width: 100%` on its own
    root, and a single class here ties with that on specificity and loses on load
    order. */
+
+.home-page__composer-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-lg);
+  max-width: 40rem;
+}
 
 .home-page__toolbar .home-page__toolbar-select {
   flex: 0 0 11rem;
