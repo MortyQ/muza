@@ -147,6 +147,14 @@
   min-width: 0;
 }
 
+.v-table-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  flex-shrink: 0;
+}
+
 .v-table-header-click-indicator {
   display: inline-flex;
   align-items: center;

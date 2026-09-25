@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, useId } from "vue";
 
 import { formatNumber } from "@muzakit/utils";
 
+import type { SelectOption } from "../../../types/select";
 import VIcon from "../../base/VIcon.vue";
+import VSelect from "../../inputs/VSelect.vue";
 
 interface Emits {
 
@@ -109,6 +111,19 @@ const changePageSize = (newSize: number) => {
   emit("page-change", { page: 1, pageSize: newSize });
 };
 
+const sizeLabelId = useId();
+
+const sizeOptions = computed<SelectOption[]>(() =>
+  pageSizeOptions.map(size => ({ label: String(size), value: size })),
+);
+
+const sizeOption = computed<SelectOption | SelectOption[] | null>({
+  get: () => sizeOptions.value.find(option => option.value === pageSize) ?? null,
+  set: (option) => {
+    if (option && !Array.isArray(option)) changePageSize(Number(option.value));
+  },
+});
+
 // Computed for disabled states
 const isPrevDisabled = computed(() => loading || page <= 1);
 const isNextDisabled = computed(() => loading || page >= totalPages.value);
@@ -136,7 +151,7 @@ const isNextDisabled = computed(() => loading || page >= totalPages.value);
         @click="goToPreviousPage"
       >
         <VIcon
-          :size="18"
+          :size="15"
           icon="mdi:chevron-left"
         />
       </button>
@@ -171,7 +186,7 @@ const isNextDisabled = computed(() => loading || page >= totalPages.value);
         @click="goToNextPage"
       >
         <VIcon
-          :size="18"
+          :size="15"
           icon="mdi:chevron-right"
         />
       </button>
@@ -182,21 +197,19 @@ const isNextDisabled = computed(() => loading || page >= totalPages.value);
       v-if="showSizeChanger"
       class="v-table-pagination-size"
     >
-      <label for="pagination-size">Rows:</label>
-      <select
-        id="pagination-size"
-        :disabled="loading"
-        :value="pageSize"
-        @change="changePageSize(Number(($event.target as HTMLSelectElement).value))"
-      >
-        <option
-          v-for="size in pageSizeOptions"
-          :key="size"
-          :value="size"
-        >
-          {{ size }}
-        </option>
-      </select>
+      <span
+        :id="sizeLabelId"
+        class="v-table-pagination-size-label"
+      >Rows</span>
+      <div class="v-table-pagination-size-field">
+        <VSelect
+          v-model="sizeOption"
+          :aria-labelledby="sizeLabelId"
+          :disabled="loading"
+          :options="sizeOptions"
+          :searchable="false"
+        />
+      </div>
     </div>
   </div>
 </template>

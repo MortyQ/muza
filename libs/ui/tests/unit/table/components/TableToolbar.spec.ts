@@ -266,7 +266,7 @@ describe("TableEmptyState", () => {
   it("renders an icon at a fixed size", () => {
     const w = empty({ icon: "lucide:inbox" });
     expect(w.findComponent(VIcon).props("icon")).toBe("lucide:inbox");
-    expect(w.findComponent(VIcon).props("size")).toBe(48);
+    expect(w.findComponent(VIcon).props("size")).toBe(40);
   });
 
   it("renders slot content in its own wrapper", () => {

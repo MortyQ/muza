@@ -121,9 +121,8 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
           v-if="column.tooltip"
           :text="column.tooltip"
           placement="top"
-          tooltip-class="bg-cardBg opacity-1 w-[300px]"
         >
-          <div class="items-center justify-center flex p-0 w-[16px]">
+          <div class="v-table-header-info">
             <VIcon
               :size="12"
               class="v-table-header-info-icon"

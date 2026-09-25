@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 
+import VSelect from "../../../../src/components/inputs/VSelect.vue";
 import TablePagination from "../../../../src/components/table/components/TablePagination.vue";
 
 /**
@@ -26,6 +27,12 @@ const window = (w: ReturnType<typeof pagination>) =>
   w.findAll(".v-table-pagination-controls > *")
     .filter(el => !el.attributes("aria-label"))
     .map(el => (el.classes().includes("v-table-pagination-ellipsis") ? "…" : el.text()));
+
+const sizeSelect = (w: ReturnType<typeof pagination>) => w.findComponent(VSelect);
+const sizeLabels = (w: ReturnType<typeof pagination>) =>
+  (sizeSelect(w).props("options") as { label: string }[]).map(o => o.label);
+const pickSize = (w: ReturnType<typeof pagination>, size: number) =>
+  sizeSelect(w).vm.$emit("update:modelValue", { label: String(size), value: size });
 
 const prev = (w: ReturnType<typeof pagination>) => w.find("[aria-label=\"Previous page\"]");
 const next = (w: ReturnType<typeof pagination>) => w.find("[aria-label=\"Next page\"]");
@@ -173,7 +180,7 @@ describe("TablePagination", () => {
 
     it("disables the size selector too", () => {
       const w = pagination({ showSizeChanger: true, loading: true });
-      expect(w.find("select").attributes("disabled")).toBeDefined();
+      expect(sizeSelect(w).props("disabled")).toBe(true);
     });
   });
 
@@ -183,44 +190,46 @@ describe("TablePagination", () => {
     });
 
     it("shows it when asked", () => {
-      expect(pagination({ showSizeChanger: true }).find("select").exists()).toBe(true);
+      expect(sizeSelect(pagination({ showSizeChanger: true })).exists()).toBe(true);
     });
 
     it("offers the default sizes", () => {
-      const options = pagination({ showSizeChanger: true })
-        .findAll("option").map(o => o.text());
-      expect(options).toEqual(["10", "25", "50", "100"]);
+      expect(sizeLabels(pagination({ showSizeChanger: true }))).toEqual(["10", "25", "50", "100"]);
     });
 
     it("offers custom sizes", () => {
-      const options = pagination({ showSizeChanger: true, pageSizeOptions: [5, 15] })
-        .findAll("option").map(o => o.text());
-      expect(options).toEqual(["5", "15"]);
+      expect(sizeLabels(pagination({ showSizeChanger: true, pageSizeOptions: [5, 15] })))
+        .toEqual(["5", "15"]);
     });
 
     it("preselects the current size", () => {
-      const select = pagination({ showSizeChanger: true, pageSize: 25 }).find("select");
-      expect((select.element as HTMLSelectElement).value).toBe("25");
+      expect(sizeSelect(pagination({ showSizeChanger: true, pageSize: 25 })).props("modelValue"))
+        .toEqual({ label: "25", value: 25 });
     });
 
     it("resets to page 1 when the size changes", async () => {
       // A page-4-of-25 view has no meaningful counterpart at 100 per page.
       const w = pagination({ page: 4, showSizeChanger: true });
-      await w.find("select").setValue("50");
+      await pickSize(w, 50);
 
       expect(w.emitted("page-change")![0]).toEqual([{ page: 1, pageSize: 50 }]);
     });
 
     it("emits nothing when the size is unchanged", async () => {
       const w = pagination({ showSizeChanger: true, pageSize: 25 });
-      await w.find("select").setValue("25");
+      await pickSize(w, 25);
       expect(w.emitted("page-change")).toBeUndefined();
     });
 
     it("labels the selector", () => {
       const w = pagination({ showSizeChanger: true });
-      expect(w.find("label").attributes("for")).toBe("pagination-size");
-      expect(w.find("select").attributes("id")).toBe("pagination-size");
+      const id = w.find(".v-table-pagination-size-label").attributes("id");
+      expect(id).toBeTruthy();
+      expect(sizeSelect(w).attributes("aria-labelledby")).toBe(id);
+    });
+
+    it("is not searchable — there is nothing to type for a page size", () => {
+      expect(sizeSelect(pagination({ showSizeChanger: true })).props("searchable")).toBe(false);
     });
   });
 });

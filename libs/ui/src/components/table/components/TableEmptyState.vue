@@ -17,7 +17,7 @@ defineProps<{
       >
         <VIcon
           :icon="icon"
-          :size="48"
+          :size="40"
         />
       </div>
 
@@ -60,7 +60,7 @@ defineProps<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--ui-space-md);
   pointer-events: auto;
 }
 
@@ -70,7 +70,8 @@ defineProps<{
 
 .v-table-empty-state-title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: var(--ui-text-lg);
+  line-height: var(--ui-leading-lg);
   font-weight: 600;
   color: var(--ui-primary);
   white-space: nowrap;
@@ -78,13 +79,14 @@ defineProps<{
 
 .v-table-empty-state-description {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
+  line-height: var(--ui-leading-base);
   color: var(--ui-foreground-secondary);
   text-align: center;
-  max-width: 400px;
+  max-width: 25rem;
 }
 
 .v-table-empty-state-slot {
-  margin-top: 0.5rem;
+  margin-top: var(--ui-space-xs);
 }
 </style>

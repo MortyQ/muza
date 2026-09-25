@@ -3,6 +3,7 @@ import { h, nextTick, type Slot } from "vue";
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
+import TablePagination from "../../../../src/components/table/components/TablePagination.vue";
 import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import VTable from "../../../../src/components/table/VTable.vue";
 import { makeColumns, makeFixedColumns, makeRows, makeTreeRows } from "../../../setup/table";
@@ -200,6 +201,21 @@ describe("VTable — compact scale", () => {
     const first = Number.parseFloat(getComputedStyle(grid).gridTemplateColumns.split(" ")[0]);
 
     expect(first).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("stands every pagination control at the control height", async () => {
+    const screen = render(TablePagination, {
+      props: { page: 2, pageSize: 10, total: 100, showSizeChanger: true },
+    });
+    await nextTick();
+    const el = screen.container as HTMLElement;
+    const controls = [
+      ...el.querySelectorAll(".v-table-pagination-btn"),
+      el.querySelector(".v-table-pagination-size .multiselect__tags"),
+    ];
+
+    expect(controls.length).toBeGreaterThan(2);
+    for (const control of controls) expect(heightOf(control)).toBeCloseTo(px("--ui-control-h"), 0);
   });
 
   it("starts a nested leaf's text under its parent's text", async () => {
