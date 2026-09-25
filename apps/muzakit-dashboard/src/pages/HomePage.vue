@@ -540,26 +540,29 @@ const handleConfirm = () => {
           placement="right"
           text="Tooltip on the right (default)"
         >
-          <button class="home-page__demo-btn">
-            Hover me → right
-          </button>
+          <VButton
+            text="Hover me → right"
+            variant="neutral"
+          />
         </VTooltip>
         <VTooltip
           placement="top"
           text="Tooltip on top"
         >
-          <button class="home-page__demo-btn">
-            Hover me → top
-          </button>
+          <VButton
+            text="Hover me → top"
+            variant="neutral"
+          />
         </VTooltip>
         <VTooltip
           :allow-html="true"
           placement="bottom"
           text="<b>HTML</b> tooltip with <em>markup</em>"
         >
-          <button class="home-page__demo-btn">
-            Hover me → html
-          </button>
+          <VButton
+            text="Hover me → html"
+            variant="neutral"
+          />
         </VTooltip>
       </div>
     </section>
@@ -1039,19 +1042,5 @@ const handleConfirm = () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.5rem;
-}
-
-.home-page__demo-btn {
-  padding: 0.5rem 1rem;
-  border-radius: var(--ui-radius);
-  border: 1px solid var(--ui-border);
-  background: var(--ui-surface);
-  color: var(--ui-foreground);
-  font-size: 0.875rem;
-  cursor: pointer;
-
-  &:hover {
-    background: var(--ui-surface-hover);
-  }
 }
 </style>
