@@ -4,32 +4,44 @@
 // Structural values only — every colour comes from the --ui-* design tokens.
 
 // ════════════════════════════════════════════════════════════════
-// SPACING & SIZING - Generous, comfortable modern spacing
+// SPACING & SIZING — derived from the row, the row from the control
 // ════════════════════════════════════════════════════════════════
+//
+// The row is a container for a control: `DEFAULT_ROW_HEIGHT` (constants.ts)
+// is `--ui-control-h-lg`, a 30px control plus air. VTable hands the number to
+// CSS as `--v-table-row-h`; everything vertical below is solved from it, so a
+// denser `rowHeight` rescales the cell, the header and the total together.
+// The `1px` in each solve is the cell's bottom border.
 
-// Cell padding - increased for better readability
-$table-cell-padding-x: 1.25rem; // 20px - more breathing room
-$table-cell-padding-y: 0.875rem; // 14px - comfortable vertical space
-$table-header-padding-x: 1.25rem; // 20px
-$table-header-padding-y: 0.875rem; // 14px
-$table-header-padding-right: 0.6rem;
+// A line of body text centred in the row
+$table-cell-padding-y: calc((var(--v-table-row-h) - var(--ui-leading-base) - 1px) / 2);
+// A control centred in the row, for `interactive` columns
+$table-cell-padding-y-control: calc((var(--v-table-row-h) - var(--ui-control-h) - 1px) / 2);
+$table-cell-padding-x: var(--ui-space-lg);
+$table-cell-gap: var(--ui-control-gap);
 
-// Sizing
+// The header sits one step below the row: smaller, uppercase type needs less air
+$table-header-height: calc(var(--v-table-row-h) - var(--ui-space-xs));
+$table-header-padding-x: var(--ui-space-lg);
+// Narrower on the right, where the sort icon and the resize handle sit
+$table-header-padding-right: var(--ui-space-md);
+
 $table-default-height: 600px;
-$table-row-height: 50px;
-$table-header-height: 48px; // Calculated header height for multi-level positioning
-$table-expand-button-size: 24px; // Reduced from 28px for cleaner look
-$table-resize-handle-width: 4px; // Thinner, more subtle
-$table-indent-size: 24px;
+$table-expand-button-size: 1.25rem;
+$table-expand-icon-size: 0.875rem;
+$table-resize-handle-width: 4px;
+// One level of a tree: the expand button and the gap after it, so a nested
+// leaf's text starts exactly under its parent's text
+$table-indent-step: calc(#{$table-expand-button-size} + #{$table-cell-gap});
 
 // ════════════════════════════════════════════════════════════════
-// TYPOGRAPHY - Modern, readable type system
+// TYPOGRAPHY — the control scale's type
 // ════════════════════════════════════════════════════════════════
 
-$table-font-size-base: 0.875rem; // 14px - optimal for data tables
-$table-font-size-header: 0.8125rem; // 13px - slightly smaller for headers
-$table-line-height-base: 1.5; // Excellent readability
-$table-line-height-header: 1.3; // Tighter for headers
+$table-font-size-base: var(--ui-text-base);
+$table-line-height-base: var(--ui-leading-base);
+$table-font-size-header: var(--ui-text-xs);
+$table-line-height-header: var(--ui-leading-xs);
 $table-font-weight-regular: 400;
 $table-font-weight-medium: 500;
 $table-font-weight-semibold: 600;

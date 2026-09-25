@@ -139,12 +139,14 @@ describe("useTableCellMetadata", () => {
       expect(getCellMetadata(row({ depth: 3 }), plain("revenue"), 1, 0).indentStyle).toBeNull();
     });
 
-    it("adds 24px per level onto a 16px base", () => {
+    it("hands the depth to CSS, which owns the step", () => {
+      // The step is the expand button plus its gap (`--v-table-indent`), so the
+      // geometry is asserted in the browser project, not here.
       const { getCellMetadata } = setup();
       expect(getCellMetadata(row({ depth: 1 }), plain("name"), 0, 0).indentStyle)
-        .toEqual({ paddingLeft: "40px" });
+        .toEqual({ "--v-table-depth": "1" });
       expect(getCellMetadata(row({ depth: 3 }), plain("name"), 0, 0).indentStyle)
-        .toEqual({ paddingLeft: "88px" });
+        .toEqual({ "--v-table-depth": "3" });
     });
   });
 

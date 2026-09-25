@@ -64,8 +64,10 @@ export function useColumnResize(columns: Ref<Column[]>) {
   });
 
   // Grid template columns with checkbox column prepended
-  const getGridTemplateWithCheckbox = (checkboxWidth = 50) => {
-    return `${checkboxWidth}px ${gridTemplateColumns.value}`;
+  // Any CSS length. VTable passes the row height, which makes the checkbox
+  // cell square.
+  const getGridTemplateWithCheckbox = (checkboxWidth = "var(--v-table-row-h)") => {
+    return `${checkboxWidth} ${gridTemplateColumns.value}`;
   };
 
   // Start resize

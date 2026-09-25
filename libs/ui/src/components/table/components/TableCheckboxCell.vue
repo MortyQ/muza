@@ -37,7 +37,7 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.5rem; /* 8px */
+  padding: 0;
   border-right: 1px solid var(--ui-border);
 }
 </style>

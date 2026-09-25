@@ -39,9 +39,9 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 0.5rem; /* 14px 8px - match header padding */
-  height: 48px; /* Match $table-header-height from variables */
-  min-height: 48px;
+  padding: 0;
+  height: var(--v-table-header-h);
+  min-height: var(--v-table-header-h);
   box-sizing: border-box;
   background: color-mix(in oklch, var(--ui-surface) 98%, var(--ui-foreground) 2%);
   border-bottom: 1px solid var(--ui-border);

@@ -4,10 +4,10 @@
 .v-table-header-sort {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ui-space-xs);
   flex-shrink: 0;
-  padding: 4px;
-  border-radius: 4px;
+  padding: var(--ui-space-2xs);
+  border-radius: var(--ui-radius-xs);
   transition: background-color 0.15s ease;
 
   &:hover {
@@ -26,7 +26,7 @@
 
 .v-sort-icon {
   opacity: 0.45;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease, color 0.2s ease;
   color: var(--ui-foreground-secondary);
 
   &--active {
@@ -34,8 +34,8 @@
     color: var(--ui-primary);
     filter: drop-shadow(0 0 4px color-mix(in oklch, var(--ui-primary) 40%, transparent));
     background-color: color-mix(in oklch, var(--ui-primary) 15%, transparent);
-    border-radius: 4px;
-    padding: 2px;
+    border-radius: var(--ui-radius-xs);
+    padding: var(--ui-space-2xs);
   }
 }
 
@@ -43,12 +43,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  font-size: 11px;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 var(--ui-space-xs);
+  font-size: var(--ui-text-2xs);
   font-weight: 600;
   color: var(--ui-primary);
   background-color: color-mix(in oklch, var(--ui-primary) 15%, transparent);
-  border-radius: 4px;
+  border-radius: var(--ui-radius-xs);
 }

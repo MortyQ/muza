@@ -1,11 +1,14 @@
-import { nextTick } from "vue";
+import { h, nextTick, type Slot } from "vue";
 
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
+import TablePagination from "../../../../src/components/table/components/TablePagination.vue";
+import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import VTable from "../../../../src/components/table/VTable.vue";
-import { makeColumns, makeFixedColumns, makeRows } from "../../../setup/table";
+import { makeColumns, makeFixedColumns, makeRows, makeTreeRows } from "../../../setup/table";
 import { applyTheme } from "../../../setup/theme";
+import { tokenAsValue } from "../../../setup/tokens";
 
 /**
  * Everything jsdom cannot answer because it has no layout: the virtualizer's
@@ -25,11 +28,15 @@ const frame = () => new Promise(resolve => requestAnimationFrame(() => resolve(n
  * after mount invalidates the rect TanStack Virtual measured on its first
  * frame, and the window silently collapses to zero rows.
  */
-async function table(props: Record<string, unknown> = {}): Promise<HTMLElement> {
+async function table(
+  props: Record<string, unknown> = {},
+  slots: Record<string, Slot> = {},
+): Promise<HTMLElement> {
   await applyTheme("light");
 
   const screen = render(VTable, {
     props: { columns: makeColumns(), data: makeRows(200), height: "400px", ...props },
+    slots,
   });
 
   await nextTick();
@@ -92,6 +99,142 @@ describe("VTable — virtualization", () => {
     await frame();
 
     expect(header.getBoundingClientRect().top).toBeCloseTo(topBefore, 0);
+  });
+});
+
+describe("VTable — row height", () => {
+  // The virtualizer is told a height and never measures, so a row the browser
+  // draws any taller or shorter than that number shifts every row below it.
+  const cellHeights = (el: HTMLElement) =>
+    Array.from(el.querySelectorAll(".v-table-row-wrapper > *"))
+      .map(cell => cell.getBoundingClientRect().height);
+
+  it("stands every virtual row at the default height", async () => {
+    const heights = cellHeights(await table());
+
+    expect(heights.length).toBeGreaterThan(0);
+    for (const height of heights) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("stands every virtual row at the rowHeight it is given", async () => {
+    const heights = cellHeights(await table({ rowHeight: 36 }));
+
+    expect(heights.length).toBeGreaterThan(0);
+    for (const height of heights) expect(height).toBeCloseTo(36, 0);
+  });
+
+  it("does not let a tall cell grow a virtual row", async () => {
+    const tall = () => h("div", { style: { height: "72px" } }, "tall");
+    const heights = cellHeights(await table({}, { "cell-name": tall }));
+
+    for (const height of heights) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("scrolls exactly as far as the virtualizer counted", async () => {
+    const el = await table({ rowHeight: 36 });
+    const header = (el.querySelector(".v-table-header-cell") as HTMLElement)
+      .getBoundingClientRect().height;
+
+    expect(scroller(el).scrollHeight).toBeCloseTo(header + 200 * 36, 0);
+  });
+});
+
+describe("VTable — compact scale", () => {
+  // Every size below is derived from the row, and the row from the control it
+  // has to hold — so a change to the control scale moves the whole table.
+  const px = (token: string) => Number.parseFloat(tokenAsValue("height", token));
+  const heightOf = (node: Element | null) => (node as HTMLElement).getBoundingClientRect().height;
+  const cellHeights = (el: HTMLElement) =>
+    Array.from(el.querySelectorAll(".v-table-row-wrapper > *")).map(heightOf);
+
+  it("stands the default row at the large control height", () => {
+    expect(DEFAULT_ROW_HEIGHT).toBe(px("--ui-control-h-lg"));
+  });
+
+  it("stands the header one step below the row", async () => {
+    const el = await table();
+    expect(heightOf(el.querySelector(".v-table-header-cell")))
+      .toBeCloseTo(DEFAULT_ROW_HEIGHT - px("--ui-space-xs"), 0);
+  });
+
+  it("follows a denser rowHeight with the header", async () => {
+    const el = await table({ rowHeight: 32 });
+    expect(heightOf(el.querySelector(".v-table-header-cell")))
+      .toBeCloseTo(32 - px("--ui-space-xs"), 0);
+  });
+
+  it("sets body and header text on the type scale", async () => {
+    const el = await table();
+    const size = (selector: string) =>
+      getComputedStyle(el.querySelector(selector) as HTMLElement).fontSize;
+
+    expect(size(".v-table-row-wrapper > .v-table-cell"))
+      .toBe(tokenAsValue("font-size", "--ui-text-base"));
+    expect(size(".v-table-header-cell")).toBe(tokenAsValue("font-size", "--ui-text-xs"));
+  });
+
+  it("stands a plain row at the row height without virtualization", async () => {
+    const heights = cellHeights(await table({ virtualized: false, data: makeRows(5) }));
+    for (const height of heights) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("fits a control in an interactive cell without growing the row", async () => {
+    const control = () => h("div", { style: { height: "var(--ui-control-h)" } }, "control");
+    const el = await table(
+      {
+        virtualized: false,
+        data: makeRows(5),
+        columns: makeColumns({ name: { interactive: true } }),
+      },
+      { "cell-name": control },
+    );
+    for (const height of cellHeights(el)) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("makes the checkbox column as wide as the row is tall", async () => {
+    const el = await table({
+      virtualized: false,
+      data: makeRows(3),
+      multiSelect: { enabled: true },
+    });
+    const grid = el.querySelector(".v-table-grid") as HTMLElement;
+    const first = Number.parseFloat(getComputedStyle(grid).gridTemplateColumns.split(" ")[0]);
+
+    expect(first).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("stands every pagination control at the control height", async () => {
+    const screen = render(TablePagination, {
+      props: { page: 2, pageSize: 10, total: 100, showSizeChanger: true },
+    });
+    await nextTick();
+    const el = screen.container as HTMLElement;
+    const controls = [
+      ...el.querySelectorAll(".v-table-pagination-btn"),
+      el.querySelector(".v-table-pagination-size .multiselect__tags"),
+    ];
+
+    expect(controls.length).toBeGreaterThan(2);
+    for (const control of controls) expect(heightOf(control)).toBeCloseTo(px("--ui-control-h"), 0);
+  });
+
+  it("starts a nested leaf's text under its parent's text", async () => {
+    // The tree indents the first column only, so `name` goes first.
+    const el = await table({
+      virtualized: false,
+      data: makeTreeRows(),
+      columns: makeColumns().slice(1),
+    });
+    (el.querySelector(".v-table-cell-expand-btn") as HTMLElement).click();
+    await nextTick();
+    await frame();
+
+    const textLeft = (label: string) => {
+      const node = Array.from(el.querySelectorAll(".v-table-cell-text"))
+        .find(n => n.textContent?.trim() === label) as HTMLElement;
+      return node.getBoundingClientRect().left;
+    };
+    expect(textLeft("Alpha / Two")).toBeCloseTo(textLeft("Alpha"), 0);
   });
 });
 

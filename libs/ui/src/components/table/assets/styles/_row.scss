@@ -64,13 +64,12 @@
   }
 }
 
-.v-table-row-virtual {
-  display: contents;
-
-  & > .v-table-cell {
-    min-height: $table-row-height;
-    height: $table-row-height;
-  }
+// A virtual row is exactly as tall as the virtualizer was told — it does not
+// measure, so a row that grew would push every row below it off its slot.
+// Content taller than the row overflows rather than being clipped: an
+// interactive cell's open control must stay visible.
+.v-table-row-wrapper--virtual > * {
+  height: var(--v-table-row-h);
 }
 
 .v-table-row-expandable {

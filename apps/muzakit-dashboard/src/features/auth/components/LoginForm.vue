@@ -28,11 +28,24 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, form);
 
+// Read from the untracked `.env`, never committed: the button appears only
+// where a test account has been configured.
+const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
+const demoPassword = import.meta.env.VITE_DEMO_PASSWORD;
+const hasDemoAccount = !!demoEmail && !!demoPassword;
+
 const submit = async () => {
   const isValid = await v$.value.$validate();
 
   if (!isValid) return;
   await authStore.login(form);
+};
+
+const loginAsDemo = async () => {
+  if (!demoEmail || !demoPassword) return;
+  form.email = demoEmail;
+  form.password = demoPassword;
+  await submit();
 };
 </script>
 
@@ -55,8 +68,16 @@ const submit = async () => {
       name="Password"
       type="password"
     />
-    <div class="login-form__forgot">
+    <div class="login-form__links">
       <VButton
+        v-if="hasDemoAccount"
+        :disabled="authStore.initLoading"
+        text="Log in as test user"
+        variant="link"
+        @click="loginAsDemo"
+      />
+      <VButton
+        class="login-form__forgot"
         text="Forgot password?"
         variant="link"
       />
@@ -71,9 +92,13 @@ const submit = async () => {
 </template>
 
 <style scoped>
-.login-form__forgot {
+.login-form__links {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
   margin-top: -0.5rem;
+}
+
+.login-form__forgot {
+  margin-left: auto;
 }
 </style>

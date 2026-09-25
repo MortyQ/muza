@@ -23,7 +23,7 @@ export interface CellMetadata {
   formattedValue: unknown
   cssClass: string | undefined
   titleText: string | undefined
-  indentStyle: { paddingLeft: string } | null
+  indentStyle: { "--v-table-depth": string } | null
   customStyle: Record<string, string> | undefined
   isExpandable: boolean
 }
@@ -113,7 +113,7 @@ export const useTableCellMetadata = <TData extends Record<string, unknown>>(
 
     const depth = (row.depth as number) || 0;
     const indentStyle = colIndex === 0 && depth
-      ? { paddingLeft: `${depth * 24 + 16}px` }
+      ? { "--v-table-depth": String(depth) }
       : null;
 
     const isExpandableRow = colIndex === 0 && toValue(isExpandable)

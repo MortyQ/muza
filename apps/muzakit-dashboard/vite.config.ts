@@ -11,6 +11,10 @@ export default ({ mode }: ConfigEnv) => {
     = env.VITE_API_URL ?? "https://todo-list-backend-seven-mauve.vercel.app";
 
   return defineConfig({
+    // GitHub Pages serves the app from /<repo>/, not the domain root; the
+    // deploy workflow sets it, and the router reads it back as BASE_URL.
+    base: env.VITE_BASE ?? "/",
+
     plugins: [vue(), tailwindcss()],
 
     resolve: {

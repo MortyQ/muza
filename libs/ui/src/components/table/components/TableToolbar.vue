@@ -146,16 +146,12 @@ const handleSingleExport = () => {
       >
         <div
           v-if="searchConfig"
-          class="v-toolbar-search-split flex h-full items-center"
+          class="v-toolbar-search-split"
         >
-          <span
-            class="w-px h-5 mr-4"
-          />
           <VInput
             v-model="searchModel"
             :name="searchConfig.placeholder"
             :placeholder="searchConfig.placeholder"
-            class="min-w-[300px]"
             debounce
             type="search"
           />
@@ -177,7 +173,7 @@ const handleSingleExport = () => {
       <VButton
         v-if="config?.actions?.refresh"
         icon="lucide:refresh-cw"
-        variant="link"
+        variant="primary"
         @click="handleRefresh"
       />
 
@@ -186,7 +182,7 @@ const handleSingleExport = () => {
         v-if="config?.actions?.resetSort"
         icon="lucide:arrow-up-down"
         text="Reset Sort"
-        variant="link"
+        variant="primary"
         @click="handleResetSort"
       />
 

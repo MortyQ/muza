@@ -3,7 +3,6 @@
 
 .v-toolbar {
   background: transparent;
-  transition: all 0.2s ease;
 
   &--split {
     container-type: inline-size;
@@ -11,8 +10,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: var(--ui-space-lg);
+    padding: var(--ui-space-xl);
     flex-wrap: wrap;
   }
 }
@@ -20,7 +19,7 @@
 .v-toolbar-split-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--ui-space-lg);
   flex: 1 1 auto;
   min-width: 0;
   flex-wrap: wrap;
@@ -29,30 +28,32 @@
 .v-toolbar-split-right {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-md);
   flex: 0 0 auto;
 }
 
 .v-toolbar-title {
-  font-size: 1.125rem;
+  font-size: var(--ui-text-lg);
   font-weight: 600;
   color: var(--ui-foreground);
   margin: 0;
-  line-height: 1.4;
+  line-height: var(--ui-leading-lg);
   white-space: normal;
 }
 
 .v-toolbar-subtitle {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-sm);
   color: var(--ui-foreground-secondary);
-  margin: 0.25rem 0 0;
-  line-height: 1.4;
+  margin: var(--ui-space-2xs) 0 0;
+  line-height: var(--ui-leading-sm);
 }
 
 .v-toolbar-search-split {
-  flex: 1 1 200px;
-  min-width: 150px;
-  max-width: 400px;
+  display: flex;
+  align-items: center;
+  flex: 1 1 18.75rem;
+  min-width: 9.375rem;
+  max-width: 25rem;
 }
 
 .v-toolbar-export-dropdown {
