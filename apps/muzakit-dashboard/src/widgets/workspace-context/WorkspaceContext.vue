@@ -10,6 +10,11 @@ import { RouteNames } from "@/app/routes/types/names";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useWorkspaceStore } from "@/shared/store/useWorkspaceStore";
 
+const { collapsed = false } = defineProps<{
+  /** Icon-only rail: the mode tile alone, the rest lives in the menu */
+  collapsed?: boolean
+}>();
+
 const TONES = ["primary", "success", "warning"] as const;
 
 const router = useRouter();
@@ -52,13 +57,16 @@ const onLogout = (): void => {
 <template>
   <VFloating
     ref="floating"
-    placement="bottom-right"
+    :class="{ 'workspace-context--collapsed': collapsed }"
+    class="workspace-context"
+    placement="bottom-left"
     unstyled
   >
     <template #trigger="{ isOpen }">
       <button
         :aria-expanded="isOpen"
-        :class="{ 'workspace-trigger--open': isOpen }"
+        :class="{ 'workspace-trigger--open': isOpen, 'workspace-trigger--collapsed': collapsed }"
+        :title="collapsed ? activeMode.label : undefined"
         aria-label="Workspace and account"
         class="workspace-trigger"
         type="button"
@@ -70,7 +78,10 @@ const onLogout = (): void => {
           {{ initials(activeMode.label) }}
         </span>
 
-        <span class="workspace-trigger__text">
+        <span
+          v-if="!collapsed"
+          class="workspace-trigger__text"
+        >
           <span class="workspace-trigger__mode">{{ activeMode.label }}</span>
           <span
             v-if="user"
@@ -81,7 +92,7 @@ const onLogout = (): void => {
         </span>
 
         <VAvatar
-          v-if="user"
+          v-if="user && !collapsed"
           :avatar="user.avatar"
           :name="user.name"
           shape="square"
@@ -89,6 +100,7 @@ const onLogout = (): void => {
         />
 
         <VIcon
+          v-if="!collapsed"
           :loading="switching"
           :size="14"
           class="workspace-trigger__chevron"
@@ -230,9 +242,20 @@ const onLogout = (): void => {
   }
 }
 
+/* Doubled with VFloating's own root class so it outranks that inline-block */
+.v-floating.workspace-context {
+  display: block;
+  width: 100%;
+
+  &--collapsed {
+    width: auto;
+  }
+}
+
 /* ── Trigger: primary tonal, the VButton recipe at the lg step ── */
 .workspace-trigger {
   display: flex;
+  width: 100%;
   align-items: center;
   gap: var(--ui-space-md);
   height: var(--ui-control-h-lg);
@@ -262,15 +285,25 @@ const onLogout = (): void => {
     outline-offset: 2px;
   }
 
+  /* Rail: a square the size of the icon-only rows, tonal only on hover */
+  &--collapsed {
+    justify-content: center;
+    width: var(--ui-control-h);
+    height: var(--ui-control-h);
+    padding: 0;
+    border-color: transparent;
+    background-color: transparent;
+  }
+
   &__text {
     display: flex;
+    flex: 1;
     flex-direction: column;
     min-width: 0;
   }
 
   &__mode {
     overflow: hidden;
-    max-width: 10rem;
     font-size: var(--ui-text-sm);
     font-weight: 600;
     line-height: var(--ui-leading-sm);
@@ -279,6 +312,8 @@ const onLogout = (): void => {
   }
 
   &__user {
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: var(--ui-text-2xs);
     line-height: var(--ui-leading-2xs);
     color: var(--ui-foreground-muted);
@@ -305,7 +340,7 @@ const onLogout = (): void => {
   background-color: var(--ui-surface-overlay);
   box-shadow: var(--ui-shadow-lg);
   color: var(--ui-foreground);
-  transform-origin: right top;
+  transform-origin: left top;
 
   &__head {
     display: flex;

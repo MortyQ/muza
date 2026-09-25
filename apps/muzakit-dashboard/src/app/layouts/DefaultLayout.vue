@@ -9,6 +9,7 @@ import { useTheme, prefetchRoute } from "@muzakit/utils";
 import { useMenu } from "@/app/routes/composables/useMenu";
 import { useGlobalFiltersStore } from "@/shared/store/useGlobalFiltersStore";
 import AppTopbar from "@/widgets/app-topbar/AppTopbar.vue";
+import WorkspaceContext from "@/widgets/workspace-context/WorkspaceContext.vue";
 
 const { menuItems } = useMenu();
 const router = useRouter();
@@ -43,6 +44,10 @@ const contentMargin = computed(() => ({
       :sidebar="sidebar"
       @prefetch="(to) => prefetchRoute(router, to)"
     >
+      <template #subtitle-block>
+        <WorkspaceContext :collapsed="sidebar.isCollapsed.value" />
+      </template>
+
       <template #footer-end>
         <VThemeSwitcher
           v-model="theme"
@@ -74,7 +79,7 @@ const contentMargin = computed(() => ({
             />
           </button>
           <h1 class="text-lg font-semibold">
-            SO Insights
+            Muzakit
           </h1>
           <div class="w-10" />
         </div>

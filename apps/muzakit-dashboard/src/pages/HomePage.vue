@@ -412,7 +412,7 @@ const handleConfirm = () => {
         <VButtonGroup aria-label="Open in">
           <VButton
             icon="lucide:external-link"
-            text="Seller Central"
+            text="Browser"
             variant="neutral"
           />
           <VButton

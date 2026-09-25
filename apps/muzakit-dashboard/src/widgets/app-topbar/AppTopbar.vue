@@ -5,8 +5,6 @@ import { useRoute } from "vue-router";
 
 import GlobalFiltersWrapper from "@/widgets/global-filters/GlobalFiltersWrapper.vue";
 
-import WorkspaceContext from "./WorkspaceContext.vue";
-
 const route = useRoute();
 
 const title = computed<string>(() =>
@@ -22,7 +20,6 @@ const title = computed<string>(() =>
 
     <div class="app-topbar__end">
       <GlobalFiltersWrapper />
-      <WorkspaceContext />
     </div>
   </header>
 </template>

@@ -11,9 +11,9 @@ export interface WorkspaceMode {
 // Mock: there is no workspace endpoint yet, so the modes and the switch latency
 // are both stand-ins for what the API will return.
 const MODES: ReadonlyArray<WorkspaceMode> = [
-  { id: "seller", label: "Seller Central", description: "Marketplace sales" },
-  { id: "vendor", label: "Vendor Central", description: "Wholesale orders" },
-  { id: "retail", label: "Retail Media", description: "Advertising spend" },
+  { id: "personal", label: "Personal", description: "Only you" },
+  { id: "team", label: "Team", description: "Shared with your team" },
+  { id: "organization", label: "Organization", description: "Every team and billing" },
 ];
 
 const SWITCH_DELAY_MS = 600;
