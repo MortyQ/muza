@@ -1,0 +1,63 @@
+name: Deploy dashboard to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push supersedes a queued one, but a deploy
+# already in flight is allowed to finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/configure-pages@v5
+        id: pages
+
+      - name: Build
+        run: pnpm build
+        env:
+          # e.g. /muza/ — the path Pages serves the project site from
+          VITE_BASE: ${{ steps.pages.outputs.base_path }}/
+          # No dev-server proxy on Pages, so the app calls the backend directly.
+          # Set it under Settings → Secrets and variables → Actions → Variables.
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+
+      # Pages has no rewrites: a deep link or a refresh on /muza/settings would
+      # 404. Serving the app as the 404 page lets the router take the path over.
+      - name: SPA fallback
+        run: cp apps/muzakit-dashboard/dist/index.html apps/muzakit-dashboard/dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/muzakit-dashboard/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
