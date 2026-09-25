@@ -95,10 +95,8 @@ describe("VSelect", () => {
   });
 
   describe("floating label", () => {
-    // The label needs vertical room the 30px modern chrome does not have, so it
-    // only exists with `modern: false` — which is why every case here passes it.
     const labelled = (props: Record<string, unknown> = {}) =>
-      select({ modern: false, name: "Marketplace", ...props });
+      select({ name: "Marketplace", ...props });
 
     it("hides the placeholder while a label is showing and the field is unfocused", () => {
       // Otherwise the label and the placeholder say the same thing twice.
@@ -106,7 +104,7 @@ describe("VSelect", () => {
     });
 
     it("shows the placeholder when there is no label to clash with", () => {
-      const w = select({ modern: false, placeholder: "Pick one" });
+      const w = select({ placeholder: "Pick one" });
       expect(inner(w).props().placeholder).toBe("Pick one");
     });
 
@@ -138,37 +136,20 @@ describe("VSelect", () => {
     });
   });
 
-  describe("modern chrome", () => {
-    it("is what you get by default", () => {
-      // Matches VButton, where the modern chrome is also the default — a filter
-      // select and a neutral button in the same toolbar row are one family.
-      expect(select().classes()).toContain("v-select--modern");
-    });
-
-    it("steps back to the legacy chrome on request", () => {
-      expect(select({ modern: false }).classes()).not.toContain("v-select--modern");
-    });
-
-    it("drops the floating label, because the notch has no room at 30px", () => {
-      const w = select({ name: "Marketplace" });
-      expect(w.find(".v-select__label").exists()).toBe(false);
-    });
-
-    it("keeps the placeholder that a floating label would have suppressed", () => {
-      // `name` no longer hides it, so the control still says what it is for.
-      const w = select({ name: "Marketplace", placeholder: "Pick one" });
-      expect(inner(w).props().placeholder).toBe("Pick one");
-    });
-
-    it("leaves the legend hidden even with a value", () => {
+  describe("the notch", () => {
+    it("opens the legend once there is a value to sit beside", () => {
       const w = select({ name: "Marketplace", modelValue: OPTIONS[0] });
+      expect(w.find(".v-select__legend").classes()).toContain("v-select__legend--visible");
+    });
+
+    it("keeps it closed while the field is empty and unfocused", () => {
+      const w = select({ name: "Marketplace" });
       expect(w.find(".v-select__legend").classes())
         .not.toContain("v-select__legend--visible");
     });
 
-    it("shows the legend in the legacy chrome once there is a value", () => {
-      const w = select({ modern: false, name: "Marketplace", modelValue: OPTIONS[0] });
-      expect(w.find(".v-select__legend").classes()).toContain("v-select__legend--visible");
+    it("renders no label at all without a `name`", () => {
+      expect(select().find(".v-select__label").exists()).toBe(false);
     });
   });
 

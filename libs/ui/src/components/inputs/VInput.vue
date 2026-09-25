@@ -17,7 +17,7 @@ const {
   validation = undefined,
   error = undefined,
   icon = "",
-  size = "md",
+  size = undefined,
   id = undefined,
   debounce = false,
   loading = false,
@@ -34,6 +34,11 @@ const {
   /** Error message set directly, for cases with no validation object */
   error?: string
   icon?: string
+  /**
+   * 28 / 32 / 40px. Left unset the field keeps the chrome's natural 30px, which
+   * is the height `VButton` and `VSelect` stand at — so a toolbar row lines up
+   * without anyone passing a size at all.
+   */
   size?: "sm" | "md" | "lg"
   id?: string
   /**
@@ -113,11 +118,7 @@ const changeInputType = () => {
   isShowPassword.value = !isShowPassword.value;
 };
 
-const sizeClass = computed(() => ({
-  sm: "v-input-field--sm",
-  md: "v-input-field--md",
-  lg: "v-input-field--lg",
-}[size]));
+const sizeClass = computed(() => (size ? `v-input-field--${size}` : ""));
 
 const isSearchType = computed(() => type === "search");
 

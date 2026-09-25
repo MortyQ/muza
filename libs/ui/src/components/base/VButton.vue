@@ -15,7 +15,6 @@ const {
   replace = false,
   disabled = false,
   loading = false,
-  modern = true,
   size = undefined,
 } = defineProps<{
   text?: string
@@ -23,31 +22,21 @@ const {
   disabled?: boolean
   loading?: boolean
   icon?: string
+  /**
+   * Six tonal hues plus one filled tier. `default` is an alias for `primary`,
+   * kept so a call site ported from so-platform resolves the same way.
+   */
   variant?:
     | "default" | "primary" | "secondary" | "positive" | "negative" | "warning" | "link"
-    /** Tonal secondary. Has no legacy appearance to preserve. */
+    /** Tonal secondary. */
     | "neutral"
+    /** Informational accent. */
+    | "info"
   to?: RouteLocationRaw
   replace?: boolean
   /**
-   * The current chrome, and **the default**: 30px, 8px radius, 1px hairline,
-   * weight 510, two tiers of the shadow scale, and a hover that steps one token
-   * inside the variant's own family.
-   *
-   * It changes *how* a variant is drawn, never *which* variant you get —
-   * `default` is the primary fill here exactly as it is with `modern: false`.
-   *
-   * so-platform ships this opt-in, because flipping it there would repaint
-   * screens that were designed against the legacy chrome. This library has no
-   * such history, so the newer chrome is what you get unless you ask for the
-   * older one. Pass `:modern="false"` for the 40px, 2px-bordered, fully-filled
-   * button — the two are not interchangeable: the filled status variants become
-   * tonal tints under the modern chrome.
-   */
-  modern?: boolean
-  /**
-   * 28 / 32 / 40px. Left unset the button keeps its chrome's natural height —
-   * 1.875rem by default, 2.5rem with `modern: false`.
+   * 28 / 32 / 40px. Left unset the button keeps the chrome's natural 30px, so
+   * adding this prop cannot reflow anything on its own.
    */
   size?: "sm" | "md" | "lg"
 }>();
@@ -67,18 +56,13 @@ const variantClass = computed(() =>
   `v-button--${variant === "default" ? "primary" : variant}`,
 );
 
-/**
- * 24 keeps the legacy button pixel-identical — it is VIcon's own default, which
- * is what an icon rendered without a `size` already gets. The modern chrome is
- * 30px tall, where 24 leaves no room.
- */
-const iconSize = computed(() => (modern ? 16 : 24));
+/** VIcon's own default is 24, which leaves no room in a 30px button. */
+const iconSize = 15;
 
 const rootClass = computed(() => ({
   "v-button--icon-only": isIconOnly.value,
   [variantClass.value]: true,
   "v-button--disabled": isDisabled.value,
-  "v-button--modern": modern,
   "v-button--grouped": isGrouped,
   ...(size ? { [`v-button--${size}`]: true } : {}),
 }));
