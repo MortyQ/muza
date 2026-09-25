@@ -22,7 +22,6 @@ declare module "vue" {
     VSwitch: typeof import("./components/inputs/VSwitch.vue").default
     VSelect: typeof import("./components/inputs/VSelect.vue").default
     VSegmentedControl: typeof import("./components/inputs/VSegmentedControl.vue").default
-    VToggleGroup: typeof import("./components/inputs/VToggleGroup.vue").default
     VTooltip: typeof import("./components/overlay/VTooltip.vue").default
     VDrawer: typeof import("./components/overlay/VDrawer.vue").default
     VModal: typeof import("./components/overlay/VModal.vue").default

@@ -5,7 +5,6 @@ import VComposer from "../../../../src/components/inputs/VComposer.vue";
 import VInput from "../../../../src/components/inputs/VInput.vue";
 import VSegmentedControl from "../../../../src/components/inputs/VSegmentedControl.vue";
 import VSwitch from "../../../../src/components/inputs/VSwitch.vue";
-import VToggleGroup from "../../../../src/components/inputs/VToggleGroup.vue";
 import { stage } from "../../../setup/stage";
 import { THEME_CASES } from "../../../setup/theme";
 
@@ -13,11 +12,6 @@ const SEGMENTS = [
   { label: "Day", value: "day" },
   { label: "Week", value: "week" },
   { label: "Month", value: "month" },
-];
-
-const VIEWS = [
-  { label: "List", value: "list", icon: "lucide:list" },
-  { label: "Grid", value: "grid", icon: "lucide:grid-3x3" },
 ];
 
 describe.each(THEME_CASES)("input components — %s theme", (theme) => {
@@ -204,17 +198,6 @@ describe.each(THEME_CASES)("input components — %s theme", (theme) => {
         width: WIDTH,
       });
       await expect(frame).toMatchScreenshot(`vcomposer-error-${theme}`);
-    });
-  });
-
-  describe("VToggleGroup", () => {
-    it("with icons", async () => {
-      const frame = await stage(VToggleGroup, {
-        theme,
-        props: { options: VIEWS, modelValue: "grid" },
-        width: 280,
-      });
-      await expect(frame).toMatchScreenshot(`vtogglegroup-${theme}`);
     });
   });
 });

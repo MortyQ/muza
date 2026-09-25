@@ -6,7 +6,6 @@ import VThemeSwitcher from "../../../src/components/base/VThemeSwitcher.vue";
 import VInput from "../../../src/components/inputs/VInput.vue";
 import VSegmentedControl from "../../../src/components/inputs/VSegmentedControl.vue";
 import VSelect from "../../../src/components/inputs/VSelect.vue";
-import VToggleGroup from "../../../src/components/inputs/VToggleGroup.vue";
 import VTab from "../../../src/components/layout/VTab.vue";
 import { applyTheme, THEME_CASES } from "../../setup/theme";
 import { tokenAsValue } from "../../setup/tokens";
@@ -70,12 +69,6 @@ const ROW = [
   {
     name: "VSegmentedControl",
     render: () => render(VSegmentedControl, { props: { options: OPTIONS, modelValue: "day" } }),
-    selector: null,
-    property: "height",
-  },
-  {
-    name: "VToggleGroup",
-    render: () => render(VToggleGroup, { props: { options: OPTIONS, modelValue: "day" } }),
     selector: null,
     property: "height",
   },

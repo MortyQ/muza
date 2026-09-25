@@ -30,7 +30,6 @@ export { default as VCheckbox, type CheckboxValue, type CheckboxModelValue } fro
 export { default as VSwitch } from "./components/inputs/VSwitch.vue";
 export { default as VSelect } from "./components/inputs/VSelect.vue";
 export { default as VSegmentedControl, type SegmentOption } from "./components/inputs/VSegmentedControl.vue";
-export { default as VToggleGroup, type ToggleOption } from "./components/inputs/VToggleGroup.vue";
 export { default as VTooltip } from "./components/overlay/VTooltip.vue";
 export { default as VDrawer } from "./components/overlay/VDrawer.vue";
 export { default as VModal } from "./components/overlay/VModal.vue";

@@ -8,7 +8,7 @@
  * @example
  * ```vue
  * <TableTitleBlock title="Intraday Analytics">
- *   <VToggleGroup v-model="activeView" :options="viewOptions" />
+ *   <VSegmentedControl v-model="activeView" :options="viewOptions" />
  * </TableTitleBlock>
  * ```
  */
@@ -44,7 +44,7 @@ const { title = "", icon = "" } = defineProps<{
       />
     </div>
 
-    <!-- Default slot for actions (VToggleGroup, etc.) -->
+    <!-- Default slot for actions (VSegmentedControl, etc.) -->
     <div
       v-if="$slots.default"
       class="v-table-title-block__actions"
