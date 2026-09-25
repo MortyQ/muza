@@ -13,13 +13,17 @@ export interface SegmentOption {
 const {
   modelValue,
   options,
-  size = "md",
+  size = undefined,
   fullWidth = false,
   disabled = false,
   loading = false,
 } = defineProps<{
   modelValue: string | number
   options: SegmentOption[]
+  /**
+   * 28 / 32 / 40px. Left unset the control keeps the chrome's natural 30px,
+   * which is what every other control in a toolbar row stands at.
+   */
   size?: "sm" | "md" | "lg"
   fullWidth?: boolean
   disabled?: boolean
@@ -41,10 +45,10 @@ const emit = defineEmits<{
   "update:modelValue": [value: string | number]
 }>();
 
-const iconSize = computed(() => ({ sm: 14, md: 16, lg: 20 }[size]));
+const iconSize = computed(() => (size ? { sm: 14, md: 16, lg: 20 }[size] : 15));
 
 const rootClass = computed(() => ({
-  [`v-segmented-control--${size}`]: true,
+  ...(size ? { [`v-segmented-control--${size}`]: true } : {}),
   "v-segmented-control--full-width": fullWidth,
   "v-segmented-control--disabled": disabled,
   "v-segmented-control--loading": loading,

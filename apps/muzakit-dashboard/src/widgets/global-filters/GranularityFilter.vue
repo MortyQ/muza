@@ -30,6 +30,5 @@ const selectedGranularity = computed({
   <VToggleGroup
     v-model="selectedGranularity"
     :options="options"
-    size="md"
   />
 </template>

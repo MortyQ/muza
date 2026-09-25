@@ -15,10 +15,10 @@
    LABEL
    ============================================ */
 .v-datepicker-label {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   font-weight: 500;
   color: var(--ui-foreground);
-  margin-bottom: 0.125rem;
+  margin-bottom: var(--ui-space-2xs);
   transition: color 0.2s ease;
 }
 
@@ -26,17 +26,17 @@
    HELPER TEXT & ERRORS
    ============================================ */
 .v-datepicker-helper-text {
-  font-size: 0.75rem;
+  font-size: var(--ui-text-sm);
   color: var(--ui-foreground-muted);
-  margin-top: 0.125rem;
+  margin-top: var(--ui-space-2xs);
   transition: color 0.2s ease;
 }
 
 .form-error {
-  font-size: 0.75rem;
+  font-size: var(--ui-text-sm);
   color: var(--ui-danger);
   font-weight: 500;
-  margin-top: 0.125rem;
+  margin-top: var(--ui-space-2xs);
 }
 
 /* ============================================
@@ -94,20 +94,24 @@
   --dp-font-family: inherit;
   --dp-border-radius: var(--ui-radius-lg);
   --dp-cell-border-radius: var(--ui-radius);
-  --dp-month-year-row-height: 2.25rem;
-  --dp-month-year-row-button-size: 2.25rem;
-  --dp-button-icon-height: 1.25rem;
-  --dp-cell-size: 2.25rem;
-  --dp-cell-padding: 0.25rem;
-  --dp-common-padding: 0.75rem;
-  --dp-preview-font-size: 0.5rem;
-  --dp-time-font-size: 0.875rem;
+  --dp-month-year-row-height: 2rem;
+  --dp-month-year-row-button-size: 2rem;
+  --dp-button-icon-height: 1rem;
+  --dp-cell-size: 2rem;
+  --dp-cell-padding: var(--ui-space-xs);
+  --dp-common-padding: var(--ui-space-md);
+  --dp-preview-font-size: var(--ui-text-2xs);
+  --dp-time-font-size: var(--ui-text-base);
 
-  /* Default MD size */
-  --dp-font-size: 1rem;
-  --dp-input-padding: 0.625rem 1.5rem;
-  --dp-input-icon-padding: 2.75rem;
-  --dp-button-height: 2.75rem;
+  /* The field's height is set on `.dp__input` below rather than derived from
+     vertical padding, so it lands on the control scale exactly the way the
+     button and the plain field do. The padding that remains is horizontal only:
+     room for the calendar icon on the left and the clear button on the right. */
+  --dp-font-size: var(--ui-text-base);
+  --dp-input-padding: 0 2.25rem 0 2rem;
+  --dp-input-icon-padding: 2rem;
+  /* The menu's own action buttons, not the field. */
+  --dp-button-height: var(--ui-control-h-md);
 
   /* Colors → --ui-* tokens */
   --dp-background-color: var(--ui-input-bg);
@@ -142,61 +146,46 @@
 }
 
 /* ============================================
-   SIZE VARIANTS
+   THE FIELD
+
+   `height` on the input, not padding arithmetic: the library derives the
+   field's box from `--dp-input-padding` plus `--dp-font-size`, which means a
+   type change silently moves the height. Pinning the height instead puts the
+   control on the same scale as everything else, and the type is free to move
+   inside it.
    ============================================ */
-
-/* Small */
-.v-datepicker--sm .v-datepicker {
-  --dp-font-size: 0.875rem;
-  --dp-input-padding: 0.4375rem 2.5rem 0.4375rem 2.25rem;
-  --dp-input-icon-padding: 2.25rem;
-  --dp-button-height: 2.25rem;
+:deep(.dp__input) {
+  height: var(--ui-control-h);
 }
 
-.v-datepicker--sm .v-datepicker-no-clear {
-  --dp-input-padding: 0.4375rem 0.75rem 0.4375rem 2.25rem;
+:deep(.dp__input_icon svg),
+:deep(.dp__clear_icon svg) {
+  width: 0.9375rem;
+  height: 0.9375rem;
 }
 
-.v-datepicker--sm :deep(.dp__input_icon svg),
-.v-datepicker--sm :deep(.dp__clear_icon svg) {
-  width: 1rem;
-  height: 1rem;
+/* Without a clear button the right-hand gutter is dead space. */
+.v-datepicker-no-clear {
+  --dp-input-padding: 0 var(--ui-control-px) 0 2rem;
 }
 
-/* Medium */
-.v-datepicker--md .v-datepicker {
-  --dp-font-size: 1rem;
-  --dp-input-padding: 0.625rem 1.5rem 0.625rem 2.25rem;
-  --dp-input-icon-padding: 2.25rem;
-  --dp-button-height: 2.75rem;
+/* ============================================
+   SIZE VARIANTS
+
+   Height only, as everywhere else on the scale. What used to live here — three
+   font sizes, three padding quadruples and three icon sizes per size — is now
+   one height each, because the padding and the type belong to the chrome.
+   ============================================ */
+.v-datepicker--sm :deep(.dp__input) {
+  height: var(--ui-control-h-sm);
 }
 
-.v-datepicker--md .v-datepicker-no-clear {
-  --dp-input-padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+.v-datepicker--md :deep(.dp__input) {
+  height: var(--ui-control-h-md);
 }
 
-.v-datepicker--md :deep(.dp__input_icon svg),
-.v-datepicker--md :deep(.dp__clear_icon svg) {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-/* Large */
-.v-datepicker--lg .v-datepicker {
-  --dp-font-size: 1.125rem;
-  --dp-input-padding: 0.6875rem 3rem;
-  --dp-input-icon-padding: 3rem;
-  --dp-button-height: 3rem;
-}
-
-.v-datepicker--lg .v-datepicker-no-clear {
-  --dp-input-padding: 0.6875rem 0.875rem 0.6875rem 3rem;
-}
-
-.v-datepicker--lg :deep(.dp__input_icon svg),
-.v-datepicker--lg :deep(.dp__clear_icon svg) {
-  width: 1.5rem;
-  height: 1.5rem;
+.v-datepicker--lg :deep(.dp__input) {
+  height: var(--ui-control-h-lg);
 }
 
 /* ============================================

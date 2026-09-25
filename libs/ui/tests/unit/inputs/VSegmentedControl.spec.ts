@@ -95,6 +95,14 @@ describe("VSegmentedControl", () => {
       expect(control({ size }).findComponent(VIcon).props().size).toBe(expected);
     });
 
+    it("carries no size modifier and a 15px icon when size is unset", () => {
+      // Unset is the chrome's natural 30px — the height every other control in
+      // a toolbar row stands at. `md` is an explicit 32px override, not the default.
+      const w = control();
+      expect(w.classes().some(c => /^v-segmented-control--(sm|md|lg)$/.test(c))).toBe(false);
+      expect(w.findComponent(VIcon).props().size).toBe(15);
+    });
+
     it("renders an icon only for options that declare one", () => {
       expect(control().findAllComponents(VIcon)).toHaveLength(1);
     });

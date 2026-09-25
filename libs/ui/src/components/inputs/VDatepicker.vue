@@ -16,7 +16,7 @@ const {
   name = "",
   helperText = "",
   validation = undefined,
-  size = "md",
+  size = undefined,
   icon = "lucide:calendar",
   autoApply = true,
   clearable = false,
@@ -29,6 +29,10 @@ const {
   /** Validation object (Vuelidate compatible) */
   validation?: FieldValidation
   /** Size variant: sm / md / lg */
+  /**
+   * 28 / 32 / 40px. Left unset the control keeps the chrome's natural 30px,
+   * which is what every other control in a toolbar row stands at.
+   */
   size?: "sm" | "md" | "lg"
   /** Icon to display in the input */
   icon?: string
@@ -56,7 +60,7 @@ const excludedSlots = [
 
 <template>
   <div
-    :class="`v-datepicker--${size}`"
+    :class="size ? `v-datepicker--${size}` : ''"
     :style="{ '--v-datepicker-width': width }"
     class="v-datepicker-wrapper"
   >

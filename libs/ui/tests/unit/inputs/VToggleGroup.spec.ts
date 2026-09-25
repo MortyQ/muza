@@ -23,6 +23,20 @@ function group(props: Record<string, unknown> = {}) {
 const items = (w: ReturnType<typeof group>) => w.findAll(".v-tg__item");
 
 describe("VToggleGroup", () => {
+  it("carries no size modifier and a 15px icon when size is unset", () => {
+    // Unset is the chrome's natural 30px — the height every other control in
+    // a toolbar row stands at. `md` is an explicit 32px override, not the default.
+    const w = group();
+    expect(w.find(".v-toggle-group").classes()
+      .some(c => /^v-toggle-group--(sm|md|lg)$/.test(c))).toBe(false);
+    expect(w.findComponent(VIcon).props().size).toBe(15);
+  });
+
+  it("adds the modifier for an explicit size", () => {
+    expect(group({ size: "lg" }).find(".v-toggle-group").classes())
+      .toContain("v-toggle-group--lg");
+  });
+
   it("renders one button per option", () => {
     expect(items(group())).toHaveLength(3);
     expect(items(group()).map(b => b.text())).toEqual(["List", "Grid", "Map"]);

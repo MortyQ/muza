@@ -114,8 +114,15 @@ describe("VDatepicker", () => {
       expect(picker({ size }).classes()).toContain(`v-datepicker--${size}`);
     });
 
-    it("defaults to md", () => {
-      expect(picker().classes()).toContain("v-datepicker--md");
+    it("carries no size modifier by default", () => {
+      // Unset is the chrome's natural height, the same 30px the button and the
+      // field stand at — not `md`, which is an explicit 32px override.
+      const classes = picker().classes();
+      expect(classes.some(c => /^v-datepicker--(sm|md|lg)$/.test(c))).toBe(false);
+    });
+
+    it("adds the modifier for an explicit size", () => {
+      expect(picker({ size: "lg" }).classes()).toContain("v-datepicker--lg");
     });
 
     it("hands an explicit width to CSS as a variable", () => {

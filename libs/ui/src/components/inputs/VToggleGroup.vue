@@ -15,10 +15,14 @@ export interface ToggleOption<V = string | number> {
 const {
   modelValue,
   options,
-  size = "md",
+  size = undefined,
 } = defineProps<{
   modelValue: T
   options: ToggleOption<T>[]
+  /**
+   * 28 / 32 / 40px. Left unset the control keeps the chrome's natural 30px,
+   * which is what every other control in a toolbar row stands at.
+   */
   size?: "sm" | "md" | "lg"
 }>();
 
@@ -26,9 +30,9 @@ const emit = defineEmits<{
   "update:modelValue": [value: T]
 }>();
 
-const iconSize = computed(() => ({ sm: 12, md: 16, lg: 20 }[size]));
+const iconSize = computed(() => (size ? { sm: 12, md: 16, lg: 20 }[size] : 15));
 
-const rootClass = computed(() => [`v-toggle-group--${size}`]);
+const rootClass = computed(() => (size ? [`v-toggle-group--${size}`] : []));
 
 const getItemClass = (option: ToggleOption<T>) => ({
   "v-tg__item--active": modelValue === option.value,

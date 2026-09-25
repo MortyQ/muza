@@ -27,6 +27,19 @@ function switcher(props: Record<string, unknown>) {
 const root = (w: ReturnType<typeof switcher>) => w.find(".v-theme-switcher");
 
 describe("VThemeSwitcher", () => {
+  it("carries no size modifier and a 15px icon when size is unset", () => {
+    // Unset is the chrome's natural 30px — the height every other control in
+    // a toolbar row stands at. `md` is an explicit 32px override, not the default.
+    const w = switcher({ modelValue: "light" });
+    expect(root(w).classes().some(c => /^v-theme-switcher--(sm|md|lg)$/.test(c))).toBe(false);
+    expect(w.findComponent(VIcon).props().size).toBe(15);
+  });
+
+  it("adds the modifier for an explicit size", () => {
+    expect(root(switcher({ modelValue: "light", size: "sm" })).classes())
+      .toContain("v-theme-switcher--sm");
+  });
+
   describe("cycle variant", () => {
     it("renders a single button", () => {
       const w = switcher({ modelValue: "light" });

@@ -13,7 +13,7 @@ export interface ThemeOption {
 const {
   themes,
   variant = "cycle",
-  size = "md",
+  size = undefined,
 } = defineProps<{
   /** All available theme options — labels + icons */
   themes: ThemeOption[]
@@ -22,12 +22,16 @@ const {
    * "segment" — all themes displayed as a segmented-control strip
    */
   variant?: "cycle" | "segment"
+  /**
+   * 28 / 32 / 40px. Left unset the control keeps the chrome's natural 30px,
+   * which is what every other control in a toolbar row stands at.
+   */
   size?: "sm" | "md" | "lg"
 }>();
 
 const model = defineModel<string>({ required: true });
 
-const iconSize = computed(() => ({ sm: 14, md: 16, lg: 20 }[size]));
+const iconSize = computed(() => (size ? { sm: 14, md: 16, lg: 20 }[size] : 15));
 
 const currentTheme = computed(
   () => themes.find(t => t.value === model.value) ?? themes[0],
@@ -45,7 +49,7 @@ const cycle = () => {
 const rootClass = computed(() => [
   "v-theme-switcher",
   `v-theme-switcher--${variant}`,
-  `v-theme-switcher--${size}`,
+  size ? `v-theme-switcher--${size}` : "",
 ]);
 
 </script>
