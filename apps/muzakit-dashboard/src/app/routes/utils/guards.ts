@@ -10,6 +10,7 @@ import type { PermissionType } from "@/features/auth/config/permissions";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { UserRole } from "@/features/auth/types";
 
+import { buildRouteMenu, firstMenuTarget } from "../composables/useMenu";
 import type { RouteMeta } from "../types/types";
 
 let routerInstance: Router | null = null;
@@ -80,32 +81,12 @@ async function ensureAuthInitialized(
 
 // ─── Smart Route Finder ───────────────────────────────────────────────────────
 
+// Where `/` lands: the first page of the menu the reader can see, so it is
+// always the top item of their sidebar.
 function findFirstAccessibleRoute(
   routes: RouteRecordNormalized[],
 ): RouteLocationRaw | null {
-  const candidates = [];
-
-  for (const route of routes) {
-    const meta = route.meta as RouteMeta;
-    const skipped
-      = meta.requiresAuth === false
-        || !route.name
-        || meta.showInMenu === false
-        || meta.isRootRedirect
-        || !!route.redirect
-        || route.path.includes("*");
-
-    if (skipped) continue;
-
-    if (hasPermissions(meta.permissions)) {
-      candidates.push({ route, meta });
-    }
-  }
-
-  if (candidates.length === 0) return null;
-
-  candidates.sort((a, b) => (a.meta.menuOrder ?? 999) - (b.meta.menuOrder ?? 999));
-  return { name: candidates[0].route.name as string };
+  return firstMenuTarget(buildRouteMenu(routes, meta => hasPermissions(meta.permissions)));
 }
 
 // ─── Main Auth Guard ──────────────────────────────────────────────────────────
