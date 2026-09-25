@@ -131,6 +131,89 @@
   }
 }
 
+/* ── Toggle variant ──────────────────────────────────────
+   A tinted track with one surface-coloured thumb that slides under the active
+   icon. The thumb is sized from the option count, so it needs no measuring. */
+
+.v-theme-switcher--toggle {
+  --v-ts-inset: var(--ui-space-2xs);
+
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: var(--ui-control-h);
+  padding: var(--v-ts-inset);
+  border-radius: var(--ui-radius-lg);
+  background-color: color-mix(in oklch, var(--ui-foreground) 6%, transparent);
+
+  &.v-theme-switcher--vertical {
+    flex-direction: column;
+    width: var(--ui-control-h);
+    height: auto;
+
+    .v-ts__option {
+      flex: none;
+      height: calc(var(--ui-control-h) - 2 * var(--v-ts-inset));
+    }
+
+    .v-ts__thumb {
+      width: calc(100% - 2 * var(--v-ts-inset));
+      height: calc((100% - 2 * var(--v-ts-inset)) / var(--v-ts-count));
+      transform: translateY(calc(var(--v-ts-index) * 100%));
+    }
+  }
+}
+
+.v-ts__thumb {
+  position: absolute;
+  top: var(--v-ts-inset);
+  left: var(--v-ts-inset);
+  width: calc((100% - 2 * var(--v-ts-inset)) / var(--v-ts-count));
+  height: calc(100% - 2 * var(--v-ts-inset));
+  border-radius: calc(var(--ui-radius-lg) - 2px);
+  background-color: var(--ui-surface);
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--ui-foreground) 18%, transparent);
+  transform: translateX(calc(var(--v-ts-index) * 100%));
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.v-ts__option {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--ui-radius-lg) - 2px);
+  background: transparent;
+  color: var(--ui-foreground-muted);
+  cursor: pointer;
+  transition: color 150ms ease;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground-secondary);
+    }
+  }
+
+  &--active,
+  &--active:hover {
+    color: var(--ui-foreground);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: -2px;
+  }
+}
+
 /* ── Sizes ─────────────────────────────────────────────────
    Both variants take the same step, so the cycle button and the segment strip
    are the same height by construction. They used to be kept level by hand —

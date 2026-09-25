@@ -14,19 +14,23 @@ const {
   themes,
   variant = "cycle",
   size = undefined,
+  vertical = false,
 } = defineProps<{
   /** All available theme options — labels + icons */
   themes: ThemeOption[]
   /**
    * "cycle"   — single icon button that cycles through themes on click
    * "segment" — all themes displayed as a segmented-control strip
+   * "toggle"  — icon-only track with one sliding thumb, full width
    */
-  variant?: "cycle" | "segment"
+  variant?: "cycle" | "segment" | "toggle"
   /**
    * 28 / 32 / 40px. Left unset the control keeps the chrome's natural 30px,
    * which is what every other control in a toolbar row stands at.
    */
   size?: "sm" | "md" | "lg"
+  /** Stack the toggle's options — for a collapsed sidebar, where side by side they would not fit */
+  vertical?: boolean
 }>();
 
 const model = defineModel<string>({ required: true });
@@ -42,6 +46,8 @@ const nextTheme = computed(() => {
   return themes[(i + 1) % themes.length];
 });
 
+const activeIndex = computed(() => Math.max(0, themes.findIndex(t => t.value === model.value)));
+
 const cycle = () => {
   model.value = nextTheme.value.value;
 };
@@ -50,6 +56,7 @@ const rootClass = computed(() => [
   "v-theme-switcher",
   `v-theme-switcher--${variant}`,
   size ? `v-theme-switcher--${size}` : "",
+  { "v-theme-switcher--vertical": variant === "toggle" && vertical },
 ]);
 
 </script>
@@ -75,6 +82,37 @@ const rootClass = computed(() => [
       />
     </Transition>
   </button>
+
+  <!-- ── Toggle variant: one thumb that slides, so the options read as one control ── -->
+  <div
+    v-else-if="variant === 'toggle'"
+    :class="rootClass"
+    :style="{ '--v-ts-count': themes.length, '--v-ts-index': activeIndex }"
+    aria-label="Theme"
+    role="radiogroup"
+  >
+    <span
+      aria-hidden="true"
+      class="v-ts__thumb"
+    />
+    <button
+      v-for="theme in themes"
+      :key="theme.value"
+      :aria-checked="model === theme.value"
+      :aria-label="theme.label"
+      :class="{ 'v-ts__option--active': model === theme.value }"
+      :title="theme.label"
+      class="v-ts__option"
+      role="radio"
+      type="button"
+      @click="model = theme.value"
+    >
+      <VIcon
+        :icon="theme.icon ?? 'lucide:palette'"
+        :size="iconSize - 1"
+      />
+    </button>
+  </div>
 
   <!-- ── Segment variant: strip with all themes ── -->
   <div

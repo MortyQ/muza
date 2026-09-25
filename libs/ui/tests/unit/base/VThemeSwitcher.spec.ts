@@ -126,6 +126,56 @@ describe("VThemeSwitcher", () => {
     });
   });
 
+  describe("toggle variant", () => {
+    it("renders a radio per theme behind one thumb", () => {
+      const w = switcher({ modelValue: "light", variant: "toggle" });
+      expect(root(w).attributes("role")).toBe("radiogroup");
+      expect(w.findAll(".v-ts__option")).toHaveLength(THEMES.length);
+      expect(w.findAll(".v-ts__thumb")).toHaveLength(1);
+    });
+
+    it("checks only the active theme", () => {
+      const w = switcher({ modelValue: "dark", variant: "toggle" });
+      const checked = w.findAll(".v-ts__option").map(b => b.attributes("aria-checked"));
+      expect(checked).toEqual(["false", "true", "false"]);
+    });
+
+    it("hands the thumb its position as custom properties", () => {
+      const style = root(switcher({ modelValue: "auto", variant: "toggle" })).attributes("style");
+      expect(style).toContain("--v-ts-count: 3");
+      expect(style).toContain("--v-ts-index: 2");
+    });
+
+    it("parks the thumb on the first option for an unknown model", () => {
+      const style = root(switcher({ modelValue: "sepia", variant: "toggle" })).attributes("style");
+      expect(style).toContain("--v-ts-index: 0");
+    });
+
+    it("selects the clicked theme", async () => {
+      const w = switcher({ modelValue: "light", variant: "toggle" });
+      await w.findAll(".v-ts__option")[1].trigger("click");
+      expect(w.emitted("update:modelValue")?.[0]).toEqual(["dark"]);
+    });
+
+    it("labels icon-only options for assistive tech", () => {
+      const w = switcher({ modelValue: "light", variant: "toggle" });
+      expect(w.findAll(".v-ts__option").map(b => b.attributes("aria-label")))
+        .toEqual(["Light", "Dark", "Auto"]);
+    });
+
+    it("stacks only when vertical is set", () => {
+      expect(root(switcher({ modelValue: "light", variant: "toggle" })).classes())
+        .not.toContain("v-theme-switcher--vertical");
+      expect(root(switcher({ modelValue: "light", variant: "toggle", vertical: true })).classes())
+        .toContain("v-theme-switcher--vertical");
+    });
+
+    it("ignores vertical on the other variants", () => {
+      expect(root(switcher({ modelValue: "light", variant: "segment", vertical: true })).classes())
+        .not.toContain("v-theme-switcher--vertical");
+    });
+  });
+
   it.each(["sm", "md", "lg"] as const)("applies the %s size class", (size) => {
     expect(root(switcher({ modelValue: "light", size })).classes())
       .toContain(`v-theme-switcher--${size}`);
