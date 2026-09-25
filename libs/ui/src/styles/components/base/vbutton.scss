@@ -203,9 +203,13 @@
     content: '';
     display: block;
     position: absolute;
-    left: 0;
-    bottom: 6px;
-    width: 100%;
+    /* Inside the padding, so the line starts and ends with the content */
+    left: var(--ui-space-md);
+    /* Solved from the button's own height, which for a link is its line of
+       text: the gap under the line box, less 2px, lands just beneath the
+       glyphs whether the button is `auto` tall or stands at a control height. */
+    bottom: calc((100% - var(--ui-leading-base)) / 2 - var(--ui-space-2xs));
+    width: calc(100% - 2 * var(--ui-space-md));
     height: 2px;
     background: linear-gradient(90deg, var(--ui-primary), var(--ui-primary-hover));
     opacity: 0.2;

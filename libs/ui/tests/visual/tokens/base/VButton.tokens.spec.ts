@@ -99,6 +99,32 @@ describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
     expect(style.boxShadow).toBe("none");
   });
 
+  it("draws the link underline beneath the text, not through it", async () => {
+    // The link has no fixed height — it is as tall as its line of text — so an
+    // underline pinned a fixed distance up from the bottom ran through the glyphs.
+    const el = await renderButton({ variant: "link", text: "Reset sort" });
+    const line = getComputedStyle(el, "::after");
+    const underlineTop = el.getBoundingClientRect().bottom
+      - Number.parseFloat(line.bottom) - Number.parseFloat(line.height);
+
+    const text = document.createRange();
+    text.selectNodeContents(el);
+    expect(underlineTop).toBeGreaterThanOrEqual(text.getBoundingClientRect().bottom - 0.5);
+  });
+
+  it("spans the underline across the content, not the padding", async () => {
+    const el = await renderButton({ variant: "link", text: "Reset sort" });
+    const line = getComputedStyle(el, "::after");
+    // `left` on the pseudo counts from the padding box, inside the 1px border
+    const left = el.getBoundingClientRect().left
+      + Number.parseFloat(getComputedStyle(el).borderLeftWidth)
+      + Number.parseFloat(line.left);
+
+    const text = document.createRange();
+    text.selectNodeContents(el);
+    expect(left).toBeCloseTo(text.getBoundingClientRect().left, 0);
+  });
+
   it("dims a disabled button by opacity alone, keeping its variant's colours", async () => {
     // It used to recolour to `--ui-foreground-disabled` on top of the opacity,
     // which dimmed twice: on the filled secondary the text vanished into its
