@@ -66,6 +66,21 @@ describe("VDatepicker", () => {
         .toBe("Delivery date");
     });
 
+    it("cuts a notch for the label only when there is one", () => {
+      // An empty legend still takes its padding once raised, which left a gap
+      // in the top border of every unlabelled picker holding a value.
+      expect(picker({ modelValue: new Date() }).find(".v-datepicker-legend").exists()).toBe(false);
+      expect(picker({ name: "Delivery date" }).find(".v-datepicker-legend").text())
+        .toBe("Delivery date");
+    });
+
+    it("marks the container filled once a value is set", () => {
+      const container = (w: ReturnType<typeof picker>) => w.find(".v-datepicker-container").classes();
+      expect(container(picker())).not.toContain("v-datepicker-container--filled");
+      expect(container(picker({ modelValue: new Date() }))).toContain("v-datepicker-container--filled");
+      expect(container(picker({ modelValue: [null, null] }))).not.toContain("v-datepicker-container--filled");
+    });
+
     it("renders helper text while there is no error", () => {
       expect(picker({ helperText: "Ships the next day" }).find(".v-datepicker-helper-text").text())
         .toBe("Ships the next day");

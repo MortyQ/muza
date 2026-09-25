@@ -4,22 +4,132 @@
 .v-datepicker-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: var(--ui-space-xs);
   /* `width` prop, or full width when it is not given. */
   width: var(--v-datepicker-width, 100%);
-  border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-xs);
 }
 
 /* ============================================
-   LABEL
+   CONTAINER, OUTLINE AND FLOATING LABEL
+
+   The same construction as VInput and VSelect: the surface and the elevation
+   sit on the container, the border is a fieldset drawn over it, and the label
+   floats into a notch cut by the legend. The library's own input is made
+   transparent and borderless so only this outline shows.
    ============================================ */
-.v-datepicker-label {
-  font-size: var(--ui-text-base);
+.v-datepicker-container {
+  position: relative;
+  width: 100%;
+  border-radius: var(--ui-radius-lg);
+  background: var(--ui-input-bg);
+  box-shadow: var(--ui-shadow-xs);
+
+  &--disabled {
+    background-color: var(--ui-surface-sunken);
+  }
+}
+
+.v-datepicker-fieldset {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  /* 7px + the legend's 3px = the 10px the raised label sits at, as on VInput. */
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  border: 1px solid var(--ui-input-border);
+  border-radius: var(--ui-radius-lg);
+  pointer-events: none;
+  transition: border-color 0.2s ease;
+}
+
+.v-datepicker-container:hover .v-datepicker-fieldset {
+  border-color: var(--ui-border-strong);
+}
+
+.v-datepicker-container:focus-within .v-datepicker-fieldset,
+.v-datepicker-container--open .v-datepicker-fieldset {
+  border-width: 2px;
+  border-color: var(--ui-border-focus);
+}
+
+.v-datepicker-container--error .v-datepicker-fieldset,
+.v-datepicker-container--error:hover .v-datepicker-fieldset {
+  border-color: var(--ui-danger);
+}
+
+.v-datepicker-container--disabled .v-datepicker-fieldset,
+.v-datepicker-container--disabled:hover .v-datepicker-fieldset {
+  border-width: 1px;
+  border-color: color-mix(in oklch, var(--ui-foreground) 20%, transparent);
+}
+
+.v-datepicker-legend {
+  width: auto;
+  max-width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  /* Same face as the raised label, or the notch closes over its last glyph. */
+  font-size: var(--ui-text-2xs);
   font-weight: 500;
-  color: var(--ui-foreground);
-  margin-bottom: var(--ui-space-2xs);
-  transition: color 0.2s ease;
+  line-height: var(--ui-leading-2xs);
+  white-space: nowrap;
+  transition: max-width 0.2s ease, padding 0.2s ease;
+
+  span {
+    display: inline-block;
+    opacity: 0;
+  }
+}
+
+.v-datepicker-label {
+  position: absolute;
+  top: 50%;
+  /* Clears the calendar icon while resting inside the field. */
+  left: 2rem;
+  z-index: 20;
+  max-width: calc(100% - 3rem);
+  overflow: hidden;
+  font-size: var(--ui-text-base);
+  line-height: var(--ui-leading-base);
+  color: color-mix(in oklch, var(--ui-foreground) 60%, transparent);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: all 0.2s ease;
+}
+
+/* Raised: a value is set, the field has focus, or the calendar is open — and
+   only with a label. Without one there is nothing to cut a notch for, so the
+   top border stays solid. */
+.v-datepicker-container--labelled.v-datepicker-container--filled,
+.v-datepicker-container--labelled:focus-within,
+.v-datepicker-container--labelled.v-datepicker-container--open {
+  .v-datepicker-label {
+    top: 0;
+    left: var(--ui-control-px);
+    font-size: var(--ui-text-2xs);
+    font-weight: 500;
+    line-height: var(--ui-leading-2xs);
+    color: var(--ui-primary);
+  }
+
+  .v-datepicker-legend {
+    max-width: 100%;
+    padding: 0 0.1875rem;
+  }
+}
+
+.v-datepicker-container--error .v-datepicker-label {
+  color: var(--ui-danger);
+}
+
+/* A resting label stands where the placeholder would, so the placeholder waits
+   until the label has moved out of the way — VInput does the same. */
+.v-datepicker-container--labelled:not(.v-datepicker-container--open):not(:focus-within) {
+  :deep(.dp__input::placeholder) {
+    color: transparent;
+  }
 }
 
 /* ============================================
@@ -43,34 +153,54 @@
    ICONS
    ============================================ */
 .v-datepicker-icon,
-.v-datepicker-clear-icon,
 .v-datepicker-arrow-icon,
 .v-datepicker-clock-icon,
 .v-datepicker-calendar-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--ui-foreground-muted);
-  transition: color 0.2s ease;
+  width: 0.9375rem;
+  height: 0.9375rem;
+  color: var(--ui-input-placeholder);
+  transition: color 0.15s ease;
 }
 
-.v-datepicker-clear-icon:hover,
+.v-datepicker-container:focus-within .v-datepicker-icon,
+.v-datepicker-container--open .v-datepicker-icon {
+  color: var(--ui-primary);
+}
+
 .v-datepicker-arrow-icon:hover {
   color: var(--ui-primary);
   cursor: pointer;
 }
 
-.v-datepicker-icon-wrapper,
-.v-datepicker-clear-wrapper {
+.v-datepicker-icon-wrapper {
   display: flex;
   align-items: center;
 }
 
-.v-datepicker-icon-wrapper {
-  margin-left: 0;
+/* The VInput clear button: a 20px target, danger on hover. */
+.v-datepicker-clear-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--ui-radius);
+  background: transparent;
+  color: var(--ui-foreground-secondary);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    color: var(--ui-danger);
+    background-color: color-mix(in oklch, var(--ui-danger) 10%, transparent);
+  }
 }
 
-.v-datepicker-clear-wrapper {
-  margin-right: 0.5rem;
+.v-datepicker-clear-icon {
+  width: 0.8125rem;
+  height: 0.8125rem;
 }
 
 /* ============================================
@@ -91,7 +221,6 @@
    MAIN DATEPICKER — CSS VARIABLES MAPPING
    ============================================ */
 .v-datepicker {
-  --dp-font-family: inherit;
   --dp-border-radius: var(--ui-radius-lg);
   --dp-cell-border-radius: var(--ui-radius);
   --dp-month-year-row-height: 2rem;
@@ -108,7 +237,7 @@
      button and the plain field do. The padding that remains is horizontal only:
      room for the calendar icon on the left and the clear button on the right. */
   --dp-font-size: var(--ui-text-base);
-  --dp-input-padding: 0 2.25rem 0 2rem;
+  --dp-input-padding: 0 2rem 0 2rem;
   --dp-input-icon-padding: 2rem;
   /* The menu's own action buttons, not the field. */
   --dp-button-height: var(--ui-control-h-md);
@@ -143,6 +272,10 @@
   --dp-range-between-border-color: var(--ui-primary-muted);
 
   width: 100%;
+  /* Not `--dp-font-family: inherit`: a CSS-wide keyword on a custom property
+     inherits the *property*, so it picked up the library's system-font default
+     from :root. Overriding the declaration itself inherits the app's face. */
+  font-family: inherit;
 }
 
 /* ============================================
@@ -158,8 +291,7 @@
   height: var(--ui-control-h);
 }
 
-:deep(.dp__input_icon svg),
-:deep(.dp__clear_icon svg) {
+:deep(.dp__input_icon svg) {
   width: 0.9375rem;
   height: 0.9375rem;
 }
@@ -204,6 +336,7 @@
 }
 
 :deep(.dp__menu) {
+  font-family: inherit;
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius);
   box-shadow: var(--ui-shadow-md);
@@ -285,27 +418,31 @@
 
 :deep(.dp__input) {
   width: 100%;
-  background-color: var(--ui-surface-raised);
-  color: var(--ui-foreground);
   border: 0;
+  border-radius: var(--ui-radius-lg);
+  background-color: transparent;
+  color: var(--ui-foreground);
   font-family: inherit;
-  transition: all 0.2s ease-in-out;
-  padding-left: 2rem;
-  padding-right: 1rem;
+  /* VInput's type: 13px at 450, a hair tighter. */
+  font-weight: 450;
+  letter-spacing: -0.005em;
+  transition: color 0.2s ease-out;
 }
 
 :deep(.dp__input::placeholder) {
-  color: var(--ui-foreground-muted);
+  color: var(--ui-input-placeholder);
+  transition: color 0.2s ease;
 }
 
 :deep(.dp__input:focus) {
   outline: none;
 }
 
-:deep(.dp__input:disabled) {
-  opacity: 0.5;
+:deep(.dp__input:disabled),
+:deep(.dp__input.dp__disabled) {
   cursor: not-allowed;
-  background-color: var(--ui-surface-raised);
+  background-color: transparent;
+  color: var(--ui-foreground-disabled);
 }
 
 :deep(.dp__arrow_top) {
@@ -343,7 +480,6 @@
 
 :deep(.dp__input_wrap) {
   position: relative;
-  box-shadow: var(--ui-shadow-lg);
   border-radius: var(--ui-radius-lg);
 }
 
@@ -357,7 +493,7 @@
 
 :deep(.dp__clear_icon) {
   position: absolute;
-  right: 0.75rem;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
