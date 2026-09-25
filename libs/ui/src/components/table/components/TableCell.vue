@@ -72,12 +72,9 @@ const metadata = computed<CellMetadata | null>(() => {
 
 // Legacy indent path: relevant only when `depth`/`isFirstColumn` are passed
 // directly, with no row/column to resolve an `indentStyle` from.
-const computedPaddingLeft = computed<string | undefined>(() => {
-  if (isFirstColumn && depth > 0) {
-    return `${depth * 24 + 16}px`;
-  }
-  return undefined;
-});
+const legacyDepth = computed<number | undefined>(() =>
+  isFirstColumn && depth > 0 ? depth : undefined,
+);
 
 const rootClass = computed(() => [
   {
@@ -85,13 +82,14 @@ const rootClass = computed(() => [
     "v-table-cell--center": align === "center",
     "v-table-cell--right": align === "right",
     "v-table-cell--indented": isFirstColumn && depth > 0,
+    "v-table-cell--interactive": !!column?.interactive,
   },
   metadata.value?.cssClass,
 ]);
 
 const rootStyle = computed<Record<string, string | undefined> | undefined>(() => {
   const style = {
-    ...(computedPaddingLeft.value ? { paddingLeft: computedPaddingLeft.value } : {}),
+    ...(legacyDepth.value ? { "--v-table-depth": String(legacyDepth.value) } : {}),
     ...metadata.value?.customStyle,
   };
   // Returning `{}` would put an empty `style=""` on every cell in the table.
@@ -119,7 +117,7 @@ const rootStyle = computed<Record<string, string | undefined> | undefined>(() =>
       >
         <VIcon
           :icon="isExpanded ? 'mdi:chevron-down' : 'mdi:chevron-right'"
-          :size="18"
+          :size="14"
         />
       </button>
 

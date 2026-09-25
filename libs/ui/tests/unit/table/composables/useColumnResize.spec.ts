@@ -107,13 +107,14 @@ describe("useColumnResize", () => {
   });
 
   describe("getGridTemplateWithCheckbox", () => {
-    it("prepends a 50px track by default", () => {
+    it("prepends a track as wide as the row is tall by default", () => {
+      // VTable sets `--v-table-row-h` on the same grid, so the checkbox cell is square.
       expect(setup([{ key: "a", label: "A", width: "120px" }]).getGridTemplateWithCheckbox())
-        .toBe("50px 120px");
+        .toBe("var(--v-table-row-h) 120px");
     });
 
     it("takes a custom width", () => {
-      expect(setup([{ key: "a", label: "A", width: "120px" }]).getGridTemplateWithCheckbox(32))
+      expect(setup([{ key: "a", label: "A", width: "120px" }]).getGridTemplateWithCheckbox("32px"))
         .toBe("32px 120px");
     });
   });

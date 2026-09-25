@@ -6,7 +6,9 @@
   position: sticky;
   bottom: 0;
   z-index: $z-index-total;
-  padding: $table-cell-padding-y $table-cell-padding-x;
+  // Its borders are 2px + 1px, not the body cell's 1px
+  min-height: var(--v-table-row-h);
+  padding: calc(#{$table-cell-padding-y} - 1px) $table-cell-padding-x;
   background: linear-gradient(
     to bottom,
     color-mix(in oklch, var(--ui-surface) 96%, var(--ui-primary) 4%),
@@ -15,7 +17,7 @@
   border-top: 2px solid color-mix(in oklch, var(--ui-primary) 40%, var(--ui-border) 60%);
   border-bottom: 1px solid color-mix(in oklch, var(--ui-primary) 20%, var(--ui-border) 80%);
   border-right: 1px solid color-mix(in oklch, var(--ui-border) 80%, transparent);
-  font-weight: $table-font-weight-bold;
+  font-weight: $table-font-weight-semibold;
   font-size: $table-font-size-base;
   line-height: $table-line-height-base;
   color: var(--ui-foreground);
@@ -34,14 +36,14 @@
 .v-table-total-content {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: $table-cell-gap;
   min-width: 0;
 }
 
 .v-table-total-text {
   flex: 1;
   min-width: 0;
-  font-weight: $table-font-weight-bold;
+  font-weight: $table-font-weight-semibold;
 
   &--truncate {
     overflow: hidden;

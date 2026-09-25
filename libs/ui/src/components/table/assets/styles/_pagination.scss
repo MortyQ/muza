@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $table-cell-padding-y $table-cell-padding-x;
+  padding: var(--ui-space-md) $table-cell-padding-x;
   gap: 1.5rem;
   flex-wrap: wrap;
   background: linear-gradient(

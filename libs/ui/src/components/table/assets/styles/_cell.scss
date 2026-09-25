@@ -18,6 +18,9 @@
     transition: none !important;
   }
 
+  // An interactive column holds a control, and the control is what gets centred
+  &--interactive { padding-block: $table-cell-padding-y-control; }
+
   &--left   { text-align: left; }
   &--center { text-align: center; }
   &--right  { text-align: right; }
@@ -26,13 +29,17 @@
 .v-table-cell-content {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: $table-cell-gap;
   min-width: 0;
   height: 100%;
+  // `--v-table-depth` is set on a nested row's first cell only
+  padding-left: calc(var(--v-table-depth, 0) * var(--v-table-indent));
+}
 
-  &--indented {
-    padding-left: var(--indent, 0);
-  }
+// The legacy path: `depth` passed straight to TableCell, with no content box
+// to indent, so the cell's own padding grows instead.
+.v-table-cell--indented {
+  padding-left: calc(#{$table-cell-padding-x} + var(--v-table-depth, 0) * var(--v-table-indent));
 }
 
 .v-table-cell-text {
@@ -78,20 +85,19 @@
   padding: 0;
   border: none;
   background: none;
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   flex-shrink: 0;
-  transition: all $transition-fast;
+  transition: background-color $transition-fast, color $transition-fast, transform $transition-fast;
   cursor: pointer;
   color: var(--ui-foreground-secondary);
 
   &:hover {
     background-color: color-mix(in oklch, var(--ui-border) 40%, transparent);
     color: var(--ui-foreground);
-    transform: scale(1.08);
   }
 
   &:active {
-    transform: scale(0.92);
+    transform: scale(0.95);
   }
 
   :deep(svg) {

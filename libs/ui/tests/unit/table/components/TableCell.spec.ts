@@ -60,14 +60,14 @@ describe("TableCell", () => {
     it("indents the first column of a nested row", () => {
       const w = cell({ isFirstColumn: true, depth: 1 });
       expect(w.classes()).toContain("v-table-cell--indented");
-      expect(w.attributes("style")).toBe("padding-left: 40px;");
+      expect(w.attributes("style")).toBe("--v-table-depth: 1;");
     });
 
-    it("adds 24px per level on top of the 16px base", () => {
+    it("hands each level's depth to CSS", () => {
       expect(cell({ isFirstColumn: true, depth: 2 }).attributes("style"))
-        .toBe("padding-left: 64px;");
+        .toBe("--v-table-depth: 2;");
       expect(cell({ isFirstColumn: true, depth: 3 }).attributes("style"))
-        .toBe("padding-left: 88px;");
+        .toBe("--v-table-depth: 3;");
     });
   });
 
@@ -147,8 +147,8 @@ describe("TableCell in metadata mode", () => {
   it("indents the content, not the cell", () => {
     // The indent has to stack on top of the cell's own horizontal padding; on
     // the cell itself it would replace it.
-    const { wrapper } = metadataCell({ indentStyle: { paddingLeft: "40px" } });
-    expect(wrapper.find(".v-table-cell-content").attributes("style")).toBe("padding-left: 40px;");
+    const { wrapper } = metadataCell({ indentStyle: { "--v-table-depth": "2" } });
+    expect(wrapper.find(".v-table-cell-content").attributes("style")).toBe("--v-table-depth: 2;");
     expect(wrapper.attributes("style")).toBeUndefined();
   });
 
@@ -159,6 +159,12 @@ describe("TableCell in metadata mode", () => {
     const interactive = metadataCell({}, { column: { ...COLUMN, interactive: true } });
     expect(interactive.wrapper.find(".v-table-cell-text").classes())
       .not.toContain("v-table-cell-text--truncate");
+  });
+
+  it("marks an interactive column so its padding centres a control, not a line", () => {
+    expect(metadataCell().wrapper.classes()).not.toContain("v-table-cell--interactive");
+    expect(metadataCell({}, { column: { ...COLUMN, interactive: true } }).wrapper.classes())
+      .toContain("v-table-cell--interactive");
   });
 
   it("withholds the title when the metadata says so", () => {

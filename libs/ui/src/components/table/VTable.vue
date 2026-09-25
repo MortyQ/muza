@@ -451,7 +451,7 @@ const {
 
 const gridStyles = computed(() => {
   const gridColumnsTemplate = selection.isEnabled.value
-    ? getGridTemplateWithCheckbox(50) // 50px for checkbox column
+    ? getGridTemplateWithCheckbox()
     : gridTemplateColumns.value;
 
   return {

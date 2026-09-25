@@ -39,7 +39,7 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 0.5rem; /* 14px 8px - match header padding */
+  padding: 0;
   height: var(--v-table-header-h);
   min-height: var(--v-table-header-h);
   box-sizing: border-box;

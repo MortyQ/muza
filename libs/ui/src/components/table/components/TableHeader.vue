@@ -125,7 +125,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
         >
           <div class="items-center justify-center flex p-0 w-[16px]">
             <VIcon
-              :size="14"
+              :size="12"
               class="v-table-header-info-icon"
               icon="lucide:info"
             />
@@ -139,7 +139,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
           class="v-table-header-click-indicator"
         >
           <VIcon
-            :size="14"
+            :size="12"
             class="click-indicator-icon"
             icon="lucide:mouse-pointer-click"
           />
@@ -159,7 +159,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
         <VIcon
           :class="iconClass"
           :icon="sortIcon"
-          :size="16"
+          :size="14"
         />
       </div>
 

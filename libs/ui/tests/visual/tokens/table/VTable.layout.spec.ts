@@ -5,8 +5,9 @@ import { render } from "vitest-browser-vue";
 
 import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import VTable from "../../../../src/components/table/VTable.vue";
-import { makeColumns, makeFixedColumns, makeRows } from "../../../setup/table";
+import { makeColumns, makeFixedColumns, makeRows, makeTreeRows } from "../../../setup/table";
 import { applyTheme } from "../../../setup/theme";
+import { tokenAsValue } from "../../../setup/tokens";
 
 /**
  * Everything jsdom cannot answer because it has no layout: the virtualizer's
@@ -134,6 +135,90 @@ describe("VTable — row height", () => {
       .getBoundingClientRect().height;
 
     expect(scroller(el).scrollHeight).toBeCloseTo(header + 200 * 36, 0);
+  });
+});
+
+describe("VTable — compact scale", () => {
+  // Every size below is derived from the row, and the row from the control it
+  // has to hold — so a change to the control scale moves the whole table.
+  const px = (token: string) => Number.parseFloat(tokenAsValue("height", token));
+  const heightOf = (node: Element | null) => (node as HTMLElement).getBoundingClientRect().height;
+  const cellHeights = (el: HTMLElement) =>
+    Array.from(el.querySelectorAll(".v-table-row-wrapper > *")).map(heightOf);
+
+  it("stands the default row at the large control height", () => {
+    expect(DEFAULT_ROW_HEIGHT).toBe(px("--ui-control-h-lg"));
+  });
+
+  it("stands the header one step below the row", async () => {
+    const el = await table();
+    expect(heightOf(el.querySelector(".v-table-header-cell")))
+      .toBeCloseTo(DEFAULT_ROW_HEIGHT - px("--ui-space-xs"), 0);
+  });
+
+  it("follows a denser rowHeight with the header", async () => {
+    const el = await table({ rowHeight: 32 });
+    expect(heightOf(el.querySelector(".v-table-header-cell")))
+      .toBeCloseTo(32 - px("--ui-space-xs"), 0);
+  });
+
+  it("sets body and header text on the type scale", async () => {
+    const el = await table();
+    const size = (selector: string) =>
+      getComputedStyle(el.querySelector(selector) as HTMLElement).fontSize;
+
+    expect(size(".v-table-row-wrapper > .v-table-cell"))
+      .toBe(tokenAsValue("font-size", "--ui-text-base"));
+    expect(size(".v-table-header-cell")).toBe(tokenAsValue("font-size", "--ui-text-xs"));
+  });
+
+  it("stands a plain row at the row height without virtualization", async () => {
+    const heights = cellHeights(await table({ virtualized: false, data: makeRows(5) }));
+    for (const height of heights) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("fits a control in an interactive cell without growing the row", async () => {
+    const control = () => h("div", { style: { height: "var(--ui-control-h)" } }, "control");
+    const el = await table(
+      {
+        virtualized: false,
+        data: makeRows(5),
+        columns: makeColumns({ name: { interactive: true } }),
+      },
+      { "cell-name": control },
+    );
+    for (const height of cellHeights(el)) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("makes the checkbox column as wide as the row is tall", async () => {
+    const el = await table({
+      virtualized: false,
+      data: makeRows(3),
+      multiSelect: { enabled: true },
+    });
+    const grid = el.querySelector(".v-table-grid") as HTMLElement;
+    const first = Number.parseFloat(getComputedStyle(grid).gridTemplateColumns.split(" ")[0]);
+
+    expect(first).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("starts a nested leaf's text under its parent's text", async () => {
+    // The tree indents the first column only, so `name` goes first.
+    const el = await table({
+      virtualized: false,
+      data: makeTreeRows(),
+      columns: makeColumns().slice(1),
+    });
+    (el.querySelector(".v-table-cell-expand-btn") as HTMLElement).click();
+    await nextTick();
+    await frame();
+
+    const textLeft = (label: string) => {
+      const node = Array.from(el.querySelectorAll(".v-table-cell-text"))
+        .find(n => n.textContent?.trim() === label) as HTMLElement;
+      return node.getBoundingClientRect().left;
+    };
+    expect(textLeft("Alpha / Two")).toBeCloseTo(textLeft("Alpha"), 0);
   });
 });
 

@@ -4,6 +4,7 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 
 import { useVirtualTable } from "../../../../src/components/table/composables/useVirtualTable";
+import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import { makeRows } from "../../../setup/table";
 
 /**
@@ -43,18 +44,18 @@ describe("useVirtualTable", () => {
     });
 
     it("sizes the spacer from the row count and the estimate", () => {
-      expect(host(makeRows(10), { estimateSize: 40 }).api().totalSize.value).toBe(400);
+      expect(host(makeRows(10), { estimateSize: 36 }).api().totalSize.value).toBe(360);
     });
 
-    it("defaults the estimate to 50px", () => {
-      expect(host(makeRows(10)).api().totalSize.value).toBe(500);
+    it("defaults the estimate to the table's row height", () => {
+      expect(host(makeRows(10)).api().totalSize.value).toBe(10 * DEFAULT_ROW_HEIGHT);
     });
 
     it("follows the data length", async () => {
-      const { api, rows } = host(makeRows(10), { estimateSize: 40 });
+      const { api, rows } = host(makeRows(10), { estimateSize: 36 });
       rows.value = makeRows(3) as Record<string, unknown>[];
       await nextTick();
-      expect(api().totalSize.value).toBe(120);
+      expect(api().totalSize.value).toBe(108);
     });
 
     it("is zero for no rows", () => {
