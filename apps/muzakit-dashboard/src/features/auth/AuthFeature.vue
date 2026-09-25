@@ -20,8 +20,8 @@ const tabs = [
     justify-center gap-6 p-8"
   >
     <v-card
+      class="opacity-70"
       size="md"
-      variant="translucent"
     >
       <div class="auth-brand">
         <div class="auth-brand__logo">
