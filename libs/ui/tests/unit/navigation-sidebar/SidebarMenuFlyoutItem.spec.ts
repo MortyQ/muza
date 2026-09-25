@@ -131,7 +131,7 @@ describe("SidebarMenuFlyoutItem", () => {
     it("renders the icon at the flyout's size", async () => {
       const icon = (await render({ icon: "lucide:image" })).wrapper.findComponent(VIcon);
       expect(icon.props("icon")).toBe("lucide:image");
-      expect(icon.props("size")).toBe(16);
+      expect(icon.props("size")).toBe(15);
     });
 
     it("renders no icon when the item has none", async () => {

@@ -2,7 +2,7 @@
 
 .sidebar-item-wrapper {
   position: relative;
-  min-height: 2.75rem;
+  min-height: var(--ui-control-md);
 }
 
 // The clickable element (button or router-link)
@@ -10,15 +10,16 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-md);
   width: 100%;
-  height: 2.5rem;
-  padding: 0.625rem 1rem;
+  height: var(--ui-control-md);
+  padding: 0 var(--ui-space-lg);
   border-radius: 0.5rem;
   border: none;
   background: transparent;
   color: var(--ui-foreground-secondary);
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
+  line-height: var(--ui-leading-base);
   font-family: inherit;
   text-decoration: none;
   cursor: pointer;
@@ -87,10 +88,9 @@
 
   // Collapsed: icon-only, centered
   &--collapsed {
-    width: auto;
+    width: var(--ui-control-md);
     justify-content: center;
-    padding: 0.625rem;
-    // padding: 0 0.625rem;
+    padding: 0;
   }
 }
 
@@ -103,8 +103,8 @@
 
 .sidebar-item__icon {
   flex-shrink: 0;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .sidebar-item__label {
@@ -117,10 +117,10 @@
 
 .sidebar-item__badge {
   flex-shrink: 0;
-  padding: 0.125rem 0.5rem;
-  font-size: 0.6875rem;
+  padding: 0 var(--ui-space-sm);
+  font-size: var(--ui-text-2xs);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: var(--ui-leading-2xs);
   border-radius: 9999px;
   background-color: var(--ui-primary-subtle);
   color: var(--ui-primary);

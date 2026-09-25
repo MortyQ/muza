@@ -47,7 +47,7 @@ const { isCollapsed, toggleCollapse, options } = useSidebarState();
       >
         <VIcon
           :icon="isCollapsed ? 'lucide:menu' : 'lucide:chevron-left'"
-          :size="20"
+          :size="18"
         />
       </button>
     </div>

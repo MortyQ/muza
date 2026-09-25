@@ -53,7 +53,7 @@ describe("SidebarMenuFlyoutParent", () => {
       const icon = render({ icon: "lucide:image" }).findComponent(VIcon);
       expect(icon.exists()).toBe(true);
       expect(icon.props("icon")).toBe("lucide:image");
-      expect(icon.props("size")).toBe(16);
+      expect(icon.props("size")).toBe(15);
     });
 
     it("renders none when it does not", () => {

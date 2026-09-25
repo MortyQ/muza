@@ -85,7 +85,7 @@ const itemClasses = computed(() => ({
         <VIcon
           v-if="item.icon"
           :icon="item.icon"
-          :size="20"
+          :size="18"
           class="sidebar-item__icon"
         />
       </button>
@@ -112,7 +112,7 @@ const itemClasses = computed(() => ({
         <VIcon
           v-if="item.icon"
           :icon="item.icon"
-          :size="20"
+          :size="18"
           class="sidebar-item__icon"
         />
       </component>
@@ -136,7 +136,7 @@ const itemClasses = computed(() => ({
       <VIcon
         v-if="item.icon"
         :icon="item.icon"
-        :size="20"
+        :size="18"
         class="sidebar-item__icon"
       />
 
@@ -164,7 +164,7 @@ const itemClasses = computed(() => ({
       <VIcon
         v-if="hasChildren && !isCollapsed"
         :icon="isItemExpanded ? 'mdi:chevron-up' : 'mdi:chevron-down'"
-        :size="16"
+        :size="14"
         class="sidebar-item__chevron"
       />
     </component>

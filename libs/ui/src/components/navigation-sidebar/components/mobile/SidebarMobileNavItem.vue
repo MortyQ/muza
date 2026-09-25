@@ -80,7 +80,7 @@ const itemClasses = computed(() => ({
       <VIcon
         v-if="item.icon"
         :icon="item.icon"
-        :size="20"
+        :size="18"
         class="sidebar-item__icon"
       />
 
@@ -96,7 +96,7 @@ const itemClasses = computed(() => ({
       <VIcon
         v-if="hasChildren"
         :icon="isItemExpanded ? 'mdi:chevron-up' : 'mdi:chevron-down'"
-        :size="16"
+        :size="14"
         class="sidebar-item__chevron"
       />
     </component>

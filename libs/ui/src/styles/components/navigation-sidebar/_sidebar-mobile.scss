@@ -85,7 +85,7 @@ $sidebar-mobile-breakpoint: 1024px;
 
 .sidebar-mobile-header__name {
   flex: 1;
-  font-size: 1.125rem;
+  font-size: var(--ui-text-lg);
   font-weight: 600;
   color: var(--ui-foreground);
   white-space: nowrap;

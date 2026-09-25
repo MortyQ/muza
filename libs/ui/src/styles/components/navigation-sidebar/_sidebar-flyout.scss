@@ -25,7 +25,7 @@
 
 .sidebar-flyout__title {
   padding: 0.375rem 0.75rem 0.5rem;
-  font-size: 0.75rem;
+  font-size: var(--ui-text-xs);
   font-weight: 600;
   color: var(--ui-foreground-muted);
   border-bottom: 1px solid var(--ui-border-subtle);
@@ -45,11 +45,13 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ui-space-md);
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  min-height: var(--ui-control-h);
+  padding: var(--ui-space-sm) var(--ui-space-lg);
   border-radius: 0.375rem;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
+  line-height: var(--ui-leading-base);
   color: var(--ui-foreground-secondary);
   text-decoration: none;
   cursor: pointer;
@@ -57,7 +59,7 @@
   outline: none;
 
   // Indentation via CSS custom property (set inline: --depth)
-  padding-left: calc(0.75rem + var(--depth, 0) * 1rem);
+  padding-left: calc(var(--ui-space-lg) + var(--depth, 0) * 1rem);
 
   &:hover:not(&--disabled) {
     background-color: var(--ui-surface-hover);
@@ -84,7 +86,7 @@
   &--parent {
     color: var(--ui-foreground-muted);
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: var(--ui-text-2xs);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     cursor: default;
@@ -106,8 +108,9 @@
 
 .sidebar-flyout__item-badge {
   flex-shrink: 0;
-  padding: 0.125rem 0.375rem;
-  font-size: 0.6875rem;
+  padding: 0 var(--ui-space-sm);
+  font-size: var(--ui-text-2xs);
+  line-height: var(--ui-leading-2xs);
   font-weight: 600;
   border-radius: 9999px;
   background-color: var(--ui-primary-subtle);

@@ -31,7 +31,7 @@ const { closeMobile, options } = useSidebarState();
       @click="closeMobile"
     >
       <VIcon
-        :size="20"
+        :size="18"
         icon="lucide:x"
       />
     </button>

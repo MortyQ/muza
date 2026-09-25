@@ -60,7 +60,7 @@ describe("SidebarNavItem", () => {
       const { wrapper } = await render({ ...LEAF, icon: "lucide:package" });
       const icon = wrapper.findComponent(VIcon);
       expect(icon.props("icon")).toBe("lucide:package");
-      expect(icon.props("size")).toBe(20);
+      expect(icon.props("size")).toBe(18);
     });
 
     it("shows a badge", async () => {
