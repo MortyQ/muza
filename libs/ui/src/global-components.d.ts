@@ -15,6 +15,7 @@ declare module "vue" {
     VIcon: typeof import("./components/base/VIcon.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
     VThemeSwitcher: typeof import("./components/base/VThemeSwitcher.vue").default
+    VComposer: typeof import("./components/inputs/VComposer.vue").default
     VInput: typeof import("./components/inputs/VInput.vue").default
     VDatepicker: typeof import("./components/inputs/VDatepicker.vue").default
     VCheckbox: typeof import("./components/inputs/VCheckbox.vue").default

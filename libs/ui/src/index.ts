@@ -15,6 +15,7 @@ export {
 export { default as VIcon } from "./components/base/VIcon.vue";
 export { default as VTag, type TagVariant, type TagColor, type TagSize } from "./components/base/VTag.vue";
 export { default as VThemeSwitcher, type ThemeOption } from "./components/base/VThemeSwitcher.vue";
+export { default as VComposer, type VComposerStatus } from "./components/inputs/VComposer.vue";
 export { default as VInput } from "./components/inputs/VInput.vue";
 export { default as DragNDrop } from "./components/inputs/DragNDrop.vue";
 export { default as VFileUpload } from "./components/inputs/VFileUpload.vue";

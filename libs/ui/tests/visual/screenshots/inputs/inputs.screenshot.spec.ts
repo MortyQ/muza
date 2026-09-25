@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import VCheckbox from "../../../../src/components/inputs/VCheckbox.vue";
+import VComposer from "../../../../src/components/inputs/VComposer.vue";
 import VInput from "../../../../src/components/inputs/VInput.vue";
 import VSegmentedControl from "../../../../src/components/inputs/VSegmentedControl.vue";
 import VSwitch from "../../../../src/components/inputs/VSwitch.vue";
@@ -156,6 +157,53 @@ describe.each(THEME_CASES)("input components — %s theme", (theme) => {
         width: 340,
       });
       await expect(frame).toMatchScreenshot(`vsegmentedcontrol-disabled-${theme}`);
+    });
+  });
+
+  describe("VComposer", () => {
+    // One width across all four, so a diff stays local to what actually moved
+    // between two states rather than to the box being reflowed.
+    const WIDTH = 520;
+
+    it("collapsed", async () => {
+      const frame = await stage(VComposer, {
+        theme,
+        props: { preview: "Buy box lost on 3 ASINs", openLabel: "Write" },
+        width: WIDTH,
+      });
+      await expect(frame).toMatchScreenshot(`vcomposer-collapsed-${theme}`);
+    });
+
+    it("open, with a value and the edited marker", async () => {
+      const frame = await stage(VComposer, {
+        theme,
+        props: {
+          open: true,
+          initialValue: "Original note",
+          modelValue: "Edited note",
+          helperText: "Visible to the brand",
+        },
+        width: WIDTH,
+      });
+      await expect(frame).toMatchScreenshot(`vcomposer-open-${theme}`);
+    });
+
+    it("sent", async () => {
+      const frame = await stage(VComposer, {
+        theme,
+        props: { status: "sent", preview: "Sent to the brand" },
+        width: WIDTH,
+      });
+      await expect(frame).toMatchScreenshot(`vcomposer-sent-${theme}`);
+    });
+
+    it("open and invalid", async () => {
+      const frame = await stage(VComposer, {
+        theme,
+        props: { open: true, modelValue: "Hi", error: "Note is too short" },
+        width: WIDTH,
+      });
+      await expect(frame).toMatchScreenshot(`vcomposer-error-${theme}`);
     });
   });
 
