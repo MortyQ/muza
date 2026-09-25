@@ -42,12 +42,12 @@ jobs:
           # No dev-server proxy on Pages, so the app calls the backend directly.
           # Set it under Settings → Secrets and variables → Actions → Variables.
           VITE_API_URL: ${{ vars.VITE_API_URL }}
-          # The dedicated demo account behind "Log in as test user". Secrets keep
-          # it out of the repo and the logs, but every `VITE_` value is inlined
-          # into the public bundle — so this must only ever be an account with
-          # nothing worth protecting. Unset, the button does not render.
-          VITE_DEMO_EMAIL: ${{ secrets.VITE_DEMO_EMAIL }}
-          VITE_DEMO_PASSWORD: ${{ secrets.VITE_DEMO_PASSWORD }}
+          # The dedicated demo account behind "Log in as test user", from the
+          # repository variables. Every `VITE_` value is inlined into the public
+          # bundle anyway, so this must only ever be an account with nothing
+          # worth protecting. Unset, the button does not render.
+          VITE_DEMO_EMAIL: ${{ vars.VITE_DEMO_EMAIL }}
+          VITE_DEMO_PASSWORD: ${{ vars.VITE_DEMO_PASSWORD }}
 
       # Pages has no rewrites: a deep link or a refresh on /muza/settings would
       # 404. Serving the app as the 404 page lets the router take the path over.
