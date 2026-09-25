@@ -158,7 +158,10 @@ for sizes exclusively.
 6. **Virtualization.** `useVirtualTable(scrollContainerRef, displayData, {
    estimateSize: rowHeight, overscan: 2, measureElement: false })`.
    `measureElement` is off on purpose: fixed row heights are dramatically
-   cheaper, at the cost of a slightly inaccurate scrollbar once rows expand.
+   cheaper. That makes the number a contract, so it is also what the browser
+   draws — VTable hands `rowHeight` (default `DEFAULT_ROW_HEIGHT`) to CSS as
+   `--v-table-row-h`, and a virtual row's cells stand at exactly that height.
+   Content taller than the row overflows instead of growing it.
 7. **Cells.** `getCellMetadata(row, column, colIndex, rowIndex)` computes the
    formatted value, class, title, indent and expandability in one pass, cached
    in a `WeakMap<row, Map<cacheKey, CellMetadata>>` and provided down as

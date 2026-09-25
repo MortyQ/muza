@@ -37,6 +37,7 @@ import { TABLE_PAGE_KEY } from "./composables/useTablePage";
 import { useTableSelection } from "./composables/useTableSelection";
 import { useTableSort } from "./composables/useTableSort";
 import { useVirtualTable } from "./composables/useVirtualTable";
+import { DEFAULT_ROW_HEIGHT } from "./constants";
 import type {
   Column,
   ExpandableRow,
@@ -50,7 +51,7 @@ import type { TableProps, TableEmits } from "./types/props";
 const {
   loading = false,
   virtualized = true,
-  rowHeight = 50,
+  rowHeight = DEFAULT_ROW_HEIGHT,
   expandMode = "auto",
   sort = { type: "server", multiple: true },
   toolbar,
@@ -457,6 +458,7 @@ const gridStyles = computed(() => {
     display: "grid",
     gridTemplateColumns: gridColumnsTemplate,
     gridAutoRows: "auto", // All rows auto-sized (headers get height from CSS)
+    "--v-table-row-h": `${rowHeight}px`,
   };
 });
 
@@ -637,15 +639,6 @@ const rowsToRender = computed(() => {
     };
   });
 });
-
-// Styles for virtualized rows
-const getRowStyles = (item: { isVirtual: boolean }) => {
-  if (!item.isVirtual) return {};
-  return {
-    height: `${rowHeight}px`,
-    minHeight: `${rowHeight}px`,
-  };
-};
 
 const getRowClasses = (row: TData & FlattenedRow, index: number): string => {
   if (!rowClassName) return "";
@@ -1024,8 +1017,10 @@ onUnmounted(() => {
             <TableRow
               v-for="item in rowsToRender"
               :key="item.key"
-              :class="{ 'v-table-row-wrapper--pinned': isRowPinned(item.row.id) }"
-              :style="getRowStyles(item)"
+              :class="{
+                'v-table-row-wrapper--pinned': isRowPinned(item.row.id),
+                'v-table-row-wrapper--virtual': item.isVirtual,
+              }"
               @click="onRowClick(item.row)"
             >
               <!-- Checkbox column (separate) -->

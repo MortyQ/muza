@@ -10,6 +10,7 @@ import {
 
 import { useVirtualizer } from "@tanstack/vue-virtual";
 
+import { DEFAULT_ROW_HEIGHT } from "../constants";
 import type { VirtualTableOptions } from "../types";
 
 export function useVirtualTable(
@@ -18,7 +19,7 @@ export function useVirtualTable(
   options: VirtualTableOptions = {},
 ) {
   const {
-    estimateSize = 50,
+    estimateSize = DEFAULT_ROW_HEIGHT,
     overscan = 3,
     measureElement = false,
   } = options;

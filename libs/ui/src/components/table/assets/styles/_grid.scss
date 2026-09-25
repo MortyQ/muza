@@ -3,6 +3,9 @@
 @use './variables' as *;
 
 .v-table-grid {
+  // `--v-table-row-h` arrives inline from VTable, which owns the number.
+  --v-table-header-h: #{$table-header-height};
+
   display: grid;
   width: 100%;
   min-width: fit-content;

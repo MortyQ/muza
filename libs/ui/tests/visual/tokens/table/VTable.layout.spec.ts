@@ -1,8 +1,9 @@
-import { nextTick } from "vue";
+import { h, nextTick, type Slot } from "vue";
 
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
+import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import VTable from "../../../../src/components/table/VTable.vue";
 import { makeColumns, makeFixedColumns, makeRows } from "../../../setup/table";
 import { applyTheme } from "../../../setup/theme";
@@ -25,11 +26,15 @@ const frame = () => new Promise(resolve => requestAnimationFrame(() => resolve(n
  * after mount invalidates the rect TanStack Virtual measured on its first
  * frame, and the window silently collapses to zero rows.
  */
-async function table(props: Record<string, unknown> = {}): Promise<HTMLElement> {
+async function table(
+  props: Record<string, unknown> = {},
+  slots: Record<string, Slot> = {},
+): Promise<HTMLElement> {
   await applyTheme("light");
 
   const screen = render(VTable, {
     props: { columns: makeColumns(), data: makeRows(200), height: "400px", ...props },
+    slots,
   });
 
   await nextTick();
@@ -92,6 +97,43 @@ describe("VTable — virtualization", () => {
     await frame();
 
     expect(header.getBoundingClientRect().top).toBeCloseTo(topBefore, 0);
+  });
+});
+
+describe("VTable — row height", () => {
+  // The virtualizer is told a height and never measures, so a row the browser
+  // draws any taller or shorter than that number shifts every row below it.
+  const cellHeights = (el: HTMLElement) =>
+    Array.from(el.querySelectorAll(".v-table-row-wrapper > *"))
+      .map(cell => cell.getBoundingClientRect().height);
+
+  it("stands every virtual row at the default height", async () => {
+    const heights = cellHeights(await table());
+
+    expect(heights.length).toBeGreaterThan(0);
+    for (const height of heights) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("stands every virtual row at the rowHeight it is given", async () => {
+    const heights = cellHeights(await table({ rowHeight: 36 }));
+
+    expect(heights.length).toBeGreaterThan(0);
+    for (const height of heights) expect(height).toBeCloseTo(36, 0);
+  });
+
+  it("does not let a tall cell grow a virtual row", async () => {
+    const tall = () => h("div", { style: { height: "72px" } }, "tall");
+    const heights = cellHeights(await table({}, { "cell-name": tall }));
+
+    for (const height of heights) expect(height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+  });
+
+  it("scrolls exactly as far as the virtualizer counted", async () => {
+    const el = await table({ rowHeight: 36 });
+    const header = (el.querySelector(".v-table-header-cell") as HTMLElement)
+      .getBoundingClientRect().height;
+
+    expect(scroller(el).scrollHeight).toBeCloseTo(header + 200 * 36, 0);
   });
 });
 

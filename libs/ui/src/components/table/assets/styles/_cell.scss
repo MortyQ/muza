@@ -4,7 +4,7 @@
 
 .v-table-cell {
   padding: $table-cell-padding-y $table-cell-padding-x;
-  min-height: 50px;
+  min-height: var(--v-table-row-h);
   border-bottom: 1px solid var(--ui-border);
   border-right: 1px solid color-mix(in oklch, var(--ui-border) 70%, transparent);
   color: var(--ui-foreground);
