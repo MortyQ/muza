@@ -253,22 +253,23 @@
 }
 
 .v-card__title {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: var(--ui-text-lg);
+  font-weight: var(--ui-weight-strong);
   color: var(--ui-foreground);
-  line-height: 1.25;
-  margin: 0 0 0.25rem 0;
+  line-height: var(--ui-leading-lg);
+  margin: 0 0 var(--ui-space-2xs) 0;
 }
 
 .v-card__subtitle {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: var(--ui-text-sm);
+  font-weight: var(--ui-weight-regular);
+  line-height: var(--ui-leading-sm);
   color: var(--ui-foreground-secondary);
   margin: 0;
 }
 
 .v-card__description {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
   line-height: 1.625;
   margin-top: 0.5rem;

@@ -167,6 +167,19 @@
     --type-xl: 1.125rem;
     --type-xl--line-height: 1.5rem;
 
+    /* ─── Weight scale (theme-independent) ────────────────────
+         regular 450  the control chrome and body copy
+         medium  500  labels, table headers, the active tab
+         strong  600  headings and figures
+
+       Hierarchy is one step, not three: a heading is `strong` over `regular`
+       text, and size does the rest. 400, 550 and 700 are what the components
+       are moving off. Not mapped onto Tailwind's `font-*` — remapping
+       `font-medium` would quietly reweight every app that uses it. */
+    --weight-regular: 450;
+    --weight-medium:  500;
+    --weight-strong:  600;
+
     /* ─── Control metrics (theme-independent) ─────────────────
        The chrome as three numbers. Every control that can be stood next to
        another one in a toolbar row — button, field, select, segmented control,

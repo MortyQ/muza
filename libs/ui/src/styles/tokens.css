@@ -159,6 +159,13 @@
     --ui-leading-lg:   var(--type-lg--line-height, 1.375rem);
     --ui-leading-xl:   var(--type-xl--line-height, 1.5rem);
 
+    /* Three weights — see theme.css. A heading is `strong` over `regular`
+       text; a literal font-weight under styles/components/ is the same defect
+       a literal font-size is. */
+    --ui-weight-regular: var(--weight-regular, 450);
+    --ui-weight-medium:  var(--weight-medium, 500);
+    --ui-weight-strong:  var(--weight-strong, 600);
+
     /* ╔══════════════════════════════════════════════════════════╗
        ║  CONTROL METRICS                                         ║
        ╚══════════════════════════════════════════════════════════╝ */
