@@ -4,30 +4,12 @@ import { computed } from "vue";
 import VIcon from "./VIcon.vue";
 
 export type TagVariant = "solid" | "soft" | "outline" | "ghost";
-export type TagColor = "primary" | "success" | "warning" | "error" | "info" | "neutral" | "gray";
+// "error" and "gray" are kept as aliases of "danger" and "neutral" so existing
+// call sites keep working; new code uses the status names.
+export type TagColor = "primary" | "success" | "warning" | "danger" | "info" | "neutral" | "error" | "gray";
 export type TagSize = "xs" | "sm" | "md" | "lg";
 
-interface Props {
-  /** Text content of the tag */
-  label?: string
-  /** Visual variant */
-  variant?: TagVariant
-  /** Color scheme */
-  color?: TagColor
-  /** Size variant */
-  size?: TagSize
-  /** Icon to display (lucide format) */
-  icon?: string
-  /** Which side the icon sits on */
-  iconPosition?: "left" | "right"
-  /** Make tag rounded/pill shaped */
-  rounded?: boolean
-  /**
-   * Name of a CSS custom property to tone the tag with, e.g. "--ui-info".
-   * Takes precedence over `color`, for palettes outside the TagColor set.
-   */
-  customColor?: string
-}
+type TagTone = Exclude<TagColor, "error" | "gray"> | "custom";
 
 const {
   label = "",
@@ -38,28 +20,60 @@ const {
   iconPosition = "left",
   rounded = false,
   customColor = undefined,
-} = defineProps<Props>();
+} = defineProps<{
+  label?: string
+  variant?: TagVariant
+  color?: TagColor
+  size?: TagSize
+  /** Iconify name, e.g. "lucide:star" */
+  icon?: string
+  iconPosition?: "left" | "right"
+  /** Pill shape instead of the default small radius */
+  rounded?: boolean
+  /**
+   * Name of a CSS custom property to tone the tag with, e.g. "--ui-info".
+   * Takes precedence over `color`, for palettes outside the TagColor set.
+   */
+  customColor?: string
+}>();
 
-const iconSize = computed(() => ({ xs: 12, sm: 14, md: 16, lg: 18 }[size]));
+const TONES = {
+  primary: "primary",
+  success: "success",
+  warning: "warning",
+  danger: "danger",
+  info: "info",
+  neutral: "neutral",
+  error: "danger",
+  gray: "neutral",
+} as const satisfies Record<TagColor, TagTone>;
 
-const sizeClass = computed(() => `vtag--${size}`);
+const ICON_SIZES = { xs: 10, sm: 12, md: 12, lg: 14 } as const satisfies Record<TagSize, number>;
 
-// customColor swaps the whole variant/colour pair for the custom-* rules, which
-// read the tone from --_tag-color rather than a fixed token.
-const variantColorClass = computed(() =>
-  customColor ? `vtag--custom-${variant}` : `vtag--${variant}-${color}`,
-);
+const tone = computed<TagTone>(() => {
+  if (customColor) return "custom";
+  return TONES[color];
+});
+
+const iconSize = computed(() => ICON_SIZES[size]);
+
+const modifiers = computed(() => [
+  `vtag--${size}`,
+  `vtag--${variant}`,
+  `vtag--tone-${tone.value}`,
+  rounded ? "vtag--rounded" : "vtag--square",
+]);
 
 const customStyle = computed(() =>
-  customColor ? { "--_tag-color": `var(${customColor})` } : undefined,
+  customColor ? { "--v-tag-custom": `var(${customColor})` } : undefined,
 );
-
-const roundedClass = computed(() => rounded ? "vtag--rounded" : "vtag--square");
 </script>
 
 <template>
   <span
-    :class="[sizeClass, variantColorClass, roundedClass]"
+    :class="modifiers"
+    :data-tone="tone"
+    :data-variant="variant"
     :style="customStyle"
     class="vtag"
   >
@@ -83,6 +97,6 @@ const roundedClass = computed(() => rounded ? "vtag--rounded" : "vtag--square");
   </span>
 </template>
 
-<style scoped>
-@import "../../styles/components/base/vtag.scss";
+<style lang="scss" scoped>
+@use "../../styles/components/base/vtag.scss";
 </style>

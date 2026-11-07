@@ -401,7 +401,7 @@ defineExpose({ focusRow });
             :text="chipErrors[line] ?? ''"
           >
             <VTag
-              :color="chipErrors[line] ? 'error' : 'primary'"
+              :color="chipErrors[line] ? 'danger' : 'primary'"
               :label="line"
               class="v-list-editor__chip"
               size="md"
