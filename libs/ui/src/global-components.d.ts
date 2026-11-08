@@ -13,6 +13,7 @@ declare module "vue" {
     VButtonGroup: typeof import("./components/base/VButtonGroup.vue").default
     VDate: typeof import("./components/base/VDate.vue").default
     VIcon: typeof import("./components/base/VIcon.vue").default
+    VStat: typeof import("./components/base/VStat.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
     VThemeSwitcher: typeof import("./components/base/VThemeSwitcher.vue").default
     VComposer: typeof import("./components/inputs/VComposer.vue").default

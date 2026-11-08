@@ -13,6 +13,7 @@ export {
   default as VChip, type ChipVariant, type ChipColor, type ChipSize,
 } from "./components/base/VChip.vue";
 export { default as VIcon } from "./components/base/VIcon.vue";
+export { default as VStat } from "./components/base/VStat.vue";
 export { default as VTag, type TagVariant, type TagColor, type TagSize } from "./components/base/VTag.vue";
 export { default as VThemeSwitcher, type ThemeOption } from "./components/base/VThemeSwitcher.vue";
 export { default as VComposer, type VComposerStatus } from "./components/inputs/VComposer.vue";
