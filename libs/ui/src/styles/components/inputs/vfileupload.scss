@@ -106,7 +106,7 @@
   }
 
   &__action {
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-primary);
     transition: color 0.2s ease;
 
@@ -177,7 +177,7 @@
   &__item-name {
     overflow: hidden;
     font-size: var(--ui-text-base);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
     text-overflow: ellipsis;
     white-space: nowrap;

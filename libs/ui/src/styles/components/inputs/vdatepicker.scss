@@ -70,7 +70,7 @@
   overflow: hidden;
   /* Same face as the raised label, or the notch closes over its last glyph. */
   font-size: var(--ui-text-2xs);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   line-height: var(--ui-leading-2xs);
   white-space: nowrap;
   transition: max-width 0.2s ease, padding 0.2s ease;
@@ -109,7 +109,7 @@
     top: 0;
     left: var(--ui-control-px);
     font-size: var(--ui-text-2xs);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     line-height: var(--ui-leading-2xs);
     color: var(--ui-primary);
   }
@@ -145,7 +145,7 @@
 .form-error {
   font-size: var(--ui-text-sm);
   color: var(--ui-danger);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   margin-top: var(--ui-space-2xs);
 }
 
@@ -424,7 +424,7 @@
   color: var(--ui-foreground);
   font-family: inherit;
   /* VInput's type: 13px at 450, a hair tighter. */
-  font-weight: 450;
+  font-weight: var(--ui-weight-regular);
   letter-spacing: -0.005em;
   transition: color 0.2s ease-out;
 }

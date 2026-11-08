@@ -50,7 +50,7 @@
   height: var(--ui-control-h);
   padding: 0 var(--ui-control-px);
   font-size: var(--ui-text-base);
-  font-weight: 450;
+  font-weight: var(--ui-weight-regular);
   letter-spacing: -0.005em;
   position: relative;
   z-index: 10;
@@ -252,7 +252,7 @@
     font-size: var(--ui-text-2xs);
     line-height: var(--ui-leading-2xs);
     transform: translateY(-50%);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-primary);
   }
 
@@ -318,7 +318,7 @@
   line-height: var(--ui-leading-2xs);
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   white-space: nowrap;
   overflow: hidden;
   transition: all 0.2s ease;
@@ -340,7 +340,7 @@
    ============================================ */
 .v-input-helper-text {
   margin-left: 0.75rem;
-  font-size: 0.75rem;
+  font-size: var(--ui-text-sm);
   line-height: 1rem;
   color: var(--ui-foreground-secondary);
 }
@@ -350,9 +350,9 @@
    ============================================ */
 .v-input-error-message {
   margin-left: 0.75rem;
-  font-size: 0.75rem;
+  font-size: var(--ui-text-sm);
   line-height: 1rem;
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   color: var(--ui-danger);
 }
 
@@ -402,7 +402,7 @@
     top: 0;
     left: 0.75rem;
     transform: translateY(-50%) scale(0.75);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-primary);
 
     &.v-label--error {

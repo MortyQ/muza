@@ -117,7 +117,7 @@
   gap: var(--ui-control-gap);
   font-size: var(--ui-text-base);
   border-radius: calc(var(--ui-radius-lg) - 2px);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   font-family: inherit;
   white-space: nowrap;
   cursor: pointer;
