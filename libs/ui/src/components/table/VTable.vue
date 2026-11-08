@@ -7,6 +7,7 @@ import {
 import type { VirtualItem } from "@tanstack/vue-virtual";
 
 import VButton from "../base/VButton.vue";
+import VSkeleton from "../feedback/VSkeleton.vue";
 import VFloating from "../overlay/VFloating.vue";
 
 import TableBackdrop from "./components/TableBackdrop.vue";
@@ -37,7 +38,7 @@ import { TABLE_PAGE_KEY } from "./composables/useTablePage";
 import { useTableSelection } from "./composables/useTableSelection";
 import { useTableSort } from "./composables/useTableSort";
 import { useVirtualTable } from "./composables/useVirtualTable";
-import { DEFAULT_ROW_HEIGHT } from "./constants";
+import { DEFAULT_ROW_HEIGHT, SKELETON_ROW_COUNT, SKELETON_WIDTHS } from "./constants";
 import type {
   Column,
   ExpandableRow,
@@ -602,6 +603,15 @@ provide("tableHighlight", {
   toggleColumn: highlightApi.toggleColumn,
 });
 
+// The first load has nothing to keep on screen, so it draws rows at their own
+// geometry instead of a spinner over an empty grid. A refetch with rows already
+// showing keeps them and dims them under the overlay.
+const isFirstLoad = computed<boolean>(() => loading && displayData.value.length === 0);
+
+// Deterministic, so a re-render does not reshuffle the bars.
+const skeletonWidth = (row: number, col: number): string =>
+  SKELETON_WIDTHS[(row * 3 + col) % SKELETON_WIDTHS.length];
+
 // Computed for final rows (considering virtualization)
 const rowsToRender = computed(() => {
   // If virtualization is disabled, render all data
@@ -923,7 +933,7 @@ onUnmounted(() => {
       <div class="v-table-container-wrapper">
         <!-- Empty State (positioned over scroll container) -->
         <TableEmptyState
-          v-if="displayData.length === 0"
+          v-if="displayData.length === 0 && !loading"
           description="Try adjusting your filters or search criteria"
           icon="lucide:inbox"
           title="No data to display"
@@ -932,11 +942,18 @@ onUnmounted(() => {
         </TableEmptyState>
 
         <!-- Loading Overlay -->
-        <TableLoadingOverlay :loading />
+        <TableLoadingOverlay :loading="loading && !isFirstLoad" />
+
+        <span
+          v-if="isFirstLoad"
+          class="v-table-sr-status"
+          role="status"
+        >Loading</span>
 
         <!-- Scroll container -->
         <div
           ref="scrollContainerRef"
+          :aria-busy="loading"
           :class="{ 'v-table-scroll-container--loading': loading }"
           :style="{
             height: isFullscreen ? fullscreenContentHeight : tableHeight,
@@ -1005,6 +1022,33 @@ onUnmounted(() => {
                 />
               </template>
             </component>
+
+            <template v-if="isFirstLoad">
+              <TableRow
+                v-for="n in SKELETON_ROW_COUNT"
+                :key="`skeleton-${n}`"
+                class="v-table-row-wrapper--skeleton"
+              >
+                <div
+                  v-if="selection.isEnabled.value"
+                  class="v-table-checkbox-cell"
+                />
+                <TableCell
+                  v-for="(column, colIndex) in columnsForData"
+                  :key="`skeleton-${n}-${column.key}`"
+                  :align="column.align"
+                  :class="getColumnClasses(column)"
+                  :style="getFixedStyles(column)"
+                >
+                  <span
+                    :class="`v-table-skeleton-cell--${column.align ?? 'left'}`"
+                    class="v-table-skeleton-cell"
+                  >
+                    <VSkeleton :width="skeletonWidth(n, colIndex)" />
+                  </span>
+                </TableCell>
+              </TableRow>
+            </template>
 
             <!-- Virtualization: spacer before -->
             <div

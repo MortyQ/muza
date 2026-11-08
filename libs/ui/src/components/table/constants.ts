@@ -9,3 +9,14 @@
  * browser contract fails if the control scale moves away from this number.
  */
 export const DEFAULT_ROW_HEIGHT = 40;
+
+/**
+ * Rows drawn while the first load has nothing to show. Twelve rows at the
+ * default 40px fill most of the default 600px body, so the first paint is the
+ * table's own shape rather than a spinner over an empty grid. A shorter table
+ * clips the rest, which costs nothing.
+ */
+export const SKELETON_ROW_COUNT = 12;
+
+/** Bar widths cycled across skeleton cells, so the rows do not read as stripes. */
+export const SKELETON_WIDTHS = ["72%", "48%", "60%", "36%", "84%", "52%"] as const;

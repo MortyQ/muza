@@ -48,3 +48,30 @@
 .fade-leave-to {
   opacity: 0;
 }
+
+// ============================================
+// First-load skeleton rows
+// ============================================
+
+// Same height as a virtual row, so the real rows land where the bars were.
+.v-table-row-wrapper--skeleton > * {
+  height: var(--v-table-row-h);
+}
+
+.v-table-skeleton-cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  &--center { justify-content: center; }
+  &--right  { justify-content: flex-end; }
+}
+
+.v-table-sr-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

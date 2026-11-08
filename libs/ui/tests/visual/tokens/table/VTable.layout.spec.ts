@@ -382,3 +382,49 @@ describe("VTable — grid geometry", () => {
     expect(total.getBoundingClientRect().bottom).toBeCloseTo(bottomBefore, 0);
   });
 });
+
+describe("VTable — first-load skeleton", () => {
+  const firstCell = (el: HTMLElement, wrapper: string) =>
+    el.querySelector(`${wrapper} .v-table-cell`) as HTMLElement;
+
+  it("stands every skeleton row at the row height", async () => {
+    const el = await table({ data: [], loading: true });
+    const cells = el.querySelectorAll(".v-table-row-wrapper--skeleton > .v-table-cell");
+    expect(cells.length).toBeGreaterThan(0);
+    for (const cell of cells) {
+      expect(cell.getBoundingClientRect().height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+    }
+  });
+
+  it("puts each bar in the body text's line box, centred in the row", async () => {
+    const el = await table({ data: [], loading: true });
+    const cell = firstCell(el, ".v-table-row-wrapper--skeleton");
+    const bar = cell.querySelector(".v-skeleton") as HTMLElement;
+    const cellRect = cell.getBoundingClientRect();
+    const barRect = bar.getBoundingClientRect();
+
+    expect(barRect.height).toBeCloseTo(parseFloat(tokenAsValue("height", "--ui-leading-base")), 0);
+    const cellMid = cellRect.top + cellRect.height / 2;
+    const barMid = barRect.top + barRect.height / 2;
+    expect(Math.abs(cellMid - barMid)).toBeLessThan(1.5);
+  });
+
+  it("lands the first real row where the first skeleton row was", async () => {
+    const screen = render(VTable, {
+      props: { columns: makeColumns(), data: [], loading: true, height: "400px" },
+    });
+    await nextTick();
+    await frame();
+    const el = screen.container as HTMLElement;
+    const before = firstCell(el, ".v-table-row-wrapper--skeleton").getBoundingClientRect().top;
+
+    await screen.rerender({ data: makeRows(20), loading: false });
+    await nextTick();
+    await frame();
+    await frame();
+    const after = firstCell(el, ".v-table-row-wrapper:not(.v-table-row-wrapper--skeleton)")
+      .getBoundingClientRect().top;
+
+    expect(after).toBeCloseTo(before, 0);
+  });
+});

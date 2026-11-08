@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import TablePagination from "../../../src/components/table/components/TablePagination.vue";
 import TableToolbar from "../../../src/components/table/components/TableToolbar.vue";
 import { TABLE_PAGE_KEY } from "../../../src/components/table/composables/useTablePage";
+import { SKELETON_ROW_COUNT } from "../../../src/components/table/constants";
 import type { Column } from "../../../src/components/table/types";
 import tableStorage from "../../../src/components/table/utils/storage";
 import VTable from "../../../src/components/table/VTable.vue";
@@ -191,13 +192,56 @@ describe("VTable", () => {
       expect(table().find(".v-table-loading-overlay").exists()).toBe(false);
     });
 
-    it("renders one while loading", () => {
+    it("renders one while refetching over rows already shown", () => {
       expect(table({ loading: true }).find(".v-table-loading-overlay").exists()).toBe(true);
     });
 
-    it("marks the scroll container as inert", () => {
-      expect(table({ loading: true }).find(".v-table-scroll-container").classes())
-        .toContain("v-table-scroll-container--loading");
+    it("marks the scroll container as inert and busy", () => {
+      const container = table({ loading: true }).find(".v-table-scroll-container");
+      expect(container.classes()).toContain("v-table-scroll-container--loading");
+      expect(container.attributes("aria-busy")).toBe("true");
+    });
+
+    it("draws no skeleton rows while rows are showing", () => {
+      expect(table({ loading: true }).find(".v-table-row-wrapper--skeleton").exists()).toBe(false);
+    });
+
+    describe("first load, nothing to show yet", () => {
+      const firstLoad = (props: Record<string, unknown> = {}) =>
+        table({ loading: true, data: [], ...props });
+
+      it("draws skeleton rows instead of the spinner overlay", () => {
+        const w = firstLoad();
+        expect(w.findAll(".v-table-row-wrapper--skeleton")).toHaveLength(SKELETON_ROW_COUNT);
+        expect(w.find(".v-table-loading-overlay").exists()).toBe(false);
+      });
+
+      it("gives each skeleton row one bar per data column", () => {
+        const row = firstLoad().find(".v-table-row-wrapper--skeleton");
+        expect(row.findAll(".v-skeleton")).toHaveLength(makeColumns().length);
+      });
+
+      it("keeps the selection column in place", () => {
+        const row = firstLoad({ multiSelect: { enabled: true } }).find(".v-table-row-wrapper--skeleton");
+        expect(row.find(".v-table-checkbox-cell").exists()).toBe(true);
+      });
+
+      it("does not claim there is no data while it is still loading", () => {
+        expect(firstLoad().find(".v-table-empty-state").exists()).toBe(false);
+      });
+
+      it("announces the load once", () => {
+        const status = firstLoad().findAll("[role='status']");
+        expect(status).toHaveLength(1);
+        expect(status[0].text()).toBe("Loading");
+      });
+
+      it("swaps to the empty state when the load finishes with nothing", async () => {
+        const w = firstLoad();
+        await w.setProps({ loading: false });
+        expect(w.find(".v-table-row-wrapper--skeleton").exists()).toBe(false);
+        expect(w.find(".v-table-empty-state").exists()).toBe(true);
+      });
     });
   });
 
