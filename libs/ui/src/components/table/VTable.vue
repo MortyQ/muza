@@ -49,6 +49,11 @@ import type {
 } from "./types/index";
 import type { TableProps, TableEmits } from "./types/props";
 
+// The root is a fragment (placeholder, backdrop, teleport), so a parent's
+// class and style need an explicit target: the wrapper, and the placeholder
+// that stands in for it while fullscreen.
+defineOptions({ inheritAttrs: false });
+
 const {
   loading = false,
   virtualized = true,
@@ -829,7 +834,8 @@ onUnmounted(() => {
   <div
     v-if="placeholderStyle"
     ref="placeholderRef"
-    :style="placeholderStyle"
+    :class="$attrs.class"
+    :style="[$attrs.style, placeholderStyle]"
     aria-hidden="true"
     class="v-table-fullscreen-placeholder"
   />
@@ -852,6 +858,7 @@ onUnmounted(() => {
       }"
       :style="isFullscreen ? { ...fullscreenPanelStyle, zIndex: fullscreenZIndex } : undefined"
       class="v-table-wrapper"
+      v-bind="$attrs"
     >
       <TableFullscreenToggle
         v-if="fullscreenEnabled"

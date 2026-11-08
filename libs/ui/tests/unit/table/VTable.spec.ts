@@ -567,6 +567,29 @@ describe("VTable", () => {
     });
   });
 
+  describe("attributes", () => {
+    // The root is a fragment (placeholder, backdrop, teleport), so without an
+    // explicit target Vue drops a parent's class and style with a warning.
+    it("lands a parent's class, style and data attributes on the wrapper", () => {
+      const w = table({}, { attrs: { class: "my-table", style: "margin-top: 8px", "data-test": "t" } });
+      const wrapper = w.find(".v-table-wrapper");
+
+      expect(wrapper.classes()).toContain("my-table");
+      expect(wrapper.attributes("style")).toContain("margin-top: 8px");
+      expect(wrapper.attributes("data-test")).toBe("t");
+    });
+
+    it("gives the fullscreen placeholder the parent's class too, so it holds the same slot", async () => {
+      const w = table(
+        { toolbar: { enabled: true, actions: { fullscreen: true } } },
+        { attrs: { class: "my-table" } },
+      );
+      await w.find(".v-table-fullscreen-toggle").trigger("click");
+
+      expect(w.find(".v-table-fullscreen-placeholder").classes()).toContain("my-table");
+    });
+  });
+
   describe("fixed columns", () => {
     it("sticks a pinned column and marks the shadow edge", () => {
       const w = table({ columns: makeColumns({ id: { fixed: "left" } }) });
