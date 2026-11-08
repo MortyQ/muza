@@ -1,0 +1,30 @@
+.v-empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-md);
+  padding: var(--ui-space-xl);
+
+  &--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  &--start {
+    align-items: flex-start;
+    text-align: start;
+  }
+
+  &__text {
+    margin: 0;
+    max-width: 32ch;
+    font-size: var(--ui-text-base);
+    font-weight: var(--ui-weight-regular);
+    line-height: var(--ui-leading-base);
+    color: var(--ui-foreground-muted);
+  }
+
+  &__action {
+    display: flex;
+    gap: var(--ui-space-md);
+  }
+}

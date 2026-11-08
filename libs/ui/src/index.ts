@@ -57,6 +57,7 @@ export { default as VMeter } from "./components/feedback/VMeter.vue";
 export {
   default as VSkeleton, type SkeletonShape, type SkeletonSize,
 } from "./components/feedback/VSkeleton.vue";
+export { default as VEmptyState } from "./components/feedback/VEmptyState.vue";
 export { default as VTable } from "./components/table/VTable.vue";
 
 // ── Table: standalone subcomponents ─────────────────────────────────────────
