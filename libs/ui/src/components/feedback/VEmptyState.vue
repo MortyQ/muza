@@ -8,7 +8,7 @@
  * ```vue
  * <VEmptyState text="No orders in this period">
  *   <template #action>
- *     <VButton variant="ghost" size="sm" @click="resetFilters">Reset filters</VButton>
+ *     <VButton variant="link" size="sm" @click="resetFilters">Reset filters</VButton>
  *   </template>
  * </VEmptyState>
  * ```
