@@ -152,6 +152,29 @@ describe("TableColumnPicker", () => {
       expect(w.findAll(".cp-type-group-label").length).toBeGreaterThan(0);
     });
 
+    it("gives each type one header, with types it does not know after the ones it does", async () => {
+      // An unknown type used to sort as -1 — ahead of everything, and in source
+      // order, so two of them interleaved into repeated headers.
+      const groups: ColumnPickerGroup[] = [{
+        key: "mixed",
+        label: "Mixed",
+        items: [
+          { key: "a", label: "A", icon: "url" },
+          { key: "b", label: "B", icon: "number" },
+          { key: "c", label: "C", icon: "email" },
+          { key: "d", label: "D", icon: "url" },
+          { key: "e", label: "E", icon: "text" },
+        ],
+      }];
+      const w = await picker({ groups, columns: [] });
+      await w.findAll(".cp-sort-btn")[0].trigger("click");
+      await groupHeader(w, 0).trigger("click");
+
+      expect(w.findAll(".cp-type-group-label").map(l => l.text()))
+        .toEqual(["Text", "Number", "Url", "Email"]);
+      expect(available(w)).toEqual(["E", "B", "A", "D", "C"]);
+    });
+
     it("shows how many of a group are selected", async () => {
       const w = await picker();
       expect(w.findAll(".cp-group-badge")[0].text()).toContain("3");

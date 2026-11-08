@@ -143,6 +143,15 @@ describe("TableToolbar", () => {
       expect(toolbar({}, { slots }).find(".setup").exists()).toBe(false);
     });
 
+    it("renders the slot for a column picker on its own", () => {
+      // The picker shares the column-setup slot, so gating that slot on
+      // columnSetup alone hid a picker configured without it.
+      const slots = { "column-setup": "<div class=\"setup\" />" };
+      const picker = { groups: [] };
+      expect(toolbar({ actions: { columnPicker: picker } }, { slots })
+        .find(".setup").exists()).toBe(true);
+    });
+
     it("renders an actions slot", () => {
       expect(toolbar({}, { slots: { actions: "<b class=\"own\" />" } })
         .find(".own").exists()).toBe(true);

@@ -107,11 +107,14 @@ function sortedGroupItems(group: ColumnPickerGroup): ColumnPickerItem[] {
       return 0;
     });
   }
-  return items.sort((a, b) => {
-    const ai = TYPE_ORDER.indexOf(a.icon ?? "");
-    const bi = TYPE_ORDER.indexOf(b.icon ?? "");
-    return ai - bi;
-  });
+  // Known types first in their fixed order; unknown ones after them, in order
+  // of first appearance, so every type stays contiguous under one header.
+  const rank = new Map(TYPE_ORDER.map((t, i) => [t, i]));
+  for (const item of items) {
+    const t = item.icon ?? "";
+    if (!rank.has(t)) rank.set(t, rank.size);
+  }
+  return items.sort((a, b) => (rank.get(a.icon ?? "") ?? 0) - (rank.get(b.icon ?? "") ?? 0));
 }
 
 function displayedItems(group: ColumnPickerGroup): ColumnPickerItem[] {
@@ -151,6 +154,9 @@ const TYPE_LABELS: Record<string, string> = {
   date: "Date",
   sys: "File",
 };
+
+const typeLabel = (key: string): string =>
+  TYPE_LABELS[key] ?? (key ? key.charAt(0).toUpperCase() + key.slice(1) : "Other");
 
 function itemsWithHeaders(items: ColumnPickerItem[]): DisplayEntry[] {
   if (leftSortMode.value !== "by-type") {
@@ -611,7 +617,7 @@ function typeStyle(icon?: string): Record<string, string> {
                       class="cp-type-group-dot"
                     />
                     <span class="cp-type-group-label">
-                      {{ TYPE_LABELS[entry.typeKey] ?? entry.typeKey }}
+                      {{ typeLabel(entry.typeKey) }}
                     </span>
                   </div>
 

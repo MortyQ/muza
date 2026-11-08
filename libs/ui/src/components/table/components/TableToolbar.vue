@@ -216,7 +216,7 @@ const handleSingleExport = () => {
 
       <!-- Column Setup slot -->
       <slot
-        v-if="config?.actions?.columnSetup"
+        v-if="config?.actions?.columnSetup || config?.actions?.columnPicker"
         name="column-setup"
       />
     </div>
