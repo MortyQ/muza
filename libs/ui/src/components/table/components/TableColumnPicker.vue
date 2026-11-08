@@ -4,8 +4,14 @@ import { computed, onMounted, ref, watch } from "vue";
 import VButton from "../../base/VButton.vue";
 import VIcon from "../../base/VIcon.vue";
 import VInput from "../../inputs/VInput.vue";
+import { COLUMN_PICKER_TYPES } from "../constants";
 import type { Column } from "../types";
-import type { ColumnPickerGroup, ColumnPickerItem } from "../types/toolbar";
+import type {
+  ColumnPickerGroup,
+  ColumnPickerItem,
+  ColumnPickerType,
+  ColumnPickerTypeColor,
+} from "../types/toolbar";
 import { readColumnState, writeColumnState, type SavedColumnState } from "../utils/columnState";
 import tableStorage from "../utils/storage";
 
@@ -29,6 +35,7 @@ const {
   loading = false,
   storageKey = undefined,
   storageType = undefined,
+  types = undefined,
 } = defineProps<{
   groups: ColumnPickerGroup[]
   columns: Column[]
@@ -37,6 +44,7 @@ const {
   loading?: boolean
   storageKey?: string
   storageType?: "indexedDB" | "localStorage" | "sessionStorage"
+  types?: ReadonlyArray<ColumnPickerType>
 }>();
 
 const emit = defineEmits<Emits>();
@@ -88,7 +96,43 @@ watch(leftSearch, (val) => {
 
 // ── Left panel sort + section helpers (sort/display, no draft deps) ──
 const SECTION_INITIAL_LIMIT = 6;
-const TYPE_ORDER: string[] = ["text", "number", "boolean", "date", "sys"];
+
+// ── Type registry: built-ins merged with the consumer's `types` ──
+// A key that already exists is replaced in place, keeping its position; a new
+// key is appended.
+const typeRegistry = computed<ColumnPickerType[]>(() => {
+  const merged = COLUMN_PICKER_TYPES.map(t => ({ ...t }));
+  for (const own of types ?? []) {
+    const index = merged.findIndex(t => t.key === own.key);
+    if (index === -1) merged.push({ ...own });
+    else merged[index] = { ...own };
+  }
+  return merged;
+});
+
+const typeByKey = computed(() => new Map(typeRegistry.value.map(t => [t.key, t])));
+
+const TONE_TOKENS = {
+  primary: "--ui-primary",
+  success: "--ui-success",
+  warning: "--ui-warning",
+  danger: "--ui-danger",
+  info: "--ui-info",
+  muted: "--ui-foreground-secondary",
+} as const satisfies Record<ColumnPickerTypeColor, string>;
+
+const typeLabel = (key: string): string =>
+  typeByKey.value.get(key)?.label
+  ?? (key ? key.charAt(0).toUpperCase() + key.slice(1) : "Other");
+
+const typeIcon = (key: string): string =>
+  typeByKey.value.get(key)?.icon ?? "lucide:help-circle";
+
+// Sets --cp-type-color so the row's ::before, the dot and .cp-type-icon share it.
+function typeStyle(key?: string): Record<string, string> {
+  const tone = (key && typeByKey.value.get(key)?.color) || "muted";
+  return { "--cp-type-color": `var(${TONE_TOKENS[tone]})` };
+}
 
 function toggleShowAll(groupKey: string) {
   const s = new Set(expandedFull.value);
@@ -107,9 +151,9 @@ function sortedGroupItems(group: ColumnPickerGroup): ColumnPickerItem[] {
       return 0;
     });
   }
-  // Known types first in their fixed order; unknown ones after them, in order
-  // of first appearance, so every type stays contiguous under one header.
-  const rank = new Map(TYPE_ORDER.map((t, i) => [t, i]));
+  // Registered types first in registry order; unknown ones after them, in
+  // order of first appearance, so every type stays contiguous under one header.
+  const rank = new Map(typeRegistry.value.map((t, i) => [t.key, i]));
   for (const item of items) {
     const t = item.icon ?? "";
     if (!rank.has(t)) rank.set(t, rank.size);
@@ -146,17 +190,6 @@ interface DisplayEntry {
   typeKey?: string
   item?: ColumnPickerItem
 }
-
-const TYPE_LABELS: Record<string, string> = {
-  text: "Text",
-  number: "Number",
-  boolean: "Boolean",
-  date: "Date",
-  sys: "File",
-};
-
-const typeLabel = (key: string): string =>
-  TYPE_LABELS[key] ?? (key ? key.charAt(0).toUpperCase() + key.slice(1) : "Other");
 
 function itemsWithHeaders(items: ColumnPickerItem[]): DisplayEntry[] {
   if (leftSortMode.value !== "by-type") {
@@ -445,40 +478,6 @@ const handleCancel = () => {
   draftItems.value = JSON.parse(JSON.stringify(originalDraft.value));
   emit("close");
 };
-
-// ── Type indicator config ─────────────────────────────────────────
-interface TypeConfig {
-  colorVar: string // Design-system colour token, e.g. '--ui-primary'
-  lucideIcon: string // Iconify icon id
-}
-
-const TYPE_CONFIG: Record<string, TypeConfig> = {
-  text: { colorVar: "--ui-foreground-secondary", lucideIcon: "lucide:align-left" },
-  "multi-text": { colorVar: "--ui-foreground-secondary", lucideIcon: "lucide:align-justify" },
-  number: { colorVar: "--ui-primary", lucideIcon: "lucide:hash" },
-  decimal: { colorVar: "--ui-primary", lucideIcon: "lucide:percent" },
-  boolean: { colorVar: "--ui-success", lucideIcon: "lucide:toggle-right" },
-  date: { colorVar: "--ui-warning", lucideIcon: "lucide:calendar" },
-  datetime: { colorVar: "--ui-warning", lucideIcon: "lucide:calendar-clock" },
-  color: { colorVar: "--ui-danger", lucideIcon: "lucide:palette" },
-  json: { colorVar: "--ui-danger", lucideIcon: "lucide:braces" },
-  url: { colorVar: "--ui-foreground-secondary", lucideIcon: "lucide:link" },
-  link: { colorVar: "--ui-foreground-secondary", lucideIcon: "lucide:external-link" },
-  select: { colorVar: "--ui-primary", lucideIcon: "lucide:list" },
-  "multi-select": { colorVar: "--ui-primary", lucideIcon: "lucide:list-checks" },
-  asset: { colorVar: "--ui-info", lucideIcon: "lucide:image" },
-  "multi-asset": { colorVar: "--ui-info", lucideIcon: "lucide:images" },
-  sys: { colorVar: "--ui-info", lucideIcon: "lucide:file" },
-};
-
-// Sets --cp-type-color on the element so both ::before and .cp-type-icon can use it:
-//   var(--cp-type-color)                                         → solid colour
-//   color-mix(in oklch, var(--cp-type-color) 12%, transparent)   → alpha background
-function typeStyle(icon?: string): Record<string, string> {
-  const cfg = icon ? TYPE_CONFIG[icon] : undefined;
-  if (!cfg) return {};
-  return { "--cp-type-color": `var(${cfg.colorVar})` };
-}
 </script>
 
 <template>
@@ -610,10 +609,7 @@ function typeStyle(icon?: string): Record<string, string> {
                     class="cp-type-group-header"
                   >
                     <div
-                      :style="{
-                        background: `var(${TYPE_CONFIG[entry.typeKey]?.colorVar
-                          ?? '--ui-foreground-secondary'})`,
-                      }"
+                      :style="typeStyle(entry.typeKey)"
                       class="cp-type-group-dot"
                     />
                     <span class="cp-type-group-label">
@@ -634,7 +630,7 @@ function typeStyle(icon?: string): Record<string, string> {
                       class="cp-type-icon"
                     >
                       <VIcon
-                        :icon="TYPE_CONFIG[entry.item.icon]?.lucideIcon ?? 'lucide:help-circle'"
+                        :icon="typeIcon(entry.item.icon)"
                         :size="9"
                       />
                     </div>
@@ -737,7 +733,7 @@ function typeStyle(icon?: string): Record<string, string> {
               class="cp-type-icon"
             >
               <VIcon
-                :icon="TYPE_CONFIG[item.icon]?.lucideIcon ?? 'lucide:help-circle'"
+                :icon="typeIcon(item.icon)"
                 :size="9"
               />
             </div>

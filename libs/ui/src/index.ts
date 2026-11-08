@@ -93,6 +93,7 @@ export {
 } from "./components/table/composables/useTableFormatters";
 export { useLinkedTables } from "./components/table/composables/useLinkedTables";
 export { useTablePage, TABLE_PAGE_KEY } from "./components/table/composables/useTablePage";
+export { COLUMN_PICKER_TYPES } from "./components/table/constants";
 
 // ── Table: storage ──────────────────────────────────────────────────────────
 export {
@@ -129,6 +130,8 @@ export type {
   ExportFormat,
   ColumnPickerItem,
   ColumnPickerGroup,
+  ColumnPickerType,
+  ColumnPickerTypeColor,
   ScrollSyncController,
   LinkedTableBindings,
   LinkedTablesOptions,

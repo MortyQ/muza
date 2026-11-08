@@ -939,6 +939,7 @@ onUnmounted(() => {
                   :original-columns="columns"
                   :storage-key="columnPickerConfig.key"
                   :storage-type="columnPickerConfig.type"
+                  :types="columnPickerConfig.types"
                   @close="handleColumnPickerClose"
                   @update:visible-columns="handleVisibleColumnsUpdate"
                 />

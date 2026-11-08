@@ -186,6 +186,13 @@ export interface ToolbarConfig {
       /** All available column groups shown in the left panel */
       groups: ColumnPickerGroup[]
 
+      /**
+             * Extra or replacement types for "group by type" mode. A key that already exists in
+             * COLUMN_PICKER_TYPES is replaced in place, keeping its position; a new key is
+             * appended after the built-ins.
+             */
+      types?: ColumnPickerType[]
+
       /** Shows a skeleton in the left panel while groups are fetching */
       loading?: boolean
 
@@ -240,4 +247,18 @@ export interface ExportFormat {
      * Loading state for this format
      */
   loading?: boolean
+}
+
+/** Semantic tone of a column picker type; resolves to the matching `--ui-*` token. */
+export type ColumnPickerTypeColor = "primary" | "success" | "warning" | "danger" | "info" | "muted";
+
+export interface ColumnPickerType {
+  /** Matches `ColumnPickerItem.icon`: the type discriminator, not an icon id. */
+  key: string
+  /** Header text in "group by type" mode. */
+  label: string
+  /** Iconify id for the type chip. */
+  icon: string
+  /** @default 'muted' */
+  color?: ColumnPickerTypeColor
 }
