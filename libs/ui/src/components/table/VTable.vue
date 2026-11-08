@@ -7,6 +7,7 @@ import {
 import type { VirtualItem } from "@tanstack/vue-virtual";
 
 import VButton from "../base/VButton.vue";
+import VSkeleton from "../feedback/VSkeleton.vue";
 import VFloating from "../overlay/VFloating.vue";
 
 import TableBackdrop from "./components/TableBackdrop.vue";
@@ -37,7 +38,7 @@ import { TABLE_PAGE_KEY } from "./composables/useTablePage";
 import { useTableSelection } from "./composables/useTableSelection";
 import { useTableSort } from "./composables/useTableSort";
 import { useVirtualTable } from "./composables/useVirtualTable";
-import { DEFAULT_ROW_HEIGHT } from "./constants";
+import { DEFAULT_ROW_HEIGHT, SKELETON_ROW_COUNT, SKELETON_WIDTHS } from "./constants";
 import type {
   Column,
   ExpandableRow,
@@ -47,6 +48,11 @@ import type {
   TableHighlightState,
 } from "./types/index";
 import type { TableProps, TableEmits } from "./types/props";
+
+// The root is a fragment (placeholder, backdrop, teleport), so a parent's
+// class and style need an explicit target: the wrapper, and the placeholder
+// that stands in for it while fullscreen.
+defineOptions({ inheritAttrs: false });
 
 const {
   loading = false,
@@ -64,6 +70,7 @@ const {
   sortState,
   pagination,
   page,
+  pageSize,
   rowClassName,
   scrollSync,
   highlight,
@@ -71,11 +78,42 @@ const {
   highlightSync,
 } = defineProps<TableProps<TData>>();
 
+// Declared, not inferred: the toolbar and header slots reach their components
+// through provide("tableSlots") rather than a <slot> here, so inference never
+// saw them and a consumer's #toolbar-filters failed type-check. Every header
+// slot receives at least the column, which keeps `header-cell-custom-action`
+// assignable to the `header-*` pattern it also matches.
+defineSlots<{
+  "toolbar"?(): unknown
+  "toolbar-title"?(): unknown
+  "toolbar-search"?(): unknown
+  "toolbar-actions"?(): unknown
+  "toolbar-filters"?(): unknown
+  "toolbar-column-actions"?(): unknown
+  "empty-state"?(): unknown
+  "header-cell-custom-action"?(props: { column: Column<TData> }): unknown
+  [name: `header-${string}`]:
+    ((props: { column: Column<TData> } & Record<string, unknown>) => unknown) | undefined
+  [name: `cell-${string}`]: ((props: {
+    column: Column<TData>
+    depth: number
+    index: number
+    row: TData & FlattenedRow
+    value: unknown
+  }) => unknown) | undefined
+  [name: `total-cell-${string}`]: ((props: {
+    column: Column<TData>
+    row: Record<string, unknown>
+    value: unknown
+  }) => unknown) | undefined
+}>();
+
 // defineEmits with generic type params is broken in generic SFCs (Vue compiler limitation —
 // only the last overload is recognized). Workaround: runtime array + cast to TableEmits<TData>.
 const emit = defineEmits([
   "row-click", "update:selected-rows", "expand-click",
-  "update:sort-state", "update:highlight-state", "update:page", "request", "sort",
+  "update:sort-state", "update:highlight-state", "update:page", "update:pageSize", "request",
+  "sort",
   "update:search", "toolbar:refresh", "toolbar:reset-sort", "toolbar:export",
 ]) as unknown as TableEmits<TData>;
 
@@ -96,6 +134,8 @@ provide("tableSlots", {
   toolbarTitle: $slots["toolbar-title"],
   toolbarSearch: $slots["toolbar-search"],
   toolbarActions: $slots["toolbar-actions"],
+  toolbarFilters: $slots["toolbar-filters"],
+  toolbarColumnActions: $slots["toolbar-column-actions"],
 });
 
 const searchModel = defineModel<string>("search", { default: "" });
@@ -111,7 +151,10 @@ const handleToolbarRefresh = () => {
   emit("toolbar:refresh");
 
   // Check refresh action mode from config
-  const refreshMode = toolbar?.actions?.refresh;
+  const refreshAction = toolbar?.actions?.refresh;
+  const refreshMode = typeof refreshAction === "object"
+    ? refreshAction.mode ?? "default"
+    : refreshAction;
 
   // Apply built-in behavior only if mode is 'default', true, or not specified
   // If mode is 'custom', only emit event without built-in behavior
@@ -123,10 +166,11 @@ const handleToolbarRefresh = () => {
   sortStateRef.value = [];
   pageRef.value = 1; // sync v-model:page
   expandableLogic.collapseAll();
+  highlightApi.clear();
   // Emit request event (works for both with/without pagination)
   emit("request", {
-    page: pagination?.page ?? 1,
-    pageSize: pagination?.pageSize ?? 10,
+    page: 1, // not pageRef: in modes 1 and 2 it reads the old page until the parent updates
+    pageSize: pageSizeRef.value,
     sort: [],
   });
 };
@@ -148,10 +192,11 @@ const handleToolbarResetSort = () => {
   sortStateRef.value = [];
   pageRef.value = 1; // sync v-model:page
   expandableLogic.collapseAll();
+  highlightApi.clear();
   // Emit request event with current page (works for both with/without pagination)
   emit("request", {
-    page: pagination?.page ?? 1,
-    pageSize: pagination?.pageSize ?? 10,
+    page: 1, // not pageRef: in modes 1 and 2 it reads the old page until the parent updates
+    pageSize: pageSizeRef.value,
     sort: [],
   });
 };
@@ -297,6 +342,19 @@ const pageRef = computed({
   },
 });
 
+// Page size: v-model:page-size when the parent owns it (a request `limit`), otherwise
+// display-only from `pagination.pageSize`, with size changes read off `@request`.
+const pageSizeRef = computed({
+  get: () => pageSize ?? pagination?.pageSize ?? 10,
+  set: (val) => {
+    if (pageSize !== undefined) emit("update:pageSize", val);
+  },
+});
+
+// Passing a list of sizes is the intent to offer them; the flag stays as an override.
+const showSizeChanger = computed(() =>
+  pagination?.showSizeChanger ?? pagination?.pageSizeOptions !== undefined);
+
 const {
   getSortState,
   handleSortClick: internalHandleSortClick,
@@ -306,11 +364,12 @@ const {
   sortState: sortStateRef,
   columns: columnsRef,
   page: computed(() => pagination?.page),
-  pageSize: computed(() => pagination?.pageSize),
+  pageSize: pageSizeRef,
   data: computed<TData[]>(() => data as TData[]),
   onRequest: (payload) => {
     pageRef.value = payload.page; // sync v-model:page (sort resets to page 1)
     expandableLogic.collapseAll();
+    highlightApi.clear();
     emit("request", payload);
   },
   onSort: payload => emit("sort", payload),
@@ -481,7 +540,9 @@ const handlePaginationChange = ({ page, pageSize }: { page: number, pageSize: nu
   }
 
   pageRef.value = page; // sync v-model:page
+  pageSizeRef.value = pageSize; // sync v-model:page-size
   expandableLogic.collapseAll();
+  highlightApi.clear();
   emit("request", {
     page,
     pageSize,
@@ -602,6 +663,15 @@ provide("tableHighlight", {
   toggleColumn: highlightApi.toggleColumn,
 });
 
+// The first load has nothing to keep on screen, so it draws rows at their own
+// geometry instead of a spinner over an empty grid. A refetch with rows already
+// showing keeps them and dims them under the overlay.
+const isFirstLoad = computed<boolean>(() => loading && displayData.value.length === 0);
+
+// Deterministic, so a re-render does not reshuffle the bars.
+const skeletonWidth = (row: number, col: number): string =>
+  SKELETON_WIDTHS[(row * 3 + col) % SKELETON_WIDTHS.length];
+
 // Computed for final rows (considering virtualization)
 const rowsToRender = computed(() => {
   // If virtualization is disabled, render all data
@@ -626,9 +696,12 @@ const rowsToRender = computed(() => {
   }
 
   // Virtualized rendering - only render visible items
-  return virtualItems.value.map((virtualRow: VirtualItem) => {
+  // The virtualizer can hold an index past the end of the data for a beat
+  // mid-scroll (seen in so-platform); a row read there is undefined.
+  return virtualItems.value.flatMap((virtualRow: VirtualItem) => {
     const row = displayData.value[virtualRow.index];
-    return {
+    if (!row) return [];
+    return [{
       row,
       index: virtualRow.index,
       // CRITICAL: Use row.id as key, not index! Index causes memory leaks
@@ -636,7 +709,7 @@ const rowsToRender = computed(() => {
       key: (row.id as string | number) || `row-${virtualRow.index}`,
       isVirtual: true,
       virtualRow,
-    };
+    }];
   });
 });
 
@@ -747,6 +820,17 @@ const {
   },
 });
 
+// The scroll container's height in fullscreen has to be an explicit length.
+// `contentHeight` is a number, and a number in a `height` style binding is
+// passed through unitless — the browser rejects it and keeps the normal-mode
+// height, which left a short table with its own scrollbar in a viewport-sized
+// panel. Flex-fill is not an option either: the container is a grandchild of
+// the panel, so a `%` height would subtract the chrome twice.
+const scrollContainerStyle = computed(() => ({
+  height: isFullscreen.value ? `${fullscreenContentHeight.value}px` : tableHeight.value,
+  overscrollBehavior: "contain" as const,
+}));
+
 // ── Linked tables ───────────────────────────────────────────────────────────
 const onScrollContainerScroll = (event: Event) => {
   if (!scrollSync) return;
@@ -799,6 +883,11 @@ onUnmounted(() => {
   // Clear scroll container ref
   scrollContainerRef.value = null;
 });
+
+// Read-only view of what the user currently sees, after column setup or the
+// picker and the storage restore, so a consumer can act on the table's own
+// column choice (for example, preseed an export).
+defineExpose({ visibleColumns: effectiveColumns });
 </script>
 
 <template>
@@ -808,7 +897,8 @@ onUnmounted(() => {
   <div
     v-if="placeholderStyle"
     ref="placeholderRef"
-    :style="placeholderStyle"
+    :class="$attrs.class"
+    :style="[$attrs.style, placeholderStyle]"
     aria-hidden="true"
     class="v-table-fullscreen-placeholder"
   />
@@ -831,6 +921,7 @@ onUnmounted(() => {
       }"
       :style="isFullscreen ? { ...fullscreenPanelStyle, zIndex: fullscreenZIndex } : undefined"
       class="v-table-wrapper"
+      v-bind="$attrs"
     >
       <TableFullscreenToggle
         v-if="fullscreenEnabled"
@@ -885,6 +976,7 @@ onUnmounted(() => {
                   :original-columns="columns"
                   :storage-key="columnPickerConfig.key"
                   :storage-type="columnPickerConfig.type"
+                  :types="columnPickerConfig.types"
                   @close="handleColumnPickerClose"
                   @update:visible-columns="handleVisibleColumnsUpdate"
                 />
@@ -923,7 +1015,7 @@ onUnmounted(() => {
       <div class="v-table-container-wrapper">
         <!-- Empty State (positioned over scroll container) -->
         <TableEmptyState
-          v-if="displayData.length === 0"
+          v-if="displayData.length === 0 && !loading"
           description="Try adjusting your filters or search criteria"
           icon="lucide:inbox"
           title="No data to display"
@@ -932,16 +1024,20 @@ onUnmounted(() => {
         </TableEmptyState>
 
         <!-- Loading Overlay -->
-        <TableLoadingOverlay :loading />
+        <TableLoadingOverlay :loading="loading && !isFirstLoad" />
+
+        <span
+          v-if="isFirstLoad"
+          class="v-table-sr-status"
+          role="status"
+        >Loading</span>
 
         <!-- Scroll container -->
         <div
           ref="scrollContainerRef"
+          :aria-busy="loading"
           :class="{ 'v-table-scroll-container--loading': loading }"
-          :style="{
-            height: isFullscreen ? fullscreenContentHeight : tableHeight,
-            overscrollBehavior: 'contain',
-          }"
+          :style="scrollContainerStyle"
           class="v-table-scroll-container v-table-scrollbar-styled"
           @scroll="onScrollContainerScroll"
         >
@@ -1005,6 +1101,33 @@ onUnmounted(() => {
                 />
               </template>
             </component>
+
+            <template v-if="isFirstLoad">
+              <TableRow
+                v-for="n in SKELETON_ROW_COUNT"
+                :key="`skeleton-${n}`"
+                class="v-table-row-wrapper--skeleton"
+              >
+                <div
+                  v-if="selection.isEnabled.value"
+                  class="v-table-checkbox-cell"
+                />
+                <TableCell
+                  v-for="(column, colIndex) in columnsForData"
+                  :key="`skeleton-${n}-${column.key}`"
+                  :align="column.align"
+                  :class="getColumnClasses(column)"
+                  :style="getFixedStyles(column)"
+                >
+                  <span
+                    :class="`v-table-skeleton-cell--${column.align ?? 'left'}`"
+                    class="v-table-skeleton-cell"
+                  >
+                    <VSkeleton :width="skeletonWidth(n, colIndex)" />
+                  </span>
+                </TableCell>
+              </TableRow>
+            </template>
 
             <!-- Virtualization: spacer before -->
             <div
@@ -1156,9 +1279,9 @@ onUnmounted(() => {
         ref="paginationRef"
         :loading="loading"
         :page="pageRef"
-        :page-size="pagination.pageSize"
+        :page-size="pageSizeRef"
         :page-size-options="pagination.pageSizeOptions || [10, 25, 50, 100]"
-        :show-size-changer="pagination.showSizeChanger"
+        :show-size-changer
         :total="pagination.total"
         @page-change="handlePaginationChange"
       />

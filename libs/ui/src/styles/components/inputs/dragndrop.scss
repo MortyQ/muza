@@ -109,7 +109,7 @@
 
   &__title {
     font-size: var(--ui-text-lg);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
 
     &--accent {
@@ -170,7 +170,7 @@
   &__file-name {
     overflow: hidden;
     font-size: var(--ui-text-base);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
     text-overflow: ellipsis;
     white-space: nowrap;

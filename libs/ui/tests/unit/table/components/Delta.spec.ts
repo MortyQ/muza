@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 
+import VCount from "../../../../src/components/base/VCount.vue";
 import VIcon from "../../../../src/components/base/VIcon.vue";
 import DeltaIndicator from "../../../../src/components/table/components/DeltaIndicator.vue";
 import DeltaValue from "../../../../src/components/table/components/DeltaValue.vue";
@@ -240,5 +241,23 @@ describe("DeltaIndicator", () => {
 
   it.each(["sm", "default", "lg"])("applies the %s size class", (size) => {
     expect(indicator({ value: 1, size }).classes()).toContain(`v-delta--${size}`);
+  });
+});
+
+describe("delta figures roll", () => {
+  // VCount owns the roll; what is pinned here is that each figure goes through
+  // it with the formatted string, so a filter change does not make it jump.
+  it("DeltaValue hands both the value and the delta to VCount", () => {
+    const w = mount(DeltaValue, { props: { value: 1200, delta: 4 }, global: { stubs } });
+    const counts = w.findAllComponents(VCount).map(c => c.props("value"));
+    expect(counts).toEqual(["1,200", "4%"]);
+  });
+
+  it("DeltaIndicator hands its formatted value to VCount", () => {
+    const w = mount(DeltaIndicator, {
+      props: { value: 12.5, format: { percentage: { decimals: 1 } } },
+      global: { stubs },
+    });
+    expect(w.findComponent(VCount).props("value")).toBe(w.find(".v-delta__text").text());
   });
 });

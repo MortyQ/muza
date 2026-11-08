@@ -32,8 +32,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: var(--ui-weight-strong);
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground);
   letter-spacing: -0.01em;
 }
@@ -94,8 +94,8 @@
 }
 
 .column-picker-panel-count {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--ui-text-sm);
+  font-weight: var(--ui-weight-strong);
   color: var(--ui-foreground-secondary);
   letter-spacing: -0.01em;
 
@@ -111,8 +111,8 @@
   padding: 0;
   border: none;
   background: transparent;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--ui-text-sm);
+  font-weight: var(--ui-weight-medium);
   color: var(--ui-foreground-secondary);
   cursor: pointer;
   transition: color 0.15s ease;
@@ -167,7 +167,7 @@
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 11.5px;
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground);
     outline: none;
     min-width: 0;
@@ -197,8 +197,8 @@
   height: 100%;
   border: none;
   cursor: pointer;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--ui-text-xs);
+  font-weight: var(--ui-weight-strong);
   letter-spacing: -0.01em;
   background: transparent;
   color: var(--ui-foreground-secondary);
@@ -275,8 +275,8 @@
 
 .cp-group-label {
   flex: 1;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: var(--ui-text-2xs);
+  font-weight: var(--ui-weight-strong);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: color-mix(in oklch, var(--ui-foreground-secondary) 45%, transparent);
@@ -296,8 +296,8 @@
   padding: 1px 6px;
   border-radius: 5px;
   border: none;
-  font-size: 9.5px;
-  font-weight: 600;
+  font-size: var(--ui-text-2xs);
+  font-weight: var(--ui-weight-strong);
   letter-spacing: -0.01em;
   background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
   color: var(--ui-primary);
@@ -311,8 +311,8 @@
 }
 
 .cp-group-badge {
-  font-size: 9.5px;
-  font-weight: 700;
+  font-size: var(--ui-text-2xs);
+  font-weight: var(--ui-weight-strong);
   padding: 1px 5px;
   border-radius: 9px;
   flex-shrink: 0;
@@ -400,7 +400,7 @@
 
 .cp-available-item-label {
   flex: 1;
-  font-size: 12px;
+  font-size: var(--ui-text-sm);
   letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;
@@ -410,7 +410,7 @@
 
 .cp-available-item--selected .cp-available-item-label {
   color: var(--ui-foreground);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
 }
 
 .cp-available-item:not(.cp-available-item--selected) .cp-available-item-label {
@@ -444,8 +444,8 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: var(--ui-text-xs);
+  font-weight: var(--ui-weight-medium);
   color: var(--ui-primary);
   text-align: left;
   border-radius: 6px;
@@ -466,6 +466,7 @@
 }
 
 .cp-type-group-dot {
+  background: var(--cp-type-color);
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -474,8 +475,8 @@
 }
 
 .cp-type-group-label {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: var(--ui-text-2xs);
+  font-weight: var(--ui-weight-strong);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
@@ -562,8 +563,8 @@
 
 .cp-selected-item-label {
   flex: 1;
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: var(--ui-text-sm);
+  font-weight: var(--ui-weight-medium);
   letter-spacing: -0.01em;
   color: var(--ui-foreground);
   white-space: nowrap;
@@ -617,7 +618,7 @@
 .column-picker-empty {
   padding: 24px 16px;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
 }
 
@@ -657,7 +658,7 @@
   align-items: center;
   gap: 4px;
   flex: 1;
-  font-size: 11px;
+  font-size: var(--ui-text-xs);
   color: var(--ui-foreground-secondary);
   opacity: 0.7;
 

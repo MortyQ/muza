@@ -49,17 +49,17 @@
 .v-table-header-cell.v-table-fixed-column {
   z-index: $z-index-header-fixed !important;
   background-color: color-mix(in oklch, var(--ui-primary) 1%, var(--ui-surface) 99%);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
 }
 
 .v-table-header-group.v-table-fixed-column {
   z-index: $z-index-header-fixed !important;
   background-color: color-mix(in oklch, var(--ui-primary) 1%, var(--ui-surface) 99%);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
 }
 
 .v-table-total-cell.v-table-fixed-column {
   z-index: $z-index-total-fixed !important;
   background-color: color-mix(in oklch, var(--ui-primary) 3%, var(--ui-surface) 97%);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
 }

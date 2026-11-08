@@ -1,6 +1,11 @@
 import {baseConfig} from "@muzakit/config/eslint.base.mjs";
 
 export default [
+    {
+        // Vendored skills are third-party code pinned by hash in skills-lock.json;
+        // lint-staged's `eslint --fix` would rewrite them on commit.
+        ignores: [".agents/**"],
+    },
     ...baseConfig,
     {
         // Specs define throwaway host components inline — a router stub, a

@@ -100,7 +100,7 @@ $sidebar-mobile-breakpoint: 1024px;
   color: var(--ui-primary-foreground);
   font-size: var(--ui-text-sm);
   line-height: 1;
-  font-weight: 700;
+  font-weight: var(--ui-weight-strong);
 }
 
 .sidebar-mobile-header__name {
@@ -108,7 +108,7 @@ $sidebar-mobile-breakpoint: 1024px;
   margin: 0;
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   letter-spacing: -0.01em;
   color: var(--ui-foreground);
   white-space: nowrap;

@@ -164,8 +164,10 @@ Badge       --ui-badge-neutral-bg  --ui-badge-neutral-text
 Radius      --ui-radius-xs  --ui-radius  -lg  -xl  -2xl  -full
 Shadow      --ui-shadow-xs  -sm  -md  -lg  -xl  -inner
 Focus ring  --ui-ring  --ui-ring-offset
-Type        --ui-text-2xs  -xs  -sm  -base  -lg  -xl
-            --ui-leading-2xs  -xs  -sm  -base  -lg  -xl
+Type        --ui-text-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
+            --ui-leading-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
+            (2xl/3xl are headline figures only — VStat — never a heading)
+Weight      --ui-weight-regular (450)  -medium (500)  -strong (600)
 Control     --ui-control-h  -sm  -md  -lg   --ui-control-px  --ui-control-gap
 Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl
 ```
@@ -313,6 +315,7 @@ which surfaces as styles that revert for no visible reason.
 - [ ] Exactly one `<style lang="scss" scoped>` holding one `@use`
 - [ ] No `--_color-*` block, no `rgb(var(…) / a)`, no raw colour values
 - [ ] Every colour is `--ui-*`, every alpha is `color-mix(in oklch, …)`
+- [ ] Every `font-size` is `--ui-text-*`, every `font-weight` is `--ui-weight-*`
 - [ ] `.scss` at `styles/components/{category}/{name}.scss`
 - [ ] Exported from `index.ts`; `global-components.d.ts` updated if global
 - [ ] New runtime deps in both `package.json` and `vite.config.ts` externals

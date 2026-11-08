@@ -5,7 +5,7 @@ import VIcon from "../../../src/components/base/VIcon.vue";
 import VTag, { type TagColor, type TagSize, type TagVariant } from "../../../src/components/base/VTag.vue";
 
 const VARIANTS: TagVariant[] = ["solid", "soft", "outline", "ghost"];
-const COLORS: TagColor[] = ["primary", "success", "warning", "error", "info", "neutral", "gray"];
+const TONES = ["primary", "success", "warning", "danger", "info", "neutral"] as const satisfies TagColor[];
 const SIZES: TagSize[] = ["xs", "sm", "md", "lg"];
 
 const stubs = { Icon: true };
@@ -28,19 +28,29 @@ describe("VTag", () => {
     expect(tag({ size }).classes()).toContain(`vtag--${size}`);
   });
 
-  it("pairs variant and colour into a single class", () => {
+  it("exposes variant and tone as data attributes", () => {
     for (const variant of VARIANTS) {
-      for (const color of COLORS) {
-        expect(tag({ variant, color }).classes()).toContain(`vtag--${variant}-${color}`);
+      for (const color of TONES) {
+        const w = tag({ variant, color });
+        expect(w.attributes("data-variant")).toBe(variant);
+        expect(w.attributes("data-tone")).toBe(color);
       }
     }
   });
 
+  it.each([["error", "danger"], ["gray", "neutral"]] as const)(
+    "keeps %s as an alias of %s",
+    (color, tone) => {
+      expect(tag({ color }).attributes("data-tone")).toBe(tone);
+    },
+  );
+
   it("defaults to a soft primary square tag", () => {
-    const classes = tag({}).classes();
-    expect(classes).toContain("vtag--soft-primary");
-    expect(classes).toContain("vtag--square");
-    expect(classes).toContain("vtag--sm");
+    const w = tag({});
+    expect(w.attributes("data-variant")).toBe("soft");
+    expect(w.attributes("data-tone")).toBe("primary");
+    expect(w.classes()).toContain("vtag--square");
+    expect(w.classes()).toContain("vtag--sm");
   });
 
   it.each([[true, "vtag--rounded"], [false, "vtag--square"]] as const)(
@@ -51,15 +61,15 @@ describe("VTag", () => {
   );
 
   describe("customColor", () => {
-    it("swaps to the custom variant class and drops the colour pairing", () => {
+    it("takes over the tone from the colour prop", () => {
       const w = tag({ variant: "soft", color: "success", customColor: "--ui-info" });
-      expect(w.classes()).toContain("vtag--custom-soft");
-      expect(w.classes()).not.toContain("vtag--soft-success");
+      expect(w.attributes("data-tone")).toBe("custom");
+      expect(w.attributes("data-variant")).toBe("soft");
     });
 
     it("passes the tone in through a custom property", () => {
       const w = tag({ customColor: "--ui-info" });
-      expect(w.attributes("style")).toContain("--_tag-color: var(--ui-info)");
+      expect(w.attributes("style")).toContain("--v-tag-custom: var(--ui-info)");
     });
 
     it("leaves the style attribute off when unused", () => {
@@ -68,8 +78,9 @@ describe("VTag", () => {
 
     it("keeps working across every variant", () => {
       for (const variant of VARIANTS) {
-        expect(tag({ variant, customColor: "--ui-info" }).classes())
-          .toContain(`vtag--custom-${variant}`);
+        const w = tag({ variant, customColor: "--ui-info" });
+        expect(w.attributes("data-tone")).toBe("custom");
+        expect(w.attributes("data-variant")).toBe(variant);
       }
     });
   });
@@ -105,7 +116,7 @@ describe("VTag", () => {
     });
 
     it("scales with the tag size", () => {
-      const expected = { xs: 12, sm: 14, md: 16, lg: 18 } as const;
+      const expected = { xs: 10, sm: 12, md: 12, lg: 14 } as const;
       for (const size of SIZES) {
         const w = tag({ icon: "lucide:star", size });
         expect(w.findComponent(VIcon).props().size).toBe(expected[size]);

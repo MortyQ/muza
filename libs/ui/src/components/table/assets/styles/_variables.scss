@@ -42,10 +42,10 @@ $table-font-size-base: var(--ui-text-base);
 $table-line-height-base: var(--ui-leading-base);
 $table-font-size-header: var(--ui-text-xs);
 $table-line-height-header: var(--ui-leading-xs);
-$table-font-weight-regular: 400;
-$table-font-weight-medium: 500;
-$table-font-weight-semibold: 600;
-$table-font-weight-bold: 700;
+$table-font-weight-regular: var(--ui-weight-regular);
+$table-font-weight-medium: var(--ui-weight-medium);
+$table-font-weight-semibold: var(--ui-weight-strong);
+$table-font-weight-bold: var(--ui-weight-strong);
 
 // ════════════════════════════════════════════════════════════════
 // BORDERS - Minimal, subtle approach

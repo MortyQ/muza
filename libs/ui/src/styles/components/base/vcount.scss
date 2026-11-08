@@ -1,0 +1,77 @@
+/*
+  Each changed digit is a column one line box tall, clipping a reel of two
+  faces. The reel moves by half its height — exactly one face — so the column
+  never shows anything but a whole digit at rest. Tabular digits keep every
+  column the same width, which is what lets the unchanged ones stay still.
+*/
+
+.v-count {
+  --v-count-curve: cubic-bezier(0.45, 0, 0.1, 1);
+
+  position: relative;
+  display: inline-flex;
+  width: var(--v-count-width, auto);
+  white-space: pre;
+  font-variant-numeric: tabular-nums;
+  transition: width var(--v-count-duration) var(--v-count-curve);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  &__glyphs {
+    display: inline-flex;
+  }
+
+  &__column {
+    display: inline-flex;
+    /* Without this the reel is stretched to the column's one line box, and
+       -50% would move it half a digit instead of one whole face. */
+    align-items: flex-start;
+    height: 1lh;
+    overflow: hidden;
+  }
+
+  &__reel {
+    display: flex;
+    flex-direction: column;
+    animation: v-count-roll-up var(--v-count-duration) var(--v-count-curve) var(--v-count-delay, 0ms) both;
+
+    &--down {
+      animation-name: v-count-roll-down;
+    }
+  }
+
+  &__face {
+    height: 1lh;
+  }
+}
+
+@keyframes v-count-roll-up {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes v-count-roll-down {
+  from {
+    transform: translateY(-50%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}

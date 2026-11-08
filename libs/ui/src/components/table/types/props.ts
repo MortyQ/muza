@@ -34,6 +34,11 @@ export type TableProps<TData extends Record<string, unknown> = Record<string, un
   // Pagination configuration (server-side only)
   pagination?: PaginationConfig
   page?: number // v-model:page - current page (synced externally)
+  /**
+   * v-model:page-size. Bind it when the size is a request `limit` the parent owns; it outranks
+   * `pagination.pageSize` for both display and the size changer.
+   */
+  pageSize?: number
 
   // Toolbar configuration
   toolbar?: ToolbarConfig
@@ -100,6 +105,7 @@ export type TableEmits<TData extends Record<string, unknown> = Record<string, un
     & ((e: "update:sort-state", sortState: SortItem[]) => void)
     & ((e: "update:highlight-state", state: TableHighlightState<TData> | null) => void)
     & ((e: "update:page", page: number) => void)
+    & ((e: "update:pageSize", pageSize: number) => void)
     & ((e: "request", payload: RequestPayload) => void)
     & ((e: "sort", payload: FrontSortPayload) => void)
     & ((e: "update:search", query: string) => void)

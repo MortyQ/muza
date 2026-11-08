@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import {
   DragNDrop,
@@ -9,6 +9,8 @@ import {
   VButton,
   VCard,
   VChip,
+  VCount,
+  VEmptyState,
   VFileUpload,
   VFloating,
   VInfoNotice,
@@ -16,10 +18,13 @@ import {
   VLoader,
   VProgressBar,
   VScrollPanel,
+  VSkeleton,
+  VStat,
   VTag,
   type AccordionItem,
   type ListEditorItem,
 } from "@muzakit/ui";
+import { formatCurrency } from "@muzakit/utils";
 
 // ── VChip ────────────────────────────────────────────────────────────────
 const selectedChip = ref<string | null>("design");
@@ -50,6 +55,20 @@ const accordionItems: AccordionItem[] = [
     disabled: true,
   },
 ];
+
+// ── Figures: VStat · VCount · VSkeleton · VEmptyState ───────────────────
+const revenue = ref(12_400);
+const revenueLabel = computed<string>(() => formatCurrency(revenue.value, { decimals: 2 }));
+const isStatLoading = ref(false);
+const showEmpty = ref(true);
+
+function nudgeRevenue(): void {
+  revenue.value = Math.max(0, revenue.value + Math.round((Math.random() - 0.4) * 2_000));
+}
+
+function jumpRevenue(): void {
+  revenue.value = revenue.value < 100_000 ? revenue.value * 12 : 840;
+}
 
 // ── VProgressBar ─────────────────────────────────────────────────────────
 const progress = ref(42);
@@ -235,23 +254,130 @@ const hasUnsavedChanges = ref(false);
       </div>
     </section>
 
+    <!-- ── Figures ── -->
+    <section class="components-demo__section">
+      <h2 class="components-demo__title">
+        VStat · VCount · VSkeleton · VEmptyState
+      </h2>
+      <p class="components-demo__desc">
+        One figure per block. Changed digits roll, last digit first; a length change eases the
+        width. Loading keeps the figure's own line boxes. Check under reduced motion too.
+      </p>
+      <div class="components-demo__grid">
+        <VCard title="Revenue">
+          <div class="components-demo__stack">
+            <div
+              v-if="isStatLoading"
+              aria-label="Loading revenue"
+              class="components-demo__stat-skeleton"
+              role="status"
+            >
+              <VSkeleton
+                size="sm"
+                width="4rem"
+              />
+              <VSkeleton
+                size="2xl"
+                width="9rem"
+              />
+              <VSkeleton
+                size="sm"
+                width="6rem"
+              />
+            </div>
+            <VStat
+              v-else
+              hint="vs. last month"
+              label="This month"
+            >
+              <VCount :value="revenueLabel" />
+              <template #chip>
+                <VTag
+                  color="success"
+                  label="+8.2%"
+                  rounded
+                />
+              </template>
+            </VStat>
+            <div class="components-demo__row">
+              <VButton
+                size="sm"
+                @click="nudgeRevenue"
+              >
+                Nudge
+              </VButton>
+              <VButton
+                size="sm"
+                variant="secondary"
+                @click="jumpRevenue"
+              >
+                Change length
+              </VButton>
+              <VButton
+                size="sm"
+                variant="link"
+                @click="isStatLoading = !isStatLoading"
+              >
+                {{ isStatLoading ? "Show figure" : "Show skeleton" }}
+              </VButton>
+            </div>
+          </div>
+        </VCard>
+
+        <VCard title="Overdue invoices">
+          <VEmptyState
+            v-if="showEmpty"
+            text="Nothing overdue in this period"
+          >
+            <template #action>
+              <VButton
+                size="sm"
+                variant="link"
+                @click="showEmpty = false"
+              >
+                Show a figure
+              </VButton>
+            </template>
+          </VEmptyState>
+          <VStat
+            v-else
+            label="Overdue"
+            size="lg"
+            tone="danger"
+            value="$3,180.00"
+          />
+        </VCard>
+      </div>
+    </section>
+
     <!-- ── VProgressBar ── -->
     <section class="components-demo__section">
       <h2 class="components-demo__title">
         VProgressBar
       </h2>
       <p class="components-demo__desc">
-        Turns green and swaps the shine for a check once it reaches 100%.
+        A bare bar: it draws no card of its own, so it sits in whatever holds it.
+        It moves only when the value changes, and turns green with a tick at 100%.
       </p>
       <div class="components-demo__stack">
-        <VProgressBar
-          :percentage="progress"
-          step="Uploading assets"
-        />
-        <VProgressBar
-          :percentage="100"
-          step="Finished"
-        />
+        <VCard title="Catalog sync">
+          <div class="components-demo__stack">
+            <VProgressBar
+              :percentage="progress"
+              step="Uploading listings"
+            />
+            <VProgressBar
+              :percentage="100"
+              step="Images"
+              size="sm"
+            />
+            <VProgressBar
+              :percentage="progress / 2"
+              :show-percentage="false"
+              size="lg"
+            />
+          </div>
+        </VCard>
         <div class="components-demo__row">
           <VButton
             text="-10"
@@ -539,6 +665,12 @@ const hasUnsavedChanges = ref(false);
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1rem;
   align-items: start;
+}
+
+.components-demo__stat-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-2xs);
 }
 
 .components-demo__popover {

@@ -3,6 +3,7 @@ import { computed } from "vue";
 
 import { formatCurrency, formatNumber, formatPercentage } from "@muzakit/utils";
 
+import VCount from "../../base/VCount.vue";
 import VIcon from "../../base/VIcon.vue";
 import type { ColumnFormatOptions } from "../types";
 
@@ -138,7 +139,10 @@ const rootClass = computed(() => [
       :size="iconSize"
     />
 
-    <span class="v-delta__text">{{ formattedValue }}</span>
+    <VCount
+      :value="formattedValue"
+      class="v-delta__text"
+    />
   </div>
 </template>
 

@@ -53,8 +53,19 @@ export interface ToolbarConfig {
          * - true/'default': Built-in behavior (resets sort & pagination)
          * - 'custom': Only emits @toolbar:refresh event, no built-in behavior
          * - false: Button hidden
+         * - object: the same modes, plus a loading state for the button. The table cannot
+         *   know when the parent's request finishes, so the parent hands the flag back.
+         *
+         * @example
+         * refresh: { mode: 'custom', loading: isFetching }
          */
-    refresh?: boolean | "default" | "custom"
+    refresh?: boolean | "default" | "custom" | {
+      /** @default 'default' */
+      mode?: "default" | "custom"
+
+      /** Spins the button and blocks clicks while a refetch is in flight. */
+      loading?: boolean
+    }
 
     /**
          * Reset sort button behavior
@@ -175,6 +186,13 @@ export interface ToolbarConfig {
       /** All available column groups shown in the left panel */
       groups: ColumnPickerGroup[]
 
+      /**
+             * Extra or replacement types for "group by type" mode. A key that already exists in
+             * COLUMN_PICKER_TYPES is replaced in place, keeping its position; a new key is
+             * appended after the built-ins.
+             */
+      types?: ColumnPickerType[]
+
       /** Shows a skeleton in the left panel while groups are fetching */
       loading?: boolean
 
@@ -229,4 +247,18 @@ export interface ExportFormat {
      * Loading state for this format
      */
   loading?: boolean
+}
+
+/** Semantic tone of a column picker type; resolves to the matching `--ui-*` token. */
+export type ColumnPickerTypeColor = "primary" | "success" | "warning" | "danger" | "info" | "muted";
+
+export interface ColumnPickerType {
+  /** Matches `ColumnPickerItem.icon`: the type discriminator, not an icon id. */
+  key: string
+  /** Header text in "group by type" mode. */
+  label: string
+  /** Iconify id for the type chip. */
+  icon: string
+  /** @default 'muted' */
+  color?: ColumnPickerTypeColor
 }

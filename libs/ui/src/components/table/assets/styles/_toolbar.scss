@@ -34,7 +34,7 @@
 
 .v-toolbar-title {
   font-size: var(--ui-text-lg);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   color: var(--ui-foreground);
   margin: 0;
   line-height: var(--ui-leading-lg);
@@ -80,7 +80,7 @@
   gap: 0.75rem;
   width: 100%;
   padding: 0.625rem 0.75rem;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground);
   background: transparent;
   border: none;

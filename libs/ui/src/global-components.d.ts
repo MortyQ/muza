@@ -11,8 +11,10 @@ declare module "vue" {
     VAvatar: typeof import("./components/base/VAvatar.vue").default
     VButton: typeof import("./components/base/VButton.vue").default
     VButtonGroup: typeof import("./components/base/VButtonGroup.vue").default
+    VCount: typeof import("./components/base/VCount.vue").default
     VDate: typeof import("./components/base/VDate.vue").default
     VIcon: typeof import("./components/base/VIcon.vue").default
+    VStat: typeof import("./components/base/VStat.vue").default
     VTag: typeof import("./components/base/VTag.vue").default
     VThemeSwitcher: typeof import("./components/base/VThemeSwitcher.vue").default
     VComposer: typeof import("./components/inputs/VComposer.vue").default
@@ -33,6 +35,8 @@ declare module "vue" {
     VLoader: typeof import("./components/feedback/VLoader.vue").default
     VProgressBar: typeof import("./components/feedback/VProgressBar.vue").default
     VMeter: typeof import("./components/feedback/VMeter.vue").default
+    VSkeleton: typeof import("./components/feedback/VSkeleton.vue").default
+    VEmptyState: typeof import("./components/feedback/VEmptyState.vue").default
     VCollapse: typeof import("./components/layout/VCollapse.vue").default
     VTablePagination: typeof import("./components/table/components/TablePagination.vue").default
     TableTitleBlock: typeof import("./components/table/components/TableTitleBlock.vue").default

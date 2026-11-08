@@ -40,7 +40,7 @@
     font-size: var(--ui-text-2xs);
     line-height: var(--ui-leading-2xs);
     color: var(--ui-primary);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
   }
 }
 
@@ -79,7 +79,7 @@
   line-height: var(--ui-leading-2xs);
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   transition: max-width 200ms ease, padding 200ms ease;
   border: none;
   padding: 0;
@@ -152,7 +152,7 @@
   background-color: transparent;
   color: var(--ui-foreground);
   font-size: var(--ui-text-base);
-  font-weight: 450;
+  font-weight: var(--ui-weight-regular);
   letter-spacing: -0.005em;
   margin-bottom: 0;
   line-height: 1.375rem;
@@ -190,7 +190,7 @@
   font-size: var(--ui-text-base);
   line-height: 1.375rem;
   letter-spacing: -0.005em;
-  font-weight: 400;
+  font-weight: var(--ui-weight-regular);
   margin-bottom: 0;
   padding-top: 0;
   color: var(--ui-input-placeholder);
@@ -261,7 +261,7 @@
   background-color: var(--ui-primary);
   color: white;
   font-size: var(--ui-text-xs);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   line-height: var(--ui-leading-base);
   border-radius: var(--ui-radius-xs);
   margin-bottom: 0;
@@ -291,7 +291,7 @@
 :deep(.multiselect__tag-icon::after) {
   content: "×";
   color: white;
-  font-size: 14px;
+  font-size: var(--ui-text-base);
   line-height: 1;
 }
 
@@ -335,7 +335,7 @@
 :deep(.multiselect__option) {
   color: var(--ui-foreground);
   font-size: var(--ui-text-base);
-  font-weight: 400;
+  font-weight: var(--ui-weight-regular);
   min-height: 0;
   line-height: var(--ui-leading-base);
   padding: 0.3125rem 0.5rem;
@@ -353,7 +353,7 @@
 :deep(.multiselect__option.multiselect__option--selected) {
   background-color: var(--ui-primary);
   color: white;
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
 }
 
 /* Make sure all children are also white on selected */
@@ -379,7 +379,7 @@
 :deep(.multiselect__option.multiselect__option--group) {
   background-color: var(--ui-surface-sunken);
   color: var(--ui-primary);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   cursor: pointer;
   padding: 0.3125rem 0.5rem;
 }

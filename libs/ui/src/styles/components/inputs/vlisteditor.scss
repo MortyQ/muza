@@ -14,8 +14,8 @@
   }
 
   &__label {
-    font-size: 0.8125rem;
-    font-weight: 600;
+    font-size: var(--ui-text-base);
+    font-weight: var(--ui-weight-strong);
     color: var(--ui-foreground);
   }
 
@@ -65,8 +65,8 @@
 
   &__error {
     margin-left: 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: var(--ui-text-sm);
+    font-weight: var(--ui-weight-medium);
     line-height: 1rem;
     color: var(--ui-danger);
   }
@@ -143,8 +143,8 @@
     border: 1px dashed var(--ui-border);
     border-radius: var(--ui-radius);
     background: transparent;
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: var(--ui-text-sm);
+    font-weight: var(--ui-weight-medium);
     line-height: 1;
     color: var(--ui-foreground-secondary);
     white-space: nowrap;
@@ -166,12 +166,12 @@
   }
 
   &__hint {
-    font-size: 0.75rem;
+    font-size: var(--ui-text-sm);
     color: var(--ui-foreground-secondary);
   }
 
   &__hint-detected {
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
   }
 
@@ -182,7 +182,7 @@
   }
 
   &__count {
-    font-size: 0.75rem;
+    font-size: var(--ui-text-sm);
     color: var(--ui-foreground-secondary);
   }
 
@@ -193,8 +193,8 @@
     border: none;
     border-radius: var(--ui-radius);
     background: transparent;
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: var(--ui-text-sm);
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground-secondary);
     cursor: pointer;
     transition: color 0.15s ease-out, background-color 0.15s ease-out, transform 0.15s ease-out;

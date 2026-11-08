@@ -17,6 +17,8 @@ const tableSlots = inject<{
   toolbarTitle?: Slot
   toolbarSearch?: Slot
   toolbarActions?: Slot
+  toolbarFilters?: Slot
+  toolbarColumnActions?: Slot
 }>("tableSlots", {});
 
 interface Emits {
@@ -71,6 +73,12 @@ const exportConfig = computed(() => {
     selectedOnly: false,
     loading: false,
   };
+});
+
+// Only the object form carries a loading state; `mode` is VTable's business.
+const refreshLoading = computed(() => {
+  const refresh = config?.actions?.refresh;
+  return typeof refresh === "object" && (refresh.loading ?? false);
 });
 
 // Check if export is enabled
@@ -157,6 +165,16 @@ const handleSingleExport = () => {
           />
         </div>
       </slot>
+
+      <!-- Filters section -->
+      <component
+        :is="tableSlots.toolbarFilters"
+        v-if="tableSlots.toolbarFilters"
+      />
+      <slot
+        v-else
+        name="filters"
+      />
     </div>
 
     <!-- Right section - Actions -->
@@ -170,8 +188,10 @@ const handleSingleExport = () => {
         name="actions"
       />
       <!-- Refresh button -->
+      <!-- VButton blocks clicks while `loading`, so no separate `disabled` is needed. -->
       <VButton
         v-if="config?.actions?.refresh"
+        :loading="refreshLoading"
         icon="lucide:refresh-cw"
         variant="primary"
         @click="handleRefresh"
@@ -214,9 +234,15 @@ const handleSingleExport = () => {
         </template>
       </VFloating>
 
+      <!-- Column actions, just before column setup -->
+      <component
+        :is="tableSlots.toolbarColumnActions"
+        v-if="tableSlots.toolbarColumnActions"
+      />
+
       <!-- Column Setup slot -->
       <slot
-        v-if="config?.actions?.columnSetup"
+        v-if="config?.actions?.columnSetup || config?.actions?.columnPicker"
         name="column-setup"
       />
     </div>

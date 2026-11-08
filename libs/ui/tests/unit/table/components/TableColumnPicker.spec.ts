@@ -4,6 +4,7 @@ import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import VButton from "../../../../src/components/base/VButton.vue";
+import VIcon from "../../../../src/components/base/VIcon.vue";
 import VInput from "../../../../src/components/inputs/VInput.vue";
 import TableColumnPicker from "../../../../src/components/table/components/TableColumnPicker.vue";
 import type { Column } from "../../../../src/components/table/types";
@@ -150,6 +151,67 @@ describe("TableColumnPicker", () => {
       await groupHeader(w, 1).trigger("click");
 
       expect(w.findAll(".cp-type-group-label").length).toBeGreaterThan(0);
+    });
+
+    it("gives each type one header, with types it does not know after the ones it does", async () => {
+      // An unknown type used to sort as -1 — ahead of everything, and in source
+      // order, so two of them interleaved into repeated headers.
+      const groups: ColumnPickerGroup[] = [{
+        key: "mixed",
+        label: "Mixed",
+        items: [
+          { key: "a", label: "A", icon: "url" },
+          { key: "b", label: "B", icon: "number" },
+          { key: "c", label: "C", icon: "email" },
+          { key: "d", label: "D", icon: "url" },
+          { key: "e", label: "E", icon: "text" },
+        ],
+      }];
+      const w = await picker({ groups, columns: [] });
+      await w.findAll(".cp-sort-btn")[0].trigger("click");
+      await groupHeader(w, 0).trigger("click");
+
+      expect(w.findAll(".cp-type-group-label").map(l => l.text()))
+        .toEqual(["Text", "Number", "URL", "Email"]);
+      expect(available(w)).toEqual(["E", "B", "A", "D", "C"]);
+    });
+
+    describe("the type registry", () => {
+      async function byType(items: ColumnPickerGroup["items"], props: Record<string, unknown> = {}) {
+        const w = await picker({ groups: [{ key: "g", label: "G", items }], columns: [], ...props });
+        await w.findAll(".cp-sort-btn")[0].trigger("click");
+        await groupHeader(w, 0).trigger("click");
+        return w;
+      }
+      const headers = (w: Awaited<ReturnType<typeof picker>>) =>
+        w.findAll(".cp-type-group-label").map(l => l.text());
+
+      it("orders the built-in types by the registry, not by a short list", async () => {
+        const w = await byType([
+          { key: "a", label: "A", icon: "boolean" },
+          { key: "b", label: "B", icon: "decimal" },
+          { key: "c", label: "C", icon: "number" },
+        ]);
+        expect(headers(w)).toEqual(["Number", "Decimal", "Boolean"]);
+      });
+
+      it("takes a consumer's own type, after the built-ins, with its label and icon", async () => {
+        const w = await byType(
+          [{ key: "a", label: "A", icon: "money" }, { key: "b", label: "B", icon: "text" }],
+          { types: [{ key: "money", label: "Money", icon: "lucide:coins", color: "success" }] },
+        );
+        expect(headers(w)).toEqual(["Text", "Money"]);
+        const icons = w.findAllComponents(VIcon).map(i => i.props("icon"));
+        expect(icons).toContain("lucide:coins");
+      });
+
+      it("replaces a built-in in place when a consumer redefines it", async () => {
+        const w = await byType(
+          [{ key: "a", label: "A", icon: "boolean" }, { key: "b", label: "B", icon: "text" }],
+          { types: [{ key: "text", label: "Plain text", icon: "lucide:type" }] },
+        );
+        expect(headers(w)).toEqual(["Plain text", "Boolean"]);
+      });
     });
 
     it("shows how many of a group are selected", async () => {

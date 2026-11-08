@@ -57,7 +57,7 @@
 }
 
 .v-loader-message {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: currentColor;
   opacity: 0.75;
 }

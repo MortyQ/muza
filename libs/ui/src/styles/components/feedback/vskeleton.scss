@@ -1,0 +1,76 @@
+/*
+  A line is as tall as the line box of its type step, and paints only the
+  glyph band in the middle of it — the padding is the half-leading, and the
+  fill is clipped to the content box. Replacing it with the text it stands for
+  therefore moves nothing above or below.
+*/
+
+.v-skeleton {
+  --v-skeleton-text: var(--ui-text-base);
+  --v-skeleton-leading: var(--ui-leading-base);
+
+  display: block;
+  flex: none;
+  box-sizing: border-box;
+  background-color: var(--ui-surface-sunken);
+  background-clip: content-box;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: v-skeleton-pulse 1.6s ease-in-out infinite;
+  }
+
+  &--line {
+    width: var(--v-skeleton-width, 100%);
+    height: var(--v-skeleton-leading);
+    padding-block: calc((var(--v-skeleton-leading) - var(--v-skeleton-text)) / 2);
+    border-radius: var(--ui-radius-xs);
+  }
+
+  &--disc {
+    width: var(--v-skeleton-width, var(--ui-control-h));
+    aspect-ratio: 1;
+    border-radius: var(--ui-radius-full);
+  }
+
+  &--block {
+    width: var(--v-skeleton-width, 100%);
+    height: var(--v-skeleton-height, var(--ui-control-h));
+    border-radius: var(--ui-radius);
+  }
+
+  &--xs {
+    --v-skeleton-text: var(--ui-text-xs);
+    --v-skeleton-leading: var(--ui-leading-xs);
+  }
+
+  &--sm {
+    --v-skeleton-text: var(--ui-text-sm);
+    --v-skeleton-leading: var(--ui-leading-sm);
+  }
+
+  &--lg {
+    --v-skeleton-text: var(--ui-text-lg);
+    --v-skeleton-leading: var(--ui-leading-lg);
+  }
+
+  &--xl {
+    --v-skeleton-text: var(--ui-text-xl);
+    --v-skeleton-leading: var(--ui-leading-xl);
+  }
+
+  &--2xl {
+    --v-skeleton-text: var(--ui-text-2xl);
+    --v-skeleton-leading: var(--ui-leading-2xl);
+  }
+
+  &--3xl {
+    --v-skeleton-text: var(--ui-text-3xl);
+    --v-skeleton-leading: var(--ui-leading-3xl);
+  }
+}
+
+@keyframes v-skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

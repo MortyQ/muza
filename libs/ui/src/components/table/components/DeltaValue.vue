@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
+import VCount from "../../base/VCount.vue";
 import VIcon from "../../base/VIcon.vue";
 
 export interface DeltaValueProps {
@@ -190,12 +191,11 @@ const deltaClass = computed(() => [
     :class="`v-delta-value--${size}`"
     class="v-delta-value"
   >
-    <span
+    <VCount
       v-if="formattedValue !== null"
+      :value="formattedValue"
       class="v-delta-value__main"
-    >
-      {{ formattedValue }}
-    </span>
+    />
 
     <div
       v-if="showDelta"
@@ -208,7 +208,10 @@ const deltaClass = computed(() => [
         :size="iconSize"
       />
 
-      <span class="v-delta__text">{{ formattedDelta }}</span>
+      <VCount
+        :value="formattedDelta"
+        class="v-delta__text"
+      />
     </div>
   </div>
 </template>

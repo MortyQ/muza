@@ -1,12 +1,19 @@
 import { h, nextTick, type Slot } from "vue";
 
+import { userEvent } from "@vitest/browser/context";
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import TablePagination from "../../../../src/components/table/components/TablePagination.vue";
 import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import VTable from "../../../../src/components/table/VTable.vue";
-import { makeColumns, makeFixedColumns, makeRows, makeTreeRows } from "../../../setup/table";
+import {
+  makeColumns,
+  makeFixedColumns,
+  makeGroupedColumns,
+  makeRows,
+  makeTreeRows,
+} from "../../../setup/table";
 import { applyTheme } from "../../../setup/theme";
 import { tokenAsValue } from "../../../setup/tokens";
 
@@ -380,5 +387,172 @@ describe("VTable — grid geometry", () => {
     await frame();
 
     expect(total.getBoundingClientRect().bottom).toBeCloseTo(bottomBefore, 0);
+  });
+});
+
+describe("VTable — first-load skeleton", () => {
+  const firstCell = (el: HTMLElement, wrapper: string) =>
+    el.querySelector(`${wrapper} .v-table-cell`) as HTMLElement;
+
+  it("stands every skeleton row at the row height", async () => {
+    const el = await table({ data: [], loading: true });
+    const cells = el.querySelectorAll(".v-table-row-wrapper--skeleton > .v-table-cell");
+    expect(cells.length).toBeGreaterThan(0);
+    for (const cell of cells) {
+      expect(cell.getBoundingClientRect().height).toBeCloseTo(DEFAULT_ROW_HEIGHT, 0);
+    }
+  });
+
+  it("puts each bar in the body text's line box, centred in the row", async () => {
+    const el = await table({ data: [], loading: true });
+    const cell = firstCell(el, ".v-table-row-wrapper--skeleton");
+    const bar = cell.querySelector(".v-skeleton") as HTMLElement;
+    const cellRect = cell.getBoundingClientRect();
+    const barRect = bar.getBoundingClientRect();
+
+    expect(barRect.height).toBeCloseTo(parseFloat(tokenAsValue("height", "--ui-leading-base")), 0);
+    const cellMid = cellRect.top + cellRect.height / 2;
+    const barMid = barRect.top + barRect.height / 2;
+    expect(Math.abs(cellMid - barMid)).toBeLessThan(1.5);
+  });
+
+  it("lands the first real row where the first skeleton row was", async () => {
+    const screen = render(VTable, {
+      props: { columns: makeColumns(), data: [], loading: true, height: "400px" },
+    });
+    await nextTick();
+    await frame();
+    const el = screen.container as HTMLElement;
+    const before = firstCell(el, ".v-table-row-wrapper--skeleton").getBoundingClientRect().top;
+
+    await screen.rerender({ data: makeRows(20), loading: false });
+    await nextTick();
+    await frame();
+    await frame();
+    const after = firstCell(el, ".v-table-row-wrapper:not(.v-table-row-wrapper--skeleton)")
+      .getBoundingClientRect().top;
+
+    expect(after).toBeCloseTo(before, 0);
+  });
+});
+
+describe("VTable — fullscreen", () => {
+  // A raw number in a `height` style binding is not a length: Vue passes it
+  // through unitless, the browser rejects it, and the scroll container keeps
+  // its normal-mode height — a short table with its own scrollbar inside a
+  // viewport-sized panel.
+  it("grows the scroll container to fill the panel", async () => {
+    const el = await table({
+      height: "300px",
+      toolbar: { enabled: true, actions: { fullscreen: true } },
+    });
+    (el.querySelector(".v-table-fullscreen-toggle") as HTMLElement).click();
+
+    await expect.poll(() => document.querySelector(".v-table-wrapper--fullscreen")).not.toBeNull();
+    await frame();
+    await frame();
+
+    const panel = document.querySelector(".v-table-wrapper--fullscreen") as HTMLElement;
+    const body = panel.querySelector(".v-table-container-wrapper") as HTMLElement;
+    const scroll = panel.querySelector(".v-table-scroll-container") as HTMLElement;
+
+    expect(scroll.style.height).toMatch(/px$/);
+    expect(scroll.getBoundingClientRect().height).toBeGreaterThan(300);
+    const bodyHeight = body.getBoundingClientRect().height;
+    expect(scroll.getBoundingClientRect().height).toBeCloseTo(bodyHeight, 0);
+
+    // Exit is not exercised: it completes on the panel's transitionend, and the
+    // browser project disables every transition, so it never would here.
+  });
+});
+
+describe("VTable — corners", () => {
+  // The wrapper's clip region is inflated so the fullscreen toggle can overhang
+  // it, which means it rounds nothing; the box inside has to.
+  const container = async (props: Record<string, unknown> = {}) =>
+    getComputedStyle(
+      (await table({ data: makeRows(5), ...props }))
+        .querySelector(".v-table-container-wrapper") as HTMLElement,
+    );
+
+  it("clips the content to the card's curve when nothing sits above or below", async () => {
+    const style = await container();
+
+    expect(style.overflowX).toBe("clip");
+    expect(style.borderTopLeftRadius).toBe("15px");
+    expect(style.borderBottomRightRadius).toBe("15px");
+  });
+
+  it("squares the top under a toolbar", async () => {
+    const style = await container({ toolbar: { enabled: true, title: "Orders" } });
+    expect(style.borderTopLeftRadius).toBe("0px");
+    expect(style.borderBottomLeftRadius).toBe("15px");
+  });
+
+  it("squares the bottom above a pagination bar", async () => {
+    const style = await container({ pagination: { page: 1, pageSize: 10, total: 50 } });
+    expect(style.borderBottomLeftRadius).toBe("0px");
+    expect(style.borderTopLeftRadius).toBe("15px");
+  });
+});
+
+describe("VTable — row accent", () => {
+  it("draws the hover accent bar without moving its first cell's content", async () => {
+    // A 3px border-left paid for by shaving 3px off padding-left overrode the
+    // tree indent, which also lives in padding-left. An inset shadow paints
+    // the bar inside the box and leaves the padding alone.
+    const el = await table({ data: makeRows(5) });
+    const [first, second] = Array.from(rows(el)).map(r => r.firstElementChild as HTMLElement);
+    const before = getComputedStyle(first).paddingLeft;
+
+    await userEvent.hover(first);
+    const hovered = getComputedStyle(first);
+
+    expect(hovered.paddingLeft).toBe(before);
+    expect(hovered.borderLeftWidth).toBe(getComputedStyle(second).borderLeftWidth);
+    expect(hovered.boxShadow).toContain("inset");
+  });
+});
+
+describe("VTable — resizing", () => {
+  it("takes the rows out of hit-testing, so no hover rule fights a cell's own style", async () => {
+    // The old rule forced `background: none !important` on hovered cells,
+    // which outranks the inline background a column's cellStyle writes.
+    const el = await table({ data: makeRows(5) });
+    el.querySelector(".v-table-grid")!.classList.add("v-is-resizing");
+    await frame();
+
+    const cell = el.querySelector(".v-table-row-wrapper > .v-table-cell") as HTMLElement;
+    expect(getComputedStyle(cell).pointerEvents).toBe("none");
+  });
+});
+
+describe("VTable — header", () => {
+  it("stretches a leaf that spans both header rows to their full height", async () => {
+    const el = await table({ columns: makeGroupedColumns(), data: makeRows(5) });
+    const spanning = el.querySelector(".v-table-header-cell--rowspan") as HTMLElement;
+    const leaf = el.querySelector(".v-table-header-row-level-1 .v-table-header-cell") as HTMLElement;
+
+    expect(spanning.getBoundingClientRect().height)
+      .toBeCloseTo(leaf.getBoundingClientRect().height * 2, 0);
+  });
+
+  it("keeps the empty corner over a hidden header checkbox opaque and stuck to the top", async () => {
+    const el = await table({ multiSelect: { enabled: true, showHeaderCheckbox: false } });
+    const style = getComputedStyle(
+      el.querySelector(".v-table-header-checkbox-cell--empty") as HTMLElement,
+    );
+
+    expect(style.position).toBe("sticky");
+    expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+  });
+
+  it("rings the sort control when it takes keyboard focus", async () => {
+    const el = await table({ columns: makeColumns({ name: { sortable: true } }) });
+    const sort = el.querySelector(".v-table-header-sort") as HTMLElement;
+
+    sort.focus({ focusVisible: true } as FocusOptions);
+    expect(document.activeElement).toBe(sort);
+    expect(getComputedStyle(sort).outlineStyle).toBe("solid");
   });
 });

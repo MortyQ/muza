@@ -30,7 +30,7 @@
   }
 
   &__title {
-    font-weight: 600;
+    font-weight: var(--ui-weight-strong);
     color: var(--ui-foreground);
   }
 
@@ -80,7 +80,7 @@
   &__feature-title {
     overflow: hidden;
     font-size: var(--ui-text-base);
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
     text-overflow: ellipsis;
     white-space: nowrap;

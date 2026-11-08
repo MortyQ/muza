@@ -50,13 +50,13 @@
   color: var(--ui-primary-foreground);
   font-size: var(--ui-text-sm);
   line-height: 1;
-  font-weight: 700;
+  font-weight: var(--ui-weight-strong);
 }
 
 .sidebar-header__name {
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;

@@ -13,19 +13,21 @@
   transition: none;
 
   &.v-is-resizing {
+    // Inherited, so set once here rather than on every node via `*`.
     cursor: col-resize;
     user-select: none;
 
-    * {
-      cursor: col-resize !important;
-      user-select: none !important;
-      transition: none !important;
+    // Hover is switched off at the source rather than overridden: an
+    // `!important` background on hovered cells also outranked the inline
+    // background a column's cellStyle writes. Rows are `display: contents`, so
+    // this reaches every cell; the drag runs on document-level listeners.
+    .v-table-row-wrapper {
+      pointer-events: none;
     }
 
-    .v-table-row-wrapper:hover > .v-table-cell {
-      background: none !important;
-      border-left: none !important;
-      border-bottom-color: color-mix(in oklch, var(--ui-border-subtle) 30%, transparent) !important;
+    .v-table-cell,
+    .v-table-header-cell {
+      transition: none !important;
     }
 
     .v-table-total-cell {

@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 
+import VCount from "../../../src/components/base/VCount.vue";
 import VIcon from "../../../src/components/base/VIcon.vue";
 import VProgressBar from "../../../src/components/feedback/VProgressBar.vue";
 
@@ -42,7 +43,6 @@ describe("VProgressBar", () => {
     it("is not complete below 100", () => {
       const w = bar({ percentage: 99.9 });
       expect(w.classes()).not.toContain("v-progress-bar--completed");
-      expect(w.find(".v-progress-bar__shine").exists()).toBe(true);
       expect(w.findAllComponents(VIcon)).toHaveLength(0);
     });
 
@@ -51,10 +51,16 @@ describe("VProgressBar", () => {
       expect(w.classes()).toContain("v-progress-bar--completed");
     });
 
-    it("stops the shine and shows a tick once complete", () => {
+    it("shows a tick once complete", () => {
       const w = bar({ percentage: 100 });
-      expect(w.find(".v-progress-bar__shine").exists()).toBe(false);
-      expect(w.findComponent(VIcon).props().icon).toBe("lucide:check-circle");
+      expect(w.findComponent(VIcon).props().icon).toBe("lucide:check");
+    });
+
+    it("never draws a decorative shine, running or done", () => {
+      // Motion is for a change of value; a loop on a bar that is not moving
+      // reads as busy rather than as progress.
+      expect(bar({ percentage: 40 }).find(".v-progress-bar__shine").exists()).toBe(false);
+      expect(bar({ percentage: 100 }).find(".v-progress-bar__shine").exists()).toBe(false);
     });
 
     it("treats an over-100 value as complete", () => {
@@ -107,6 +113,15 @@ describe("VProgressBar", () => {
 
   it.each(["sm", "md", "lg"] as const)("applies the %s size class", (size) => {
     expect(bar({ percentage: 50, size }).classes()).toContain(`v-progress-bar--${size}`);
+  });
+
+  it("rolls the figure through VCount", () => {
+    expect(bar({ percentage: 30 }).findComponent(VCount).props("value")).toBe("30%");
+  });
+
+  it("labels the progressbar with the step when there is one", () => {
+    const track = bar({ percentage: 30, step: "Uploading" }).find(".v-progress-bar__track");
+    expect(track.attributes("aria-label")).toBe("Uploading");
   });
 
   it("reacts to a changing percentage", async () => {

@@ -1,0 +1,60 @@
+/*
+  Hierarchy in one weight step: the label is regular and muted, the figure is
+  strong. Size does the rest — no third weight, no letter-spacing trick.
+*/
+
+.v-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-2xs);
+  min-width: 0;
+
+  &__label {
+    font-size: var(--ui-text-sm);
+    font-weight: var(--ui-weight-regular);
+    line-height: var(--ui-leading-sm);
+    color: var(--ui-foreground-muted);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-md);
+    min-width: 0;
+  }
+
+  &__figure {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: var(--ui-weight-strong);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-foreground);
+  }
+
+  &__chip {
+    display: inline-flex;
+    flex: none;
+  }
+
+  &__hint {
+    font-size: var(--ui-text-sm);
+    line-height: var(--ui-leading-sm);
+    color: var(--ui-foreground-muted);
+  }
+
+  &--md &__figure {
+    font-size: var(--ui-text-2xl);
+    line-height: var(--ui-leading-2xl);
+  }
+
+  &--lg &__figure {
+    font-size: var(--ui-text-3xl);
+    line-height: var(--ui-leading-3xl);
+  }
+
+  &--tone-danger &__figure {
+    color: var(--ui-danger);
+  }
+}

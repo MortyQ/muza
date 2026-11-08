@@ -44,9 +44,9 @@
 /* ── Options ────────────────────────────────────────────────────────────── */
 .multiselect__content-wrapper.v-ms-floating .multiselect__option {
   padding: 0.625rem 1rem;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground);
-  font-weight: 400;
+  font-weight: var(--ui-weight-regular);
   cursor: pointer;
   transition: color 150ms ease, background-color 150ms ease;
   background: transparent;
@@ -61,7 +61,7 @@
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected {
   background-color: var(--ui-primary);
   color: white;
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
 }
 
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected,
@@ -87,7 +87,7 @@
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--group {
   background-color: var(--ui-surface-sunken);
   color: var(--ui-primary);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   cursor: pointer;
   padding: 8px 16px;
 }
@@ -116,7 +116,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px !important;
+  font-size: var(--ui-text-2xs) !important;
   text-align: center;
   margin-bottom: 2px;
   margin-left: .5px;

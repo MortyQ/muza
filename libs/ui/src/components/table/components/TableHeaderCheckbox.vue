@@ -49,7 +49,7 @@ const handleToggle = () => {
   position: sticky;
   top: 0;
   z-index: 3;
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
 }
 
 /* Fixed column support */

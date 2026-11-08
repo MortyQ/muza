@@ -4,7 +4,7 @@ import { render } from "vitest-browser-vue";
 import VLoader from "../../../../src/components/feedback/VLoader.vue";
 import VProgressBar from "../../../../src/components/feedback/VProgressBar.vue";
 import { applyTheme, THEME_CASES } from "../../../setup/theme";
-import { computed as computedValue, rawToken, tokenAsColor } from "../../../setup/tokens";
+import { computed as computedValue, tokenAsColor } from "../../../setup/tokens";
 
 const LOADER_TONES = {
   primary: "--ui-primary",
@@ -84,25 +84,43 @@ describe.each(THEME_CASES)("feedback tokens — %s theme", (theme) => {
       expect(computedValue(under, "--v-progress-value")).toBe("0%");
     });
 
-    it("runs on the primary accent while in progress", async () => {
+    it("draws no chrome of its own, so it sits in whatever holds it", async () => {
+      const style = getComputedStyle(await mountIt(VProgressBar, { percentage: 40 }));
+      expect(style.borderTopWidth).toBe("0px");
+      expect(style.boxShadow).toBe("none");
+      expect(style.backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    });
+
+    it("lays the track on the sunken surface, fully rounded", async () => {
       const el = await mountIt(VProgressBar, { percentage: 40 });
-      expect(computedValue(el, "--v-progress-accent")).toBe(rawToken("--ui-primary"));
-      expect(computedValue(el, "--v-progress-accent-soft")).toBe(rawToken("--ui-primary-hover"));
+      const track = getComputedStyle(el.querySelector(".v-progress-bar__track") as HTMLElement);
+      expect(track.backgroundColor).toBe(tokenAsColor("--ui-surface-sunken"));
+      expect(track.borderTopLeftRadius).toBe("9999px");
     });
 
-    it("switches the whole accent pair to success on completion", async () => {
-      const el = await mountIt(VProgressBar, { percentage: 100 });
-      expect(computedValue(el, "--v-progress-accent")).toBe(rawToken("--ui-success"));
-      expect(computedValue(el, "--v-progress-accent-soft")).toBe(rawToken("--ui-success-hover"));
+    it("fills on the primary token while running and success once done", async () => {
+      const fill = async (percentage: number) => getComputedStyle(
+        (await mountIt(VProgressBar, { percentage })).querySelector(".v-progress-bar__fill") as HTMLElement,
+      );
+      expect((await fill(40)).backgroundColor).toBe(tokenAsColor("--ui-primary"));
+      expect((await fill(100)).backgroundColor).toBe(tokenAsColor("--ui-success"));
     });
 
-    it("tones the percentage label with the same accent", async () => {
+    it("keeps the fill still between changes", async () => {
+      const el = await mountIt(VProgressBar, { percentage: 40 });
+      const fill = getComputedStyle(el.querySelector(".v-progress-bar__fill") as HTMLElement);
+      expect(fill.animationName).toBe("none");
+      expect(fill.backgroundImage).toBe("none");
+    });
+
+    it("sets the figure in tabular digits, on the foreground until done", async () => {
       const running = await mountIt(VProgressBar, { percentage: 40 });
       const done = await mountIt(VProgressBar, { percentage: 100 });
       const label = (el: HTMLElement) =>
-        getComputedStyle(el.querySelector(".v-progress-bar__percentage") as HTMLElement).color;
-      expect(label(running)).toBe(tokenAsColor("--ui-primary"));
-      expect(label(done)).toBe(tokenAsColor("--ui-success"));
+        getComputedStyle(el.querySelector(".v-progress-bar__percentage") as HTMLElement);
+      expect(label(running).fontVariantNumeric).toBe("tabular-nums");
+      expect(label(running).color).toBe(tokenAsColor("--ui-foreground"));
+      expect(label(done).color).toBe(tokenAsColor("--ui-success"));
     });
 
     it.each([
@@ -111,7 +129,6 @@ describe.each(THEME_CASES)("feedback tokens — %s theme", (theme) => {
       ["lg", "8px"],
     ] as const)("size %s gives a %s track", async (size, expected) => {
       const el = await mountIt(VProgressBar, { percentage: 50, size });
-      expect(computedValue(el, "--v-progress-track-height")).toBe(expected);
       const track = el.querySelector(".v-progress-bar__track") as HTMLElement;
       expect(getComputedStyle(track).height).toBe(expected);
     });

@@ -8,11 +8,13 @@ export { default as VAvatar } from "./components/base/VAvatar.vue";
 export { default as VButton } from "./components/base/VButton.vue";
 export { default as VButtonGroup } from "./components/base/VButtonGroup.vue";
 export { BUTTON_GROUP_KEY } from "./components/base/injectionKeys";
+export { default as VCount } from "./components/base/VCount.vue";
 export { default as VDate } from "./components/base/VDate.vue";
 export {
   default as VChip, type ChipVariant, type ChipColor, type ChipSize,
 } from "./components/base/VChip.vue";
 export { default as VIcon } from "./components/base/VIcon.vue";
+export { default as VStat } from "./components/base/VStat.vue";
 export { default as VTag, type TagVariant, type TagColor, type TagSize } from "./components/base/VTag.vue";
 export { default as VThemeSwitcher, type ThemeOption } from "./components/base/VThemeSwitcher.vue";
 export { default as VComposer, type VComposerStatus } from "./components/inputs/VComposer.vue";
@@ -54,6 +56,10 @@ export { default as VToaster } from "./components/feedback/VToaster.vue";
 export { default as VLoader } from "./components/feedback/VLoader.vue";
 export { default as VProgressBar } from "./components/feedback/VProgressBar.vue";
 export { default as VMeter } from "./components/feedback/VMeter.vue";
+export {
+  default as VSkeleton, type SkeletonShape, type SkeletonSize,
+} from "./components/feedback/VSkeleton.vue";
+export { default as VEmptyState } from "./components/feedback/VEmptyState.vue";
 export { default as VTable } from "./components/table/VTable.vue";
 
 // ── Table: standalone subcomponents ─────────────────────────────────────────
@@ -87,6 +93,7 @@ export {
 } from "./components/table/composables/useTableFormatters";
 export { useLinkedTables } from "./components/table/composables/useLinkedTables";
 export { useTablePage, TABLE_PAGE_KEY } from "./components/table/composables/useTablePage";
+export { COLUMN_PICKER_TYPES } from "./components/table/constants";
 
 // ── Table: storage ──────────────────────────────────────────────────────────
 export {
@@ -123,6 +130,8 @@ export type {
   ExportFormat,
   ColumnPickerItem,
   ColumnPickerGroup,
+  ColumnPickerType,
+  ColumnPickerTypeColor,
   ScrollSyncController,
   LinkedTableBindings,
   LinkedTablesOptions,

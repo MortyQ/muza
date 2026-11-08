@@ -119,11 +119,32 @@ export interface FrontSortPayload {
 
 // Pagination configuration
 export interface PaginationConfig {
-  page: number // Current page (1-based)
-  pageSize: number // Items per page
-  total: number // Total items count (required for server pagination)
-  pageSizeOptions?: number[] // Available page size options (default: [10, 25, 50, 100])
-  showSizeChanger?: boolean // Show page size selector (default: true)
+  /** Total items. The only field the table cannot derive. */
+  total: number
+
+  /**
+   * Current page (1-based). Omit when the page has an owner elsewhere: `v-model:page` or
+   * `useTablePage()` both outrank it.
+   */
+  page?: number
+
+  /**
+   * Items per page. Omit when `v-model:page-size` is bound, which outranks it.
+   * @default 10
+   */
+  pageSize?: number
+
+  /**
+   * Page sizes offered by the size changer. Passing this turns the changer on.
+   * @default [10, 25, 50, 100]
+   */
+  pageSizeOptions?: number[]
+
+  /**
+   * Show the page size selector. Defaults to whether `pageSizeOptions` was passed; set it only
+   * to show the changer with the default options, or to hide it despite options.
+   */
+  showSizeChanger?: boolean
 }
 
 // Re-export selection types

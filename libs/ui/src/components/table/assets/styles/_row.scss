@@ -10,9 +10,10 @@
     background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
     border-bottom-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-border) 80%);
 
+    // An inset shadow, not a border: a border needs padding-left shaved to
+    // compensate, which overrides the tree indent and re-lays the grid.
     &:first-child {
-      border-left: 3px solid color-mix(in oklch, var(--ui-primary) 80%, transparent);
-      padding-left: calc(#{$table-cell-padding-x} - 3px);
+      box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ui-primary) 80%, transparent);
     }
 
     &[data-custom-row="true"] {
@@ -20,19 +21,8 @@
       border-bottom-color: var(--ui-border);
 
       &:first-child {
-        border-left: 3px solid var(--ui-primary);
-        padding-left: calc(#{$table-cell-padding-x} - 3px);
+        box-shadow: inset 3px 0 0 var(--ui-primary);
       }
-    }
-  }
-
-  .v-table-grid.v-is-resizing &:hover > .v-table-cell {
-    background: none;
-    border-bottom-color: color-mix(in oklch, var(--ui-border-subtle) 30%, transparent);
-
-    &:first-child {
-      border-left: none;
-      padding-left: $table-cell-padding-x;
     }
   }
 
@@ -54,8 +44,7 @@
     font-weight: $table-font-weight-medium;
 
     &:first-child {
-      border-left: 3px solid var(--ui-primary);
-      padding-left: calc(#{$table-cell-padding-x} - 3px);
+      box-shadow: inset 3px 0 0 var(--ui-primary);
     }
   }
 

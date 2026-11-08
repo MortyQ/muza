@@ -96,6 +96,13 @@
 
   &--sortable { cursor: pointer; }
 
+  // A leaf beside a group spans both header rows; without this it keeps one
+  // row's height and leaves a hole under itself.
+  &--rowspan {
+    height: auto;
+    align-self: stretch;
+  }
+
   &.v-table-fixed-column {
     z-index: $z-index-header-fixed !important;
   }
@@ -233,4 +240,18 @@
   border-radius: 1px;
   opacity: 0;
   transition: opacity 0.15s ease;
+}
+
+// The corner over a hidden header checkbox. TableHeaderCheckbox styles the
+// visible one in its own scoped block, which does not reach this div.
+.v-table-header-checkbox-cell--empty {
+  height: var(--v-table-header-h);
+  min-height: var(--v-table-header-h);
+  box-sizing: border-box;
+  background: color-mix(in oklch, var(--ui-surface) 98%, var(--ui-foreground) 2%);
+  border-bottom: $table-border-width solid var(--ui-border);
+  border-right: $table-border-width solid var(--ui-border);
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }

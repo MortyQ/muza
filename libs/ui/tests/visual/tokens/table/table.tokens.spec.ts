@@ -259,6 +259,10 @@ describe.each(THEME_CASES)("table tokens — %s theme", (theme) => {
       expect(getComputedStyle(await delta({ value: 5, reverse: true })).color)
         .toBe(tokenAsColor("--ui-danger"));
     });
+
+    it("sets its figure in tabular digits, so a changed value holds its width", async () => {
+      expect(getComputedStyle(await delta({ value: 5 })).fontVariantNumeric).toBe("tabular-nums");
+    });
   });
 });
 

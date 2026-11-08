@@ -86,7 +86,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.8125rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
 }
 
@@ -98,7 +98,7 @@
 }
 
 .v-composer__meta {
-  font-size: 0.75rem;
+  font-size: var(--ui-text-sm);
   color: var(--ui-foreground-secondary);
 }
 
@@ -136,7 +136,7 @@
   outline: none;
   background: transparent;
   font: inherit;
-  font-size: 0.8125rem;
+  font-size: var(--ui-text-base);
   line-height: 1.55;
   color: var(--ui-foreground);
 
@@ -147,13 +147,13 @@
 
 .v-composer__message {
   margin: 0.25rem 0 0;
-  font-size: 0.75rem;
+  font-size: var(--ui-text-sm);
   line-height: 1rem;
   color: var(--ui-foreground-secondary);
 }
 
 .v-composer__message--error {
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
   color: var(--ui-danger);
 }
 
@@ -170,7 +170,7 @@
 }
 
 .v-composer__hint {
-  font-size: 0.71875rem;
+  font-size: var(--ui-text-xs);
   color: var(--ui-foreground-secondary);
 
   kbd {
@@ -178,13 +178,13 @@
     border: 1px solid var(--ui-border);
     border-radius: var(--ui-radius-xs);
     font: inherit;
-    font-size: 0.6875rem;
+    font-size: var(--ui-text-xs);
   }
 }
 
 .v-composer__failed {
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: var(--ui-text-sm);
+  font-weight: var(--ui-weight-medium);
   color: var(--ui-danger);
 }
 
