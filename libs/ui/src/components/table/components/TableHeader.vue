@@ -3,7 +3,9 @@ import { computed, inject, type Slot } from "vue";
 
 import VIcon from "../../base/VIcon.vue";
 import VTooltip from "../../overlay/VTooltip.vue";
-import type { Column, SortOrder } from "../types";
+import type { Column, SortOrder, TableHighlightInjection } from "../types";
+
+import TablePinButton from "./TablePinButton.vue";
 
 const {
   column,
@@ -36,6 +38,8 @@ const emit = defineEmits<{
 
 // Inject slots from Table.vue (avoid prop drilling)
 const tableSlots = inject<{ headerCellCustomAction?: Slot }>("tableSlots", {});
+// Optional: a header rendered outside VTable has no highlight to pin into.
+const highlight = inject<TableHighlightInjection | null>("tableHighlight", null);
 
 const sortIcon = computed(() => {
   if (!isSorted || !sortOrder) return "lucide:arrow-up-down";
@@ -167,6 +171,13 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
         :is="tableSlots.headerCellCustomAction"
         v-if="tableSlots.headerCellCustomAction"
         :column="column"
+      />
+
+      <TablePinButton
+        v-if="highlight?.columnEnabled.value"
+        :label
+        :pinned="highlight.isColumnPinned(columnKey)"
+        @toggle="highlight.toggleColumn(columnKey)"
       />
     </div>
 

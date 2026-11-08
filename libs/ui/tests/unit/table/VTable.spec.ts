@@ -607,6 +607,26 @@ describe("VTable", () => {
       });
     });
 
+    it("renders a column pin in every header and pins on click", async () => {
+      const w = table({ highlight: { row: false } });
+      const pins = w.findAll(".v-table-header-cell .v-table-pin-button");
+      expect(pins).toHaveLength(5);
+
+      await pins[1].trigger("click");
+      const state = w.emitted("update:highlight-state")!.at(-1)![0] as {
+        column: { columnKey: string } | null
+      } | null;
+      expect(state?.column).toMatchObject({ columnKey: "name" });
+    });
+
+    it("does not sort a column when its pin is clicked", async () => {
+      const columns = makeColumns({ name: { sortable: true } });
+      const w = table({ highlight: { row: false }, columns });
+      await w.findAll(".v-table-header-cell .v-table-pin-button")[1].trigger("click");
+
+      expect(w.emitted("update:sort-state")).toBeUndefined();
+    });
+
     it("renders only the row axis for `{ column: false }`", () => {
       const w = table({ highlight: { column: false } });
       expect(w.findAll(".v-table-pin-button").length).toBe(5);
