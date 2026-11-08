@@ -473,6 +473,33 @@ describe("VTable", () => {
       expect(w.emitted("toolbar:reset-sort")).toHaveLength(1);
     });
 
+    it.each(["refresh", "reset-sort"])(
+      "%s asks for page 1, not the page the config started on",
+      async (action) => {
+        // Both reset the page to 1; the request has to say so, or the parent
+        // fetches the old page while the pager shows page 1.
+        const w = table({
+          toolbar: { enabled: true, actions: { refresh: true, resetSort: true } },
+          pagination: { page: 3, pageSize: 25, total: 100 },
+        });
+        await w.findComponent(TableToolbar).vm.$emit(action);
+
+        expect(w.emitted("request")!.at(-1)![0]).toMatchObject({ page: 1, pageSize: 25 });
+      },
+    );
+
+    it("asks for page 1 with a bound page too, before the parent has written it back", async () => {
+      const w = table({
+        toolbar: { enabled: true, actions: { refresh: true } },
+        pagination: { page: 3, pageSize: 25, total: 100 },
+        page: 3,
+      });
+      await w.findComponent(TableToolbar).vm.$emit("refresh");
+
+      expect(w.emitted("update:page")!.at(-1)).toEqual([1]);
+      expect(w.emitted("request")!.at(-1)![0]).toMatchObject({ page: 1 });
+    });
+
     it("forwards export with its format and scope", async () => {
       const w = table({ toolbar: { enabled: true, actions: { export: "single" } } });
       await w.findComponent(TableToolbar).vm.$emit("export", "csv", true);
@@ -537,6 +564,47 @@ describe("VTable", () => {
       await w.find(".v-table-row-wrapper .v-table-pin-button").trigger("click");
 
       expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(true);
+    });
+
+    describe("a pin does not outlive the rows it was set on", () => {
+      // Each of these replaces the rows on screen, so a row pinned by id
+      // would point at a row that is gone or at a different one entirely.
+      async function pinned(props: Record<string, unknown> = {}) {
+        const w = table({ highlight: true, ...props });
+        await w.find(".v-table-row-wrapper .v-table-pin-button").trigger("click");
+        expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(true);
+        return w;
+      }
+
+      it("clears on refresh", async () => {
+        const w = await pinned({ toolbar: { enabled: true, actions: { refresh: true } } });
+        await w.findComponent(TableToolbar).vm.$emit("refresh");
+
+        expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(false);
+        expect(w.emitted("update:highlight-state")!.at(-1)![0]).toBeNull();
+      });
+
+      it("clears on reset-sort", async () => {
+        const w = await pinned({ toolbar: { enabled: true, actions: { resetSort: true } } });
+        await w.findComponent(TableToolbar).vm.$emit("reset-sort");
+
+        expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(false);
+      });
+
+      it("clears on a server sort", async () => {
+        const w = await pinned({ columns: makeColumns({ name: { sortable: true } }) });
+        await w.findAll(".v-table-header-sort")[0].trigger("click");
+
+        expect(w.emitted("request")).toHaveLength(1);
+        expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(false);
+      });
+
+      it("clears on a page change", async () => {
+        const w = await pinned({ pagination: { page: 1, pageSize: 10, total: 50 } });
+        await w.findComponent(TablePagination).vm.$emit("page-change", { page: 2, pageSize: 10 });
+
+        expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(false);
+      });
     });
 
     it("renders only the row axis for `{ column: false }`", () => {

@@ -129,9 +129,10 @@ const handleToolbarRefresh = () => {
   sortStateRef.value = [];
   pageRef.value = 1; // sync v-model:page
   expandableLogic.collapseAll();
+  highlightApi.clear();
   // Emit request event (works for both with/without pagination)
   emit("request", {
-    page: pagination?.page ?? 1,
+    page: 1, // not pageRef: in modes 1 and 2 it reads the old page until the parent updates
     pageSize: pagination?.pageSize ?? 10,
     sort: [],
   });
@@ -154,9 +155,10 @@ const handleToolbarResetSort = () => {
   sortStateRef.value = [];
   pageRef.value = 1; // sync v-model:page
   expandableLogic.collapseAll();
+  highlightApi.clear();
   // Emit request event with current page (works for both with/without pagination)
   emit("request", {
-    page: pagination?.page ?? 1,
+    page: 1, // not pageRef: in modes 1 and 2 it reads the old page until the parent updates
     pageSize: pagination?.pageSize ?? 10,
     sort: [],
   });
@@ -317,6 +319,7 @@ const {
   onRequest: (payload) => {
     pageRef.value = payload.page; // sync v-model:page (sort resets to page 1)
     expandableLogic.collapseAll();
+    highlightApi.clear();
     emit("request", payload);
   },
   onSort: payload => emit("sort", payload),
@@ -488,6 +491,7 @@ const handlePaginationChange = ({ page, pageSize }: { page: number, pageSize: nu
 
   pageRef.value = page; // sync v-model:page
   expandableLogic.collapseAll();
+  highlightApi.clear();
   emit("request", {
     page,
     pageSize,
