@@ -31,6 +31,13 @@
   - A first load with no rows draws twelve skeleton rows at the row height instead of a spinner. A refetch over rows already shown keeps the dimmed overlay.
   - The scroll container carries `aria-busy`.
 - **`DeltaIndicator` / `DeltaValue`** roll their figures through `VCount` and use tabular digits.
+- **`VProgressBar`** is now a bare bar, in line with `VStat` and `VSkeleton`:
+  - **It draws no card.** The border, shadow, surface and 200px minimum width are gone. Wrap it in `VCard` where the card was wanted.
+  - The track is fully rounded on `--ui-surface-sunken`, with a solid fill. The flowing gradient and the looping shine are gone, so nothing moves while the value is still.
+  - A change of value eases the fill to its new width, and the figure rolls through `VCount` in tabular digits. Both are instant under reduced motion.
+  - The label and figure use the `sm` type step; the label is secondary text. At 100% the figure and fill turn success-green, with a plain check instead of `check-circle`.
+  - Track heights are spacing tokens, at the same 4, 6 and 8px. The progressbar takes `step` as its accessible name.
+  - The props are unchanged.
 - **`VTable` pagination**:
   - `PaginationConfig.page` and `pageSize` are optional. An owner elsewhere (`v-model:page`, `useTablePage()`, `v-model:page-size`) outranks both.
   - The size changer shows whenever `pageSizeOptions` is passed. It was hidden unless `showSizeChanger: true` was also set. An explicit `showSizeChanger: false` still hides it.

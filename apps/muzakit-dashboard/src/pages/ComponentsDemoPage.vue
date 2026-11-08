@@ -356,17 +356,28 @@ const hasUnsavedChanges = ref(false);
         VProgressBar
       </h2>
       <p class="components-demo__desc">
-        Turns green and swaps the shine for a check once it reaches 100%.
+        A bare bar: it draws no card of its own, so it sits in whatever holds it.
+        It moves only when the value changes, and turns green with a tick at 100%.
       </p>
       <div class="components-demo__stack">
-        <VProgressBar
-          :percentage="progress"
-          step="Uploading assets"
-        />
-        <VProgressBar
-          :percentage="100"
-          step="Finished"
-        />
+        <VCard title="Catalog sync">
+          <div class="components-demo__stack">
+            <VProgressBar
+              :percentage="progress"
+              step="Uploading listings"
+            />
+            <VProgressBar
+              :percentage="100"
+              step="Images"
+              size="sm"
+            />
+            <VProgressBar
+              :percentage="progress / 2"
+              :show-percentage="false"
+              size="lg"
+            />
+          </div>
+        </VCard>
         <div class="components-demo__row">
           <VButton
             text="-10"

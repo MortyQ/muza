@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
+import VCount from "../base/VCount.vue";
 import VIcon from "../base/VIcon.vue";
 
 const {
@@ -18,6 +19,8 @@ const {
 }>();
 
 const clampedPercentage = computed(() => Math.max(0, Math.min(100, percentage)));
+
+const roundedPercentage = computed(() => Math.round(clampedPercentage.value));
 
 const isCompleted = computed(() => clampedPercentage.value >= 100);
 
@@ -43,38 +46,33 @@ const rootClass = computed(() => [
       >
         {{ step }}
       </span>
-      <span v-else />
 
-      <div
+      <span
         v-if="showPercentage"
         class="v-progress-bar__percentage"
       >
-        <span>{{ Math.round(clampedPercentage) }}%</span>
         <VIcon
           v-if="isCompleted"
-          :size="14"
-          icon="lucide:check-circle"
+          :size="12"
+          icon="lucide:check"
         />
-      </div>
+        <VCount :value="`${roundedPercentage}%`" />
+      </span>
     </div>
 
     <div
-      :aria-valuenow="Math.round(clampedPercentage)"
+      :aria-label="step || undefined"
+      :aria-valuenow="roundedPercentage"
       aria-valuemax="100"
       aria-valuemin="0"
       class="v-progress-bar__track"
       role="progressbar"
     >
-      <div class="v-progress-bar__fill">
-        <div
-          v-if="!isCompleted"
-          class="v-progress-bar__shine"
-        />
-      </div>
+      <div class="v-progress-bar__fill" />
     </div>
   </div>
 </template>
 
-<style scoped>
-@import "../../styles/components/feedback/vprogressbar.scss";
+<style lang="scss" scoped>
+@use "../../styles/components/feedback/vprogressbar.scss";
 </style>
