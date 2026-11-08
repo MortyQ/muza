@@ -428,3 +428,33 @@ describe("VTable — first-load skeleton", () => {
     expect(after).toBeCloseTo(before, 0);
   });
 });
+
+describe("VTable — fullscreen", () => {
+  // A raw number in a `height` style binding is not a length: Vue passes it
+  // through unitless, the browser rejects it, and the scroll container keeps
+  // its normal-mode height — a short table with its own scrollbar inside a
+  // viewport-sized panel.
+  it("grows the scroll container to fill the panel", async () => {
+    const el = await table({
+      height: "300px",
+      toolbar: { enabled: true, actions: { fullscreen: true } },
+    });
+    (el.querySelector(".v-table-fullscreen-toggle") as HTMLElement).click();
+
+    await expect.poll(() => document.querySelector(".v-table-wrapper--fullscreen")).not.toBeNull();
+    await frame();
+    await frame();
+
+    const panel = document.querySelector(".v-table-wrapper--fullscreen") as HTMLElement;
+    const body = panel.querySelector(".v-table-container-wrapper") as HTMLElement;
+    const scroll = panel.querySelector(".v-table-scroll-container") as HTMLElement;
+
+    expect(scroll.style.height).toMatch(/px$/);
+    expect(scroll.getBoundingClientRect().height).toBeGreaterThan(300);
+    const bodyHeight = body.getBoundingClientRect().height;
+    expect(scroll.getBoundingClientRect().height).toBeCloseTo(bodyHeight, 0);
+
+    // Exit is not exercised: it completes on the panel's transitionend, and the
+    // browser project disables every transition, so it never would here.
+  });
+});

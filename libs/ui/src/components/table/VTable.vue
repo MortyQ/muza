@@ -757,6 +757,17 @@ const {
   },
 });
 
+// The scroll container's height in fullscreen has to be an explicit length.
+// `contentHeight` is a number, and a number in a `height` style binding is
+// passed through unitless — the browser rejects it and keeps the normal-mode
+// height, which left a short table with its own scrollbar in a viewport-sized
+// panel. Flex-fill is not an option either: the container is a grandchild of
+// the panel, so a `%` height would subtract the chrome twice.
+const scrollContainerStyle = computed(() => ({
+  height: isFullscreen.value ? `${fullscreenContentHeight.value}px` : tableHeight.value,
+  overscrollBehavior: "contain" as const,
+}));
+
 // ── Linked tables ───────────────────────────────────────────────────────────
 const onScrollContainerScroll = (event: Event) => {
   if (!scrollSync) return;
@@ -955,10 +966,7 @@ onUnmounted(() => {
           ref="scrollContainerRef"
           :aria-busy="loading"
           :class="{ 'v-table-scroll-container--loading': loading }"
-          :style="{
-            height: isFullscreen ? fullscreenContentHeight : tableHeight,
-            overscrollBehavior: 'contain',
-          }"
+          :style="scrollContainerStyle"
           class="v-table-scroll-container v-table-scrollbar-styled"
           @scroll="onScrollContainerScroll"
         >
