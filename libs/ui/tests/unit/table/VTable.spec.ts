@@ -343,6 +343,53 @@ describe("VTable", () => {
       expect(w.emitted("update:page")).toBeUndefined();
     });
 
+    describe("page size", () => {
+      it("shows the size changer once options are passed", () => {
+        const bar = table({ pagination: { total: 50, pageSizeOptions: [10, 25] } })
+          .findComponent(TablePagination);
+        expect(bar.props("showSizeChanger")).toBe(true);
+      });
+
+      it("hides it without options", () => {
+        expect(table({ pagination: { total: 50 } }).findComponent(TablePagination)
+          .props("showSizeChanger")).toBe(false);
+      });
+
+      it("lets an explicit flag override the options", () => {
+        const pagination = { total: 50, pageSizeOptions: [10], showSizeChanger: false };
+        const bar = table({ pagination }).findComponent(TablePagination);
+        expect(bar.props("showSizeChanger")).toBe(false);
+      });
+
+      it("prefers a bound page size over the config's", () => {
+        const w = table({ pagination: { total: 50, pageSize: 10 }, pageSize: 25 });
+        expect(w.findComponent(TablePagination).props("pageSize")).toBe(25);
+      });
+
+      it("defaults to 10 with neither", () => {
+        expect(table({ pagination: { total: 50 } }).findComponent(TablePagination)
+          .props("pageSize")).toBe(10);
+      });
+
+      it("emits update:pageSize on a size change when bound", async () => {
+        const w = table({ pagination: { total: 50 }, pageSize: 10 });
+        await w.findComponent(TablePagination).vm.$emit("page-change", { page: 1, pageSize: 50 });
+
+        expect(w.emitted("update:pageSize")!.at(-1)).toEqual([50]);
+      });
+
+      it("refreshes with the bound size", async () => {
+        const w = table({
+          pagination: { total: 50, pageSize: 10 },
+          pageSize: 100,
+          toolbar: { enabled: true, actions: { refresh: true } },
+        });
+        await w.findComponent(TableToolbar).vm.$emit("refresh");
+
+        expect(w.emitted("request")!.at(-1)![0]).toMatchObject({ pageSize: 100 });
+      });
+    });
+
     it("ignores navigation while loading", async () => {
       const w = table({ pagination: config, loading: true });
       await w.findComponent(TablePagination).vm.$emit("page-change", { page: 3, pageSize: 10 });
