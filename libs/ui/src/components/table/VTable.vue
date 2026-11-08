@@ -78,6 +78,36 @@ const {
   highlightSync,
 } = defineProps<TableProps<TData>>();
 
+// Declared, not inferred: the toolbar and header slots reach their components
+// through provide("tableSlots") rather than a <slot> here, so inference never
+// saw them and a consumer's #toolbar-filters failed type-check. Every header
+// slot receives at least the column, which keeps `header-cell-custom-action`
+// assignable to the `header-*` pattern it also matches.
+defineSlots<{
+  "toolbar"?(): unknown
+  "toolbar-title"?(): unknown
+  "toolbar-search"?(): unknown
+  "toolbar-actions"?(): unknown
+  "toolbar-filters"?(): unknown
+  "toolbar-column-actions"?(): unknown
+  "empty-state"?(): unknown
+  "header-cell-custom-action"?(props: { column: Column<TData> }): unknown
+  [name: `header-${string}`]:
+    ((props: { column: Column<TData> } & Record<string, unknown>) => unknown) | undefined
+  [name: `cell-${string}`]: ((props: {
+    column: Column<TData>
+    depth: number
+    index: number
+    row: TData & FlattenedRow
+    value: unknown
+  }) => unknown) | undefined
+  [name: `total-cell-${string}`]: ((props: {
+    column: Column<TData>
+    row: Record<string, unknown>
+    value: unknown
+  }) => unknown) | undefined
+}>();
+
 // defineEmits with generic type params is broken in generic SFCs (Vue compiler limitation —
 // only the last overload is recognized). Workaround: runtime array + cast to TableEmits<TData>.
 const emit = defineEmits([
