@@ -11,6 +11,7 @@ declare module "vue" {
     VAvatar: typeof import("./components/base/VAvatar.vue").default
     VButton: typeof import("./components/base/VButton.vue").default
     VButtonGroup: typeof import("./components/base/VButtonGroup.vue").default
+    VCount: typeof import("./components/base/VCount.vue").default
     VDate: typeof import("./components/base/VDate.vue").default
     VIcon: typeof import("./components/base/VIcon.vue").default
     VStat: typeof import("./components/base/VStat.vue").default

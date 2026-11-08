@@ -8,6 +8,7 @@ export { default as VAvatar } from "./components/base/VAvatar.vue";
 export { default as VButton } from "./components/base/VButton.vue";
 export { default as VButtonGroup } from "./components/base/VButtonGroup.vue";
 export { BUTTON_GROUP_KEY } from "./components/base/injectionKeys";
+export { default as VCount } from "./components/base/VCount.vue";
 export { default as VDate } from "./components/base/VDate.vue";
 export {
   default as VChip, type ChipVariant, type ChipColor, type ChipSize,
