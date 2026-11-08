@@ -45,27 +45,6 @@ export const useTableSort = <T = Record<string, unknown>>(options: UseTableSortO
   // Internal sort state (controlled via v-model:sort-state)
   const internalSortState = ref<SortItem[]>(propSortState?.value || []);
 
-  // Store original data order for reset (only for frontend sorting)
-  const originalDataOrder = ref<T[]>([]);
-
-  // Track if original order has been saved
-  const originalOrderSaved = ref(false);
-
-  // Save original data order on first load
-  if (data && sortConfig.value.type === "front") {
-    watch(
-      data,
-      (newData) => {
-        // Save original order only once, on first data load
-        if (!originalOrderSaved.value && newData.length > 0) {
-          originalDataOrder.value = [...newData];
-          originalOrderSaved.value = true;
-        }
-      },
-      { immediate: true },
-    );
-  }
-
   // Sync with prop if controlled
   if (propSortState) {
     watch(propSortState, (val) => {
@@ -140,11 +119,7 @@ export const useTableSort = <T = Record<string, unknown>>(options: UseTableSortO
      * Sort data array by multiple columns (multi-sort support)
      */
   const sortDataByMultiple = (dataToSort: T[], sortItems: SortItem[]): T[] => {
-    // If no sorting applied, return original order
     if (sortItems.length === 0) {
-      if (originalOrderSaved.value && originalDataOrder.value.length > 0) {
-        return [...originalDataOrder.value] as T[];
-      }
       return [...dataToSort];
     }
 

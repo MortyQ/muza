@@ -446,20 +446,20 @@ describe("useTableSort", () => {
       expect(names(rows.value)).toEqual(before);
     });
 
-    it("keeps the first non-empty data as the original order", async () => {
-      // The snapshot is taken once, on the first non-empty load. A later
-      // refetch must not become the new "unsorted" order.
-      const { rows, handleSortClick, sortedData } = setup({ ...front, data: [] });
+    it("clears to the latest data, not to the first load", async () => {
+      // A refetch, a page change or an edit replaces the data; clearing the
+      // sort afterwards must show that data, not a snapshot of the first load.
+      const { rows, handleSortClick, sortedData } = setup({ ...front, data: makeRows(3) });
 
-      rows.value = makeRows(3);
+      rows.value = makeRows(5).reverse();
       await nextTick();
-      const first = names(sortedData.value);
+      const latest = names(rows.value);
 
       handleSortClick(column("name"));
       handleSortClick(column("name"));
       handleSortClick(column("name"));
 
-      expect(names(sortedData.value)).toEqual(first);
+      expect(names(sortedData.value)).toEqual(latest);
     });
   });
 
