@@ -70,14 +70,14 @@
 
   &__title {
     margin-bottom: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--ui-text-base);
+    font-weight: var(--ui-weight-strong);
     line-height: 1.375;
     color: var(--ui-foreground);
   }
 
   &__description {
-    font-size: 0.75rem;
+    font-size: var(--ui-text-sm);
     line-height: 1.625;
     color: var(--ui-foreground-secondary);
   }
