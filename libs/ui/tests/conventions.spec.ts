@@ -278,6 +278,44 @@ describe("stylesheet conventions", () => {
   });
 });
 
+describe("type values", () => {
+  // Every stylesheet in the library, the table's partials and the sidebar's
+  // included, plus the style blocks inside .vue files — a literal type value
+  // is the same defect wherever it lives.
+  function walk(dir: string): string[] {
+    return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) return walk(path);
+      return /\.(scss|vue)$/.test(entry.name) ? [path] : [];
+    });
+  }
+
+  const FILES = walk(SRC).map((path) => {
+    const source = readFileSync(path, "utf8");
+    const css = path.endsWith(".vue")
+      ? [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join("\n")
+      : source;
+    return {
+      file: path.slice(SRC.length + 1),
+      code: css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""),
+    };
+  });
+
+  it("finds the files", () => {
+    expect(FILES.length).toBeGreaterThan(80);
+  });
+
+  it.each(FILES)("$file sets font-size and font-weight from tokens", ({ file, code }) => {
+    const literals = [
+      ...code.matchAll(/font-size:\s*[\d.]+(?:px|rem|em)\b/g),
+      ...code.matchAll(/font-weight:\s*\d{3}\b/g),
+      ...code.matchAll(/\$[\w-]*font-weight[\w-]*:\s*\d{3}\b/g),
+    ].map(m => m[0]);
+    expect(literals, `${file} hardcodes type: ${literals.join(", ")} — use --ui-text-* / --ui-weight-*`)
+      .toHaveLength(0);
+  });
+});
+
 describe("global component registration", () => {
   it("declares every globally registered component with a matching import path", () => {
     const declared = [...GLOBALS.matchAll(/(\w+): typeof import\("([^"]+)"\)/g)];
