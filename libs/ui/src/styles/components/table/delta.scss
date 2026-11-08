@@ -3,8 +3,9 @@
 .v-delta {
   display: inline-flex;
   align-items: center;
-  gap: 0.125rem;
+  gap: var(--ui-space-2xs);
   line-height: 1.25;
+  font-variant-numeric: tabular-nums;
   color: var(--ui-foreground);
 
   &--sm {
@@ -36,6 +37,7 @@
 .v-delta-value {
   display: flex;
   flex-direction: column;
+  font-variant-numeric: tabular-nums;
 
   &__main {
     color: var(--ui-foreground);
