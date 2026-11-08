@@ -760,6 +760,14 @@ describe("VTable", () => {
     });
   });
 
+  describe("exposed state", () => {
+    it("exposes the columns the user currently sees", () => {
+      const w = table();
+      const exposed = (w.vm as unknown as { visibleColumns: Column[] }).visibleColumns;
+      expect(exposed.map(c => c.key)).toEqual(["id", "name", "status", "revenue", "updatedAt"]);
+    });
+  });
+
   describe("fixed columns", () => {
     it("sticks a pinned column and marks the shadow edge", () => {
       const w = table({ columns: makeColumns({ id: { fixed: "left" } }) });

@@ -853,6 +853,11 @@ onUnmounted(() => {
   // Clear scroll container ref
   scrollContainerRef.value = null;
 });
+
+// Read-only view of what the user currently sees, after column setup or the
+// picker and the storage restore, so a consumer can act on the table's own
+// column choice (for example, preseed an export).
+defineExpose({ visibleColumns: effectiveColumns });
 </script>
 
 <template>
