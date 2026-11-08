@@ -53,8 +53,19 @@ export interface ToolbarConfig {
          * - true/'default': Built-in behavior (resets sort & pagination)
          * - 'custom': Only emits @toolbar:refresh event, no built-in behavior
          * - false: Button hidden
+         * - object: the same modes, plus a loading state for the button. The table cannot
+         *   know when the parent's request finishes, so the parent hands the flag back.
+         *
+         * @example
+         * refresh: { mode: 'custom', loading: isFetching }
          */
-    refresh?: boolean | "default" | "custom"
+    refresh?: boolean | "default" | "custom" | {
+      /** @default 'default' */
+      mode?: "default" | "custom"
+
+      /** Spins the button and blocks clicks while a refetch is in flight. */
+      loading?: boolean
+    }
 
     /**
          * Reset sort button behavior

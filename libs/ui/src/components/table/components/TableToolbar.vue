@@ -73,6 +73,12 @@ const exportConfig = computed(() => {
   };
 });
 
+// Only the object form carries a loading state; `mode` is VTable's business.
+const refreshLoading = computed(() => {
+  const refresh = config?.actions?.refresh;
+  return typeof refresh === "object" && (refresh.loading ?? false);
+});
+
 // Check if export is enabled
 const isExportEnabled = computed(() => exportConfig.value !== null);
 
@@ -170,8 +176,10 @@ const handleSingleExport = () => {
         name="actions"
       />
       <!-- Refresh button -->
+      <!-- VButton blocks clicks while `loading`, so no separate `disabled` is needed. -->
       <VButton
         v-if="config?.actions?.refresh"
+        :loading="refreshLoading"
         icon="lucide:refresh-cw"
         variant="primary"
         @click="handleRefresh"

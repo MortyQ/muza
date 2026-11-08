@@ -119,7 +119,10 @@ const handleToolbarRefresh = () => {
   emit("toolbar:refresh");
 
   // Check refresh action mode from config
-  const refreshMode = toolbar?.actions?.refresh;
+  const refreshAction = toolbar?.actions?.refresh;
+  const refreshMode = typeof refreshAction === "object"
+    ? refreshAction.mode ?? "default"
+    : refreshAction;
 
   // Apply built-in behavior only if mode is 'default', true, or not specified
   // If mode is 'custom', only emit event without built-in behavior

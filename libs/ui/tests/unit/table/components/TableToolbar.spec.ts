@@ -128,6 +128,18 @@ describe("TableToolbar", () => {
       expect(w.emitted("refresh")).toHaveLength(1);
     });
 
+    it("spins refresh while the object form says it is loading", () => {
+      const button = toolbar({ actions: { refresh: { mode: "custom", loading: true } } })
+        .findAllComponents(VButton)[0];
+      expect(button.props("icon")).toBe("lucide:refresh-cw");
+      expect(button.props("loading")).toBe(true);
+    });
+
+    it("renders refresh idle for the plain forms", () => {
+      expect(toolbar({ actions: { refresh: true } }).findAllComponents(VButton)[0]
+        .props("loading")).toBe(false);
+    });
+
     it("renders reset-sort when enabled", async () => {
       const w = toolbar({ actions: { resetSort: true } });
       const button = buttonWithText(w, "Reset Sort")!;

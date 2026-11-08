@@ -513,6 +513,23 @@ describe("VTable", () => {
       expect(w.emitted("toolbar:refresh")).toHaveLength(1);
     });
 
+    it("leaves a custom-mode refresh to the parent in the object form too", async () => {
+      const w = table({
+        toolbar: { enabled: true, actions: { refresh: { mode: "custom", loading: false } } },
+      });
+      await w.findComponent(TableToolbar).vm.$emit("refresh");
+
+      expect(w.emitted("toolbar:refresh")).toHaveLength(1);
+      expect(w.emitted("request")).toBeUndefined();
+    });
+
+    it("runs the built-in refresh for an object without a mode", async () => {
+      const w = table({ toolbar: { enabled: true, actions: { refresh: { loading: false } } } });
+      await w.findComponent(TableToolbar).vm.$emit("refresh");
+
+      expect(w.emitted("request")).toHaveLength(1);
+    });
+
     it("forwards reset-sort", async () => {
       const w = table({ toolbar: { enabled: true, actions: { resetSort: true } } });
       await w.findComponent(TableToolbar).vm.$emit("reset-sort");
