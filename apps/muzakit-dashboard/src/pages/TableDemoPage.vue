@@ -1,9 +1,13 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
 
 import {
+  DeltaIndicator,
+  VButton,
   VTable,
+  VTag,
   useLinkedTables,
+  useToast,
   type Column,
   type ColumnPickerGroup,
   type ExpandableRow,
@@ -213,6 +217,99 @@ const pickerGroups: ColumnPickerGroup[] = [
     ],
   },
 ];
+
+// ── Table 6: loading, refetch, page size, toolbar slots ─────────────────────
+// Fake marketplace orders. The parent pages them itself through v-model:page and
+// v-model:page-size, so the size changer and the request limit are one value.
+
+type OrderStatus = "Live" | "Paused" | "Out of stock";
+
+const ORDER_PRODUCTS = ["Trail Bottle", "Desk Lamp", "Yoga Mat", "Phone Stand", "Tote Bag", "Kettle"];
+const ORDER_CHANNELS = ["Amazon", "TikTok Shop", "Walmart", "Target"];
+const ORDER_STATUSES: OrderStatus[] = ["Live", "Live", "Live", "Paused", "Out of stock"];
+const STATUS_TONE = { Live: "success", Paused: "warning", "Out of stock": "danger" } as const;
+
+const makeOrders = (): ExpandableRow[] => Array.from({ length: 64 }, (_, i) => ({
+  id: i + 1,
+  sku: `SKU-${String(10240 + i * 7).padStart(5, "0")}`,
+  product: ORDER_PRODUCTS[i % ORDER_PRODUCTS.length],
+  channel: ORDER_CHANNELS[(i * 3) % ORDER_CHANNELS.length],
+  units: 40 + ((i * 37) % 900),
+  revenue: 1200 + ((i * 7919) % 48000),
+  delta: (((i * 13) % 41) - 18) / 100,
+  status: ORDER_STATUSES[(i * 5) % ORDER_STATUSES.length],
+}));
+
+const orderColumns: Column[] = [
+  { key: "sku", label: "SKU", width: "130px", fixed: "left" },
+  { key: "product", label: "Product", width: "170px", sortable: true },
+  { key: "channel", label: "Channel", width: "140px", sortable: true },
+  { key: "units", label: "Units", width: "100px", align: "right", sortable: true, format: { number: { type: "default" } } },
+  { key: "revenue", label: "Revenue", width: "140px", align: "right", sortable: true, format: { currency: "USD" } },
+  { key: "delta", label: "vs last week", width: "130px", align: "right", sortable: true },
+  { key: "status", label: "Status", width: "flex", align: "center" },
+];
+
+const orders = ref<ExpandableRow[]>(makeOrders());
+const ordersLoading = ref(false);
+const ordersPage = ref(1);
+const ordersPageSize = ref(10);
+const statusFilter = ref<OrderStatus | null>(null);
+
+const filteredOrders = computed(() =>
+  statusFilter.value ? orders.value.filter(o => o.status === statusFilter.value) : orders.value);
+
+const pagedOrders = computed(() => {
+  const start = (ordersPage.value - 1) * ordersPageSize.value;
+  return filteredOrders.value.slice(start, start + ordersPageSize.value);
+});
+
+watch([statusFilter, ordersPageSize], () => {
+  ordersPage.value = 1;
+});
+
+const timers = new Set<ReturnType<typeof setTimeout>>();
+const later = (ms: number, fn: () => void) => {
+  const id = setTimeout(() => {
+    timers.delete(id);
+    fn();
+  }, ms);
+  timers.add(id);
+};
+onUnmounted(() => timers.forEach(clearTimeout));
+
+// Rows stay on screen: the table dims them under its overlay, then the new
+// figures roll in.
+const refetchOrders = () => {
+  if (ordersLoading.value) return;
+  ordersLoading.value = true;
+  later(2000, () => {
+    orders.value = orders.value.map(o => ({
+      ...o,
+      revenue: Math.round((o.revenue as number) * (0.85 + Math.random() * 0.3)),
+      delta: Math.round((Math.random() * 0.6 - 0.25) * 100) / 100,
+    }));
+    ordersLoading.value = false;
+  });
+};
+
+// Nothing to keep on screen, so the table draws skeleton rows instead.
+const reloadOrdersFromEmpty = () => {
+  if (ordersLoading.value) return;
+  orders.value = [];
+  ordersLoading.value = true;
+  later(2500, () => {
+    orders.value = makeOrders();
+    ordersLoading.value = false;
+  });
+};
+
+const ordersTable = useTemplateRef<{ visibleColumns: ReadonlyArray<Column> }>("ordersTable");
+const toast = useToast();
+const showVisibleColumns = () => {
+  const labels = ordersTable.value?.visibleColumns.map(c => c.label) ?? [];
+  toast.success("Visible columns", labels.join(", "));
+};
 
 // ── Table 5: linked tables ───────────────────────────────────────────────────
 // Both tables register under the same group id, so scrolling or pinning in one
@@ -523,6 +620,99 @@ const orgTotal: Record<string, unknown> = {
       </p>
     </section>
 
+    <!-- ── Table 6: loading, refetch, page size, toolbar slots ── -->
+    <section class="table-demo-page__section">
+      <h2 class="table-demo-page__title">
+        Loading · Refetch · Page size · Toolbar slots
+      </h2>
+      <p class="table-demo-page__desc">
+        “Refetch” keeps the rows under a dimmed overlay and rolls the new figures in;
+        the toolbar’s refresh button does the same and spins until it finishes.
+        “Reload from empty” shows the first-load skeleton. The page-size changer is
+        bound with <code>v-model:page-size</code>; the status filter is the
+        <code>toolbar-filters</code> slot and the list button is
+        <code>toolbar-column-actions</code>, reading the exposed <code>visibleColumns</code>.
+      </p>
+      <div class="table-demo-page__controls">
+        <VButton
+          :disabled="ordersLoading"
+          icon="lucide:refresh-cw"
+          text="Refetch"
+          variant="primary"
+          @click="refetchOrders"
+        />
+        <VButton
+          :disabled="ordersLoading"
+          icon="lucide:database"
+          text="Reload from empty"
+          variant="secondary"
+          @click="reloadOrdersFromEmpty"
+        />
+      </div>
+      <VTable
+        ref="ordersTable"
+        v-model:page="ordersPage"
+        v-model:page-size="ordersPageSize"
+        :columns="orderColumns"
+        :data="pagedOrders"
+        :height="440"
+        :loading="ordersLoading"
+        :pagination="{ total: filteredOrders.length, pageSizeOptions: [10, 25, 50] }"
+        :sort="{ type: 'front', multiple: false }"
+        :toolbar="{
+          enabled: true,
+          title: 'Marketplace orders',
+          subtitle: 'Demo data · 64 SKUs',
+          actions: {
+            refresh: { mode: 'custom', loading: ordersLoading },
+            columnSetup: { key: 'demo_orders_cols', type: 'sessionStorage' },
+          },
+        }"
+        :virtualized="false"
+        highlight
+        @toolbar:refresh="refetchOrders"
+      >
+        <template #toolbar-filters>
+          <div class="table-demo-page__filters">
+            <VButton
+              :variant="statusFilter === null ? 'primary' : 'neutral'"
+              text="All"
+              @click="statusFilter = null"
+            />
+            <VButton
+              v-for="status in (['Live', 'Paused', 'Out of stock'] as const)"
+              :key="status"
+              :text="status"
+              :variant="statusFilter === status ? 'primary' : 'neutral'"
+              @click="statusFilter = status"
+            />
+          </div>
+        </template>
+        <template #toolbar-column-actions>
+          <VButton
+            icon="lucide:list-checks"
+            variant="neutral"
+            @click="showVisibleColumns"
+          />
+        </template>
+        <template #cell-delta="{ value }">
+          <DeltaIndicator
+            :format="{ percentage: { decimals: 0 } }"
+            :value="Number(value)"
+            show-zero
+          />
+        </template>
+        <template #cell-status="{ value }">
+          <VTag
+            :color="STATUS_TONE[value as OrderStatus]"
+            :label="String(value)"
+            size="sm"
+            variant="outline"
+          />
+        </template>
+      </VTable>
+    </section>
+
     <!-- ── Table 5: linked tables ── -->
     <section class="table-demo-page__section">
       <h2 class="table-demo-page__title">
@@ -596,6 +786,13 @@ const orgTotal: Record<string, unknown> = {
   font-weight: 600;
   color: var(--ui-foreground);
   margin: 0;
+}
+
+.table-demo-page__controls,
+.table-demo-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .table-demo-page__desc {
