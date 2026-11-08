@@ -17,6 +17,8 @@ const tableSlots = inject<{
   toolbarTitle?: Slot
   toolbarSearch?: Slot
   toolbarActions?: Slot
+  toolbarFilters?: Slot
+  toolbarColumnActions?: Slot
 }>("tableSlots", {});
 
 interface Emits {
@@ -163,6 +165,16 @@ const handleSingleExport = () => {
           />
         </div>
       </slot>
+
+      <!-- Filters section -->
+      <component
+        :is="tableSlots.toolbarFilters"
+        v-if="tableSlots.toolbarFilters"
+      />
+      <slot
+        v-else
+        name="filters"
+      />
     </div>
 
     <!-- Right section - Actions -->
@@ -221,6 +233,12 @@ const handleSingleExport = () => {
           />
         </template>
       </VFloating>
+
+      <!-- Column actions, just before column setup -->
+      <component
+        :is="tableSlots.toolbarColumnActions"
+        v-if="tableSlots.toolbarColumnActions"
+      />
 
       <!-- Column Setup slot -->
       <slot

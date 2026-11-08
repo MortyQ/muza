@@ -104,6 +104,8 @@ provide("tableSlots", {
   toolbarTitle: $slots["toolbar-title"],
   toolbarSearch: $slots["toolbar-search"],
   toolbarActions: $slots["toolbar-actions"],
+  toolbarFilters: $slots["toolbar-filters"],
+  toolbarColumnActions: $slots["toolbar-column-actions"],
 });
 
 const searchModel = defineModel<string>("search", { default: "" });

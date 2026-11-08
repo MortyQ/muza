@@ -589,6 +589,24 @@ describe("VTable", () => {
       expect(w.find(".injected").exists()).toBe(true);
     });
 
+    it("renders a filters slot after the search, on the left", () => {
+      const w = table(
+        { toolbar: { enabled: true, search: true } },
+        { slots: { "toolbar-filters": "<div class=\"filters\" />" } },
+      );
+      const left = w.find(".v-toolbar-split-left");
+      expect(left.find(".filters").exists()).toBe(true);
+    });
+
+    it("renders a column-actions slot just before the column buttons", () => {
+      const w = table(
+        { toolbar: { enabled: true, actions: { columnSetup: true } } },
+        { slots: { "toolbar-column-actions": "<i class=\"col-action\" />" } },
+      );
+      const right = w.find(".v-toolbar-split-right");
+      expect(right.find(".col-action").exists()).toBe(true);
+    });
+
     it("injects the header-cell action slot down to every header", () => {
       const w = table(
         {},
