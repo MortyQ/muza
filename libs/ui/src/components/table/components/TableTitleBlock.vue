@@ -83,8 +83,8 @@ const { title = "", icon = "" } = defineProps<{
   }
 
   &__title {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: var(--ui-text-xl);
+    font-weight: var(--ui-weight-strong);
     color: var(--ui-foreground);
     margin: 0;
 

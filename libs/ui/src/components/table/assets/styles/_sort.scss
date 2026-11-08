@@ -47,7 +47,7 @@
   height: 1rem;
   padding: 0 var(--ui-space-xs);
   font-size: var(--ui-text-2xs);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   color: var(--ui-primary);
   background-color: color-mix(in oklch, var(--ui-primary) 15%, transparent);
   border-radius: var(--ui-radius-xs);

@@ -72,7 +72,7 @@ defineProps<{
   margin: 0;
   font-size: var(--ui-text-lg);
   line-height: var(--ui-leading-lg);
-  font-weight: 600;
+  font-weight: var(--ui-weight-strong);
   color: var(--ui-primary);
   white-space: nowrap;
 }

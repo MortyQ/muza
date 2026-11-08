@@ -8,16 +8,16 @@
   color: var(--ui-foreground);
 
   &--sm {
-    font-size: 0.75rem;
+    font-size: var(--ui-text-sm);
   }
 
   &--default {
-    font-size: 0.875rem;
+    font-size: var(--ui-text-base);
   }
 
   &--lg {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--ui-text-base);
+    font-weight: var(--ui-weight-strong);
   }
 
   &--positive {
@@ -39,15 +39,15 @@
 
   &__main {
     color: var(--ui-foreground);
-    font-size: 1rem;
+    font-size: var(--ui-text-lg);
   }
 
   &--sm &__main {
-    font-size: 0.875rem;
+    font-size: var(--ui-text-base);
   }
 
   &--lg &__main {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: var(--ui-text-xl);
+    font-weight: var(--ui-weight-strong);
   }
 }
