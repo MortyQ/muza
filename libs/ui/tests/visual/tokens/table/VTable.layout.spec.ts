@@ -1,5 +1,6 @@
 import { h, nextTick, type Slot } from "vue";
 
+import { userEvent } from "@vitest/browser/context";
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -486,5 +487,36 @@ describe("VTable — corners", () => {
     const style = await container({ pagination: { page: 1, pageSize: 10, total: 50 } });
     expect(style.borderBottomLeftRadius).toBe("0px");
     expect(style.borderTopLeftRadius).toBe("15px");
+  });
+});
+
+describe("VTable — row accent", () => {
+  it("draws the hover accent bar without moving its first cell's content", async () => {
+    // A 3px border-left paid for by shaving 3px off padding-left overrode the
+    // tree indent, which also lives in padding-left. An inset shadow paints
+    // the bar inside the box and leaves the padding alone.
+    const el = await table({ data: makeRows(5) });
+    const [first, second] = Array.from(rows(el)).map(r => r.firstElementChild as HTMLElement);
+    const before = getComputedStyle(first).paddingLeft;
+
+    await userEvent.hover(first);
+    const hovered = getComputedStyle(first);
+
+    expect(hovered.paddingLeft).toBe(before);
+    expect(hovered.borderLeftWidth).toBe(getComputedStyle(second).borderLeftWidth);
+    expect(hovered.boxShadow).toContain("inset");
+  });
+});
+
+describe("VTable — resizing", () => {
+  it("takes the rows out of hit-testing, so no hover rule fights a cell's own style", async () => {
+    // The old rule forced `background: none !important` on hovered cells,
+    // which outranks the inline background a column's cellStyle writes.
+    const el = await table({ data: makeRows(5) });
+    el.querySelector(".v-table-grid")!.classList.add("v-is-resizing");
+    await frame();
+
+    const cell = el.querySelector(".v-table-row-wrapper > .v-table-cell") as HTMLElement;
+    expect(getComputedStyle(cell).pointerEvents).toBe("none");
   });
 });
