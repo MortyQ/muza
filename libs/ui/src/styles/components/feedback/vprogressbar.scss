@@ -44,8 +44,8 @@
 
   &__step {
     overflow: hidden;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--ui-text-base);
+    font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -56,8 +56,8 @@
     flex-shrink: 0;
     align-items: center;
     gap: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--ui-text-base);
+    font-weight: var(--ui-weight-strong);
     color: var(--v-progress-accent);
   }
 

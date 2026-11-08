@@ -17,7 +17,7 @@
   border: 1px solid transparent;
   border-radius: var(--ui-radius-lg);
   font-size: var(--ui-text-base);
-  font-weight: 450;
+  font-weight: var(--ui-weight-regular);
   letter-spacing: -0.005em;
   text-decoration: none;
   cursor: pointer;
@@ -197,7 +197,7 @@
   border-color: transparent;
   box-shadow: none;
   color: var(--ui-primary);
-  font-weight: 500;
+  font-weight: var(--ui-weight-medium);
 
   &::after {
     content: '';
