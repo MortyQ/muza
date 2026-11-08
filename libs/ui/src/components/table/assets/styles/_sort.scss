@@ -22,6 +22,11 @@
   &:active {
     background-color: color-mix(in oklch, var(--ui-primary) 15%, transparent);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: -2px;
+  }
 }
 
 .v-sort-icon {

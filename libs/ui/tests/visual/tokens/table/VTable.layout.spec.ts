@@ -7,7 +7,13 @@ import { render } from "vitest-browser-vue";
 import TablePagination from "../../../../src/components/table/components/TablePagination.vue";
 import { DEFAULT_ROW_HEIGHT } from "../../../../src/components/table/constants";
 import VTable from "../../../../src/components/table/VTable.vue";
-import { makeColumns, makeFixedColumns, makeRows, makeTreeRows } from "../../../setup/table";
+import {
+  makeColumns,
+  makeFixedColumns,
+  makeGroupedColumns,
+  makeRows,
+  makeTreeRows,
+} from "../../../setup/table";
 import { applyTheme } from "../../../setup/theme";
 import { tokenAsValue } from "../../../setup/tokens";
 
@@ -518,5 +524,35 @@ describe("VTable — resizing", () => {
 
     const cell = el.querySelector(".v-table-row-wrapper > .v-table-cell") as HTMLElement;
     expect(getComputedStyle(cell).pointerEvents).toBe("none");
+  });
+});
+
+describe("VTable — header", () => {
+  it("stretches a leaf that spans both header rows to their full height", async () => {
+    const el = await table({ columns: makeGroupedColumns(), data: makeRows(5) });
+    const spanning = el.querySelector(".v-table-header-cell--rowspan") as HTMLElement;
+    const leaf = el.querySelector(".v-table-header-row-level-1 .v-table-header-cell") as HTMLElement;
+
+    expect(spanning.getBoundingClientRect().height)
+      .toBeCloseTo(leaf.getBoundingClientRect().height * 2, 0);
+  });
+
+  it("keeps the empty corner over a hidden header checkbox opaque and stuck to the top", async () => {
+    const el = await table({ multiSelect: { enabled: true, showHeaderCheckbox: false } });
+    const style = getComputedStyle(
+      el.querySelector(".v-table-header-checkbox-cell--empty") as HTMLElement,
+    );
+
+    expect(style.position).toBe("sticky");
+    expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+  });
+
+  it("rings the sort control when it takes keyboard focus", async () => {
+    const el = await table({ columns: makeColumns({ name: { sortable: true } }) });
+    const sort = el.querySelector(".v-table-header-sort") as HTMLElement;
+
+    sort.focus({ focusVisible: true } as FocusOptions);
+    expect(document.activeElement).toBe(sort);
+    expect(getComputedStyle(sort).outlineStyle).toBe("solid");
   });
 });
