@@ -645,9 +645,12 @@ const rowsToRender = computed(() => {
   }
 
   // Virtualized rendering - only render visible items
-  return virtualItems.value.map((virtualRow: VirtualItem) => {
+  // The virtualizer can hold an index past the end of the data for a beat
+  // mid-scroll (seen in so-platform); a row read there is undefined.
+  return virtualItems.value.flatMap((virtualRow: VirtualItem) => {
     const row = displayData.value[virtualRow.index];
-    return {
+    if (!row) return [];
+    return [{
       row,
       index: virtualRow.index,
       // CRITICAL: Use row.id as key, not index! Index causes memory leaks
@@ -655,7 +658,7 @@ const rowsToRender = computed(() => {
       key: (row.id as string | number) || `row-${virtualRow.index}`,
       isVirtual: true,
       virtualRow,
-    };
+    }];
   });
 });
 
