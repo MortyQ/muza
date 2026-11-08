@@ -458,3 +458,33 @@ describe("VTable — fullscreen", () => {
     // browser project disables every transition, so it never would here.
   });
 });
+
+describe("VTable — corners", () => {
+  // The wrapper's clip region is inflated so the fullscreen toggle can overhang
+  // it, which means it rounds nothing; the box inside has to.
+  const container = async (props: Record<string, unknown> = {}) =>
+    getComputedStyle(
+      (await table({ data: makeRows(5), ...props }))
+        .querySelector(".v-table-container-wrapper") as HTMLElement,
+    );
+
+  it("clips the content to the card's curve when nothing sits above or below", async () => {
+    const style = await container();
+
+    expect(style.overflowX).toBe("clip");
+    expect(style.borderTopLeftRadius).toBe("15px");
+    expect(style.borderBottomRightRadius).toBe("15px");
+  });
+
+  it("squares the top under a toolbar", async () => {
+    const style = await container({ toolbar: { enabled: true, title: "Orders" } });
+    expect(style.borderTopLeftRadius).toBe("0px");
+    expect(style.borderBottomLeftRadius).toBe("15px");
+  });
+
+  it("squares the bottom above a pagination bar", async () => {
+    const style = await container({ pagination: { page: 1, pageSize: 10, total: 50 } });
+    expect(style.borderBottomLeftRadius).toBe("0px");
+    expect(style.borderTopLeftRadius).toBe("15px");
+  });
+});

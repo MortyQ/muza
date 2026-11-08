@@ -3,11 +3,14 @@
 @use './variables' as *;
 
 .v-table-wrapper {
+  // One source for the card radius; .v-table-container-wrapper derives its own.
+  --v-table-radius: 1rem;
+
   width: 100%;
   position: relative;
   box-shadow: var(--ui-shadow-lg);
   border: 1px solid var(--ui-border-subtle);
-  border-radius: 1rem;
+  border-radius: var(--v-table-radius);
   background-color: var(--ui-surface);
 
   // `clip` instead of `hidden`: the wrapper is not a scroll container (the inner
@@ -15,10 +18,8 @@
   // accepts overflow-clip-margin, which lets the corner fullscreen toggle
   // overhang the top-right border.
   //
-  // The margin is not directional, though, so it stops the wrapper clipping the
-  // bottom corners too. Whichever element ends up last therefore rounds its own
-  // bottom corners (see the :last-child rules below) — otherwise the final row
-  // runs straight through the curve.
+  // An inflated clip region rounds nothing, so the corners are cut by
+  // .v-table-container-wrapper below and by the pagination bar's own radius.
   overflow: clip;
   overflow-clip-margin: 24px;
   display: flex;
@@ -26,25 +27,40 @@
   align-self: start;
   height: fit-content;
 
-  &--with-toolbar {
-    .v-table-scroll-container {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-  }
-
-  // Round whatever sits at the bottom, so row backgrounds, cell borders and the
-  // fixed-column divider are cut by the curve instead of running past it.
-  // .v-table-container-wrapper does not clip, so the radius has to reach the
-  // scroll container inside it — but only when no pagination follows.
-  > :last-child {
+  // Whatever else ends up last rounds its own bottom corners; the container
+  // derives its radius below and must not inherit the outer one.
+  > :last-child:not(.v-table-container-wrapper) {
     border-bottom-right-radius: inherit;
     border-bottom-left-radius: inherit;
   }
+}
 
-  > .v-table-container-wrapper:last-child .v-table-scroll-container {
-    border-bottom-right-radius: inherit;
-    border-bottom-left-radius: inherit;
+// The element that rounds off table content: the sticky header, the last row,
+// the loading overlay and the empty state. The wrapper cannot (see above), and
+// rounding the corner cells instead breaks as soon as a wide table scrolls
+// sideways — a clip on this box stays anchored to the corners.
+.v-table-container-wrapper {
+  // `- 1px`: this sits inside the wrapper's 1px border, whose radius is
+  // measured on the border box.
+  border-radius: calc(var(--v-table-radius) - 1px);
+
+  // `clip`, not `hidden`: a second scrollport here would break the sticky
+  // header, which positions against its nearest scrolling ancestor.
+  overflow: clip;
+
+  // Square off the edge that meets the toolbar or the pagination bar.
+  .v-table-wrapper--with-toolbar & {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  &:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .v-table-wrapper--fullscreen & {
+    border-radius: 0;
   }
 }
 
