@@ -14,12 +14,14 @@
     "prepare": "husky",
     "test": "pnpm --filter @muzakit/ui test",
     "test:tokens": "pnpm --filter @muzakit/ui test:tokens",
-    "test:visual": "pnpm --filter @muzakit/ui test:visual:docker"
+    "test:visual": "pnpm --filter @muzakit/ui test:visual:docker",
+    "openspec:update": "OPENSPEC_TELEMETRY=0 openspec update"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",
     "@commitlint/config-conventional": "^20.4.3",
     "@eslint/js": "^10.0.1",
+    "@fission-ai/openspec": "1.14.1",
     "@muzakit/config": "workspace:*",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@vue/typescript-plugin": "^3.2.5",
