@@ -120,7 +120,7 @@ Before building any UI element, check if `@muzakit/ui` already provides it.
 | Tabs | `VTab` |
 | Status badge / enum chip | `VTag`, `VChip` |
 | Tooltip | `VTooltip` |
-| Icon | `VIcon` |
+| Icon | `VIcon` — lucide only (`lucide:<name>`), see Icons below |
 | Spinner / skeleton | `VLoader`, `VSkeleton` |
 | Toggle / boolean switch | `VSwitch` |
 | Checkbox | `VCheckbox` |
@@ -135,6 +135,14 @@ Before building any UI element, check if `@muzakit/ui` already provides it.
 | Accordion / collapsible | `VAccordion`, `VCollapse` |
 | Progress / meter | `VProgressBar`, `VMeter` |
 | Headline figure | `VStat` |
+
+### Icons
+
+Lucide is the only icon set. The icons the library's own components draw are bundled in
+`libs/ui/src/icons/library-icons.json` and registered by `VIcon` on first render, so they never
+hit the network. After adding or removing a `lucide:` icon anywhere in `libs/ui/src`, run
+`pnpm --filter @muzakit/ui icons` — `tests/unit/icons.spec.ts` fails until you do. Icons an app
+passes in by name are the app's: they load from the Iconify API unless the app registers them.
 
 Only build a custom component when `@muzakit/ui` has no equivalent **and** the need is specific
 enough that adding it to the library isn't warranted. Adding one to the library follows

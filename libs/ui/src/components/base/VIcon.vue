@@ -3,6 +3,8 @@ import { computed } from "vue";
 
 import { Icon } from "@iconify/vue";
 
+import { registerLibraryIcons } from "../../icons/registerLibraryIcons";
+
 const {
   icon = "",
   size = 24,
@@ -22,6 +24,8 @@ const {
   color?: string
   loading?: boolean
 }>();
+
+registerLibraryIcons();
 
 const resolvedIcon = computed(() =>
   loading ? "lucide:loader-circle" : icon,

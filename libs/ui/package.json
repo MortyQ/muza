@@ -24,7 +24,8 @@
     "test:coverage": "vitest run --project unit --coverage",
     "test:tokens": "vitest run --project browser tests/visual/tokens",
     "test:visual:docker": "bash scripts/visual-docker.sh",
-    "test:types": "vitest run --project types"
+    "test:types": "vitest run --project types",
+    "icons": "node scripts/generate-icons.js"
   },
   "peerDependencies": {
     "vue": "^3.5.34",
@@ -33,7 +34,6 @@
   "devDependencies": {
     "@fontsource/plus-jakarta-sans": "5.3.0",
     "@iconify-json/lucide": "^1.2.122",
-    "@iconify-json/mdi": "^1.2.3",
     "@muzakit/config": "workspace:*",
     "@tailwindcss/vite": "^4.1.0",
     "@types/luxon": "^3.4.2",
