@@ -91,9 +91,9 @@ describe("VCheckbox", () => {
       expect(w.find("label").attributes("for")).toBe(input(w).attributes("id"));
     });
 
-    it("drops the association when disabled, so a click cannot toggle it", () => {
+    it("keeps the association when disabled — the input ignores the click, the name stays", () => {
       const w = checkbox({ label: "Subscribe", disabled: true });
-      expect(w.find("label").attributes("for")).toBeUndefined();
+      expect(w.find("label").attributes("for")).toBe(input(w).attributes("id"));
       expect(w.find("label").classes()).toContain("v-checkbox__label--disabled");
     });
 

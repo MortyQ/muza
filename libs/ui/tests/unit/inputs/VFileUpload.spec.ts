@@ -49,6 +49,12 @@ describe("VFileUpload", () => {
       expect((w.emitted("change")?.at(-1)?.[0] as File[]).map(f => f.name)).toEqual(["b.png"]);
     });
 
+    it("names each remove button after its file", async () => {
+      const w = upload({ multiple: true });
+      await drop(w, [new File(["x"], "a.pdf")]);
+      expect(w.find(".v-file-upload__remove").attributes("aria-label")).toBe("Remove a.pdf");
+    });
+
     it("appends in multiple mode", async () => {
       const w = upload({ multiple: true });
       await drop(w, [makeFile("a.png")]);

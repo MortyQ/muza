@@ -101,6 +101,12 @@ describe("DragNDrop", () => {
   });
 
   describe("removal", () => {
+    it("names each remove button after its file", async () => {
+      const w = dnd({ multiple: true });
+      await drop(w, [makeFile("a.pdf")]);
+      expect(w.find(".v-dragndrop__file-remove").attributes("aria-label")).toBe("Remove a.pdf");
+    });
+
     it("drops the chosen file and re-announces the list", async () => {
       const w = dnd({ multiple: true });
       await drop(w, [makeFile("a.pdf"), makeFile("b.pdf")]);

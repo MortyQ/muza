@@ -193,3 +193,9 @@
     }
   }
 }
+
+.v-chip[role="button"]:focus-visible,
+.v-chip__close:focus-visible {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: 2px;
+}

@@ -51,7 +51,7 @@ watchEffect(() => {
         'v-checkbox__label',
         { 'v-checkbox__label--disabled': disabled }
       ]"
-      :for="!disabled ? uniqueId : undefined"
+      :for="uniqueId"
     >
       <slot name="label">
         {{ label }}

@@ -181,3 +181,19 @@ describe("VSelect", () => {
     });
   });
 });
+
+describe("VSelect labelling", () => {
+  it("names the combobox with its floating label", () => {
+    const w = select({ name: "Country" });
+    const label = w.find(".v-select__label");
+    const combobox = w.find("[role='combobox']");
+
+    expect(label.attributes("id")).toBeTruthy();
+    expect(combobox.attributes("aria-labelledby")).toBe(label.attributes("id"));
+  });
+
+  it("lets an aria-label from the caller name a select without a floating label", () => {
+    const w = select({ "aria-label": "Country" });
+    expect(w.find("[role='combobox']").attributes("aria-label")).toBe("Country");
+  });
+});

@@ -274,6 +274,7 @@ defineExpose({ clearFiles });
         </div>
 
         <button
+          :aria-label="`Remove ${file.name}`"
           :disabled="loading"
           class="v-dragndrop__file-remove"
           type="button"
