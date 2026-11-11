@@ -44,6 +44,8 @@
 - **`VTable` column picker**:
   - In "group by type" mode, types follow the registry's sixteen-step order instead of a five-type list; for example, `decimal` now sits right after `number`.
   - Types keep their registry labels, so `url` reads "URL".
+- **`TablePeriodSelect`**: `widthClass` defaults to `""`, not the Tailwind class `w-40`. The library's own templates carry no utility classes. The wrapper is still 10rem wide, so nothing moves. Pass a class only for your app's own sizing.
+- **Raw colours replaced with tokens**: `white` on primary fills is now `--ui-primary-foreground`, in the same colour. The switch thumb uses that token too. The modal and drawer glass edge is foreground at 10% instead of `white` at 30%, so it shows in light mode and no longer glares in dark.
 
 ### Fixed
 
@@ -64,6 +66,41 @@
   - The corner over a hidden header checkbox is opaque and sticky; rows no longer scroll through it.
   - The sort control shows a focus ring.
 - `VTable` skips a virtual row whose index has run past the data, instead of reading an undefined row.
+- `DeltaValue` groups thousands in an unformatted delta (`12,345`), as every other branch already did.
+- `VTab`'s arrow keys no longer throw when every tab is disabled.
+- `VFloating` removes its document `keydown` listener on every close path and on unmount. Closing through the trigger or unmounting while open used to leave it attached.
+
+### Accessibility
+
+Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MODE=all`):
+
+- **`VModal`, `VDrawer`**: `role="dialog"`, `aria-modal`, named by the title. Focus moves into the dialog on open, Tab stays inside, and focus returns to the trigger on close. Escape works without a click first; before, the key never reached the dialog. `NavigationGuardModal` now also returns focus. The shared `useDialogFocus` composable does this.
+- **Click-only elements now work from the keyboard**. Each takes Enter/Space and has a focus ring:
+  - a `clickable` `VCard` is `role="button"`;
+  - `VChip` is a toggle button with `aria-pressed` when bound to a model, or a button when it has a click listener;
+  - in the column picker, groups expand from a real button with `aria-expanded`, and columns are checkboxes;
+  - "show all" in column setup is a tri-state checkbox;
+  - a header label with `onHeaderClick` is a button.
+- **Icon-only buttons are named**: `VTab`'s overflow button ("3 more tabs"), `VChip` close, file and list remove buttons, the table's refresh, row-expand, additional-headers and both column popover triggers. Disclosure buttons report `aria-expanded`.
+- **Labels**:
+  - `VSelect`'s floating label names its combobox.
+  - `VCheckbox` keeps its label association when disabled.
+  - The column picker's search input is labelled.
+
+### Motion
+
+- No `transition: all` remains. Every transition names its properties.
+- Exits use ease-out instead of ease-in (tooltip, guard modal, mobile sidebar backdrop).
+- Modals and drawers leave faster than they enter. Drawers and the mobile sidebar use the drawer curve.
+- `prefers-reduced-motion` is honoured across the library:
+  - modals, drawers, toasts, the mobile sidebar and table row expansion keep their fade and drop their movement;
+  - press scales, hover lifts, enter/leave slides, chevron rotations and the switch thumb change instantly;
+  - colour and opacity still ease;
+  - spinners keep turning, since their motion is the message.
+- Hover styles sit behind `@media (hover: hover) and (pointer: fine)`: 98 rules across the components and the table. A tap on a touch screen no longer leaves a button, row, chip or menu item stuck in its hover colour.
+- Hover affordance only where a click does something:
+  - only an interactive `VCard` reacts, lifting 2px instead of `scale(1.02)` on every elevated card;
+  - a display-only `VChip` no longer darkens under the pointer.
 
 ### Look
 
