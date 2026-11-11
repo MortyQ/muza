@@ -87,11 +87,12 @@ pnpm openspec:update     # regenerate skills/commands/prompts for the installed 
 
 ## Git Hooks
 
-Husky runs three hooks automatically:
+Husky runs two hooks automatically:
 
 - **pre-commit** → `lint-staged` (`eslint --fix` on staged `*.{ts,vue,js,mjs}`)
 - **commit-msg** → `commitlint` (validates commit message format)
-- **pre-push** → `@muzakit/ui` unit tests, plus the token contracts when a Chromium is installed
+
+There is no pre-push hook. Tests run in CI (see CI Checks).
 
 **Never use `--no-verify`** unless explicitly told to. Fix lint, test or commit format errors
 instead.
@@ -150,14 +151,21 @@ Optional but recommended. Use the package or area: `ui`, `utils`, `config`, `das
 
 `.github/workflows/ci.yml` runs on every pull request and every push to `main`:
 
+Always (job `check`):
+
 1. `pnpm build:libs`
 2. `pnpm --filter @muzakit/ui type-check`
 3. `pnpm --filter @muzakit/dashboard exec vue-tsc --noEmit`
 4. `pnpm exec eslint libs apps`
-5. `pnpm --filter @muzakit/ui test:coverage`
-6. Token contracts — `pnpm --filter @muzakit/ui test:tokens`, in its own job
 
-All must pass before merge. Fix errors locally before pushing.
+Only when `libs/`, the root `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml` or `ci.yml`
+changed (decided by job `changes`, diffing against the PR base or the previous push):
+
+5. `pnpm --filter @muzakit/ui test:coverage` (job `unit`)
+6. Token contracts, `pnpm --filter @muzakit/ui test:tokens` (job `visual`)
+
+A skipped job reports as passed, so it does not block a required check. All must pass before
+merge. Fix errors locally before pushing.
 
 ---
 

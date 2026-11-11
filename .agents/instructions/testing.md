@@ -21,8 +21,9 @@ pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
 pnpm --filter @muzakit/ui test:visual:docker   # the browser project in CI's image
 ```
 
-A `pre-push` hook runs the unit project, and the token contracts when a Chromium
-is installed.
+No git hook runs tests. They run in CI, and only when a push or PR touches
+`libs/`, the root `package.json`, the lockfile, the workspace file or `ci.yml`.
+Run them locally before pushing a `libs/` change.
 
 ## What CI gates on
 
