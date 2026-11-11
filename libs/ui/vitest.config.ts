@@ -5,13 +5,16 @@ import vue from "@vitejs/plugin-vue";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
+import { muzakitIcons } from "./vite/icons.js";
+
 const root = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   // `tailwindcss()` is only needed by the browser project, but a project-level
   // plugin list would replace this one rather than extend it, so both projects
   // share it. In jsdom the generated stylesheet is simply never applied.
-  plugins: [vue(), tailwindcss()],
+  // `bundle: true`: specs see the icons a built app ships, not an empty development set.
+  plugins: [vue(), tailwindcss(), muzakitIcons({ bundle: true })],
 
   resolve: {
     alias: { "@": `${root}src` },

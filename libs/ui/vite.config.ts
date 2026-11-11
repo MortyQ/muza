@@ -5,11 +5,16 @@ import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
+import { muzakitIcons } from "./vite/icons.js";
+
 export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
     dts(),
+    // `vite build` embeds the library's own icons into dist, so consumers of the package never
+    // need the plugin themselves.
+    muzakitIcons(),
   ],
   build: {
     lib: {

@@ -7,20 +7,16 @@ import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import VIcon from "../../src/components/base/VIcon.vue";
-import libraryIcons from "../../src/icons/library-icons.json";
+import { collectIcons, findLibraryIcons, muzakitIcons } from "../../vite/icons.js";
 
 /**
- * The library ships the lucide icons its own components draw (`src/icons/library-icons.json`,
- * written by `pnpm --filter @muzakit/ui icons`), so they never depend on the public Iconify API.
- * These checks keep that file in step with the components: a new icon in a template without a
- * re-run of the script would otherwise render as an empty box offline and fetch online.
+ * The library's own icons are assembled by `muzakitIcons()` (`libs/ui/vite/icons.js`): embedded on
+ * `vite build`, left to the Iconify API on `vite dev`. These checks pin both halves, and that the
+ * library sticks to the one icon set the build knows how to embed.
  */
 
 const SRC = resolve(__dirname, "../../src");
-const REGENERATE = "run `pnpm --filter @muzakit/ui icons`";
 
-// The generator's pattern: the scan and this check must agree on what "used" means.
-const ICON_PATTERN = /lucide:([a-z0-9]+(?:-[a-z0-9]+)*)/g;
 // Any other Iconify set. Lucide is the library's only one.
 const OTHER_SET_PATTERN
   = /["'`](mdi|tabler|ph|heroicons|ri|carbon|material-symbols|fa6?-[a-z]+|bi|ic):[a-z0-9-]+/g;
@@ -31,36 +27,52 @@ const sourceFiles = (dir: string): string[] => readdirSync(dir).flatMap((name) =
   return /\.(vue|ts)$/.test(name) ? [path] : [];
 });
 
-const usedIcons = (): Map<string, string> => {
-  const used = new Map<string, string>();
-  for (const file of sourceFiles(SRC)) {
-    for (const match of readFileSync(file, "utf8").matchAll(ICON_PATTERN)) {
-      if (match[1] && !used.has(match[1])) used.set(match[1], relative(SRC, file));
-    }
-  }
-  return used;
+// Drives the plugin the way Vite does: configResolved, then resolveId → load.
+type Hook = (...args: unknown[]) => unknown;
+const loadVirtualModule = (command: "build" | "serve"): string => {
+  const plugin = muzakitIcons();
+  const hook = (name: string): Hook => {
+    const value: unknown = Reflect.get(plugin, name);
+    if (typeof value !== "function") throw new Error(`plugin has no ${name} hook`);
+    return value as Hook;
+  };
+  hook("configResolved")({ command });
+  const id = hook("resolveId")("virtual:muzakit-icons");
+  const code = hook("load")(id);
+  if (typeof code !== "string") throw new Error("virtual module did not load");
+  return code;
 };
 
-const aliases: Record<string, { parent: string }> = "aliases" in libraryIcons
-  ? libraryIcons.aliases
-  : {};
-const bundled = new Set([...Object.keys(libraryIcons.icons), ...Object.keys(aliases)]);
+describe("muzakitIcons()", () => {
+  it("embeds every lucide icon the library references on a build", () => {
+    const used = findLibraryIcons();
+    const collection = collectIcons(used);
+    const embedded = new Set([
+      ...Object.keys(collection.icons),
+      ...Object.keys(collection.aliases ?? {}),
+    ]);
+
+    expect(used.length).toBeGreaterThan(0);
+    expect(used.filter(name => !embedded.has(name))).toEqual([]);
+    expect(loadVirtualModule("build")).toContain("\"prefix\":\"lucide\"");
+  });
+
+  it("leaves development to the Iconify API", () => {
+    expect(loadVirtualModule("serve")).toBe("export default null;");
+  });
+
+  it("fails the build on a name lucide does not have", () => {
+    expect(() => collectIcons(["no-such-icon"])).toThrow("no-such-icon");
+  });
+
+  it("finds icons in .vue and .ts sources alike", () => {
+    const used = findLibraryIcons();
+    expect(used).toContain("loader-circle"); // VIcon.vue
+    expect(used).toContain("file-spreadsheet"); // DragNDrop.vue's lookup table
+  });
+});
 
 describe("the library's icon set", () => {
-  it("bundles every lucide icon a component uses", () => {
-    const missing = [...usedIcons()]
-      .filter(([name]) => !bundled.has(name))
-      .map(([name, file]) => `lucide:${name} (${file})`);
-    expect(missing, `not bundled — ${REGENERATE}`).toEqual([]);
-  });
-
-  it("bundles nothing no component uses", () => {
-    const used = usedIcons();
-    const parents = new Set([...used.keys()].map(name => aliases[name]?.parent ?? name));
-    const stale = [...bundled].filter(name => !used.has(name) && !parents.has(name));
-    expect(stale, `stale entries — ${REGENERATE}`).toEqual([]);
-  });
-
   it("uses lucide only", () => {
     const foreign = sourceFiles(SRC).flatMap(file =>
       [...readFileSync(file, "utf8").matchAll(OTHER_SET_PATTERN)]
@@ -69,15 +81,15 @@ describe("the library's icon set", () => {
   });
 });
 
-describe("VIcon with a bundled icon", () => {
+describe("VIcon with the build's icon set", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  // @iconify/vue renders an empty <svg> until it is mounted (SSR safety), then fills it in the
-  // same tick from local data — before the browser paints. Without local data it would wait on a
-  // request instead, which is what this guards.
-  it("draws the glyph as soon as it mounts, with no request", async () => {
+  // Vitest runs the plugin with `bundle: true`, so this is what a built app does. @iconify/vue
+  // renders an empty <svg> until mounted (SSR safety), then fills it in the same tick from local
+  // data — before the browser paints.
+  it("draws a library icon as soon as it mounts, with no request", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const wrapper = mount(VIcon, { props: { icon: "lucide:x" } });
     await nextTick();

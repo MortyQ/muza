@@ -138,11 +138,16 @@ Before building any UI element, check if `@muzakit/ui` already provides it.
 
 ### Icons
 
-Lucide is the only icon set. The icons the library's own components draw are bundled in
-`libs/ui/src/icons/library-icons.json` and registered by `VIcon` on first render, so they never
-hit the network. After adding or removing a `lucide:` icon anywhere in `libs/ui/src`, run
-`pnpm --filter @muzakit/ui icons` — `tests/unit/icons.spec.ts` fails until you do. Icons an app
-passes in by name are the app's: they load from the Iconify API unless the app registers them.
+Lucide is the only icon set. The icons the library's own components draw are assembled at
+build time by `muzakitIcons()` (`@muzakit/ui/vite`): `vite build` scans `libs/ui/src` and embeds
+every `lucide:` name it finds, `vite dev` embeds nothing and lets them load from the Iconify API.
+There is nothing to run by hand — use an icon in a component and the next build ships it. A name
+lucide does not have fails the build.
+
+Every Vite config that compiles the library from source registers the plugin (`libs/ui`, its
+Vitest config, each app); without it the import of `virtual:muzakit-icons` does not resolve.
+Icons an app passes in by name are the app's: they load from the Iconify API unless the app
+registers them.
 
 Only build a custom component when `@muzakit/ui` has no equivalent **and** the need is specific
 enough that adding it to the library isn't warranted. Adding one to the library follows

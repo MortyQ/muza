@@ -10,7 +10,11 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./vite": {
+      "types": "./vite/icons.d.ts",
+      "import": "./vite/icons.js"
+    }
   },
   "scripts": {
     "build": "vite build",
@@ -24,8 +28,7 @@
     "test:coverage": "vitest run --project unit --coverage",
     "test:tokens": "vitest run --project browser tests/visual/tokens",
     "test:visual:docker": "bash scripts/visual-docker.sh",
-    "test:types": "vitest run --project types",
-    "icons": "node scripts/generate-icons.js"
+    "test:types": "vitest run --project types"
   },
   "peerDependencies": {
     "vue": "^3.5.34",
