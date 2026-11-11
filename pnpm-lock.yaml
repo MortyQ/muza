@@ -57,8 +57,8 @@ importers:
   apps/muzakit-dashboard:
     dependencies:
       '@ametie/vue-muza-use':
-        specifier: ^0.6.1
-        version: 0.6.1(axios@1.13.6)(vue@3.5.41(typescript@5.9.3))
+        specifier: ^1.10.0
+        version: 1.10.0(axios@1.13.6)(vue@3.5.41(typescript@5.9.3))
       '@muzakit/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -118,8 +118,8 @@ importers:
   apps/muzakit-starter-without-tailwind:
     dependencies:
       '@ametie/vue-muza-use':
-        specifier: ^0.6.1
-        version: 0.6.1(axios@1.13.6)(vue@3.5.41(typescript@5.9.3))
+        specifier: ^1.10.0
+        version: 1.10.0(axios@1.13.6)(vue@3.5.41(typescript@5.9.3))
       '@muzakit/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -307,11 +307,11 @@ importers:
 
 packages:
 
-  '@ametie/vue-muza-use@0.6.1':
-    resolution: {integrity: sha512-5su4QaXfsItMIxZb1iK5YT4VlMMRsvZB2noxVqWdbOXSGEc3CRnhTFKZoUr2UFKUIUlY2SQst38hDVhWvKYpHQ==}
+  '@ametie/vue-muza-use@1.10.0':
+    resolution: {integrity: sha512-M9s9apvLu+V1uHSZGJ/xdsa3KvWMrBLn/8rOtcyeSQqIrB7vuUXGZExDhIpm+twX50XNsZ6ZiLbE0Qt08SSblA==}
     peerDependencies:
       axios: ^1.0.0
-      vue: ^3.3.0
+      vue: ^3.5.0
 
   '@asamuzakjp/css-color@6.0.7':
     resolution: {integrity: sha512-vC/bk1Lz7Tn/EfU9/apOTBk80/8dyGyWMowPoV1tJ52muDGsDqt2HPT2klrFUiY60MQmQv9q8yIht15JnBgDGw==}
@@ -4141,7 +4141,7 @@ packages:
 
 snapshots:
 
-  '@ametie/vue-muza-use@0.6.1(axios@1.13.6)(vue@3.5.41(typescript@5.9.3))':
+  '@ametie/vue-muza-use@1.10.0(axios@1.13.6)(vue@3.5.41(typescript@5.9.3))':
     dependencies:
       axios: 1.13.6
       vue: 3.5.41(typescript@5.9.3)

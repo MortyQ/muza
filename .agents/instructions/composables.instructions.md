@@ -9,8 +9,8 @@ applyTo: "**/composables/**/*.ts,**/api/use*.ts"
 > covered by the `use-api` skill. General composable shape (naming, `MaybeRefOrGetter`, cleanup,
 > no top-level side effects) is `vue-syntax` Rule 16.
 >
-> The apps pin `@ametie/vue-muza-use` **0.6.1**. Rules 4, 6 and 7 below describe that version,
-> verified against its `dist/`. If the pin moves, re-check them.
+> The apps pin `@ametie/vue-muza-use` **^1.10.0**, as so-platform's insights-client does. Rules 4,
+> 6, 7 and 12 describe that version, checked against its `dist/`. If the pin moves, re-check them.
 >
 > These rules are hard constraints. Every rule is verifiable in code review. Numbering is shared
 > with the rule set this file was ported from, so cross-references stay valid; rules that do not
@@ -116,28 +116,28 @@ export const useReportDraft = () => { ... };
 
 ---
 
-## Rule 4 — Re-fetching Is the `watch` Option, Not a Hand-Written Watcher
+## Rule 4 — Getters Re-fetch on Their Own; Mutations Are `lazy`
 
-In 0.6.1 `useApi` does **not** track the `url`, `params` or `data` getters on its own: they are
-read with `toValue()` at `execute()` time. Re-fetching on a dependency change is the `watch`
-option, which re-runs `execute()` whenever a listed source changes. Getters are still the right
-shape for `params` / `data` — they make every execution read the current values.
+`useApi` re-fetches when a reactive dependency read inside the `url`, `params` or `data` **getter**
+changes. There is no `watch` option — passing one is a TypeScript error; it belonged to the 0.6
+API and any example still showing it is stale.
 
 ```ts
-// ✅ correct — getter for the payload, `watch` for the trigger
+// ✅ correct — the getter is the trigger
 const { data } = fetchReports({
   params: () => ({ status: status.value, limit: limit.value }),
-  watch: [status, limit],
   immediate: true,
 });
 
-// ❌ wrong — a second, hand-written trigger for what the option already does
+// ❌ wrong — a second, hand-written trigger for what the getter already does
 const { data, execute } = fetchReports({ params: () => ({ status: status.value }), immediate: true });
 watch(status, () => execute());
 ```
 
-`immediate` defaults to `false`, so a mutation or a manual request is simply created without it and
-run with `execute()`.
+Mutations and manual requests pass `lazy: true`. Auto-tracking is on for **every** method, not
+just GET: without `lazy`, a reactive `data: () => form.value` getter sends the mutation on every
+keystroke. Verified in the dashboard's register form, which POSTed `/auth/register` while the name
+was being typed until it got `lazy: true`.
 
 ---
 
@@ -165,17 +165,18 @@ Prefer a `computed` over both when the value is pure derivation rather than a se
 
 ---
 
-## Rule 6 — Conditional Requests: `immediate: false` + a Watcher
+## Rule 6 — Conditional Requests: `lazy: true` + a Watcher
 
 `useApi` has **no `enabled` option**, and two obvious workarounds are both wrong:
 
 - **Returning `undefined` from the URL getter does not skip the request.** `execute()` throws
   `Error("Request URL is missing")`, which lands in `error.value` — a visible error state, plus the
-  global error notification unless `skipErrorNotification` is set.
+  global error notification unless `skipErrorNotification` is set. The auto-trigger has no
+  falsy-URL guard either.
 - **A placeholder id in the URL sends a real request** (`/reports/0` → 404).
 
-The correct pattern is no `immediate`, no `watch` option, and a watcher that calls `execute()`
-only once the dependency is non-null.
+The correct pattern is `lazy: true` — so the getter does not auto-run — and a watcher that calls
+`execute()` only once the dependency is non-null.
 
 ```ts
 // ✅ correct
@@ -183,7 +184,7 @@ export const useReport = (id: MaybeRefOrGetter<number | null>): UseReportReturn 
   const { fetchReport } = useReportsRequest();
 
   // `?? 0` is unreachable — execute() is never called while the id is null.
-  const { data, loading, error, execute } = fetchReport(() => toValue(id) ?? 0);
+  const { data, loading, error, execute } = fetchReport(() => toValue(id) ?? 0, { lazy: true });
 
   watch(() => toValue(id), (value) => {
     if (value === null) return;
@@ -197,7 +198,7 @@ export const useReport = (id: MaybeRefOrGetter<number | null>): UseReportReturn 
 const { data } = fetchReport(() => (id.value ? `/reports/${id.value}` : undefined));
 ```
 
-This is the one place a watcher is preferred over `onSuccess` / the `watch` option.
+This is the one place a watcher is preferred over `onSuccess` / auto-tracking.
 
 ---
 
@@ -254,8 +255,8 @@ No side effects at the top level of the composable body: they belong in lifecycl
 ## Rule 10 — `useApi` + `VTable`: One Request, Zero Plumbing
 
 Every input the request depends on — filters, page, sort — is a ref read inside the `data` /
-`params` getter and listed in `watch`. There is nothing else to wire: no `@request`, no hand-written
-re-fetch watcher.
+`params` getter, and `useApi` re-fetches when any of them changes. There is nothing else to wire:
+no `@request`, no `execute()` call, no re-fetch watcher.
 
 ```ts
 // ✅ correct
@@ -264,7 +265,6 @@ const sort = ref<SortItem[]>([{ field: "createdAt", order: "desc" }]);
 
 const { loading, data } = fetchReports({
   params: () => ({ status: status.value, page: page.value, sort: sort.value, limit: 50 }),
-  watch: [status, page, sort],
   immediate: true,
 });
 ```
@@ -277,7 +277,7 @@ const { loading, data } = fetchReports({
 |---|---|---|
 | Page | `useTablePage(resetOn)` — resets and injects itself into VTable | `ref(1)` + reset watcher + `@request` |
 | Sort | `v-model:sort-state` on a `ref<SortItem[]>` read in the getter | `@request` → `sortState.value = …` → `execute()` |
-| Re-fetch | the `watch` option | `watch(filters, () => execute())` |
+| Re-fetch | the `data` / `params` getter | `watch(filters, () => execute())` |
 | Loading UI | `:loading` — VTable overlays itself | `v-if="loading"` swapping the table for a `VLoader` |
 
 `@request` is a **fallback** for what no other channel carries — a page-size changer, or a table
@@ -318,9 +318,22 @@ setup, and the `VTable` must be a descendant of that component.
 
 ---
 
-## Rule 12 — Caching
+## Rule 12 — Caching Is Opt-In: `cache: true`, a Custom Config Needs a Reason
 
-Not carried over — `@ametie/vue-muza-use` 0.6.1 has no `cache` option.
+A read opts into caching with `cache: true`, which also auto-keys the entry from
+`method + url + params + data` — every filter/page combination gets its own entry with no manual
+key. That is the form that belongs in an API-wrapper file. muzakit sets no app-wide
+`cacheDefaults` yet (so-platform's insights-client does: `swr`, `staleTime`, `freshFor` in
+`createApi({ globalOptions })`); add one there, once, before tuning requests one by one.
+
+```ts
+// ✅ correct
+useApiGet<ReportList>("/reports", { cache: true, ...options });
+```
+
+A per-request `cache` object (manual `id`, `staleTime`, `freshFor`, `swr`) or an `invalidateCache`
+is allowed only with a comment stating what makes this endpoint different. Never cache a read
+whose answer changes with the signed-in user (`/me`) without invalidating it on login and logout.
 
 ---
 

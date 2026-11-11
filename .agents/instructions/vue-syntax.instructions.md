@@ -242,7 +242,7 @@ Answer three questions in order — the first "yes" is the answer, and `watch` i
 
 `watch` is correct in exactly three cases:
 - **side effect on change** — a request, an imperative API, DOM work;
-- **conditional execution** — `immediate: false` + a watcher calling `execute()`, the only way to
+- **conditional execution** — `lazy: true` + a watcher calling `execute()`, the only way to
   make a `useApi` request conditional (Rule 6 in `composables.instructions.md`);
 - **seeding editable state** from a value that arrives asynchronously — and only when the user
   is then allowed to diverge from it.

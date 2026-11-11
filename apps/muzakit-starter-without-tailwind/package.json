@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ametie/vue-muza-use": "^0.6.1",
+    "@ametie/vue-muza-use": "^1.10.0",
     "@muzakit/ui": "workspace:*",
     "@muzakit/utils": "workspace:*",
     "@vuelidate/core": "^2.0.3",

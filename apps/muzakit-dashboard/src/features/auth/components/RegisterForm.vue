@@ -43,7 +43,10 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, form);
 
+// `lazy`: the body is a getter over the form, and an eager request re-sends whenever a getter it
+// reads changes — every keystroke would POST a registration.
 const { execute, loading } = useApiPost("/auth/register", {
+  lazy: true,
   data: () => ({
     name: form.name,
     email: form.email,
