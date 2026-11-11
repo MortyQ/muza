@@ -161,6 +161,12 @@ describe("VTab", () => {
       expect(activeId(await press("a"))).toBe("overview");
     });
 
+    it("does nothing, and does not throw, when every tab is disabled", async () => {
+      const { w } = await tabs({ tabs: TABS.map(t => ({ ...t, disabled: true })) });
+      await expect(w.find(".v-tab__nav").trigger("keydown", { key: "ArrowRight" }))
+        .resolves.not.toThrow();
+    });
+
     it("prevents default only for the keys it handles", async () => {
       const { w } = await tabs();
       const handled = new Event("keydown") as KeyboardEvent;

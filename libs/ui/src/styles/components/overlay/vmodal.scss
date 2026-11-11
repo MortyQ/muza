@@ -33,7 +33,7 @@
     background: color-mix(in oklch, var(--ui-surface-overlay) 95%, transparent);
     backdrop-filter: blur(10px) saturate(120%);
     -webkit-backdrop-filter: blur(10px) saturate(120%);
-    border: 1px solid color-mix(in oklch, white 30%, transparent);
+    border: 1px solid color-mix(in oklch, var(--ui-foreground) 10%, transparent);
     box-shadow: var(--ui-shadow-lg);
   }
 

@@ -184,3 +184,38 @@ describe("VFloating", () => {
     expect(Object.keys(w.emitted())).toEqual([]);
   });
 });
+
+describe("VFloating listener teardown", () => {
+  type Spy = ReturnType<typeof vi.spyOn>;
+  const keydownBalance = (spyAdd: Spy, spyRemove: Spy) =>
+    spyAdd.mock.calls.filter(c => c[0] === "keydown").length
+    - spyRemove.mock.calls.filter(c => c[0] === "keydown").length;
+
+  it("removes its Escape listener when closed by the trigger", async () => {
+    const add = vi.spyOn(document, "addEventListener");
+    const remove = vi.spyOn(document, "removeEventListener");
+    const w = floating({ teleport: true });
+
+    await open(w);
+    await trigger(w).trigger("click");
+    await w.vm.$nextTick();
+
+    expect(keydownBalance(add, remove)).toBeLessThanOrEqual(0);
+    w.unmount();
+    add.mockRestore();
+    remove.mockRestore();
+  });
+
+  it("removes its Escape listener when unmounted while open", async () => {
+    const add = vi.spyOn(document, "addEventListener");
+    const remove = vi.spyOn(document, "removeEventListener");
+    const w = floating({ teleport: true });
+
+    await open(w);
+    w.unmount();
+
+    expect(keydownBalance(add, remove)).toBeLessThanOrEqual(0);
+    add.mockRestore();
+    remove.mockRestore();
+  });
+});

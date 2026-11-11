@@ -86,7 +86,8 @@
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 9999px;
-  background-color: white;
+  /* Light in both themes, like the text on a primary fill */
+  background-color: var(--ui-primary-foreground);
   box-shadow: var(--ui-shadow-md);
   transition:
     transform 0.2s ease,

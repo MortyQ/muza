@@ -379,6 +379,8 @@ function initAutoUpdate() {
 function teardownAutoUpdate() {
   window.removeEventListener("scroll", handleScroll, { capture: true });
   window.removeEventListener("resize", handleResize);
+  // Added by open() and by initAutoUpdate(); every close path and unmount ends here.
+  document.removeEventListener("keydown", handleKeyDown);
 
   if (resizeObserver) {
     resizeObserver.disconnect();

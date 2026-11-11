@@ -136,11 +136,14 @@ const handleTabsKeydown = (event: KeyboardEvent) => {
       return;
   }
 
-  event.preventDefault();
+  // Every tab disabled: `% 0` is NaN and there is nothing to move to.
   const nextTab = enabledTabs[nextIndex];
+  if (!nextTab) return;
+
+  event.preventDefault();
   selectTab(nextTab.id);
   nextTick(() => {
-    (tabsContainerRef.value?.querySelector(`#tab-${nextTab.id}`) as HTMLElement)?.focus();
+    tabsContainerRef.value?.querySelector<HTMLElement>(`#tab-${nextTab.id}`)?.focus();
   });
 };
 

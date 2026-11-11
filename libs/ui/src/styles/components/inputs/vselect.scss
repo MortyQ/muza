@@ -259,7 +259,7 @@
    ============================================ */
 :deep(.multiselect__tag) {
   background-color: var(--ui-primary);
-  color: white;
+  color: var(--ui-primary-foreground);
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
   line-height: var(--ui-leading-base);
@@ -290,17 +290,17 @@
 
 :deep(.multiselect__tag-icon::after) {
   content: "×";
-  color: white;
+  color: var(--ui-primary-foreground);
   font-size: var(--ui-text-base);
   line-height: 1;
 }
 
 :deep(.multiselect__tag-icon:hover) {
-  background-color: color-mix(in oklch, white 25%, transparent);
+  background-color: color-mix(in oklch, var(--ui-primary-foreground) 25%, transparent);
 }
 
 :deep(.multiselect__tag-icon:hover::after) {
-  color: white;
+  color: var(--ui-primary-foreground);
 }
 
 /* ============================================
@@ -352,14 +352,14 @@
 
 :deep(.multiselect__option.multiselect__option--selected) {
   background-color: var(--ui-primary);
-  color: white;
+  color: var(--ui-primary-foreground);
   font-weight: var(--ui-weight-medium);
 }
 
-/* Make sure all children are also white on selected */
+/* Make sure all children take the on-primary colour when selected */
 :deep(.multiselect__option.multiselect__option--selected),
 :deep(.multiselect__option.multiselect__option--selected) * {
-  color: white !important;
+  color: var(--ui-primary-foreground) !important;
 }
 
 /* Hovering a selected item = deselect indicator */
