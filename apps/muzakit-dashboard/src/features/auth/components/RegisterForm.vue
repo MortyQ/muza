@@ -89,21 +89,30 @@ const handleSubmit = async () => {
         name="Password"
         type="password"
       />
-      <div
-        class="flex gap-1 mt-1.5 px-0.5"
-      >
+      <div class="flex items-center gap-2 mt-1.5 px-0.5">
         <div
-          v-for="i in 4"
-          :key="i"
-          :class="{
-            'bg-danger': i <= passwordStrength.strength && passwordStrength.strength === 1,
-            'bg-warning': i <= passwordStrength.strength && passwordStrength.strength === 2,
-            'bg-info': i <= passwordStrength.strength && passwordStrength.strength === 3,
-            'bg-success': i <= passwordStrength.strength && passwordStrength.strength === 4,
-            'bg-background': i > passwordStrength.strength
-          }"
-          class="h-1 flex-1 rounded-full transition-all duration-300"
-        />
+          aria-hidden="true"
+          class="flex flex-1 gap-1"
+        >
+          <div
+            v-for="i in 4"
+            :key="i"
+            :class="{
+              'bg-danger': i <= passwordStrength.strength && passwordStrength.strength === 1,
+              'bg-warning': i <= passwordStrength.strength && passwordStrength.strength === 2,
+              'bg-info': i <= passwordStrength.strength && passwordStrength.strength === 3,
+              'bg-success': i <= passwordStrength.strength && passwordStrength.strength === 4,
+              'bg-surface-sunken': i > passwordStrength.strength
+            }"
+            class="h-1 flex-1 rounded-full transition-colors duration-200"
+          />
+        </div>
+        <span
+          aria-live="polite"
+          class="min-w-12 text-right text-xs text-foreground-muted"
+        >
+          {{ passwordStrength.label }}
+        </span>
       </div>
     </div>
     <VInput

@@ -690,6 +690,7 @@ const orgTotal: Record<string, unknown> = {
         </template>
         <template #toolbar-column-actions>
           <VButton
+            aria-label="Show visible columns"
             icon="lucide:list-checks"
             variant="neutral"
             @click="showVisibleColumns"

@@ -1,25 +1,26 @@
-export enum Permissions {
-  CREATE_LIST = "create:list",
-  READ_LIST = "read:list",
-  UPDATE_LIST = "update:list",
-  DELETE_LIST = "delete:list",
-  READ_ALL_LISTS = "read:all-lists",
-  CREATE_TASK = "create:task",
-  READ_TASK = "read:task",
-  UPDATE_TASK = "update:task",
-  DELETE_TASK = "delete:task",
-  READ_ALL_TASKS = "read:all-tasks",
-  READ_USERS = "read:users",
-  UPDATE_USER = "update:user",
-  DELETE_USER = "delete:user",
-  MANAGE_ROLES = "manage:roles",
-  MANAGE_PERMISSIONS = "manage:permissions",
-  READ_DASHBOARD = "read:dashboard",
-  READ_ANALYTICS = "read:analytics",
-}
+export const Permissions = {
+  CREATE_LIST: "create:list",
+  READ_LIST: "read:list",
+  UPDATE_LIST: "update:list",
+  DELETE_LIST: "delete:list",
+  READ_ALL_LISTS: "read:all-lists",
+  CREATE_TASK: "create:task",
+  READ_TASK: "read:task",
+  UPDATE_TASK: "update:task",
+  DELETE_TASK: "delete:task",
+  READ_ALL_TASKS: "read:all-tasks",
+  READ_USERS: "read:users",
+  UPDATE_USER: "update:user",
+  DELETE_USER: "delete:user",
+  MANAGE_ROLES: "manage:roles",
+  MANAGE_PERMISSIONS: "manage:permissions",
+  READ_DASHBOARD: "read:dashboard",
+  READ_ANALYTICS: "read:analytics",
+} as const;
 
-export type PermissionType = `${Permissions}`;
-export const PermissionValues = Object.values(Permissions) as PermissionType[];
+export type Permissions = (typeof Permissions)[keyof typeof Permissions];
+export type PermissionType = Permissions;
+export const PermissionValues: PermissionType[] = Object.values(Permissions);
 
 export const PermissionGroups = {
   LISTS: [
