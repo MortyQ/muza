@@ -75,6 +75,14 @@ describe("VTab overflow", () => {
     expect(host.querySelector(".v-tab__more")).not.toBeNull();
   });
 
+  it("gives the icon-only more-button an accessible name with the hidden count", async () => {
+    const host = await mountTabs(MANY, "400px");
+    const visible = host.querySelectorAll(".v-tab-btn:not(.more-button)").length;
+    const more = host.querySelector(".v-tab__more button");
+
+    expect(more?.getAttribute("aria-label")).toBe(`${MANY.length - visible} more tabs`);
+  });
+
   it("keeps the visible tabs inside the container", async () => {
     const host = await mountTabs(MANY, "400px");
     const containerRight = (host.querySelector(".v-tab__list-wrapper") as HTMLElement)

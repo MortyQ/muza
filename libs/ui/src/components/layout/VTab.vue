@@ -364,7 +364,11 @@ defineExpose({
             @select="selectTab"
           >
             <template #trigger>
-              <VButton icon="mdi:dots-horizontal" />
+              <VButton
+                :aria-label="`${overflowTabs.length} more tabs`"
+                aria-haspopup="menu"
+                icon="mdi:dots-horizontal"
+              />
             </template>
           </VFloating>
         </div>
