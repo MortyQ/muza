@@ -2,7 +2,7 @@
 applyTo: "**/*.ts,**/*.vue"
 ---
 
-# TypeScript Rules — so-platform
+# TypeScript Rules — muzakit
 
 > These rules are hard constraints. No degradation of type safety is allowed.
 > TypeScript strict mode is always on. Every rule is verifiable in code review.
@@ -40,17 +40,17 @@ Use proper generics for reusable functions.
 
 ```ts
 // ✅ correct — unknown + type guard
-function processWebhookPayload(raw: unknown) {
+const processWebhookPayload = (raw: unknown) => {
   if (!isProductPayload(raw)) throw new Error('Unexpected payload')
   return raw.id
 }
 
-function isProductPayload(val: unknown): val is { id: string; name: string } {
+const isProductPayload = (val: unknown): val is { id: string; name: string } => {
   return typeof val === 'object' && val !== null && 'id' in val
 }
 
 // ❌ wrong — any to silence TS
-function doSomething(handler: any) {
+const doSomething = (handler: any) => {
   handler()
 }
 
@@ -91,9 +91,6 @@ enum ProductStatus {
 enum Direction { Up, Down, Left, Right }
 ```
 
-> Note: GQL codegen may produce enums from the schema — those are allowed since they come from generated code.
-> Do not replicate them manually.
-
 ---
 
 ## Rule 4 — `import type` for Type-Only Imports
@@ -102,12 +99,13 @@ All type-only imports use `import type`. Prevents accidental runtime imports and
 
 ```ts
 // ✅ correct
-import type { Product, ProductStatus, ProductFiltersInput } from '@/gql/generated'
 import type { Ref, ComputedRef } from 'vue'
-import type { ApolloError } from '@apollo/client/core'
+import type { ApiError } from '@ametie/vue-muza-use'
+import type { Column, ExpandableRow } from '@muzakit/ui'
+import type { Product, ProductStatus } from '../types'
 
 // ❌ wrong — importing types without `import type`
-import { Product, ProductStatus } from '@/gql/generated'
+import { Product, ProductStatus } from '../types'
 import { Ref } from 'vue'
 ```
 
@@ -124,26 +122,26 @@ interface UseProductsReturn {
   products: ComputedRef<Product[]>
   total: ComputedRef<number>
   loading: Ref<boolean>
-  error: Ref<ApolloError | null>
+  error: Ref<ApiError | null>
   isEmpty: ComputedRef<boolean>
   refetch: () => void
 }
 
-export function useProducts(): UseProductsReturn {
+export const useProducts = (): UseProductsReturn => {
   // ...
 }
 
 // ✅ correct — inline for simple composables
-export function useToggle(initial = false): { value: Ref<boolean>; toggle: () => void } {
+export const useToggle = (initial = false): { value: Ref<boolean>; toggle: () => void } => {
   const value = ref(initial)
   const toggle = () => { value.value = !value.value }
   return { value, toggle }
 }
 
 // ❌ wrong — no return type on exported composable
-export function useProducts() {
-  const { result } = useProductsQuery()
-  return { products: computed(() => result.value?.products.items ?? []) }
+export const useProducts = () => {
+  const { data } = fetchProducts({ immediate: true })
+  return { products: computed(() => data.value?.items ?? []) }
 }
 ```
 
@@ -160,7 +158,7 @@ const selectedProductId = ref<string | null>(null)
 const product = ref<Product | null>(null)
 
 // ✅ correct — optional param uses undefined implicitly
-function useProducts(filters?: Ref<ProductFiltersInput>) { ... }
+const useProducts = (filters?: Ref<ProductFilters>) => { ... }
 
 // ❌ wrong — undefined for state that represents "nothing selected"
 const selectedProductId = ref<string | undefined>(undefined)
@@ -170,7 +168,8 @@ const selectedProductId = ref<string | undefined>(undefined)
 
 ## Rule 7 — Non-null Assertion `!`
 
-`!` is allowed **only** when lifecycle guarantees existence — inside `onMounted`, `onUpdated`, or `onDone` callbacks.
+`!` is allowed **only** when lifecycle guarantees existence — inside `onMounted`, `onUpdated`, or an
+`onSuccess` callback.
 Never use `!` to silence TypeScript outside of these boundaries.
 After a null guard (`if (!x) return`), TypeScript narrows the type automatically — `!` is redundant and banned.
 
@@ -200,11 +199,6 @@ const id = selectedProduct.value!.id
 the type is known by construction. Any other use requires explicit justification in a comment.
 
 ```ts
-// ✅ correct — DOM type known by construction inside onMounted
-onMounted(() => {
-  inputRef.value!.focus() // useTemplateRef<HTMLInputElement> — no `as` needed
-})
-
 // ✅ correct — narrowing after discriminant check
 if (state.status !== 'success') return
 const data = state.data // TS knows the type from discriminated union
@@ -253,12 +247,12 @@ Unconstrained `<T>` where a shape constraint is possible is banned.
 
 ```ts
 // ✅ correct
-function getById<T extends { id: string }>(list: T[], id: string): T | undefined {
+const getById = <T extends { id: string }>(list: T[], id: string): T | undefined => {
     return list.find(item => item.id === id)
 }
 
 // ❌ wrong — unconstrained when shape is known
-function getById<T>(list: T[], id: string): T | undefined {
+const getById = <T>(list: T[], id: string): T | undefined => {
     return (list as any[]).find(item => item.id === id)
 }
 ```
@@ -267,23 +261,7 @@ function getById<T>(list: T[], id: string): T | undefined {
 
 ## Rule 11 — Typed Props with `defineProps` Generic Syntax
 
-Always use generic syntax for `defineProps`. Never use runtime object syntax.
-
-```ts
-// ✅ correct
-const { products, loading, error } = defineProps<{
-  products: ReadonlyArray<Product>
-  loading: boolean
-  error: ApolloError | null
-}>()
-
-// ❌ wrong — runtime object syntax
-const props = defineProps({
-  products: Array,
-  loading: Boolean,
-  error: Object,
-})
-```
+Generic syntax only, never runtime object syntax — merged into `vue-syntax` Rule 2.
 
 ---
 
@@ -320,12 +298,7 @@ const ROUTES = {
 
 // ROUTES.products → '/products' (literal), not string
 
-// ✅ correct — const object with satisfies for enum replacement
-const PRODUCT_STATUS = {
-  Active: 'active',
-  Inactive: 'inactive',
-  Archived: 'archived',
-} as const satisfies Record<string, string>
+// ✅ correct — const object for enum replacement: see Rule 3
 
 // ✅ correct — satisfies on component config objects
 const tableColumns = [
@@ -368,7 +341,13 @@ const isLoading = ref(false)
 const error = ref<Error | null>(null)
 ```
 
-Apply to: data fetching composables, form submission state, any operation with loading/error phases.
+Applies to async state **you write by hand**: form submission, a custom async operation, a
+composable that orchestrates its own phases.
+
+**Exception — library data layers.** `useApi*` / `useApiBatch` from `@ametie/vue-muza-use` return
+parallel `data` / `loading` / `error` refs by design. Use them as they are; never wrap or mirror
+them into an `AsyncState`. The data-layer rules (`use-api` skill, `composables.instructions.md`)
+are built on those refs.
 
 ---
 
@@ -385,17 +364,134 @@ const {items} = defineProps<{
 }>()
 
 // ✅ correct — readonly in composable return (signals intent)
-export function useProductList(): {
+export const useProductList = (): {
     products: Readonly<Ref<ReadonlyArray<Product>>>
     loading: Ref<boolean>
-} { ...
-}
+} => { ... }
 
 // ✅ correct — readonly tuple
-function useSorted<T>(list: ReadonlyArray<T>): ReadonlyArray<T> { ...
-}
+const useSorted = <T>(list: ReadonlyArray<T>): ReadonlyArray<T> => { ... }
 
 // ❌ wrong — mutable array prop allows push/splice inside component
 const {items} = defineProps<{ items: Product[] }>()
 items.push(newProduct) // silently mutates parent data
 ```
+
+### Rule 15a — No defensive copies to satisfy a mutable prop
+
+`readonly` is not a reason to copy. **Never** spread an array into a `computed` or a constant only
+because a component prop is typed mutable (`VTable` `data`, `VSelect` `options`, …). The copy adds a
+layer, a name and a comment, and protects nothing — the component does not mutate it.
+
+Give the value the right shape **at its source** instead:
+
+- A composable returns `ComputedRef<T[]>` (mutable) for rows and options a component consumes;
+  the template binds it directly: `:data="rows"`, `:options`.
+- A static option list is declared `Option[]` in `constants.ts`, not `readonly Option[]`, and is
+  bound directly: `:options="STATUS_OPTIONS"`.
+- A table or select that owns its data — calls its own composable instead of receiving fetched
+  rows from a parent — receives no array props at all, so there is no readonly prop to copy from.
+
+```ts
+// ✅ correct — the source already has the shape the component takes
+const { rows } = useProducts();            // rows: ComputedRef<ProductRow[]>
+// <VTable :data="rows" />  <VSelect :options="STATUS_OPTIONS" />
+
+// ❌ banned — a copy whose only job is the type
+const tableData = computed(() => [...rows.value]);
+const statusOptions: Option[] = [...STATUS_OPTIONS];
+```
+
+A `computed` over a list is allowed only when it **transforms** it: prepends an "All" option,
+filters, maps, sorts, slices. If removing the computed would change what the user sees, it is a
+transformation; if it would change only a type, it is banned.
+
+Existing component props that receive arrays stay `ReadonlyArray<T>`. Where such a prop must go
+into a mutable-typed component prop, the fix is to move the data into the component (it should own
+it), not to copy.
+
+---
+
+## Rule 16 — Template Literal Types for Domain-Specific String Unions
+
+When a domain has a finite set of valid `"entity.action"` or `"namespace.key"` string combinations,
+model it as a template literal type derived from a source-of-truth map — not as a plain `string` or hand-written union.
+
+This gives: exhaustive type checking, auto-complete, zero duplication, and a single place to extend.
+
+### Pattern — PERMISSION_MAP → Permission type → PERMISSIONS const
+
+```ts
+// ── 1. Source of truth — the only place to edit when adding new entries ──────
+const PERMISSION_MAP = {
+  catalog:  ["read", "write", "admin", "import"],
+  users:    ["read", "write", "admin"],
+  channels: ["read", "write", "admin"],
+} as const;
+
+type PermissionMap = typeof PERMISSION_MAP;
+
+// ── 2. Derived types — auto-update when PERMISSION_MAP changes ────────────────
+
+// "catalog" | "users" | "channels"
+type Entity = keyof PermissionMap;
+
+// ActionFor<"catalog"> → "read" | "write" | "admin" | "import"
+type ActionFor<E extends Entity> = PermissionMap[E][number];
+
+// Full union of valid combinations only:
+// "catalog.read" | "catalog.write" | "catalog.admin" | "catalog.import" |
+// "users.read" | "users.write" | "users.admin" |
+// "channels.read" | "channels.write" | "channels.admin"
+//
+// "users.import" and "catalog.fly" are NOT in this type — TS catches them.
+type Permission = { [E in Entity]: `${E}.${ActionFor<E>}` }[Entity];
+
+// ── 3. Auto-generated const — keys follow ENTITY_ACTION pattern ───────────────
+type PermissionsConst = {
+  [E in Entity as `${Uppercase<E>}_${Uppercase<ActionFor<E>>}`]: `${E}.${ActionFor<E>}`;
+};
+
+const buildPermissions = (): PermissionsConst => {
+  const result: Record<string, string> = {};
+  for (const entity of Object.keys(PERMISSION_MAP) as Entity[]) {
+    for (const action of PERMISSION_MAP[entity]) {
+      result[`${entity.toUpperCase()}_${action.toUpperCase()}`] = `${entity}.${action}`;
+    }
+  }
+  return result as PermissionsConst;
+};
+
+const PERMISSIONS = buildPermissions();
+
+// PERMISSIONS.CATALOG_READ   → "catalog.read"   (literal type, not string)
+// PERMISSIONS.USERS_WRITE    → "users.write"
+// PERMISSIONS.USERS_IMPORT   → TS error: Property does not exist ✓
+// PERMISSIONS.CATALOG_FLY    → TS error: Property does not exist ✓
+```
+
+### How to extend
+
+```ts
+// Add a new module — everything auto-derives, nothing else to change:
+const PERMISSION_MAP = {
+  catalog:  [...],
+  users:    [...],
+  channels: [...],
+  products: ["read", "write", "admin"],  // ← add here
+} as const;
+
+// Now available:
+// PERMISSIONS.PRODUCTS_READ, PERMISSIONS.PRODUCTS_WRITE, PERMISSIONS.PRODUCTS_ADMIN
+// Permission type now includes "products.read" | "products.write" | "products.admin"
+```
+
+### When to use this pattern
+
+Use template literal type unions when:
+- A domain has a fixed set of `"namespace.key"` or `"entity.action"` strings
+- The valid combinations vary per namespace (not a cartesian product of all × all)
+- The set will grow over time — new entries should not require touching multiple files
+- You want compile-time safety on string values passed to APIs or stored in configs
+
+Do NOT use for open-ended strings, user-generated content, or purely runtime values.

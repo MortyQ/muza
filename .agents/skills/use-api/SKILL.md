@@ -1,13 +1,18 @@
 ---
 name: use-api
-description: Use when creating or editing an api/use*.ts wrapper, calling useApiGet/useApiPost/useApiPut/useApiPatch/useApiDelete/useApiBatch, importing @ametie/vue-muza-use, wiring a REST request in insights-client, or debugging a request that fires on every keystroke, never fires, polls forever, or errors with "Request URL is missing".
+description: Use when creating or editing an api/use*.ts wrapper, calling useApiGet/useApiPost/useApiPut/useApiPatch/useApiDelete/useApiBatch, importing @ametie/vue-muza-use, wiring a REST request in an app, or debugging a request that fires on every keystroke, never fires, polls forever, or errors with "Request URL is missing".
 ---
 
 # Skill: Vue Muza Use API Layer
 
-Verified against `@ametie/vue-muza-use` **1.8.2** — the version pinned in this repo
-(`apps/insights-client/package.json`, lockfile-exact). `pim-client` and `tools-client` are
-still on 0.6.0; nothing here applies to them.
+Written against `@ametie/vue-muza-use` **1.8.2** (ported from so-platform).
+
+> **muzakit pins `^0.6.1`** in `apps/muzakit-dashboard` and `apps/muzakit-starter-without-tailwind`.
+> 0.6.1 has no `lazy`, no `cache`, and re-fetches through the `watch` option rather than
+> auto-tracked getters. Until the pin is bumped, where this skill and
+> `.agents/instructions/composables.instructions.md` disagree, the composables file (written for
+> 0.6.1 and checked against its `dist/`) wins. Check `dist/` of the installed version before
+> relying on an option named here.
 
 ---
 

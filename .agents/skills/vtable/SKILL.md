@@ -1,14 +1,14 @@
 ---
 name: vtable
-description: Use when rendering, configuring or debugging a VTable from @app/core in any app — defining columns, cell slots, pagination, sorting, selection, row actions, empty/loading states — or when hitting TS4104 / "readonly array" / "not assignable to ExpandableRow[]" on the data prop, or pages not syncing. Also the entry point when modifying VTable itself under libs/core/src/components/table.
+description: Use when rendering, configuring or debugging a VTable from @muzakit/ui in any app — defining columns, cell slots, pagination, sorting, selection, row actions, empty/loading states — or when hitting TS4104 / "readonly array" / "not assignable to ExpandableRow[]" on the data prop, or pages not syncing. Also the entry point when modifying VTable itself under libs/ui/src/components/table.
 ---
 
 # VTable
 
-`VTable` is the shared data table in `@app/core`, used by every app. This skill covers **consuming**
+`VTable` is the shared data table in `@muzakit/ui`, used by every app. This skill covers **consuming**
 it. Changing the component itself is a different job — see [Extending VTable](#extending-vtable).
 
-Source of truth for the contract: `libs/core/src/components/table/types/props.ts` (`TableProps`,
+Source of truth for the contract: `libs/ui/src/components/table/types/props.ts` (`TableProps`,
 `TableEmits`) and `types/index.ts` (`Column`, `PaginationConfig`). Read those before inventing a prop.
 
 ## Quick reference
@@ -16,7 +16,7 @@ Source of truth for the contract: `libs/core/src/components/table/types/props.ts
 | Need | How |
 |---|---|
 | Columns | `:columns="Column[]"` — `{ key, label, width?, align?, sortable?, format?, fixed? }` |
-| Rows | `:data="ExpandableRow[]"` — **mutable array, see gotcha below** |
+| Rows | `:data="rows"` straight from the composable (`ComputedRef<T[]>`) — no copy, see gotcha below |
 | Custom cell | `<template #cell-<columnKey>="{ value, row, rowIndex }">` |
 | Row click | `@row-click="(row) => …"` — payload is `Record<string, unknown>`, cast at the boundary |
 | Loading | `:loading="true"` — renders the built-in overlay; don't hand-roll one |
@@ -34,25 +34,27 @@ client sorting but never got `sort: { type: "front" }`.
 
 ## Gotcha 1 — `data` is a mutable array
 
-`TableProps.data` is `ExpandableRow[]`. Passing a readonly prop straight through fails:
-
-```
-TS4104: The type 'readonly EmailDelivery[]' is 'readonly' and cannot be assigned to the mutable type 'ExpandableRow[]'
-```
-
-Do **not** "fix" this by widening your own prop away from `ReadonlyArray` — props stay readonly
-(TypeScript Rule 15). Copy into a `computed` instead:
+`TableProps.data` is `ExpandableRow[]`. A readonly array does not assign to it (TS4104). **Do not
+copy the rows into a `computed` to get around it** — `computed(() => [...rows.value])` is banned
+(TypeScript Rule 15a). Give the rows the right shape at the source and bind them directly:
 
 ```ts
-// ✅ correct — prop stays readonly, VTable gets its mutable array
-const { deliveries } = defineProps<{ deliveries: ReadonlyArray<EmailDelivery> }>();
-
-const rows = computed(() => [...deliveries]);
+// ✅ correct — the table owns its data; the composable returns ComputedRef<ProductRow[]>
+const { rows, loading, pagination } = useProducts();
 ```
 
 ```vue
-<VTable :columns :data="rows" :loading />
+<VTable :columns :data="rows" :loading :pagination />
 ```
+
+```ts
+// ❌ banned — a copy whose only job is the type
+const tableData = computed(() => [...rows.value]);
+```
+
+If TS4104 appears, the source is wrong: make the composable return `T[]`, or — when the rows arrive
+as a readonly prop — move the composable into the component that renders the table, so it owns its
+data. A `computed` is fine only when it transforms the rows (filter, map, sort, slice).
 
 `ExpandableRow` carries an index signature (`[key: string]: any`), so most row shapes assign to it
 without a cast. Going the other way — the `row-click` payload back to your type — does need one,
@@ -97,9 +99,6 @@ Do not paginate. Bind `v-model:page-size` to the `limit`, and the pagination bar
 truth. A pager offering "page 2 of 3" over 50 fetched rows implies a page 2 on the server; there
 isn't one.
 
-Reference: `features/admin/communication/deliveries/` — `useDeliveries.ts` plus
-`components/DeliveriesTable.vue`.
-
 ```ts
 // constants.ts — one number is both the request limit and the page size
 export const DEFAULT_LIMIT = 50;
@@ -143,7 +142,7 @@ const rows = computed<Order[]>(() => {
 ```
 
 ```vue
-<!-- No `page` in the config — the injected ref outranks it (`pageRef`, VTable.vue:358) -->
+<!-- No `page` in the config — the injected ref outranks it (`pageRef`, libs/ui/src/components/table/VTable.vue:332) -->
 <VTable
   :columns
   :data="rows"
@@ -177,7 +176,7 @@ anything a model already carries: with `v-model:page-size` bound, a `@request` h
 
 | Mistake | Fix |
 |---|---|
-| Widening a prop to `ExpandableRow[]` to silence TS4104 | Keep the prop readonly, spread into a `computed` |
+| `computed(() => [...rows.value])` to silence TS4104 | Banned (TS Rule 15a) — return `T[]` from the composable and bind `:data="rows"` |
 | Custom empty state wrapper around the table | VTable already renders one |
 | Custom loading spinner beside the table | Pass `:loading` |
 | Raw `<span>` badge for a status cell | `VTag` in a `#cell-<key>` slot, `variant="outline"` in tables |
@@ -189,7 +188,7 @@ anything a model already carries: with `v-model:page-size` bound, a `@request` h
 
 ## Extending VTable
 
-Only when editing files under `libs/core/src/components/table/**` — adding a prop, emit, composable,
+Only when editing files under `libs/ui/src/components/table/**` — adding a prop, emit, composable,
 subcomponent or SCSS partial. **Read `internals.md` in this skill directory** for the component and
 composable contracts, extension points and forbidden patterns.
 
@@ -197,7 +196,7 @@ Do not load `internals.md` merely to render a table in an app — it is ~850 lin
 answers none of the questions above.
 
 Two caveats when you do:
-- `internals.md`'s SCSS file list is stale. `libs/core/src/components/table/README.md` has the
+- `internals.md`'s SCSS file list is stale. `libs/ui/src/components/table/README.md` has the
   current filenames; use `internals.md` for composable and component contracts.
 - `VTable.vue` is **not** generic — `Column`, `TableProps`, `TableEmits` take no `TData`. Adding one
   is a real architecture change, not a bug fix; confirm intent with the user first.
