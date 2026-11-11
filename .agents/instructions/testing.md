@@ -103,9 +103,10 @@ The image tag in `ci.yml` and `scripts/visual-docker.sh` must match the
    gives `6px`. For anything that is not a colour use `tokenAsValue()` from
    `tests/setup/tokens.ts`, which pushes both sides through the same probe.
 
-7. **The unit project needs jsdom, never `node`** — even for pure functions.
-   `@muzakit/utils` runs a module-scope `watch` on import that touches
-   `document` and `localStorage`.
+7. **The unit project needs jsdom, never `node`** — components and the theme
+   need `document` and `localStorage`. Importing the library touches neither
+   (`tests/unit/imports.spec.ts` keeps it that way); `useTheme()` does, on its
+   first call, and keeps that state for the rest of the file.
 
 8. **Module-level singletons survive between tests**: the `useModal` registry,
    `useTheme`. Clear them in `beforeEach`.
