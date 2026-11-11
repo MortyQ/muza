@@ -222,11 +222,10 @@ cross-product. Layout-dependent behaviour is in the browser project.
     `TablePagination` on its own is a baseline of an unstyled component — which
     looks plausible until someone compares it with the app.
 
-20. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
-    project). Its ESM build imports `./keyv-idb` with no extension, which Node's
-    resolver rejects, so the storage module cannot be imported at all otherwise.
-    `fake-indexeddb/auto` in the unit setup then makes the default IndexedDB
-    branch testable rather than skipped.
+20. **IndexedDB is `fake-indexeddb/auto`** in the unit setup, so the storage
+    layer's default branch is tested rather than skipped. The adapter opens its
+    database on first use; a spec that wants a fresh one uses a namespace of
+    its own, since databases outlive a test within one file.
 
 21. **More module-level singletons**: the `useLinkedTables` registry, and
     `tableStorage`, whose `setStorageType` mutates global state. Reset both in

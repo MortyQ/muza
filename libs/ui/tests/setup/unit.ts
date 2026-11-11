@@ -2,9 +2,9 @@ import { defineComponent } from "vue";
 
 import { config } from "@vue/test-utils";
 // jsdom implements neither indexedDB nor IDBKeyRange, and the table's storage
-// singleton defaults to the IndexedDB adapter — importing it is enough to reach
-// `idb-keyval`, which reads the global on first use. `/auto` installs a real
-// in-memory implementation, so the default branch is tested rather than skipped.
+// singleton defaults to the IndexedDB adapter, which reads the global on first
+// use. `/auto` installs a real in-memory implementation, so the default branch
+// is tested rather than skipped.
 import "fake-indexeddb/auto";
 import { beforeEach, vi } from "vitest";
 

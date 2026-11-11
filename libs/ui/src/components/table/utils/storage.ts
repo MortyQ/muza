@@ -1,9 +1,7 @@
 /**
  * Storage abstraction layer for table configurations
- * Supports multiple storage backends: IndexedDB (via keyv-browser), localStorage, sessionStorage
+ * Supports multiple storage backends: IndexedDB, localStorage, sessionStorage
  */
-
-import { KeyvIndexedDB } from "keyv-browser";
 
 export type StorageType = "indexedDB" | "localStorage" | "sessionStorage";
 
@@ -18,24 +16,56 @@ export interface StorageAdapter {
   clear(): Promise<void>
 }
 
+// The layout keyv-browser left behind — a database per namespace, one store named "keyv", the
+// table key as the record key — so column layouts saved before it was replaced still load.
+const STORE_NAME = "keyv";
+
 /**
- * IndexedDB adapter using keyv-browser
+ * IndexedDB adapter
  * Best for: 100+ tables, large datasets, production apps
+ *
+ * The database is opened on first use, never on construction: the default adapter is built when
+ * the library is imported, and an app that renders no table should not get a database for it.
  */
 class IndexedDBAdapter implements StorageAdapter {
-  private keyv: KeyvIndexedDB;
+  private connection: Promise<IDBDatabase> | null = null;
 
-  constructor(namespace = "table-configs") {
-    this.keyv = new KeyvIndexedDB({
-      dbName: namespace,
-      storeName: "keyv",
-      namespace: namespace,
+  constructor(private readonly dbName = "table-configs") {}
+
+  private open(): Promise<IDBDatabase> {
+    this.connection ??= new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open(this.dbName);
+      request.onupgradeneeded = () => request.result.createObjectStore(STORE_NAME);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    }).catch((error: unknown) => {
+      // A failed open is not cached: the next call tries again.
+      this.connection = null;
+      throw error;
+    });
+    return this.connection;
+  }
+
+  // Resolves once the transaction commits, not when the request succeeds, so a write is durable
+  // by the time the caller's await returns.
+  private async run<T>(
+    mode: IDBTransactionMode,
+    operation: (store: IDBObjectStore) => IDBRequest<T>,
+  ): Promise<T> {
+    const db = await this.open();
+    return new Promise<T>((resolve, reject) => {
+      const transaction = db.transaction(STORE_NAME, mode);
+      const request = operation(transaction.objectStore(STORE_NAME));
+      transaction.oncomplete = () => resolve(request.result);
+      transaction.onerror = () => reject(transaction.error ?? request.error);
+      transaction.onabort = () => reject(transaction.error ?? request.error);
     });
   }
 
   async get<T>(key: string): Promise<T | null> {
     try {
-      const value = await this.keyv.get<T>(key);
+      // The adapter's callers own the stored shape, as with the JSON the web adapter parses.
+      const value = await this.run<T | undefined>("readonly", store => store.get(key));
       return value ?? null;
     }
     catch (error) {
@@ -46,7 +76,7 @@ class IndexedDBAdapter implements StorageAdapter {
 
   async set<T>(key: string, value: T): Promise<void> {
     try {
-      await this.keyv.set(key, value);
+      await this.run("readwrite", store => store.put(value, key));
     }
     catch (error) {
       console.error("IndexedDB set error:", error);
@@ -56,7 +86,7 @@ class IndexedDBAdapter implements StorageAdapter {
 
   async delete(key: string): Promise<void> {
     try {
-      await this.keyv.delete(key);
+      await this.run("readwrite", store => store.delete(key));
     }
     catch (error) {
       console.error("IndexedDB delete error:", error);
@@ -66,7 +96,7 @@ class IndexedDBAdapter implements StorageAdapter {
 
   async clear(): Promise<void> {
     try {
-      await this.keyv.clear();
+      await this.run("readwrite", store => store.clear());
     }
     catch (error) {
       console.error("IndexedDB clear error:", error);
@@ -138,10 +168,10 @@ class WebStorageAdapter implements StorageAdapter {
 /**
  * Factory function to create storage adapter
  */
-export function createStorageAdapter(
+export const createStorageAdapter = (
   type: StorageType = "indexedDB",
   namespace?: string,
-): StorageAdapter {
+): StorageAdapter => {
   switch (type) {
     case "indexedDB":
       return new IndexedDBAdapter(namespace);
@@ -152,7 +182,7 @@ export function createStorageAdapter(
     default:
       throw new Error(`Unknown storage type: ${type}`);
   }
-}
+};
 
 /**
  * Singleton storage manager for table configurations

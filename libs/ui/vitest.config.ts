@@ -30,18 +30,6 @@ export default defineConfig({
           environment: "jsdom",
           include: ["tests/unit/**/*.spec.ts", "tests/conventions.spec.ts"],
           setupFiles: ["./tests/setup/unit.ts"],
-          server: {
-            deps: {
-              // keyv-browser's ESM build imports "./keyv-idb" without an
-              // extension. Vitest externalizes dependencies by default and
-              // hands them to Node, whose ESM resolver requires the extension,
-              // so the table's storage module fails to import at all. Inlining
-              // routes it through Vite's resolver instead, which tries the
-              // extensions. The browser project never hits this — Vite serves
-              // every module there.
-              inline: ["keyv-browser"],
-            },
-          },
         },
       },
       {
