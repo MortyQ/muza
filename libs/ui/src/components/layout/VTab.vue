@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch, nextTick, onBeforeUnmount, computed, type Component } from "vue";
+import { onMounted, ref, watch, nextTick, onBeforeUnmount, computed, useTemplateRef, type Component } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 
@@ -148,7 +148,7 @@ const handleTabsKeydown = (event: KeyboardEvent) => {
 };
 
 // Overflow tabs logic
-const tabsContainerRef = ref<HTMLElement | null>(null);
+const tabsContainerRef = useTemplateRef<HTMLElement>("tabsContainerRef");
 const visibleTabs = ref<ITab[]>([...tabs]);
 const overflowTabs = ref<ITab[]>([]);
 const moreButtonWidth = 70; // Width of icon button (48px) + small buffer

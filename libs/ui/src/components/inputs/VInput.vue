@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, useId, useSlots, watch } from "vue";
+import { ref, computed, useId, useSlots, useTemplateRef, watch } from "vue";
 
 import { useDebounceFn } from "@vueuse/core";
 
@@ -66,7 +66,7 @@ const generatedId = useId();
 
 const isShowPassword = ref(false);
 const isFocused = ref(false);
-const inputRef = ref<HTMLInputElement | HTMLTextAreaElement | null>(null);
+const inputRef = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("inputRef");
 
 const inputId = computed(() => id || `v-input-${generatedId}`);
 

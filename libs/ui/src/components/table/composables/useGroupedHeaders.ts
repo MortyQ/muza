@@ -2,6 +2,15 @@ import { computed, type Ref, type ComputedRef } from "vue";
 
 import type { Column, HeaderCell } from "../types";
 
+export interface UseGroupedHeadersReturn {
+  hasGroups: ComputedRef<boolean>
+  flatColumns: ComputedRef<Column[]>
+  headerLevels: ComputedRef<HeaderCell[][]>
+  getGroupWidth: (column: Column) => number
+  getColspan: (column: Column) => number
+  isGroupFixed: (column: Column) => "left" | "right" | null
+}
+
 /**
  * Composable for working with grouped headers (multi-level headers)
  *
@@ -18,7 +27,7 @@ import type { Column, HeaderCell } from "../types";
 export function useGroupedHeaders(
   columns: Ref<Column[]> | ComputedRef<Column[]>,
   columnWidths: Ref<Map<string, number>>,
-) {
+): UseGroupedHeadersReturn {
   const DEFAULT_COLUMN_WIDTH = 150;
 
   /**
@@ -178,7 +187,9 @@ export function useGroupedHeaders(
 
         // Always recurse into children if we haven't reached target level yet
         if (currentLevel < targetLevel) {
-          cells.push(...buildHeaderLevel(col.children!, targetLevel, currentLevel + 1, maxDepth));
+          cells.push(
+            ...buildHeaderLevel(col.children ?? [], targetLevel, currentLevel + 1, maxDepth),
+          );
         }
       }
     });

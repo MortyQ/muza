@@ -24,7 +24,7 @@ interface Props {
   isColumnResizable: (_column: Column) => boolean
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   "resize-start": [columnKey: string, event: MouseEvent]
   "resize-dblclick": [columnKey: string]
@@ -88,7 +88,7 @@ const handleSortClick = (column: Column) => {
         :column-key="cell.column.key"
         :is-sorted="getSortState(cell.column.key).isSorted"
         :label="cell.label"
-        :resizable="props.isColumnResizable(cell.column)"
+        :resizable="isColumnResizable(cell.column)"
         :sort-index="getSortState(cell.column.key).index"
         :sort-order="getSortState(cell.column.key).order"
         :style="{

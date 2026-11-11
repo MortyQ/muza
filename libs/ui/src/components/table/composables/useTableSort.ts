@@ -1,4 +1,4 @@
-import { computed, ref, type Ref, watch } from "vue";
+import { computed, ref, type ComputedRef, type Ref, watch } from "vue";
 
 import type {
   Column,
@@ -23,7 +23,19 @@ interface UseTableSortOptions<T = Record<string, unknown>> {
   onUpdateSortState?: (sortState: SortItem[]) => void
 }
 
-export const useTableSort = <T = Record<string, unknown>>(options: UseTableSortOptions<T>) => {
+export interface UseTableSortReturn<T = Record<string, unknown>> {
+  sortState: Ref<SortItem[]>
+  sortConfig: ComputedRef<Required<SortConfig>>
+  getSortState: (columnKey: string) => { isSorted: boolean, order: SortOrder | null, index: number }
+  handleSortClick: (column: Column) => void
+  hasSortedColumns: ComputedRef<boolean>
+  resetSort: () => void
+  sortedData: ComputedRef<T[]>
+}
+
+export const useTableSort = <T = Record<string, unknown>>(
+  options: UseTableSortOptions<T>,
+): UseTableSortReturn<T> => {
   const {
     sort = {},
     sortState: propSortState,

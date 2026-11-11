@@ -1,6 +1,6 @@
 <script generic="TData extends Record<string, unknown> = Record<string, unknown>" lang="ts" setup>
 import {
-  ref, computed, watch, onMounted, onUnmounted, useSlots, provide, inject,
+  ref, computed, watch, onMounted, onUnmounted, useSlots, useTemplateRef, provide, inject,
   type Component, type ComponentPublicInstance, type Ref,
 } from "vue";
 
@@ -486,9 +486,9 @@ const scrollContainerRef = ref<HTMLElement | null>(null);
 // Fullscreen geometry targets. `wrapperRef` becomes the fixed panel;
 // `placeholderRef` holds the wrapper's original slot in the page while it is
 // out of flow; the chrome refs are measured to derive the content height.
-const wrapperRef = ref<HTMLElement | null>(null);
-const placeholderRef = ref<HTMLElement | null>(null);
-const toolbarSlotRef = ref<HTMLElement | null>(null);
+const wrapperRef = useTemplateRef<HTMLElement>("wrapperRef");
+const placeholderRef = useTemplateRef<HTMLElement>("placeholderRef");
+const toolbarSlotRef = useTemplateRef<HTMLElement>("toolbarSlotRef");
 const paginationRef = ref<ComponentPublicInstance | null>(null);
 
 const {

@@ -7,14 +7,14 @@ interface Props {
   disabled?: boolean
 }
 
-const props = defineProps<Props>();
+const { disabled } = defineProps<Props>();
 
 const emit = defineEmits<{
   toggle: []
 }>();
 
 const handleToggle = () => {
-  if (!props.disabled) {
+  if (!disabled) {
     emit("toggle");
   }
 };

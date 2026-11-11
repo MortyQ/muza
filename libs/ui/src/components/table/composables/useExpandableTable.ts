@@ -1,8 +1,17 @@
-import { ref, computed, type Ref } from "vue";
+import { ref, computed, type ComputedRef, type Ref } from "vue";
 
 import type { ExpandableRow, FlattenedRow } from "../types";
 
-export function useExpandableTable(data: Ref<ExpandableRow[]>) {
+export interface UseExpandableTableReturn {
+  flattenedData: ComputedRef<FlattenedRow[]>
+  expandedRows: Ref<Set<string | number>>
+  toggleRow: (id: string | number) => void
+  expandAll: () => void
+  collapseAll: () => void
+  isExpandable: (row: ExpandableRow) => boolean
+}
+
+export function useExpandableTable(data: Ref<ExpandableRow[]>): UseExpandableTableReturn {
   // State of expanded rows (Set for O(1) lookup)
   const expandedRows = ref<Set<string | number>>(new Set());
 
@@ -23,7 +32,7 @@ export function useExpandableTable(data: Ref<ExpandableRow[]>) {
           row.children?.length
           || (row.expandable && row.expandedContent),
         );
-        const isExpanded = expandedRows.value.has(row.id!);
+        const isExpanded = row.id !== undefined && expandedRows.value.has(row.id);
 
         // Add parent row
         result.push({

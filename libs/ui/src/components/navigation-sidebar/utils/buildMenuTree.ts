@@ -43,7 +43,8 @@ function insertIntoTree(
       segmentMeta?.icon ?? (i === 0 ? meta.menuGroupIcon : undefined),
       segmentMeta?.order ?? (i === 0 ? meta.menuGroupOrder : undefined),
     );
-    currentChildren = node.children!;
+    node.children ??= [];
+    currentChildren = node.children;
   });
 
   currentChildren.push(item);

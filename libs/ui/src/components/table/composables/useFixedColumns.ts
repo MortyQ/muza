@@ -3,6 +3,17 @@ import { computed, type ComputedRef, type Ref } from "vue";
 import { RESPONSIVE_COLUMN_CONFIG } from "../../../utils/viewport";
 import type { Column } from "../types";
 
+export interface UseFixedColumnsReturn {
+  leftFixedColumns: ComputedRef<Column[]>
+  rightFixedColumns: ComputedRef<Column[]>
+  normalColumns: ComputedRef<Column[]>
+  getFixedStyles: (column: Column) => Record<string, string>
+  isFixed: (column: Column) => boolean
+  isLastLeftFixed: (columnKey: string) => boolean
+  isFirstRightFixed: (columnKey: string) => boolean
+  getZIndex: (columnKey: string, column: Column) => number
+}
+
 const { DEFAULT_COLUMN_WIDTH } = RESPONSIVE_COLUMN_CONFIG;
 
 /**
@@ -19,7 +30,7 @@ const { DEFAULT_COLUMN_WIDTH } = RESPONSIVE_COLUMN_CONFIG;
 export function useFixedColumns(
   columns: Ref<Column[]> | ComputedRef<Column[]>,
   columnWidths?: Ref<Map<string, number>>,
-) {
+): UseFixedColumnsReturn {
   // Divide columns into groups
   const leftFixedColumns = computed(() =>
     columns.value.filter(col => col.fixed === "left"),

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, nextTick, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, nextTick, onMounted, onBeforeUnmount, useTemplateRef } from "vue";
 
 import VIcon from "../base/VIcon.vue";
 
@@ -65,8 +65,8 @@ const emit = defineEmits<Emits>();
 
 // State
 const isOpen = ref(false);
-const triggerRef = ref<HTMLElement | null>(null);
-const floatingRef = ref<HTMLElement | null>(null);
+const triggerRef = useTemplateRef<HTMLElement>("triggerRef");
+const floatingRef = useTemplateRef<HTMLElement>("floatingRef");
 const floatingPosition = ref<{
   top: number
   left: number | undefined

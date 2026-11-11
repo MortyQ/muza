@@ -23,7 +23,7 @@ export const TABLE_PAGE_KEY: InjectionKey<Ref<number>> = Symbol("tablePageKey");
  * // With period select
  * const page = useTablePage([() => filterStore.tableFilters, periodState]);
  */
-export function useTablePage(resetOn: WatchSource[] = []) {
+export function useTablePage(resetOn: WatchSource[] = []): Ref<number> {
   const page = ref(1);
 
   if (resetOn.length) {

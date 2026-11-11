@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, useTemplateRef, watch } from "vue";
 
 import { clickOnActivationKey } from "../../../utils/a11y";
 import VButton from "../../base/VButton.vue";
@@ -215,7 +215,7 @@ const visibleCount = computed(() => items.value.filter(item => item.visible).len
 // Drag state
 const draggedIndex = ref<number | null>(null);
 const dragOverIndex = ref<number | null>(null);
-const listRef = ref<HTMLElement | null>(null);
+const listRef = useTemplateRef<HTMLElement>("listRef");
 const autoScrollInterval = ref<number | null>(null);
 
 // Auto-scroll when dragging near edges

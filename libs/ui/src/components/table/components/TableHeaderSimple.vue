@@ -19,7 +19,7 @@ interface Props {
   isColumnResizable: (_column: Column) => boolean
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const emit = defineEmits<{
   "resize-start": [columnKey: string, event: MouseEvent]
@@ -54,7 +54,7 @@ const handleSortClick = (column: Column) => {
       :column-key="column.key"
       :is-sorted="getSortState(column.key).isSorted"
       :label="column.label"
-      :resizable="props.isColumnResizable(column)"
+      :resizable="isColumnResizable(column)"
       :sort-index="getSortState(column.key).index"
       :sort-order="getSortState(column.key).order"
       :style="getFixedStyles(column)"

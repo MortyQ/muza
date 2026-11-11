@@ -77,7 +77,17 @@ export const formatCellValue = (
 /**
  * Composable for table formatters
  */
-export const useTableFormatters = () => {
+export interface UseTableFormattersReturn {
+  formatCellValue: typeof formatCellValue
+  formatCurrency: typeof formatCurrency
+  formatPercentage: typeof formatPercentage
+  formatNumber: typeof formatNumber
+  formatDate: typeof formatDate
+  formatBoolean: typeof formatBoolean
+  formatFileSize: typeof formatFileSize
+}
+
+export const useTableFormatters = (): UseTableFormattersReturn => {
   return {
     formatCellValue,
     // Export individual formatters for custom use

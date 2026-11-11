@@ -1,4 +1,4 @@
-import { computed, type Ref, ref, watch } from "vue";
+import { computed, type ComputedRef, type Ref, ref, watch } from "vue";
 
 import type {
   CheckboxState,
@@ -15,7 +15,21 @@ interface UseTableSelectionOptions {
   onSelectionChange: (selected: ExpandableRow[]) => void
 }
 
-export function useTableSelection(options: UseTableSelectionOptions) {
+export interface UseTableSelectionReturn {
+  isEnabled: ComputedRef<boolean>
+  isDependentMode: ComputedRef<boolean>
+  selectedIds: Ref<Set<string | number>>
+  isRowSelected: (rid: string | number) => boolean
+  isRowSelectable: (row: ExpandableRow) => boolean
+  toggleRow: (row: FlattenedRow) => void
+  toggleAllRows: () => void
+  getParentCheckboxState: (row: FlattenedRow) => CheckboxState
+  getHeaderCheckboxState: () => CheckboxState
+  clearSelection: () => void
+  selectRows: (rowIds: (string | number)[]) => void
+}
+
+export function useTableSelection(options: UseTableSelectionOptions): UseTableSelectionReturn {
   const { config, flattenedData, selectedRows, onSelectionChange } = options;
 
   // Internal state: Set of selected row IDs for fast lookup

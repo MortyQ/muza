@@ -78,9 +78,21 @@ export interface UseTablePeriodSelectOptions {
   onPeriodChange?: (params: PeriodRequestParams, isGroupByDate: boolean) => void
 }
 
+export interface UseTablePeriodSelectReturn {
+  selectedPeriod: Ref<PeriodOption>
+  periodOptions: ComputedRef<PeriodOption[]>
+  defaultPeriod: ComputedRef<PeriodOption>
+  periodRequestParams: ComputedRef<PeriodRequestParams>
+  isGroupByDate: Ref<boolean>
+  handlePeriodChange: (option: PeriodOption) => void
+  resetPeriod: () => Promise<void>
+}
+
 // ==================== Composable ====================
 
-export function useTablePeriodSelect(options: UseTablePeriodSelectOptions) {
+export function useTablePeriodSelect(
+  options: UseTablePeriodSelectOptions,
+): UseTablePeriodSelectReturn {
   const {
     granularity,
     dateRange,
