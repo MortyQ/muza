@@ -74,8 +74,13 @@ describe.each([
     const w = mountDialog();
     registry.open("dlg");
     await flush();
+    // Vue drops an event stamped in the same millisecond its listener was attached
+    // (`e._vts <= invoker.attached`). A real key press cannot arrive that fast; a test can.
+    await new Promise(resolve => setTimeout(resolve, 2));
 
-    document.activeElement?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    document.activeElement?.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
     await flush();
     expect(w.emitted("close")).toHaveLength(1);
     w.unmount();
