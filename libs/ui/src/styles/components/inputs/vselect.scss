@@ -134,7 +134,7 @@
   box-shadow: none !important;
   color: var(--ui-foreground);
   border-radius: var(--ui-radius-lg);
-  transition: all 200ms;
+  transition: color 200ms ease;
   min-height: var(--ui-control-h);
   /* Right padding clears the caret box; the vertical centring is the
      line-height's job, so a 30px control needs no top padding to look balanced. */
@@ -210,7 +210,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 200ms;
+  transition: color 150ms ease;
   background: transparent !important;
 }
 

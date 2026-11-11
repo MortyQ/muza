@@ -125,14 +125,20 @@
 /* ============================================
    TRANSITIONS
    ============================================ */
-.v-modal-enter-active,
-.v-modal-leave-active {
-  transition: opacity 0.3s ease;
+.v-modal-enter-active {
+  transition: opacity 200ms ease-out;
 }
 
-.v-modal-enter-active .v-modal__container,
+.v-modal-leave-active {
+  transition: opacity 150ms ease-out;
+}
+
+.v-modal-enter-active .v-modal__container {
+  transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1), opacity 200ms ease-out;
+}
+
 .v-modal-leave-active .v-modal__container {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 150ms ease-out, opacity 150ms ease-out;
 }
 
 .v-modal-enter-from,
@@ -142,7 +148,7 @@
 
 .v-modal-enter-from .v-modal__container,
 .v-modal-leave-to .v-modal__container {
-  transform: scale(0.95) translateY(-20px);
+  transform: scale(0.96) translateY(-8px);
   opacity: 0;
 }
 
@@ -165,5 +171,13 @@
   .v-modal__content,
   .v-modal__footer {
     padding: 1rem;
+  }
+}
+
+/* Reduced motion keeps the fade and drops the scale and slide. */
+@media (prefers-reduced-motion: reduce) {
+  .v-modal-enter-from .v-modal__container,
+  .v-modal-leave-to .v-modal__container {
+    transform: none;
   }
 }

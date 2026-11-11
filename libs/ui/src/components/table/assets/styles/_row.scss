@@ -69,7 +69,7 @@
   }
 
   &--leaving > .v-table-cell {
-    animation: expandRowOut $transition-normal cubic-bezier(0.4, 0, 1, 1);
+    animation: expandRowOut $transition-fast ease-out;
   }
 }
 
@@ -81,4 +81,11 @@
 @keyframes expandRowOut {
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v-table-row-expandable--entering > .v-table-cell,
+  .v-table-row-expandable--leaving > .v-table-cell {
+    animation-duration: 1ms;
+  }
 }

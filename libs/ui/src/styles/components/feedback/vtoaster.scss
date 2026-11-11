@@ -66,7 +66,7 @@
   box-shadow: var(--ui-shadow-xl);
   min-width: 320px;
   max-width: 450px;
-  transition: all 0.3s ease-in-out;
+  transition: box-shadow 200ms ease, background-color 200ms ease;
   font-family: inherit;
 }
 
@@ -267,5 +267,14 @@
   to {
     transform: translateX(100%);
     opacity: 0;
+  }
+}
+
+/* Reduced motion: toasts fade in place, the spinner keeps turning (it carries meaning). */
+@media (prefers-reduced-motion: reduce) {
+  :global([data-sonner-toast]),
+  :global([data-sonner-toast][data-removed='true']) {
+    animation-name: none;
+    transition: opacity 150ms ease-out;
   }
 }

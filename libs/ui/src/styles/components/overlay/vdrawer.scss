@@ -151,9 +151,12 @@
 /* ============================================
    TRANSITIONS
    ============================================ */
-.v-drawer-enter-active,
+.v-drawer-enter-active {
+  transition: opacity 300ms ease-out;
+}
+
 .v-drawer-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 200ms ease-out;
 }
 
 .v-drawer-enter-from,
@@ -161,9 +164,12 @@
   opacity: 0;
 }
 
-.v-drawer-enter-active .v-drawer__container,
+.v-drawer-enter-active .v-drawer__container {
+  transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 .v-drawer-leave-active .v-drawer__container {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .v-drawer-enter-from .v-drawer__container--right,
@@ -189,5 +195,15 @@
   .v-drawer__content,
   .v-drawer__footer {
     padding: 1rem;
+  }
+}
+
+/* Reduced motion: the panel fades with the backdrop instead of sliding in. */
+@media (prefers-reduced-motion: reduce) {
+  .v-drawer-enter-from .v-drawer__container--right,
+  .v-drawer-leave-to .v-drawer__container--right,
+  .v-drawer-enter-from .v-drawer__container--left,
+  .v-drawer-leave-to .v-drawer__container--left {
+    transform: none;
   }
 }

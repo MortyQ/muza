@@ -85,7 +85,7 @@ useEventListener(document, "keydown", (e: KeyboardEvent) => {
 }
 
 .sidebar-overlay-leave-active {
-  transition: opacity 200ms ease-in;
+  transition: opacity 150ms ease-out;
 }
 
 .sidebar-overlay-leave-from {

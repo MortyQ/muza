@@ -49,7 +49,7 @@ const emit = defineEmits<{
   color: var(--ui-primary);
 
   /* Smooth transitions */
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 150ms ease, transform 150ms ease-out;
 
   /* Hover state - subtle background with primary color */
 
@@ -60,7 +60,7 @@ const emit = defineEmits<{
   /* Active state - micro interaction */
 
   &:active {
-    transform: scale(0.92);
+    transform: scale(0.96);
     background-color: color-mix(in oklch, var(--ui-primary) 20%, transparent);
   }
 

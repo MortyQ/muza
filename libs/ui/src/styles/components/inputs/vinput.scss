@@ -180,7 +180,7 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: color 150ms ease, background-color 150ms ease;
 
   &:hover {
     color: var(--ui-danger);
@@ -203,13 +203,13 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: color 150ms ease, box-shadow 150ms ease;
 
   &:hover {
     color: var(--ui-foreground);
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px color-mix(in oklch, var(--ui-primary) 30%, transparent);
   }
@@ -233,7 +233,13 @@
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
   color: color-mix(in oklch, var(--ui-foreground) 60%, transparent);
-  transition: all 0.2s ease;
+  transition:
+    top 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    left 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    font-size 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    line-height 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    color 150ms ease;
 
   &--with-icon {
     left: 2rem;
@@ -321,7 +327,7 @@
   font-weight: var(--ui-weight-medium);
   white-space: nowrap;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: max-width 200ms cubic-bezier(0.23, 1, 0.32, 1), padding 200ms cubic-bezier(0.23, 1, 0.32, 1);
 
   span {
     display: inline-block;
@@ -422,7 +428,7 @@
    ============================================ */
 .error-slide-enter-active,
 .error-slide-leave-active {
-  transition: all 0.3s ease;
+  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .error-slide-enter-from,
