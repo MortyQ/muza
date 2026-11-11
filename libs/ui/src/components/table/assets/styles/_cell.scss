@@ -113,3 +113,15 @@
   width: $table-expand-button-size;
   flex-shrink: 0;
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-table-cell-expand-btn,
+  .v-table-cell-expand-btn svg {
+    transition: none;
+  }
+
+  .v-table-cell-expand-btn:active {
+    transform: none;
+  }
+}

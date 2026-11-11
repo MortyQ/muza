@@ -161,3 +161,10 @@
     &-size    { order: 3; width: 100%; }
   }
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-table-pagination-btn:active:not(:disabled) {
+    transform: none;
+  }
+}

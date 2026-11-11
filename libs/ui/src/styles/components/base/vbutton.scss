@@ -340,3 +340,14 @@
     width: var(--ui-control-h-lg);
   }
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-button:active:not(:disabled) {
+    transform: none;
+  }
+
+  .v-button--link::after {
+    transition: opacity 120ms ease;
+  }
+}

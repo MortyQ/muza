@@ -179,3 +179,15 @@
   margin-left: auto;
   flex-shrink: 0;
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-floating-content:not(.v-floating--positioning) {
+    animation: none;
+  }
+
+  .v-floating-item-icon {
+    transition: color 0.2s ease;
+    transform: none !important;
+  }
+}

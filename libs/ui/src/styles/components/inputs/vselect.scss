@@ -409,3 +409,10 @@
   background-color: transparent;
   color: var(--ui-foreground-disabled);
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-select__caret-icon {
+    transition: color 200ms ease;
+  }
+}

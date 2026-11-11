@@ -143,3 +143,11 @@
   opacity: 0;
   transform: scale(0.95) translateY(-0.5rem);
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-nav-guard-pop-enter-from,
+  .v-nav-guard-pop-leave-to {
+    transform: none;
+  }
+}

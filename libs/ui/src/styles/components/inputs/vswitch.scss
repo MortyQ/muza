@@ -107,3 +107,10 @@
   line-height: var(--ui-leading-base);
   color: var(--ui-foreground-secondary);
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-switch__thumb {
+    transition: box-shadow 0.2s ease;
+  }
+}

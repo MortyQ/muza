@@ -761,3 +761,19 @@
   0%, 100% { opacity: 0.5; }
   50%       { opacity: 1; }
 }
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .cp-group-chevron {
+    transition: none;
+  }
+
+  .cp-available-item,
+  .cp-selected-item {
+    animation: none;
+  }
+
+  .cp-selected-item--dragging {
+    transform: none;
+  }
+}

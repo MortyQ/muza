@@ -552,3 +552,10 @@
   --dp-range-between-border-color: color-mix(in oklch, var(--ui-primary) 40%, var(--ui-nav));
 }
 
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .error-slide-enter-from,
+  .error-slide-leave-to {
+    transform: none;
+  }
+}

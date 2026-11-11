@@ -79,8 +79,19 @@ const emit = defineEmits<{
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Expanded state - rotate chevron right → down (90deg) */
+/* Expanded state - chevron points the other way */
 .expand-button.is-expanded .expand-icon {
   transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expand-button,
+  .expand-icon {
+    transition: background-color 150ms ease;
+  }
+
+  .expand-button:active {
+    transform: none;
+  }
 }
 </style>
