@@ -11,7 +11,15 @@ export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
-    dts(),
+    dts({
+      // vite-plugin-dts prints type errors and still writes dist, and its SFC codegen differs from
+      // vue-tsc's, so errors only it sees went unnoticed. Failing here puts them in front of CI.
+      afterDiagnostic: (diagnostics) => {
+        if (diagnostics.length > 0) {
+          throw new Error(`vite-plugin-dts: ${diagnostics.length} type error(s), listed above`);
+        }
+      },
+    }),
     // `vite build` embeds the library's own icons into dist, so consumers of the package never
     // need the plugin themselves.
     muzakitIcons(),

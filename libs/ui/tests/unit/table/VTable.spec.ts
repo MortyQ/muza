@@ -758,6 +758,20 @@ describe("VTable", () => {
 
       expect(w.find(".v-table-fullscreen-placeholder").classes()).toContain("my-table");
     });
+
+    // The parent's style arrives untyped through $attrs and is merged with the placeholder's own
+    // reserved size; a string style must survive that merge, not be dropped or replace it.
+    it("gives the fullscreen placeholder the parent's style alongside its reserved size", async () => {
+      const w = table(
+        { toolbar: { enabled: true, actions: { fullscreen: true } } },
+        { attrs: { style: "margin-top: 8px" } },
+      );
+      await w.find(".v-table-fullscreen-toggle").trigger("click");
+      const style = w.find(".v-table-fullscreen-placeholder").attributes("style") ?? "";
+
+      expect(style).toContain("margin-top: 8px");
+      expect(style).toContain("height");
+    });
   });
 
   describe("exposed state", () => {
