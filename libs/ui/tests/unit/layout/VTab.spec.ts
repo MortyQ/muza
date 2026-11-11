@@ -184,11 +184,19 @@ describe("VTab", () => {
       expect(w.find(".v-tab__nav").attributes("role")).toBe("tablist");
     });
 
-    it("gives each button the tab role and a panel to control", async () => {
+    it("gives each button the tab role, and only the active one a panel to control", async () => {
+      // Only the active panel is rendered; aria-controls on the others would point at nothing.
       const { w } = await tabs();
       for (const [i, button] of buttons(w).entries()) {
         expect(button.attributes("role")).toBe("tab");
-        expect(button.attributes("aria-controls")).toBe(`tabpanel-${TABS[i].id}`);
+        const controls = button.attributes("aria-controls");
+        if (button.attributes("aria-selected") === "true") {
+          expect(controls).toBe(`tabpanel-${TABS[i].id}`);
+          expect(w.find(`#${controls}`).exists()).toBe(true);
+        }
+        else {
+          expect(controls).toBeUndefined();
+        }
       }
     });
 

@@ -325,7 +325,7 @@ defineExpose({
               v-for="tab in visibleTabs"
               :id="`tab-${tab.id}`"
               :key="tab.id"
-              :aria-controls="`tabpanel-${tab.id}`"
+              :aria-controls="isTabActive(tab.id) ? `tabpanel-${tab.id}` : undefined"
               :aria-disabled="tab.disabled"
               :aria-selected="isTabActive(tab.id)"
               :class="[

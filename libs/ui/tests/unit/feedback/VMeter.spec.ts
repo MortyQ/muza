@@ -93,9 +93,17 @@ describe("VMeter", () => {
       expect(el.attributes("aria-valuemax")).toBe("120");
     });
 
-    it("omits aria-valuenow when there is no measurement", () => {
+    it("omits aria-valuenow while pending and says why in aria-valuetext", () => {
       const w = meter({ value: null, max: 100, pending: true });
       expect(fill(w).attributes("aria-valuenow")).toBeUndefined();
+      expect(fill(w).attributes("aria-valuetext")).toBe("Measuring");
+      expect(fill(w).attributes("aria-busy")).toBe("true");
+    });
+
+    it("is named by its label", () => {
+      expect(fill(meter({ value: 30, max: 120, label: "Prompt tokens" })).attributes("aria-label"))
+        .toBe("Prompt tokens");
+      expect(fill(meter({ value: 30, max: 120 })).attributes("aria-label")).toBe("30 / 120");
     });
   });
 
