@@ -14,3 +14,7 @@ coverage/
 
 # Vitest browser failure captures (written beside the spec that failed)
 **/__failures__/
+
+# Review pipeline: per-run log and the fallback plan are local
+.claude/review/log.jsonl
+.claude/review/task.md
