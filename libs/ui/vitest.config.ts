@@ -5,13 +5,16 @@ import vue from "@vitejs/plugin-vue";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
+import { muzakitIcons } from "./vite/icons.js";
+
 const root = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   // `tailwindcss()` is only needed by the browser project, but a project-level
   // plugin list would replace this one rather than extend it, so both projects
   // share it. In jsdom the generated stylesheet is simply never applied.
-  plugins: [vue(), tailwindcss()],
+  // `bundle: true`: specs see the icons a built app ships, not an empty development set.
+  plugins: [vue(), tailwindcss(), muzakitIcons({ bundle: true })],
 
   resolve: {
     alias: { "@": `${root}src` },
@@ -30,17 +33,21 @@ export default defineConfig({
           environment: "jsdom",
           include: ["tests/unit/**/*.spec.ts", "tests/conventions.spec.ts"],
           setupFiles: ["./tests/setup/unit.ts"],
-          server: {
-            deps: {
-              // keyv-browser's ESM build imports "./keyv-idb" without an
-              // extension. Vitest externalizes dependencies by default and
-              // hands them to Node, whose ESM resolver requires the extension,
-              // so the table's storage module fails to import at all. Inlining
-              // routes it through Vite's resolver instead, which tries the
-              // extensions. The browser project never hits this — Vite serves
-              // every module there.
-              inline: ["keyv-browser"],
-            },
+        },
+      },
+      {
+        // Compile-time contracts: `tsc` over `*.test-d.ts`, nothing is executed. Unit specs are
+        // not type-checked (`tsconfig.json` covers `src/` only), so a type a consumer relies on
+        // is pinned here instead.
+        extends: true,
+        test: {
+          name: "types",
+          include: [],
+          typecheck: {
+            enabled: true,
+            only: true,
+            include: ["tests/types/**/*.test-d.ts"],
+            tsconfig: "./tests/types/tsconfig.json",
           },
         },
       },

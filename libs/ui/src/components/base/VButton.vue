@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject } from "vue";
+import { type Component, computed, getCurrentInstance, inject } from "vue";
 
-import { type RouteLocationRaw, RouterLink } from "vue-router";
+import type { RouteLocationRaw } from "vue-router";
 
 import { BUTTON_GROUP_KEY } from "./injectionKeys";
 import VIcon from "./VIcon.vue";
@@ -46,8 +46,13 @@ const slots = defineSlots();
 /** Set only when this button is a cell of a `VButtonGroup`. */
 const isGrouped = inject(BUTTON_GROUP_KEY, false);
 
+// RouterLink is read from the app rather than imported: `app.use(router)` registers it globally,
+// so a button in an app without vue-router — and the library itself — never loads the router.
+// Without one, `to` falls back to a plain anchor, which can follow a string path only.
+const routerLink: Component | null = getCurrentInstance()?.appContext.components.RouterLink ?? null;
+
 const isIconOnly = computed(() => !text && !!icon && !slots.default);
-const isRouterLink = computed(() => !!to);
+const isLink = computed(() => to !== undefined);
 const isDisabled = computed(() => disabled || loading);
 
 // "default" is an alias for the primary look, matching so-platform, where the
@@ -70,14 +75,21 @@ const rootClass = computed(() => ({
   ...(size ? { [`v-button--${size}`]: true } : {}),
 }));
 
+const rootTag = computed<Component | string>(() => {
+  if (!isLink.value) return "button";
+  return routerLink ?? "a";
+});
+
 const rootAttrs = computed(() => {
-  if (isRouterLink.value) {
-    return {
-      to,
-      replace,
+  if (isLink.value) {
+    const linkState = {
       "aria-disabled": isDisabled.value || undefined,
       tabindex: isDisabled.value ? -1 : undefined,
     };
+    if (routerLink) return { to, replace, ...linkState };
+    // A disabled anchor loses its href, which is what actually stops it navigating.
+    const href = typeof to === "string" && !isDisabled.value ? to : undefined;
+    return { href, ...linkState };
   }
   return {
     type,
@@ -89,7 +101,7 @@ const rootAttrs = computed(() => {
 
 <template>
   <component
-    :is="isRouterLink ? RouterLink : 'button'"
+    :is="rootTag"
     :class="rootClass"
     class="v-button"
     v-bind="rootAttrs"

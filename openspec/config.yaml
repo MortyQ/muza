@@ -1,0 +1,38 @@
+schema: spec-driven
+githubCopilot:
+  cloudAgent: false
+
+# Project context. Code rules are NOT restated here: `.agents/instructions/**` is authoritative.
+context: |
+  Frontend-only pnpm monorepo (Vue 3.5 + TypeScript, Vite). No backend lives here.
+  Libs: @muzakit/ui (libs/ui, the shared Vue component library -- BEM SCSS, --ui-* tokens, VTable),
+  @muzakit/utils (libs/utils, shared utility functions), @muzakit/config (libs/config, shared
+  ESLint config and Tailwind theme).
+  Apps: muzakit-dashboard (apps/muzakit-dashboard, the demo app -- /components-demo, /table-demo),
+  muzakit-starter-without-tailwind (apps/muzakit-starter-without-tailwind, starter template).
+  Code conventions, component porting, token and testing rules live in `.agents/instructions/**`
+  and are authoritative. Artifacts must reference them, never restate them.
+  One root `openspec/` serves the whole monorepo. Capability folders under `openspec/specs/` are
+  prefixed by package: `ui-<capability>` (libs/ui), `utils-<capability>` (libs/utils),
+  `config-<capability>` (libs/config), `dashboard-<capability>` (apps/muzakit-dashboard).
+  All artifacts are written in English.
+
+rules:
+  proposal:
+    - State which package(s) are affected
+    - Always state what is out of scope
+    - State whether the change breaks @muzakit/ui's public API (exports, props, emits, slots, tokens), and add an entry to libs/ui/CHANGELOG.md for any change to it
+  design:
+    - Plan component decomposition and subfolder grouping before any file is written (see conventions.md)
+    - Name which repo skills apply (emil-design-eng, vtable, use-api)
+    - Evaluate alternatives in the ADVOCATE / SKEPTIC / VERDICT format from .agents/instructions/brainstorm-council.md
+    - For libs/ui components follow the token and BEM rules of .agents/instructions/ui-component-migration.md
+  tasks:
+    - "Each task group is one reviewable block and one commit: feat(<scope>): <block>"
+    - The block loop of .claude/review/PIPELINE.md applies
+    - Each block lists its unit test and token contract, per .agents/instructions/testing.md
+
+operations:
+  archive:
+    guidance:
+      - Archive only after the change is merged or committed and its specs are synced

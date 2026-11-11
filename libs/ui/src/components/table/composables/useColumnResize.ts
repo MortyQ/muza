@@ -1,4 +1,4 @@
-import { ref, computed, type Ref } from "vue";
+import { ref, computed, type ComputedRef, type Ref } from "vue";
 
 import { RESPONSIVE_COLUMN_CONFIG } from "../../../utils/viewport";
 import type { Column, ResizeState } from "../types";
@@ -9,7 +9,19 @@ const {
   DEFAULT_COLUMN_WIDTH,
 } = RESPONSIVE_COLUMN_CONFIG;
 
-export function useColumnResize(columns: Ref<Column[]>) {
+export interface UseColumnResizeReturn {
+  gridTemplateColumns: ComputedRef<string>
+  getGridTemplateWithCheckbox: (checkboxWidth?: string) => string
+  resizedWidths: Ref<Map<string, number>>
+  isResizing: ComputedRef<boolean>
+  isColumnResizable: (column: Column) => boolean
+  startResize: (columnKey: string, event: MouseEvent) => void
+  autoFitColumn: (columnKey: string) => void
+  getColumnWidth: (columnKey: string) => number | string
+  resetWidths: () => void
+}
+
+export function useColumnResize(columns: Ref<Column[]>): UseColumnResizeReturn {
   // Store ONLY manually resized column widths (in px)
   const resizedWidths = ref<Map<string, number>>(new Map());
 

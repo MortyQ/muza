@@ -16,7 +16,7 @@ import {
 
 // ── Table 1: Column Setup + Sorting + Fixed columns ──────────────────────────
 
-const salesColumns: Column[] = [
+const salesColumns: Column<SalesRow>[] = [
   { key: "region", label: "Region", width: "140px", fixed: "left", sortable: true },
   { key: "product", label: "Product", width: "180px", sortable: true },
   { key: "category", label: "Category", width: "140px", sortable: true },
@@ -36,7 +36,21 @@ const salesColumns: Column[] = [
   { key: "manager", label: "Manager", width: "160px", fixed: "right", sortable: true },
 ];
 
-const salesData: ExpandableRow[] = [
+// Row shapes are declared: an `ExpandableRow` reads undeclared fields as `unknown`.
+interface SalesRow extends ExpandableRow {
+  region: string
+  product: string
+  category: string
+  units: number
+  revenue: number
+  margin: number
+  growth: number
+  status: string
+  channel: string
+  manager: string
+}
+
+const salesData: SalesRow[] = [
   {
     region: "North America",
     product: "Pro Plan",
@@ -185,10 +199,10 @@ const salesData: ExpandableRow[] = [
 
 const salesTotal: Record<string, unknown> = {
   region: "TOTAL",
-  units: salesData.reduce((s, r) => s + (r.units as number), 0),
-  revenue: salesData.reduce((s, r) => s + (r.revenue as number), 0),
-  margin: salesData.reduce((s, r) => s + (r.margin as number), 0) / salesData.length,
-  growth: salesData.reduce((s, r) => s + (r.growth as number), 0) / salesData.length,
+  units: salesData.reduce((s, r) => s + r.units, 0),
+  revenue: salesData.reduce((s, r) => s + r.revenue, 0),
+  margin: salesData.reduce((s, r) => s + r.margin, 0) / salesData.length,
+  growth: salesData.reduce((s, r) => s + r.growth, 0) / salesData.length,
 };
 
 const salesSort = ref([]);
@@ -229,7 +243,18 @@ const ORDER_CHANNELS = ["Amazon", "TikTok Shop", "Walmart", "Target"];
 const ORDER_STATUSES: OrderStatus[] = ["Live", "Live", "Live", "Paused", "Out of stock"];
 const STATUS_TONE = { Live: "success", Paused: "warning", "Out of stock": "danger" } as const;
 
-const makeOrders = (): ExpandableRow[] => Array.from({ length: 64 }, (_, i) => ({
+interface OrderRow extends ExpandableRow {
+  id: number
+  sku: string
+  product: string
+  channel: string
+  units: number
+  revenue: number
+  delta: number
+  status: OrderStatus
+}
+
+const makeOrders = (): OrderRow[] => Array.from({ length: 64 }, (_, i) => ({
   id: i + 1,
   sku: `SKU-${String(10240 + i * 7).padStart(5, "0")}`,
   product: ORDER_PRODUCTS[i % ORDER_PRODUCTS.length],
@@ -240,7 +265,7 @@ const makeOrders = (): ExpandableRow[] => Array.from({ length: 64 }, (_, i) => (
   status: ORDER_STATUSES[(i * 5) % ORDER_STATUSES.length],
 }));
 
-const orderColumns: Column[] = [
+const orderColumns: Column<OrderRow>[] = [
   { key: "sku", label: "SKU", width: "130px", fixed: "left" },
   { key: "product", label: "Product", width: "170px", sortable: true },
   { key: "channel", label: "Channel", width: "140px", sortable: true },
@@ -250,7 +275,7 @@ const orderColumns: Column[] = [
   { key: "status", label: "Status", width: "flex", align: "center" },
 ];
 
-const orders = ref<ExpandableRow[]>(makeOrders());
+const orders = ref<OrderRow[]>(makeOrders());
 const ordersLoading = ref(false);
 const ordersPage = ref(1);
 const ordersPageSize = ref(10);
@@ -286,7 +311,7 @@ const refetchOrders = () => {
   later(2000, () => {
     orders.value = orders.value.map(o => ({
       ...o,
-      revenue: Math.round((o.revenue as number) * (0.85 + Math.random() * 0.3)),
+      revenue: Math.round(o.revenue * (0.85 + Math.random() * 0.3)),
       delta: Math.round((Math.random() * 0.6 - 0.25) * 100) / 100,
     }));
     ordersLoading.value = false;
@@ -690,6 +715,7 @@ const orgTotal: Record<string, unknown> = {
         </template>
         <template #toolbar-column-actions>
           <VButton
+            aria-label="Show visible columns"
             icon="lucide:list-checks"
             variant="neutral"
             @click="showVisibleColumns"
@@ -702,10 +728,10 @@ const orgTotal: Record<string, unknown> = {
             show-zero
           />
         </template>
-        <template #cell-status="{ value }">
+        <template #cell-status="{ row }">
           <VTag
-            :color="STATUS_TONE[value as OrderStatus]"
-            :label="String(value)"
+            :color="STATUS_TONE[row.status]"
+            :label="row.status"
             size="sm"
             variant="outline"
           />

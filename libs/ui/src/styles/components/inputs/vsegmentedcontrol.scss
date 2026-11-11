@@ -129,9 +129,11 @@
   background-color 150ms ease-in-out,
   box-shadow 150ms ease-in-out;
 
-  &:hover:not(:disabled):not(.v-sc__item--active) {
-    color: var(--ui-foreground);
-    background: var(--ui-surface-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.v-sc__item--active) {
+      color: var(--ui-foreground);
+      background: var(--ui-surface-hover);
+    }
   }
 
   /* No background of its own: the pill is the active surface. A segment that

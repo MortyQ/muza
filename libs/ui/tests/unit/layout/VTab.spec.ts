@@ -161,6 +161,12 @@ describe("VTab", () => {
       expect(activeId(await press("a"))).toBe("overview");
     });
 
+    it("does nothing, and does not throw, when every tab is disabled", async () => {
+      const { w } = await tabs({ tabs: TABS.map(t => ({ ...t, disabled: true })) });
+      await expect(w.find(".v-tab__nav").trigger("keydown", { key: "ArrowRight" }))
+        .resolves.not.toThrow();
+    });
+
     it("prevents default only for the keys it handles", async () => {
       const { w } = await tabs();
       const handled = new Event("keydown") as KeyboardEvent;
@@ -178,11 +184,19 @@ describe("VTab", () => {
       expect(w.find(".v-tab__nav").attributes("role")).toBe("tablist");
     });
 
-    it("gives each button the tab role and a panel to control", async () => {
+    it("gives each button the tab role, and only the active one a panel to control", async () => {
+      // Only the active panel is rendered; aria-controls on the others would point at nothing.
       const { w } = await tabs();
       for (const [i, button] of buttons(w).entries()) {
         expect(button.attributes("role")).toBe("tab");
-        expect(button.attributes("aria-controls")).toBe(`tabpanel-${TABS[i].id}`);
+        const controls = button.attributes("aria-controls");
+        if (button.attributes("aria-selected") === "true") {
+          expect(controls).toBe(`tabpanel-${TABS[i].id}`);
+          expect(w.find(`#${controls}`).exists()).toBe(true);
+        }
+        else {
+          expect(controls).toBeUndefined();
+        }
       }
     });
 

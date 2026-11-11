@@ -78,6 +78,11 @@ describe("DeltaValue", () => {
         .toBe("12");
     });
 
+    it("groups thousands in an unformatted delta, as the main value does", () => {
+      expect(delta({ delta: 12345, deltaAsPercentage: false }).find(".v-delta__text").text())
+        .toBe("12,345");
+    });
+
     it("shows the magnitude, leaving direction to the arrow", () => {
       expect(delta({ delta: -12 }).find(".v-delta__text").text()).toBe("12%");
     });

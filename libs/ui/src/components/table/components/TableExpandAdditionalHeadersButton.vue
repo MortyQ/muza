@@ -14,6 +14,8 @@ const emit = defineEmits<{
 
 <template>
   <button
+    :aria-expanded="isExpanded"
+    :aria-label="isExpanded ? 'Hide additional headers' : 'Show additional headers'"
     :class="{ 'is-expanded': isExpanded }"
     class="expand-button"
     type="button"
@@ -49,7 +51,7 @@ const emit = defineEmits<{
   color: var(--ui-primary);
 
   /* Smooth transitions */
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 150ms ease, transform 150ms ease-out;
 
   /* Hover state - subtle background with primary color */
 
@@ -60,7 +62,7 @@ const emit = defineEmits<{
   /* Active state - micro interaction */
 
   &:active {
-    transform: scale(0.92);
+    transform: scale(0.96);
     background-color: color-mix(in oklch, var(--ui-primary) 20%, transparent);
   }
 
@@ -77,8 +79,19 @@ const emit = defineEmits<{
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Expanded state - rotate chevron right → down (90deg) */
+/* Expanded state - chevron points the other way */
 .expand-button.is-expanded .expand-icon {
   transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expand-button,
+  .expand-icon {
+    transition: background-color 150ms ease;
+  }
+
+  .expand-button:active {
+    transform: none;
+  }
 }
 </style>

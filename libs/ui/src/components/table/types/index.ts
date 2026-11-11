@@ -11,8 +11,7 @@ export * from "./format";
 
 // Cell context for cellClass and cellStyle functions
 // Provides named parameters for better developer experience
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface CellContext<T = any> {
+export interface CellContext<T = Record<string, unknown>> {
   value: unknown // Cell value
   row: T // Full row data
   rowIndex: number // Row index in current view
@@ -27,8 +26,11 @@ export interface HeaderContext {
   event: MouseEvent // Native click event for advanced use cases
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface Column<TData = any> {
+// Callbacks are method signatures, not function-typed properties, on purpose: method parameters
+// are checked bivariantly, which is what lets a `Column<Product>` sit wherever the table's
+// internals take a plain `Column`. The table only ever calls a column's callbacks with rows from
+// the `data` that column came with, so the unsoundness bivariance allows cannot happen here.
+export interface Column<TData = Record<string, unknown>> {
   key: string // Key from data object
   label: string // Header text
   width?: string | "flex" // Fixed width (e.g., "150px") - makes column resizable. Without width, column is flexible (not resizable)
@@ -37,7 +39,7 @@ export interface Column<TData = any> {
   fixed?: "left" | "right" // Fix column (sticky) to left or right
   children?: Column<TData>[] // Nested columns for grouped headers (AG-Grid style)
   sortable?: boolean // Enable sorting for this column
-  sortValue?: (row: TData, key: string) => unknown
+  sortValue?(row: TData, key: string): unknown
 
   // Type icon badge, shown in the column picker (same values as ColumnPickerItem.icon)
   icon?: string
@@ -45,10 +47,10 @@ export interface Column<TData = any> {
   // Formatting options (mutually exclusive - only one should be used)
   format?: ColumnFormatOptions
 
-  cellClass?: (context: CellContext<TData>) => string | undefined
-  cellStyle?: (context: CellContext<TData>) => Record<string, string> | undefined
+  cellClass?(context: CellContext<TData>): string | undefined
+  cellStyle?(context: CellContext<TData>): Record<string, string> | undefined
 
-  onHeaderClick?: (context: HeaderContext) => void
+  onHeaderClick?(context: HeaderContext): void
 
   // Tooltip text for header info icon
   tooltip?: string
@@ -67,8 +69,7 @@ export interface HeaderCell {
 export interface ExpandableRow {
   id?: string | number
   children?: ExpandableRow[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface FlattenedRow extends ExpandableRow {
@@ -161,43 +162,6 @@ export type PaginatedResponse<T> = {
     totalPages: number
   }
 };
-
-/**
- * Legacy TableHeader type for backward compatibility
- * Used in download utilities and legacy table components
- */
-export interface TableHeader {
-  name?: string // Display name for the column
-  value: string // Property key in data object
-  text?: string // Alternative to 'name' for display text
-  reportName?: string // Alternative name for reports/export
-  width?: string // Column width (e.g., "150px")
-  sortable?: boolean // Whether column is sortable
-  align?: "left" | "center" | "right" // Text alignment
-
-  // Formatting flags (legacy approach)
-  currency?: boolean // Format as currency
-  currencySimbol?: string // Currency symbol override (e.g., "$", "€")
-  currencyWithTwoDecimals?: boolean // Currency with 2 decimals
-  isPercentage?: boolean // Format as percentage
-  isNumber?: boolean // Is numeric value
-  dividedForXlsx?: boolean // Divide value for XLSX export
-  roundedWithZeroDecimals?: boolean // Round to 0 decimals
-  roundedWithTwoDecimals?: boolean // Round to 2 decimals
-  roundedWithTwoDecimalsAndMultiply?: boolean // Round to 2 decimals and multiply by 100
-  roundedWithZeroDecimalsAndMultiply?: boolean // Round to 0 decimals and multiply by 100
-  maxLength?: number // Max string length for truncation
-
-  // Custom callback for formatting
-  callback?: (row: TableRow) => string | number | boolean | null
-}
-
-/**
- * Legacy TableRow type for backward compatibility
- * Generic object that can contain any properties
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TableRow = Record<string, any>;
 
 // ── Highlight (pinned cross) ─────────────────────────────────────────────────
 

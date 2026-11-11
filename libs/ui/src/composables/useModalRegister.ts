@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref } from "vue";
 
 export interface Modal {
   id: string
@@ -6,10 +6,25 @@ export interface Modal {
   zIndex: number
 }
 
+export interface UseModalRegistererReturn {
+  modals: Ref<Map<string, Modal>>
+  getModal: ComputedRef<(id: string) => Modal | undefined>
+  isOpen: ComputedRef<(id: string) => boolean>
+  getZIndex: ComputedRef<(id: string) => number>
+  openModals: ComputedRef<Modal[]>
+  hasOpenModals: ComputedRef<boolean>
+  register: (id: string) => void
+  unregister: (id: string) => void
+  open: (id: string) => void
+  close: (id: string) => void
+  toggle: (id: string) => void
+  closeAll: () => void
+}
+
 const modals = ref<Map<string, Modal>>(new Map());
 const zIndexCounter = 1000;
 
-export const useModalRegisterer = () => {
+export const useModalRegisterer = (): UseModalRegistererReturn => {
   // Getters
   const getModal = computed(() => (id: string) => modals.value.get(id));
 

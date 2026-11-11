@@ -141,17 +141,74 @@ describe("indexedDB adapter", () => {
     expect(await createStorageAdapter("indexedDB", "ns-b").get("k")).toBe("b");
   });
 
-  it("returns null instead of throwing when the read fails", async () => {
+  it("returns null instead of throwing when the database cannot be opened", async () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const built = adapter();
-    // Reaching past the public surface is the only way to simulate a backend
-    // fault: idb-keyval owns the connection and offers no injection point.
-    const keyv = (built as unknown as { keyv: { get: () => Promise<unknown> } }).keyv;
-    vi.spyOn(keyv, "get").mockRejectedValue(new Error("connection lost"));
+    const open = vi.spyOn(indexedDB, "open").mockImplementation(() => {
+      throw new Error("blocked by the browser");
+    });
+
+    expect(await createStorageAdapter("indexedDB", "spec-blocked").get("k")).toBeNull();
+    expect(spy).toHaveBeenCalled();
+    open.mockRestore();
+    spy.mockRestore();
+  });
+
+  it("retries the open after a failure instead of caching it", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const built = createStorageAdapter("indexedDB", "spec-retry");
+    const open = vi.spyOn(indexedDB, "open").mockImplementationOnce(() => {
+      throw new Error("transient");
+    });
 
     expect(await built.get("k")).toBeNull();
-    expect(spy).toHaveBeenCalled();
-    spy.mockRestore();
+    open.mockRestore();
+    await built.set("k", "recovered");
+    expect(await built.get("k")).toBe("recovered");
+    vi.restoreAllMocks();
+  });
+
+  // The default adapter is built when the library is imported. Opening a database there would
+  // give every app that imports @muzakit/ui — table or not — an IndexedDB it never asked for.
+  it("opens its database on first use, not on construction, and only once", async () => {
+    const open = vi.spyOn(indexedDB, "open");
+    const built = createStorageAdapter("indexedDB", "spec-lazy");
+    expect(open).not.toHaveBeenCalled();
+
+    await built.get("a");
+    await built.set("b", 1);
+    expect(open).toHaveBeenCalledTimes(1);
+    open.mockRestore();
+  });
+
+  // keyv-browser stored configs in a database named by the namespace, in an object store named
+  // "keyv", under the bare table key. Layouts a user saved before it was replaced must still load.
+  it("reads a config saved in keyv-browser's layout", async () => {
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.open("spec-legacy");
+      request.onupgradeneeded = () => request.result.createObjectStore("keyv");
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        const db = request.result;
+        const tx = db.transaction("keyv", "readwrite");
+        tx.objectStore("keyv").put({ visible: ["sku", "price"] }, "orders-table");
+        tx.oncomplete = () => {
+          db.close();
+          resolve();
+        };
+      };
+    });
+
+    expect(await createStorageAdapter("indexedDB", "spec-legacy").get("orders-table"))
+      .toEqual({ visible: ["sku", "price"] });
+  });
+
+  it("clears every key it holds", async () => {
+    const built = createStorageAdapter("indexedDB", "spec-clear");
+    await built.set("a", 1);
+    await built.set("b", 2);
+    await built.clear();
+    expect(await built.get("a")).toBeNull();
+    expect(await built.get("b")).toBeNull();
   });
 });
 

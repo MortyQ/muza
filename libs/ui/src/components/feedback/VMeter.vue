@@ -96,8 +96,11 @@ const iconClass = computed<string>(() => {
       class="v-meter__track"
     >
       <div
+        :aria-busy="pending || undefined"
+        :aria-label="label ?? defaultLabel"
         :aria-valuemax="max"
         :aria-valuenow="value ?? undefined"
+        :aria-valuetext="value === null ? 'Measuring' : undefined"
         :class="isMet ? 'v-meter__fill--met' : 'v-meter__fill--unmet'"
         :style="{ '--v-meter-fill': ratio }"
         aria-valuemin="0"

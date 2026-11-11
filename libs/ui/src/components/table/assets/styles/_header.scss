@@ -141,8 +141,10 @@
   &--clickable {
     cursor: pointer;
 
-    &:hover {
-      opacity: 0.8;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: 0.8;
+      }
     }
   }
 }
@@ -200,12 +202,16 @@
   }
 
   // Show divider on hover
-  &:hover .v-table-resize-divider {
-    opacity: 1;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .v-table-resize-divider {
+      opacity: 1;
+    }
   }
 
-  &:hover .v-table-resize-line {
-    opacity: 1;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .v-table-resize-line {
+      opacity: 1;
+    }
   }
 }
 
@@ -217,8 +223,10 @@
   transition: opacity 0.15s ease;
   z-index: 1;
 
-  .v-table-resize-handle:hover & {
-    opacity: 1;
+  @media (hover: hover) and (pointer: fine) {
+    .v-table-resize-handle:hover & {
+      opacity: 1;
+    }
   }
 }
 
@@ -254,4 +262,11 @@
   position: sticky;
   top: 0;
   z-index: 3;
+}
+
+// Only a label with an onHeaderClick callback is focusable (TableHeader sets role/tabindex)
+.v-table-header-label-wrapper--clickable:focus-visible {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: 2px;
+  border-radius: var(--ui-radius-xs);
 }

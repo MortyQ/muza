@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, useId, watchEffect } from "vue";
+import { computed, useId, useTemplateRef, watchEffect } from "vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -24,7 +24,7 @@ const modelValue = defineModel<CheckboxModelValue>();
 const generatedId = useId();
 const uniqueId = computed(() => id || generatedId);
 
-const inputRef = ref<HTMLInputElement | null>(null);
+const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
 
 watchEffect(() => {
   if (inputRef.value) {
@@ -51,7 +51,7 @@ watchEffect(() => {
         'v-checkbox__label',
         { 'v-checkbox__label--disabled': disabled }
       ]"
-      :for="!disabled ? uniqueId : undefined"
+      :for="uniqueId"
     >
       <slot name="label">
         {{ label }}

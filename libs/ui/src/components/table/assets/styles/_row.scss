@@ -6,22 +6,24 @@
   display: contents;
   cursor: pointer;
 
-  &:hover > .v-table-cell {
-    background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
-    border-bottom-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-border) 80%);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover > .v-table-cell {
+      background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
+      border-bottom-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-border) 80%);
 
-    // An inset shadow, not a border: a border needs padding-left shaved to
-    // compensate, which overrides the tree indent and re-lays the grid.
-    &:first-child {
-      box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ui-primary) 80%, transparent);
-    }
-
-    &[data-custom-row="true"] {
-      background-color: inherit;
-      border-bottom-color: var(--ui-border);
-
+      // An inset shadow, not a border: a border needs padding-left shaved to
+      // compensate, which overrides the tree indent and re-lays the grid.
       &:first-child {
-        box-shadow: inset 3px 0 0 var(--ui-primary);
+        box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ui-primary) 80%, transparent);
+      }
+
+      &[data-custom-row="true"] {
+        background-color: inherit;
+        border-bottom-color: var(--ui-border);
+
+        &:first-child {
+          box-shadow: inset 3px 0 0 var(--ui-primary);
+        }
       }
     }
   }
@@ -34,8 +36,10 @@
     cursor: not-allowed;
     opacity: $opacity-disabled;
 
-    &:hover > .v-table-cell {
-      background-color: var(--ui-surface);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover > .v-table-cell {
+        background-color: var(--ui-surface);
+      }
     }
   }
 
@@ -48,8 +52,10 @@
     }
   }
 
-  &--selected:hover > .v-table-cell {
-    background-color: color-mix(in oklch, var(--ui-primary) 10%, var(--ui-surface) 90%);
+  @media (hover: hover) and (pointer: fine) {
+    &--selected:hover > .v-table-cell {
+      background-color: color-mix(in oklch, var(--ui-primary) 10%, var(--ui-surface) 90%);
+    }
   }
 }
 
@@ -69,7 +75,7 @@
   }
 
   &--leaving > .v-table-cell {
-    animation: expandRowOut $transition-normal cubic-bezier(0.4, 0, 1, 1);
+    animation: expandRowOut $transition-fast ease-out;
   }
 }
 
@@ -81,4 +87,11 @@
 @keyframes expandRowOut {
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v-table-row-expandable--entering > .v-table-cell,
+  .v-table-row-expandable--leaving > .v-table-cell {
+    animation-duration: 1ms;
+  }
 }

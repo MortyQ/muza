@@ -33,7 +33,8 @@ Every component uses `<script setup lang="ts">`. No Options API, no `export defa
 
 ## Rule 2 — Reactive Destructuring for Props (Vue 3.5+)
 
-Destructure props directly from `defineProps`. Default values are inline in the destructuring.
+Destructure props directly from `defineProps`, always with the generic syntax — runtime object
+syntax (`defineProps({ items: Array })`) is banned. Default values are inline in the destructuring.
 In Vue 3.5+ the compiler preserves reactivity on destructured props — accessing them via `props.x` is banned.
 
 ```ts
@@ -225,6 +226,61 @@ watchEffect(async () => {
 
 ---
 
+## Rule 10a — Watcher Is a Last Resort, Never a Synchroniser
+
+Before writing `watch`, name **the state the watcher writes to** and **who else writes to it**.
+Answer three questions in order — the first "yes" is the answer, and `watch` is not it:
+
+1. **Is the value derived from other state?** → `computed`.
+   A watcher assigning a ref what could be computed creates a second copy that can go stale.
+2. **Does the state already have an owner elsewhere** (the `useModal` registry, a store, a
+   library's own ref, `data` from `useApi`)? → delete the local copy and read the owner.
+   A watcher copying A into B and B into A is not synchronisation — it is two sources of truth
+   with a repair loop.
+3. **Is it a reaction to an event** (request success, click, submit)? → use the event callback:
+   `onSuccess`, the handler, the emit. See Rule 5 in `composables.instructions.md`.
+
+`watch` is correct in exactly three cases:
+- **side effect on change** — a request, an imperative API, DOM work;
+- **conditional execution** — `lazy: true` + a watcher calling `execute()`, the only way to
+  make a `useApi` request conditional (Rule 6 in `composables.instructions.md`);
+- **seeding editable state** from a value that arrives asynchronously — and only when the user
+  is then allowed to diverge from it.
+
+```ts
+// ❌ banned — a pair of watchers mirroring two states into each other
+watch(open, value => value ? openDrawer() : closeDrawer(), { immediate: true });
+watch(isOpen, value => { open.value = value; });
+
+// ✅ the state has one owner — the registry; there is no local copy at all
+const { open: openDrawer } = useModal(DRAWER_ID, false);
+
+// ❌ watcher standing in for a computed
+const total = ref(0);
+watch(items, value => { total.value = value.length; }, { immediate: true });
+
+// ✅
+const total = computed(() => items.value.length);
+```
+
+**Seeding editable state — check the second firing.** A watcher that opens a panel or fills a
+field "when the condition appears" will fire again when the condition returns after a filter
+change, overwriting what the user has since edited by hand. If that is not what you want, do not
+seed the state at all: the fact belongs somewhere it is always visible, not in behaviour that
+triggers on response timing.
+
+### Red flags — stop and rewrite
+
+| Signal | What it means |
+|---|---|
+| The watcher body is a single ref assignment | It is almost certainly a `computed` |
+| Two watchers over two related variables | Two sources of truth; one must be deleted |
+| `watch` on `data` from `useApi` | The event already exists: `onSuccess` |
+| `{ immediate: true }` used to get "the initial value" | An initial value is a `computed` or `initialData` |
+| A comment along the lines of "mirror X onto Y" | That is the definition of syncing two copies |
+
+---
+
 ## Rule 11 — Typed Emits with Tuple Syntax
 
 All emits use typed `defineEmits` with the tuple notation.
@@ -299,6 +355,9 @@ component.
 </style>
 ```
 
+In `libs/ui` the block is `<style lang="scss" scoped>` holding a single `@use` of the component's
+stylesheet, and templates carry no Tailwind utilities — see `ui-component-migration.md`.
+
 Use `:deep()` sparingly — only when overriding styles of a third-party or library child component that cannot be reached
 otherwise.
 
@@ -346,7 +405,7 @@ Composables that receive external values must accept refs, getters, or raw value
 // ✅ correct — flexible input
 import {toValue, type MaybeRefOrGetter} from 'vue'
 
-export function useProductSearch(query: MaybeRefOrGetter<string>) {
+export const useProductSearch = (query: MaybeRefOrGetter<string>) => {
     const results = ref<Product[]>([])
 
     watchEffect(() => {
@@ -364,8 +423,7 @@ useProductSearch(ref('iphone'))
 useProductSearch(() => searchQuery.value)
 
 // ❌ wrong — only accepts raw value, breaks reactivity
-export function useProductSearch(query: string) { ...
-}
+export const useProductSearch = (query: string) => { ... }
 ```
 
 ### Return value
@@ -387,7 +445,7 @@ Register cleanup inside the composable — not in the calling component.
 
 ```ts
 // ✅ correct — composable owns its cleanup
-export function useResizeObserver(target: MaybeRefOrGetter<HTMLElement | null>) {
+export const useResizeObserver = (target: MaybeRefOrGetter<HTMLElement | null>) => {
     const width = ref(0)
 
     const ro = new ResizeObserver(([entry]) => {
@@ -405,19 +463,7 @@ export function useResizeObserver(target: MaybeRefOrGetter<HTMLElement | null>) 
 }
 ```
 
-### TypeScript — explicit return type
-
-Always annotate the return type on shared composables.
-
-```ts
-// ✅ correct
-export function useProductFilters(): {
-    filters: Ref<ProductFilters>
-    reset: () => void
-    apply: (f: Partial<ProductFilters>) => void
-} { ...
-}
-```
+Explicit return type on every exported composable — `typescript.instructions.md` Rule 5.
 
 ### Single responsibility
 
@@ -440,14 +486,14 @@ composable function.
 
 ```ts
 // ✅ correct
-export function useData() {
+export const useData = () => {
     const data = ref(null)
     onMounted(() => fetchData().then(r => data.value = r))
     return {data}
 }
 
 // ❌ wrong — side effect fires at call time, breaks SSR and tests
-export function useData() {
+export const useData = () => {
     const data = ref(null)
     fetchData().then(r => data.value = r) // called immediately
     return {data}
@@ -473,8 +519,8 @@ export const useProductsStore = defineStore('products', () => {
     const count = computed(() => items.value.length)
     const published = computed(() => items.value.filter(p => p.status === 'published'))
 
-    // function() → actions
-    async function fetchProducts(filters: ProductFilters) {
+    // arrow functions → actions
+    const fetchProducts = async (filters: ProductFilters) => {
         isLoading.value = true
         try {
             items.value = await api.products.list(filters)
@@ -483,7 +529,7 @@ export const useProductsStore = defineStore('products', () => {
         }
     }
 
-    function reset() {
+    const reset = () => {
         items.value = []
     }
 
@@ -532,6 +578,59 @@ productsStore.$patch((state) => {
     state.totalCount--
 })
 ```
+
+---
+
+## Rule 18 — Script Setup Block Order
+
+Inside `<script setup>`, always follow this exact order.
+Never mix sections — each group must be contiguous.
+
+1. Composables & requests — `useRouter`, `useToast`, `usePermissions`, `fetchX(...)` from a request wrapper…
+2. Template refs — `useTemplateRef`
+3. Reactive state — `ref`, `reactive`, `defineModel`
+4. Computed properties — `computed`
+5. Functions & handlers — `const onSubmit = () => …`
+6. Watchers — `watch`, `watchEffect`
+7. Lifecycle hooks — `onMounted`, `onUnmounted`…
+8. `defineExpose` — always last
+
+```ts
+// ✅ correct
+const router = useRouter()
+const { saveBrand } = useBrandsRequest()
+const { execute: createBrand, loading: creating } = saveBrand({ onSuccess: () => close() })
+
+const drawerRef = useTemplateRef<{ open(): void; close(): void }>('drawer')
+
+const name = ref('')
+const selected = ref<Brand | null>(null)
+
+const isEmpty = computed(() => name.value.length === 0)
+
+const onSubmit = () => { ... }
+const onDelete = (brand: Brand) => { ... }
+const open = () => { drawerRef.value?.open() }
+const close = () => { drawerRef.value?.close() }
+
+watch(selected, () => { ... })
+
+onMounted(() => { ... })
+
+defineExpose({ open, close })
+
+// ❌ wrong — sections out of order
+const onSubmit = () => { ... }
+defineExpose({ open })              // wrong position
+watch(selected, () => { ... })
+const isEmpty = computed(() => ...)       // computed after functions
+onMounted(() => { ... })
+const onDelete = () => { ... }      // function after lifecycle
+```
+
+Use section divider comments (`// ── Handlers ──────`) only when a section
+is long (5+ lines) and benefits from visual separation.
+Do NOT add dividers mechanically to every section.
 
 ---
 

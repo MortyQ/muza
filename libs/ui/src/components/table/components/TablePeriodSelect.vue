@@ -43,7 +43,7 @@ const {
   granularity,
   dateRange,
   includeSummary = false,
-  widthClass = "w-40",
+  widthClass = "",
   placeholder = "Select period",
 } = defineProps<{
   /**
@@ -65,8 +65,7 @@ const {
   includeSummary?: boolean
 
   /**
-   * Custom width class for the select
-   * @default 'w-40'
+   * Extra class for the select, for the consuming app's own sizing. The wrapper is 10rem wide.
    */
   widthClass?: string
 
@@ -134,7 +133,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-[160px]">
+  <div class="v-table-period-select">
     <VSelect
       v-model="selectedPeriod"
       :class="widthClass"

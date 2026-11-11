@@ -4,20 +4,28 @@ import {
   onDeactivated,
   onMounted,
   onUnmounted,
+  type ComputedRef,
   type Ref,
   shallowRef,
 } from "vue";
 
-import { useVirtualizer } from "@tanstack/vue-virtual";
+import { useVirtualizer, type VirtualItem, type Virtualizer } from "@tanstack/vue-virtual";
 
 import { DEFAULT_ROW_HEIGHT } from "../constants";
 import type { VirtualTableOptions } from "../types";
+
+export interface UseVirtualTableReturn {
+  virtualizer: Ref<Virtualizer<Element, Element>>
+  virtualItems: ComputedRef<VirtualItem[]>
+  totalSize: ComputedRef<number>
+  remeasure: () => void
+}
 
 export function useVirtualTable(
   scrollContainerRef: Ref<HTMLElement | null>,
   data: Ref<Record<string, unknown>[]>,
   options: VirtualTableOptions = {},
-) {
+): UseVirtualTableReturn {
   const {
     estimateSize = DEFAULT_ROW_HEIGHT,
     overscan = 3,

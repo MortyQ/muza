@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, getCurrentInstance } from "vue";
 
 import {
   type SelectValue,
@@ -7,6 +7,7 @@ import {
   type VModelValue,
   isSameModelValue,
 } from "../../types/vmodel";
+import { clickOnActivationKey } from "../../utils/a11y";
 
 import VIcon from "./VIcon.vue";
 import VTag, { type TagColor } from "./VTag.vue";
@@ -88,6 +89,9 @@ const activeColor = computed<Exclude<ChipColor, "default"> | "default">(() =>
   color === "default" && isSelected.value ? selectedColor : color,
 );
 
+// `click` is a declared emit, so the listener never reaches $attrs; the vnode still carries it.
+const hasClickListener = !!getCurrentInstance()?.vnode.props?.onClick;
+
 const rootClass = computed(() => [
   `v-chip--${size}`,
   `v-chip--${variant}`,
@@ -95,9 +99,21 @@ const rootClass = computed(() => [
   {
     "v-chip--selected": isSelected.value,
     "v-chip--disabled": disabled,
-    "v-chip--interactive": !disabled,
+    // Hover affordance only where a click does something — the same rule as rootAttrs.
+    "v-chip--interactive": !disabled && (isBound.value || hasClickListener),
   },
 ]);
+
+/** A chip that does something is a button; one that only displays stays out of the tab order. */
+const rootAttrs = computed(() => {
+  if (!isBound.value && !hasClickListener) return {};
+  return {
+    role: "button",
+    tabindex: disabled ? -1 : 0,
+    "aria-pressed": isBound.value ? isSelected.value : undefined,
+    "aria-disabled": disabled || undefined,
+  };
+});
 
 const handleClick = (event: MouseEvent): void => {
   if (disabled) return;
@@ -127,7 +143,9 @@ const handleClose = (event: MouseEvent): void => {
   <span
     :class="rootClass"
     class="v-chip"
+    v-bind="rootAttrs"
     @click="handleClick"
+    @keydown="rootAttrs.role && clickOnActivationKey($event)"
   >
     <span class="v-chip__content">
       <VIcon
@@ -157,6 +175,7 @@ const handleClose = (event: MouseEvent): void => {
 
     <button
       v-if="closable"
+      :aria-label="label ? `Remove ${label}` : 'Remove'"
       :disabled="disabled"
       class="v-chip__close"
       type="button"

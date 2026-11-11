@@ -60,13 +60,13 @@
 
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected {
   background-color: var(--ui-primary);
-  color: white;
+  color: var(--ui-primary-foreground);
   font-weight: var(--ui-weight-medium);
 }
 
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected,
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--selected * {
-  color: white !important;
+  color: var(--ui-primary-foreground) !important;
 }
 
 /* Hovering a selected item = deselect indicator */

@@ -122,16 +122,18 @@
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 
-  &:hover:not(&--disabled):not(&--loading) {
-    background-color: var(--ui-surface-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(&--disabled):not(&--loading) {
+      background-color: var(--ui-surface-hover);
 
-    .v-floating-item-icon {
-      color: var(--ui-primary);
-      transform: scale(1.1);
-    }
+      .v-floating-item-icon {
+        color: var(--ui-primary);
+        transform: scale(1.1);
+      }
 
-    .v-floating-item-label {
-      color: var(--ui-primary);
+      .v-floating-item-label {
+        color: var(--ui-primary);
+      }
     }
   }
 
@@ -176,4 +178,16 @@
 .v-floating-item-loading {
   margin-left: auto;
   flex-shrink: 0;
+}
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-floating-content:not(.v-floating--positioning) {
+    animation: none;
+  }
+
+  .v-floating-item-icon {
+    transition: color 0.2s ease;
+    transform: none !important;
+  }
 }

@@ -214,14 +214,4 @@ const itemClasses = computed(() => ({
 .sidebar-label-leave-to {
   opacity: 0;
 }
-
-/* Remove browser default focus ring on router-link */
-.sidebar-item:focus {
-  outline: none;
-}
-
-.sidebar-item.router-link-active:focus,
-.sidebar-item.router-link-exact-active:focus {
-  outline: none;
-}
 </style>

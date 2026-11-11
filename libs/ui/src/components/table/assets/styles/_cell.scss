@@ -67,8 +67,10 @@
   cursor: pointer;
   user-select: none;
 
-  &:hover {
-    background-color: color-mix(in oklch, var(--ui-surface) 94%, var(--ui-foreground) 6%);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: color-mix(in oklch, var(--ui-surface) 94%, var(--ui-foreground) 6%);
+    }
   }
 
   &:active {
@@ -91,9 +93,11 @@
   cursor: pointer;
   color: var(--ui-foreground-secondary);
 
-  &:hover {
-    background-color: color-mix(in oklch, var(--ui-border) 40%, transparent);
-    color: var(--ui-foreground);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: color-mix(in oklch, var(--ui-border) 40%, transparent);
+      color: var(--ui-foreground);
+    }
   }
 
   &:active {
@@ -108,4 +112,16 @@
 .v-table-cell-expand-spacer {
   width: $table-expand-button-size;
   flex-shrink: 0;
+}
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-table-cell-expand-btn,
+  .v-table-cell-expand-btn svg {
+    transition: none;
+  }
+
+  .v-table-cell-expand-btn:active {
+    transform: none;
+  }
 }

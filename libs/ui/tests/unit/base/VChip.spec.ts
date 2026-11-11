@@ -196,3 +196,65 @@ describe("VChip", () => {
     });
   });
 });
+
+describe("VChip keyboard and semantics", () => {
+  it("is a static span with no tab stop when nothing listens and no model is bound", () => {
+    const w = chip({ label: "Tag" });
+    expect(w.attributes("role")).toBeUndefined();
+    expect(w.attributes("tabindex")).toBeUndefined();
+  });
+
+  it("becomes a toggle button bound to a model, reporting aria-pressed", () => {
+    const w = mount(VChip, {
+      props: { label: "A", value: "a", modelValue: null },
+      global: { stubs },
+    });
+    expect(w.attributes("role")).toBe("button");
+    expect(w.attributes("tabindex")).toBe("0");
+    expect(w.attributes("aria-pressed")).toBe("false");
+  });
+
+  it("toggles its model with Space", async () => {
+    const w = mount(VChip, {
+      props: {
+        label: "A",
+        value: "a",
+        modelValue: null,
+        "onUpdate:modelValue": (v: unknown) => w.setProps({ modelValue: v }),
+      },
+      global: { stubs },
+      attachTo: document.body,
+    });
+    await w.trigger("keydown", { key: " " });
+    expect(w.attributes("aria-pressed")).toBe("true");
+    w.unmount();
+  });
+
+  it("becomes a button when a click listener is attached", () => {
+    const w = mount(VChip, { props: { label: "A", onClick: () => undefined }, global: { stubs } });
+    expect(w.attributes("role")).toBe("button");
+    expect(w.attributes("aria-pressed")).toBeUndefined();
+  });
+
+  it("drops the tab stop when disabled", () => {
+    const w = mount(VChip, {
+      props: { label: "A", value: "a", modelValue: null, disabled: true },
+      global: { stubs },
+    });
+    expect(w.attributes("tabindex")).toBe("-1");
+    expect(w.attributes("aria-disabled")).toBe("true");
+  });
+
+  it("names the close button after the chip", () => {
+    expect(chip({ label: "Paris", closable: true }).find(".v-chip__close").attributes("aria-label"))
+      .toBe("Remove Paris");
+  });
+});
+
+describe("VChip hover affordance", () => {
+  it("is offered only by a chip that does something", () => {
+    expect(chip({ label: "Static" }).classes()).not.toContain("v-chip--interactive");
+    expect(mount(VChip, { props: { label: "A", onClick: () => undefined }, global: { stubs } })
+      .classes()).toContain("v-chip--interactive");
+  });
+});

@@ -66,7 +66,7 @@
   box-shadow: var(--ui-shadow-xl);
   min-width: 320px;
   max-width: 450px;
-  transition: all 0.3s ease-in-out;
+  transition: box-shadow 200ms ease, background-color 200ms ease;
   font-family: inherit;
 }
 
@@ -80,9 +80,11 @@
   }
 }
 
-:global(.toast-custom:hover) {
-  box-shadow: var(--ui-shadow-xl);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  :global(.toast-custom:hover) {
+    box-shadow: var(--ui-shadow-xl);
+    transform: translateY(-2px);
+  }
 }
 
 /* ============================================
@@ -171,10 +173,12 @@
   padding: 0;
 }
 
-:global(.toast-close:hover) {
-  opacity: 1;
-  color: var(--ui-foreground);
-  background-color: var(--ui-surface-raised);
+@media (hover: hover) and (pointer: fine) {
+  :global(.toast-close:hover) {
+    opacity: 1;
+    color: var(--ui-foreground);
+    background-color: var(--ui-surface-raised);
+  }
 }
 
 :global(.toast-close:focus) {
@@ -200,8 +204,10 @@
   transition: background-color 0.2s;
 }
 
-:global(.toast-action:hover) {
-  background-color: var(--ui-primary-hover);
+@media (hover: hover) and (pointer: fine) {
+  :global(.toast-action:hover) {
+    background-color: var(--ui-primary-hover);
+  }
 }
 
 :global(.toast-action:focus) {
@@ -223,8 +229,10 @@
   transition: background-color 0.2s;
 }
 
-:global(.toast-cancel:hover) {
-  background-color: var(--ui-surface-hover);
+@media (hover: hover) and (pointer: fine) {
+  :global(.toast-cancel:hover) {
+    background-color: var(--ui-surface-hover);
+  }
 }
 
 :global(.toast-cancel:focus) {
@@ -267,5 +275,14 @@
   to {
     transform: translateX(100%);
     opacity: 0;
+  }
+}
+
+/* Reduced motion: toasts fade in place, the spinner keeps turning (it carries meaning). */
+@media (prefers-reduced-motion: reduce) {
+  :global([data-sonner-toast]),
+  :global([data-sonner-toast][data-removed='true']) {
+    animation-name: none;
+    transition: opacity 150ms ease-out;
   }
 }

@@ -98,9 +98,11 @@
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
 
-    &:hover {
-      background-color: var(--ui-surface-hover);
-      color: var(--ui-foreground);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--ui-surface-hover);
+        color: var(--ui-foreground);
+      }
     }
   }
 
@@ -120,7 +122,7 @@
 }
 
 .v-nav-guard-fade-leave-active {
-  transition: opacity 0.15s ease-in;
+  transition: opacity 0.15s ease-out;
 }
 
 .v-nav-guard-fade-enter-from,
@@ -133,11 +135,19 @@
 }
 
 .v-nav-guard-pop-leave-active {
-  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
 }
 
 .v-nav-guard-pop-enter-from,
 .v-nav-guard-pop-leave-to {
   opacity: 0;
   transform: scale(0.95) translateY(-0.5rem);
+}
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-nav-guard-pop-enter-from,
+  .v-nav-guard-pop-leave-to {
+    transform: none;
+  }
 }

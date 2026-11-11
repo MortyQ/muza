@@ -188,6 +188,7 @@ defineExpose({ reset });
         </div>
 
         <button
+          :aria-label="`Remove ${file.name}`"
           :disabled="isBlocked"
           class="v-file-upload__remove"
           type="button"

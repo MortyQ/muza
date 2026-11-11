@@ -96,8 +96,10 @@
     border-radius: 4px;
     border: 2px solid var(--ui-surface-sunken);
 
-    &:hover {
-      background: color-mix(in oklch, var(--ui-border) 50%, var(--ui-foreground-secondary) 50%);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: color-mix(in oklch, var(--ui-border) 50%, var(--ui-foreground-secondary) 50%);
+      }
     }
 
     &:active {

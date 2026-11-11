@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch, nextTick, onBeforeUnmount, computed, type Component } from "vue";
+import { onMounted, ref, watch, nextTick, onBeforeUnmount, computed, useTemplateRef, type Component } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 
@@ -136,16 +136,19 @@ const handleTabsKeydown = (event: KeyboardEvent) => {
       return;
   }
 
-  event.preventDefault();
+  // Every tab disabled: `% 0` is NaN and there is nothing to move to.
   const nextTab = enabledTabs[nextIndex];
+  if (!nextTab) return;
+
+  event.preventDefault();
   selectTab(nextTab.id);
   nextTick(() => {
-    (tabsContainerRef.value?.querySelector(`#tab-${nextTab.id}`) as HTMLElement)?.focus();
+    tabsContainerRef.value?.querySelector<HTMLElement>(`#tab-${nextTab.id}`)?.focus();
   });
 };
 
 // Overflow tabs logic
-const tabsContainerRef = ref<HTMLElement | null>(null);
+const tabsContainerRef = useTemplateRef<HTMLElement>("tabsContainerRef");
 const visibleTabs = ref<ITab[]>([...tabs]);
 const overflowTabs = ref<ITab[]>([]);
 const moreButtonWidth = 70; // Width of icon button (48px) + small buffer
@@ -322,7 +325,7 @@ defineExpose({
               v-for="tab in visibleTabs"
               :id="`tab-${tab.id}`"
               :key="tab.id"
-              :aria-controls="`tabpanel-${tab.id}`"
+              :aria-controls="isTabActive(tab.id) ? `tabpanel-${tab.id}` : undefined"
               :aria-disabled="tab.disabled"
               :aria-selected="isTabActive(tab.id)"
               :class="[
@@ -364,7 +367,11 @@ defineExpose({
             @select="selectTab"
           >
             <template #trigger>
-              <VButton icon="mdi:dots-horizontal" />
+              <VButton
+                :aria-label="`${overflowTabs.length} more tabs`"
+                aria-haspopup="menu"
+                icon="lucide:ellipsis"
+              />
             </template>
           </VFloating>
         </div>

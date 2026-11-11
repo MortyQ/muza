@@ -9,21 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ametie/vue-muza-use": "^0.6.1",
+    "@ametie/vue-muza-use": "^1.10.0",
     "@muzakit/ui": "workspace:*",
     "@muzakit/utils": "workspace:*",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "axios": "^1.13.6",
+    "luxon": "^3.5.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.34",
-    "vue-router": "^5.2.0",
-    "luxon": "^3.5.0"
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
-    "@types/luxon": "^3.4.2",
     "@muzakit/config": "workspace:*",
     "@tailwindcss/vite": "^4.1.0",
+    "@types/luxon": "^3.4.2",
     "@types/node": "^22.0.0",
     "@vitejs/plugin-vue": "^5.2.0",
     "tailwindcss": "^4.1.0",

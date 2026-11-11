@@ -1,13 +1,17 @@
 ---
 name: use-api
-description: Use when creating or editing an api/use*.ts wrapper, calling useApiGet/useApiPost/useApiPut/useApiPatch/useApiDelete/useApiBatch, importing @ametie/vue-muza-use, wiring a REST request in insights-client, or debugging a request that fires on every keystroke, never fires, polls forever, or errors with "Request URL is missing".
+description: Use when creating or editing an api/use*.ts wrapper, calling useApiGet/useApiPost/useApiPut/useApiPatch/useApiDelete/useApiBatch, importing @ametie/vue-muza-use, wiring a REST request in an app, or debugging a request that fires on every keystroke, never fires, polls forever, or errors with "Request URL is missing".
 ---
 
 # Skill: Vue Muza Use API Layer
 
-Verified against `@ametie/vue-muza-use` **1.8.2** — the version pinned in this repo
-(`apps/insights-client/package.json`, lockfile-exact). `pim-client` and `tools-client` are
-still on 0.6.0; nothing here applies to them.
+Written against `@ametie/vue-muza-use` **1.8.2** (ported from so-platform), re-checked on 1.10.
+
+> **muzakit pins `^1.10.0`** in both apps, like so-platform's insights-client. Everything below
+> holds for it. 1.9 added `createAuthSession` — the dashboard's auth goes through one
+> (`apps/muzakit-dashboard/src/shared/config/authSession.ts`), the way insights-client's does.
+> 1.10 notes are in "Version notes" at the end. Check `dist/` of the installed version before
+> relying on an option not named here.
 
 ---
 
@@ -396,7 +400,18 @@ see references/advanced-options.md.
 
 ## Version notes
 
-The pin is 1.8.2. What it brought over the previous 1.7.1 pin — all of it already in
+**muzakit moved from 0.6.1 straight to 1.10.** What that changed in the dashboard:
+
+- Re-fetching is auto-tracked from the getters; the 0.6 `watch` option is gone.
+- Mutations need `lazy: true` — the register form sent a request per keystroke without it.
+- Auth runs through `createAuthSession` (1.9+) instead of `createApiClient({ withAuth,
+  authOptions })`. This backend takes the refresh token in the body, so the session's `payload`
+  sends it and the token store keeps it — unlike insights-client, whose refresh token is an
+  httpOnly cookie (`storeRefreshToken: false`).
+
+What 1.10 itself added over 1.9 is not itemised here — see the library's GitHub releases.
+
+The so-platform pin this skill was first written for was 1.8.2. What it brought over the previous 1.7.1 pin — all of it already in
 effect, listed because older code in the repo was written against 1.7.x:
 
 - A `FormData` / `URLSearchParams` body derives its own Content-Type, so the explicit

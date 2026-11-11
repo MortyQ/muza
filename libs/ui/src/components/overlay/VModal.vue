@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, useId, useTemplateRef } from "vue";
 
+import { useDialogFocus } from "../../composables/useDialogFocus";
 import { useModal } from "../../composables/useModal";
 import VButton from "../base/VButton.vue";
 import VIcon from "../base/VIcon.vue";
@@ -43,6 +44,9 @@ const emit = defineEmits<{
 }>();
 
 const { isOpen, close, zIndex } = useModal(id);
+
+const titleId = `v-modal-title-${useId()}`;
+const { trapTab } = useDialogFocus(isOpen, useTemplateRef<HTMLElement>("dialog"));
 
 const DEFAULT_FOOTER_ACTIONS: Required<FooterActionsConfig> = {
   confirmText: "Confirm",
@@ -87,9 +91,15 @@ const handleKeydown = (event: KeyboardEvent) => {
         @keydown="handleKeydown"
       >
         <div
+          ref="dialog"
+          :aria-labelledby="title ? titleId : undefined"
           :class="`v-modal__container--${maxWidth}`"
+          aria-modal="true"
           class="v-modal__container"
+          role="dialog"
+          tabindex="-1"
           @click.stop
+          @keydown="trapTab"
         >
           <!-- Header -->
           <div
@@ -99,6 +109,7 @@ const handleKeydown = (event: KeyboardEvent) => {
             <slot name="header">
               <h3
                 v-if="title"
+                :id="titleId"
                 class="v-modal__title"
               >
                 {{ title }}

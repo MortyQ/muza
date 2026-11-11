@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, ref, useSlots } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, useId, useSlots } from "vue";
 
 import Multiselect from "vue-multiselect";
 
@@ -63,6 +63,9 @@ const emit = defineEmits<{
 const isFocused = ref(false);
 
 const hasFloatingLabel = computed(() => !!name);
+
+// The floating label is a sibling of the combobox, not its <label for>, so it names it by id.
+const labelId = `v-select-label-${useId()}`;
 
 const hasValue = computed(() => {
   if (Array.isArray(modelValue)) return modelValue.length > 0;
@@ -192,6 +195,7 @@ onBeforeUnmount(() => disableFloating());
     <!-- Floating label -->
     <label
       v-if="hasFloatingLabel"
+      :id="labelId"
       :class="{ 'v-select__label--active': isFocused || hasValue }"
       class="v-select__label"
     >
@@ -202,6 +206,7 @@ onBeforeUnmount(() => disableFloating());
     <Multiselect
       ref="msRef"
       :allow-empty="allowEmpty"
+      :aria-labelledby="hasFloatingLabel ? labelId : undefined"
       :clear-on-select="clearOnSelect"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
@@ -210,7 +215,7 @@ onBeforeUnmount(() => disableFloating());
       :max-height="maxHeight"
       :model-value="modelValue"
       :multiple="multiple"
-      :options="(options as any[])"
+      :options
       :options-limit="optionsLimit"
       :placeholder="computedPlaceholder"
       :searchable="searchable"
@@ -231,7 +236,7 @@ onBeforeUnmount(() => disableFloating());
           <VIcon
             :loading="loading"
             class="v-select__caret-icon"
-            icon="mdi:chevron-down"
+            icon="lucide:chevron-down"
           />
         </div>
       </template>

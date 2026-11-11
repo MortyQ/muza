@@ -409,6 +409,7 @@ defineExpose({ focusRow });
             >
               <template #icon-right>
                 <button
+                  :aria-label="`Remove ${line}`"
                   class="v-list-editor__chip-remove"
                   type="button"
                   @click="removeChip(line)"

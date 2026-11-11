@@ -110,8 +110,10 @@
     color: var(--ui-primary);
     transition: color 0.2s ease;
 
-    &:hover {
-      color: var(--ui-primary-hover);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--ui-primary-hover);
+      }
     }
   }
 
@@ -143,9 +145,11 @@
     background-color: var(--ui-surface);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover {
-      border-color: var(--ui-border);
-      box-shadow: var(--ui-shadow-xs);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: var(--ui-border);
+        box-shadow: var(--ui-shadow-xs);
+      }
     }
   }
 
@@ -201,14 +205,24 @@
     cursor: pointer;
     transition: color 0.2s ease, background-color 0.2s ease;
 
-    &:hover:not(:disabled) {
-      background-color: var(--ui-danger-subtle);
-      color: var(--ui-danger);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background-color: var(--ui-danger-subtle);
+        color: var(--ui-danger);
+      }
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
+  }
+}
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-file-upload__icon-wrapper {
+    transition: none;
+    transform: none !important;
   }
 }

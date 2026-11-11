@@ -15,13 +15,11 @@ import "@fontsource/plus-jakarta-sans/700.css";
 
 import { addCollection } from "@iconify/vue";
 import { icons as lucide } from "@iconify-json/lucide";
-import { icons as mdi } from "@iconify-json/mdi";
 import { beforeEach } from "vitest";
 
-// Without a local collection, @iconify/vue fetches over the network on first
-// use: the first screenshot has no glyph and the second does.
+// The library registers the icons its components use (src/icons). Specs may also pass an icon a
+// consumer would choose, which @iconify/vue would otherwise fetch over the network on first use.
 addCollection(lucide);
-addCollection(mdi);
 
 const deterministic = document.createElement("style");
 deterministic.textContent = `

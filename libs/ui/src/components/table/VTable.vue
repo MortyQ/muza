@@ -1,6 +1,6 @@
 <script generic="TData extends Record<string, unknown> = Record<string, unknown>" lang="ts" setup>
 import {
-  ref, computed, watch, onMounted, onUnmounted, useSlots, provide, inject,
+  ref, computed, watch, onMounted, onUnmounted, useTemplateRef, provide, inject, normalizeStyle,
   type Component, type ComponentPublicInstance, type Ref,
 } from "vue";
 
@@ -83,7 +83,12 @@ const {
 // saw them and a consumer's #toolbar-filters failed type-check. Every header
 // slot receives at least the column, which keeps `header-cell-custom-action`
 // assignable to the `header-*` pattern it also matches.
-defineSlots<{
+//
+// The script reads slots from this return value, not from useSlots(): its type is the one declared
+// here, so it cannot collapse to `any` through the component's own type (the trap VSelect's
+// annotation guards against), and vite-plugin-dts — whose codegen types useSlots() as these slots,
+// which a `ReturnType<typeof useSlots>` annotation then rejects — agrees with vue-tsc.
+const slots = defineSlots<{
   "toolbar"?(): unknown
   "toolbar-title"?(): unknown
   "toolbar-search"?(): unknown
@@ -117,10 +122,6 @@ const emit = defineEmits([
   "update:search", "toolbar:refresh", "toolbar:reset-sort", "toolbar:export",
 ]) as unknown as TableEmits<TData>;
 
-// Explicit annotation: see VSelect — an unannotated useSlots() in a globally
-// registered component resolves through its own type and collapses to `any`.
-const $slots: ReturnType<typeof useSlots> = useSlots();
-
 // Interface for formatted cell values
 interface FormattedCell {
   text?: unknown
@@ -130,19 +131,19 @@ interface FormattedCell {
 // Provide slots to deeply nested components (avoid prop drilling)
 // This is the recommended Vue approach used by Element Plus, Ant Design Vue, etc.
 provide("tableSlots", {
-  headerCellCustomAction: $slots["header-cell-custom-action"],
-  toolbarTitle: $slots["toolbar-title"],
-  toolbarSearch: $slots["toolbar-search"],
-  toolbarActions: $slots["toolbar-actions"],
-  toolbarFilters: $slots["toolbar-filters"],
-  toolbarColumnActions: $slots["toolbar-column-actions"],
+  headerCellCustomAction: slots["header-cell-custom-action"],
+  toolbarTitle: slots["toolbar-title"],
+  toolbarSearch: slots["toolbar-search"],
+  toolbarActions: slots["toolbar-actions"],
+  toolbarFilters: slots["toolbar-filters"],
+  toolbarColumnActions: slots["toolbar-column-actions"],
 });
 
 const searchModel = defineModel<string>("search", { default: "" });
 
 // Toolbar enabled check
 const toolbarEnabled = computed<boolean>(() => {
-  return !!(toolbar?.enabled || $slots.toolbar);
+  return !!(toolbar?.enabled || slots.toolbar);
 });
 
 // Toolbar event handlers
@@ -473,7 +474,7 @@ const selectedRowsRef = computed({
 
 const selection = useTableSelection({
   config: multiSelectConfig,
-  flattenedData: displayData as unknown as Ref<FlattenedRow[]>,
+  flattenedData: displayData,
   selectedRows: selectedRowsRef as unknown as Ref<ExpandableRow[]>,
   onSelectionChange: (selected) => {
     emit("update:selected-rows", selected as unknown as TData[]);
@@ -486,9 +487,9 @@ const scrollContainerRef = ref<HTMLElement | null>(null);
 // Fullscreen geometry targets. `wrapperRef` becomes the fixed panel;
 // `placeholderRef` holds the wrapper's original slot in the page while it is
 // out of flow; the chrome refs are measured to derive the content height.
-const wrapperRef = ref<HTMLElement | null>(null);
-const placeholderRef = ref<HTMLElement | null>(null);
-const toolbarSlotRef = ref<HTMLElement | null>(null);
+const wrapperRef = useTemplateRef<HTMLElement>("wrapperRef");
+const placeholderRef = useTemplateRef<HTMLElement>("placeholderRef");
+const toolbarSlotRef = useTemplateRef<HTMLElement>("toolbarSlotRef");
 const paginationRef = ref<ComponentPublicInstance | null>(null);
 
 const {
@@ -898,7 +899,7 @@ defineExpose({ visibleColumns: effectiveColumns });
     v-if="placeholderStyle"
     ref="placeholderRef"
     :class="$attrs.class"
-    :style="[$attrs.style, placeholderStyle]"
+    :style="[normalizeStyle($attrs.style), placeholderStyle]"
     aria-hidden="true"
     class="v-table-fullscreen-placeholder"
   />
@@ -957,12 +958,14 @@ defineExpose({ visibleColumns: effectiveColumns });
               v-if="columnPickerConfig"
               ref="columnPickerPopoverRef"
               :offset="8"
-              content-class="rounded-xl"
+              content-class="v-table-popover"
               placement="bottom-right"
               unstyled
             >
               <template #trigger>
                 <VButton
+                  aria-haspopup="dialog"
+                  aria-label="Choose columns"
                   icon="lucide:columns"
                   variant="primary"
                 />
@@ -987,12 +990,14 @@ defineExpose({ visibleColumns: effectiveColumns });
               v-if="columnSetupEnabled"
               ref="columnSetupPopoverRef"
               :offset="8"
-              content-class="rounded-xl"
+              content-class="v-table-popover"
               placement="bottom-right"
               unstyled
             >
               <template #trigger>
                 <VButton
+                  aria-haspopup="dialog"
+                  aria-label="Column settings"
                   icon="lucide:table-2"
                   variant="primary"
                 />

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, nextTick } from "vue";
+import { computed, ref, nextTick, useTemplateRef } from "vue";
 
 interface Props {
   /** Tooltip text */
@@ -37,8 +37,8 @@ const MIN_TOOLTIP_WIDTH = 200; // Minimum tooltip width to prevent excessive shr
 
 const isVisible = ref(false);
 const timeout = ref<ReturnType<typeof setTimeout> | null>(null);
-const triggerRef = ref<HTMLElement | null>(null);
-const tooltipRef = ref<HTMLElement | null>(null);
+const triggerRef = useTemplateRef<HTMLElement>("triggerRef");
+const tooltipRef = useTemplateRef<HTMLElement>("tooltipRef");
 const tooltipPosition = ref({ top: 0, left: 0 });
 const actualPlacement = ref(placement);
 const calculatedMaxWidth = ref<string | null>(null);

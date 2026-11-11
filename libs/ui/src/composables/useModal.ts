@@ -1,6 +1,15 @@
-import { computed, onBeforeUnmount } from "vue";
+import { computed, onBeforeUnmount, type ComputedRef } from "vue";
 
-import { useModalRegisterer } from "./useModalRegister";
+import { useModalRegisterer, type Modal } from "./useModalRegister";
+
+export interface UseModalReturn {
+  isOpen: ComputedRef<boolean>
+  zIndex: ComputedRef<number>
+  modal: ComputedRef<Modal | undefined>
+  open: () => void
+  close: () => void
+  toggle: () => void
+}
 
 /**
  * Composable for managing modal state
@@ -27,7 +36,7 @@ import { useModalRegisterer } from "./useModalRegister";
  * </template>
  * ```
  */
-export const useModal = (id: string, autoUnregister = true) => {
+export const useModal = (id: string, autoUnregister = true): UseModalReturn => {
   const registerer = useModalRegisterer();
 
   // Register modal on creation

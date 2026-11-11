@@ -44,6 +44,28 @@
 - **`VTable` column picker**:
   - In "group by type" mode, types follow the registry's sixteen-step order instead of a five-type list; for example, `decimal` now sits right after `number`.
   - Types keep their registry labels, so `url` reads "URL".
+- **BREAKING (types only) — table row types no longer use `any`**:
+  - `Column` and `CellContext` default to `Record<string, unknown>` instead of `any`. An untyped column's callbacks see `unknown` fields, which have to be narrowed.
+  - `ExpandableRow`'s index signature is `unknown`, so an undeclared field reads as `unknown`. **Migration:** declare the fields you read, with `interface OrderRow extends ExpandableRow { status: string }`, and type the column list with it: `Column<OrderRow>[]`. Rows then arrive typed in `cell-*` slots, column callbacks and `row-click`, with no cast.
+  - A `Column<Product>` still fits wherever a plain `Column` is expected.
+  - The unexported legacy `TableHeader` / `TableRow` types are removed.
+  - Runtime behaviour is unchanged.
+- **`VDatepicker` runs on `@vuepic/vue-datepicker` 14** (was 12.1). `vue-multiselect` is pinned to `^3.5.0`, already the installed version.
+  - The library renamed every class from `dp__x_y` to `dp--x-y`. All overrides are moved over, so the picker keeps the design-system colours instead of falling back to the stock blue theme.
+  - The menu and calendar classes now go through the library's `ui` prop. The old `*-class-name` props no longer exist, and passed as attributes they fell on the root, so the menu's elevation and radius never applied. They do now.
+  - The hover tint on a date applies only on hover. It used to paint every selectable date.
+  - From the library: Shift+Tab no longer force-closes the menu unless `config.tabOutClosesMenu` is set, and the week start is now locale-based. `VDatepicker` still pins Sunday.
+- **Icons are lucide only, and the library's own are bundled.**
+  - The 32 mdi icons are replaced with lucide equivalents: pagination and row-expand chevrons, `VTab`'s overflow, `VSelect`'s caret, and the `DragNDrop` file-type, upload and status icons. Some glyphs look different: the PDF, Word, Excel and PowerPoint icons are now generic `file-text`, `file-type`, `file-spreadsheet` and `file-chart-column`, since lucide has no brand icons.
+  - On `vite build`, the 73 icons the components draw (about 3 KB gzipped) are embedded by a new Vite plugin, `muzakitIcons()` from `@muzakit/ui/vite`. It scans the library's sources at build time, so there is nothing to generate or run by hand. `VIcon` registers the set on first render.
+  - A built app no longer fetches these icons from the public Iconify API: they work offline and under a strict CSP, and appear as soon as the component mounts. On `vite dev` the plugin embeds nothing, so dev-server startup is unchanged and icons load from the API as before.
+  - The library's own `dist` is built with the plugin, so consumers of the built package get the icons without it. **An app that compiles the library from source must add `muzakitIcons()` to its Vite plugins**; without it the build fails on `virtual:muzakit-icons`.
+  - Icons an app passes by name are unchanged: they load from the API unless the app registers them.
+- **Importing the library no longer touches the page.** `@muzakit/utils`' `useTheme` used to run on import, because the library pulls in `@muzakit/utils` for its formatters. Any app importing `@muzakit/ui` had its `<html data-theme>` overwritten and `muzakit-theme` written to its localStorage, and server-side rendering crashed on `document`. The theme is now set up on the first `useTheme()` call. **An app that relies on the theme must call `useTheme()` once at its root** (the dashboard does so in `App.vue`). `tests/unit/imports.spec.ts` guards against page access on import.
+- **The table's IndexedDB storage is built in.** `keyv-browser` and its `idb-keyval` dependency are gone, replaced by a native adapter of about 40 lines. Its layout is the same (a database per namespace, a `keyv` store, the table key as the record key), so saved column layouts still load. It opens the database on first use, and a failed open is retried instead of cached. `StorageAdapter`, `createStorageAdapter` and `tableStorage` are unchanged.
+- **`VButton` no longer imports vue-router.** It takes `RouterLink` from the app, which `app.use(router)` registers. In an app without a router, `to` renders a plain `<a>`: a string path becomes its `href`, a route object cannot be resolved, and a disabled link drops its `href`. With a router, nothing changes.
+- **`TablePeriodSelect`**: `widthClass` defaults to `""`, not the Tailwind class `w-40`. The library's own templates carry no utility classes. The wrapper is still 10rem wide, so nothing moves. Pass a class only for your app's own sizing.
+- **Raw colours replaced with tokens**: `white` on primary fills is now `--ui-primary-foreground`, in the same colour. The switch thumb uses that token too. The modal and drawer glass edge is foreground at 10% instead of `white` at 30%, so it shows in light mode and no longer glares in dark.
 
 ### Fixed
 
@@ -64,6 +86,41 @@
   - The corner over a hidden header checkbox is opaque and sticky; rows no longer scroll through it.
   - The sort control shows a focus ring.
 - `VTable` skips a virtual row whose index has run past the data, instead of reading an undefined row.
+- `DeltaValue` groups thousands in an unformatted delta (`12,345`), as every other branch already did.
+- `VTab`'s arrow keys no longer throw when every tab is disabled.
+- `VFloating` removes its document `keydown` listener on every close path and on unmount. Closing through the trigger or unmounting while open used to leave it attached.
+
+### Accessibility
+
+Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MODE=all`):
+
+- **`VModal`, `VDrawer`**: `role="dialog"`, `aria-modal`, named by the title. Focus moves into the dialog on open, Tab stays inside, and focus returns to the trigger on close. Escape works without a click first; before, the key never reached the dialog. `NavigationGuardModal` now also returns focus. The shared `useDialogFocus` composable does this.
+- **Click-only elements now work from the keyboard**. Each takes Enter/Space and has a focus ring:
+  - a `clickable` `VCard` is `role="button"`;
+  - `VChip` is a toggle button with `aria-pressed` when bound to a model, or a button when it has a click listener;
+  - in the column picker, groups expand from a real button with `aria-expanded`, and columns are checkboxes;
+  - "show all" in column setup is a tri-state checkbox;
+  - a header label with `onHeaderClick` is a button.
+- **Icon-only buttons are named**: `VTab`'s overflow button ("3 more tabs"), `VChip` close, file and list remove buttons, the table's refresh, row-expand, additional-headers and both column popover triggers. Disclosure buttons report `aria-expanded`.
+- **Labels**:
+  - `VSelect`'s floating label names its combobox.
+  - `VCheckbox` keeps its label association when disabled.
+  - The column picker's search input is labelled.
+
+### Motion
+
+- No `transition: all` remains. Every transition names its properties.
+- Exits use ease-out instead of ease-in (tooltip, guard modal, mobile sidebar backdrop).
+- Modals and drawers leave faster than they enter. Drawers and the mobile sidebar use the drawer curve.
+- `prefers-reduced-motion` is honoured across the library:
+  - modals, drawers, toasts, the mobile sidebar and table row expansion keep their fade and drop their movement;
+  - press scales, hover lifts, enter/leave slides, chevron rotations and the switch thumb change instantly;
+  - colour and opacity still ease;
+  - spinners keep turning, since their motion is the message.
+- Hover styles sit behind `@media (hover: hover) and (pointer: fine)`: 98 rules across the components and the table. A tap on a touch screen no longer leaves a button, row, chip or menu item stuck in its hover colour.
+- Hover affordance only where a click does something:
+  - only an interactive `VCard` reacts, lifting 2px instead of `scale(1.02)` on every elevated card;
+  - a display-only `VChip` no longer darkens under the pointer.
 
 ### Look
 

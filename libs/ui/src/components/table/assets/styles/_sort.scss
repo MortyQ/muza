@@ -10,12 +10,14 @@
   border-radius: var(--ui-radius-xs);
   transition: background-color 0.15s ease;
 
-  &:hover {
-    background-color: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: color-mix(in oklch, var(--ui-primary) 8%, transparent);
 
-    .v-sort-icon:not(.v-sort-icon--active) {
-      opacity: 0.6;
-      color: var(--ui-primary);
+      .v-sort-icon:not(.v-sort-icon--active) {
+        opacity: 0.6;
+        color: var(--ui-primary);
+      }
     }
   }
 

@@ -91,8 +91,8 @@ export interface ToolbarConfig {
          * export: {
          *   mode: 'multi',
          *   formats: [
-         *     { label: 'CSV', value: 'csv', icon: 'mdi:file-delimited' },
-         *     { label: 'Excel', value: 'xlsx', icon: 'mdi:file-excel' }
+         *     { label: 'CSV', value: 'csv', icon: 'lucide:file-spreadsheet' },
+         *     { label: 'Excel', value: 'xlsx', icon: 'lucide:file-spreadsheet' }
          *   ],
          *   selectedOnly: false
          * }

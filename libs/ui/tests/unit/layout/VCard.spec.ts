@@ -18,8 +18,17 @@ const PADDINGS: CardPadding[] = ["none", "sm", "md", "lg", "xl"];
 
 const stubs = { Icon: true };
 
-function card(props: Record<string, unknown> = {}, slots: Record<string, string> = {}) {
-  return mount(VCard, { props, slots, global: { stubs } });
+function card(
+  props: Record<string, unknown> = {},
+  slots: Record<string, string> = {},
+  attachTo = false,
+) {
+  return mount(VCard, {
+    props,
+    slots,
+    global: { stubs },
+    ...(attachTo ? { attachTo: document.body } : {}),
+  });
 }
 
 describe("VCard", () => {
@@ -79,6 +88,46 @@ describe("VCard", () => {
       const w = card({ clickable: true, loading: true });
       await w.trigger("click");
       expect(w.emitted("click")).toBeUndefined();
+    });
+  });
+
+  describe("keyboard and semantics", () => {
+    it("gives a clickable div a button role and a tab stop", () => {
+      const w = card({ clickable: true });
+      expect(w.attributes("role")).toBe("button");
+      expect(w.attributes("tabindex")).toBe("0");
+    });
+
+    it.each(["Enter", " "])("activates a clickable div with %o", async (key) => {
+      const w = card({ clickable: true }, {}, true);
+      await w.trigger("keydown", { key });
+      expect(w.emitted("click")).toHaveLength(1);
+      w.unmount();
+    });
+
+    it("leaves a static card without role or tab stop", () => {
+      const w = card();
+      expect(w.attributes("role")).toBeUndefined();
+      expect(w.attributes("tabindex")).toBeUndefined();
+    });
+
+    it("adds no role to an anchor or a native button", () => {
+      expect(card({ href: "/x" }).attributes("role")).toBeUndefined();
+      expect(card({ as: "button" }).attributes("role")).toBeUndefined();
+    });
+
+    it("keeps a native button from submitting a form", () => {
+      expect(card({ as: "button" }).attributes("type")).toBe("button");
+    });
+
+    it("drops the tab stop and says so when disabled", () => {
+      const w = card({ clickable: true, disabled: true });
+      expect(w.attributes("tabindex")).toBe("-1");
+      expect(w.attributes("aria-disabled")).toBe("true");
+    });
+
+    it("marks itself busy while loading", () => {
+      expect(card({ loading: true }).attributes("aria-busy")).toBe("true");
     });
   });
 

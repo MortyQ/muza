@@ -33,7 +33,7 @@
     background: color-mix(in oklch, var(--ui-surface-overlay) 95%, transparent);
     backdrop-filter: blur(10px) saturate(120%);
     -webkit-backdrop-filter: blur(10px) saturate(120%);
-    border: 1px solid color-mix(in oklch, white 30%, transparent);
+    border: 1px solid color-mix(in oklch, var(--ui-foreground) 10%, transparent);
     box-shadow: var(--ui-shadow-lg);
   }
 
@@ -84,9 +84,11 @@
   flex-shrink: 0;
   color: var(--ui-foreground-muted);
 
-  &:hover {
-    color: var(--ui-foreground);
-    background-color: var(--ui-surface-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground);
+      background-color: var(--ui-surface-hover);
+    }
   }
 
   &:focus-visible {
@@ -125,14 +127,20 @@
 /* ============================================
    TRANSITIONS
    ============================================ */
-.v-modal-enter-active,
-.v-modal-leave-active {
-  transition: opacity 0.3s ease;
+.v-modal-enter-active {
+  transition: opacity 200ms ease-out;
 }
 
-.v-modal-enter-active .v-modal__container,
+.v-modal-leave-active {
+  transition: opacity 150ms ease-out;
+}
+
+.v-modal-enter-active .v-modal__container {
+  transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1), opacity 200ms ease-out;
+}
+
 .v-modal-leave-active .v-modal__container {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 150ms ease-out, opacity 150ms ease-out;
 }
 
 .v-modal-enter-from,
@@ -142,7 +150,7 @@
 
 .v-modal-enter-from .v-modal__container,
 .v-modal-leave-to .v-modal__container {
-  transform: scale(0.95) translateY(-20px);
+  transform: scale(0.96) translateY(-8px);
   opacity: 0;
 }
 
@@ -166,4 +174,18 @@
   .v-modal__footer {
     padding: 1rem;
   }
+}
+
+/* Reduced motion keeps the fade and drops the scale and slide. */
+@media (prefers-reduced-motion: reduce) {
+  .v-modal-enter-from .v-modal__container,
+  .v-modal-leave-to .v-modal__container {
+    transform: none;
+  }
+}
+
+/* The container takes focus on open (useDialogFocus) so Escape and Tab land inside it. It is
+   not a control, so it draws no ring; the controls inside keep theirs. */
+.v-modal__container:focus {
+  outline: none;
 }

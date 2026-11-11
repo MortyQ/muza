@@ -42,7 +42,7 @@
 }
 
 .v-tooltip-fade-leave-active {
-  transition: opacity 150ms ease-in;
+  transition: opacity 100ms ease-out;
 }
 
 .v-tooltip-fade-enter-from,

@@ -18,6 +18,7 @@ export const useAuthStore = defineStore("auth", () => {
     accessToken: string
     refreshToken: string
   }>("/auth/login", {
+    lazy: true,
     onSuccess: async ({ data }) => {
       tokenManager.setTokens(data);
       await router.push("/");

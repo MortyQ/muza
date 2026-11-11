@@ -1,10 +1,29 @@
 import { toast } from "vue-sonner";
 
+export interface ToastPromiseOptions<T> {
+  loading: string
+  success: string | ((data: T) => string)
+  error: string | ((error: Error) => string)
+}
+
+export interface UseToastReturn {
+  success: (message: string, description?: string) => void
+  error: (message: string, description?: string) => void
+  warning: (message: string, description?: string) => void
+  info: (message: string, description?: string) => void
+  promise: <T>(
+    promise: Promise<T>,
+    options: ToastPromiseOptions<T>,
+  ) => ReturnType<typeof toast.promise<T>>
+  custom: (message: string, options?: Record<string, unknown>) => string | number
+  dismiss: (toastId?: string | number) => void
+}
+
 /**
  * Custom toast composable with project styling
  * Uses vue-sonner under the hood
  */
-export const useToast = () => {
+export const useToast = (): UseToastReturn => {
   const success = (message: string, description?: string) => {
     toast.success(message, {
       description,

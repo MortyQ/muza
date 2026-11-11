@@ -4,6 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig, loadEnv, type ConfigEnv } from "vite";
 
+import { muzakitIcons } from "@muzakit/ui/vite";
+
 export default ({ mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd(), "");
 
@@ -15,7 +17,8 @@ export default ({ mode }: ConfigEnv) => {
     // deploy workflow sets it, and the router reads it back as BASE_URL.
     base: env.VITE_BASE ?? "/",
 
-    plugins: [vue(), tailwindcss()],
+    // The library's icons: embedded on build, fetched from the Iconify API in development.
+    plugins: [vue(), tailwindcss(), muzakitIcons()],
 
     resolve: {
       alias: {

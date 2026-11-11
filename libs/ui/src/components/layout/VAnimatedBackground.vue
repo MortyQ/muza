@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
 
 interface Blob {
   x: number
@@ -31,7 +31,7 @@ const {
   ],
 } = defineProps<Props>();
 
-const canvasRef = ref<HTMLCanvasElement | null>(null);
+const canvasRef = useTemplateRef<HTMLCanvasElement>("canvasRef");
 let animationFrameId: number;
 let resizeHandler: (() => void) | null = null;
 const blobs: Blob[] = [];

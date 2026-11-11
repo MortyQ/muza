@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, useAttrs, useSlots, type Slots } from "vue";
 
-import { type ModelValue, VueDatePicker } from "@vuepic/vue-datepicker";
+import { type ModelValue, type UIConfig, VueDatePicker } from "@vuepic/vue-datepicker";
 
 import "@vuepic/vue-datepicker/dist/main.css";
 
@@ -56,6 +56,14 @@ const hasValue = computed<boolean>(() =>
 
 const isDisabled = computed<boolean>(() => attrs.disabled === "" || attrs.disabled === true);
 
+// The library takes its element classes through `ui`. The old `*-class-name` props no longer
+// exist, and passed as attrs they landed on the root instead of the menu and the calendar.
+const uiClasses = computed<Partial<UIConfig>>(() => ({
+  menu: "v-datepicker-menu",
+  calendar: "v-datepicker-calendar",
+  input: validation?.$error ? ["v-datepicker-input", "v-datepicker-input-error"] : "v-datepicker-input",
+}));
+
 // Slots with custom default implementations — do not pass-through
 const excludedSlots = [
   "input-icon",
@@ -98,7 +106,6 @@ const excludedSlots = [
       <VueDatePicker
         v-model="model"
         :auto-apply="autoApply"
-        :calendar-class-name="'v-datepicker-calendar'"
         :class="[
           'v-datepicker',
           {
@@ -106,12 +113,8 @@ const excludedSlots = [
             'v-datepicker-no-clear': !clearable,
           },
         ]"
-        :input-class-name="[
-          'v-datepicker-input',
-          { 'v-datepicker-input-error': validation?.$error },
-        ]"
-        :menu-class-name="'v-datepicker-menu'"
         :timezone="'UTC'"
+        :ui="uiClasses"
         :week-start="0"
         v-bind="$attrs"
         @closed="isOpen = false"

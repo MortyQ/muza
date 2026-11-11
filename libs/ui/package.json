@@ -10,7 +10,11 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./vite": {
+      "types": "./vite/icons.d.ts",
+      "import": "./vite/icons.js"
+    }
   },
   "scripts": {
     "build": "vite build",
@@ -23,7 +27,8 @@
     "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --project unit --coverage",
     "test:tokens": "vitest run --project browser tests/visual/tokens",
-    "test:visual:docker": "bash scripts/visual-docker.sh"
+    "test:visual:docker": "bash scripts/visual-docker.sh",
+    "test:types": "vitest run --project types"
   },
   "peerDependencies": {
     "vue": "^3.5.34",
@@ -32,7 +37,6 @@
   "devDependencies": {
     "@fontsource/plus-jakarta-sans": "5.3.0",
     "@iconify-json/lucide": "^1.2.122",
-    "@iconify-json/mdi": "^1.2.3",
     "@muzakit/config": "workspace:*",
     "@tailwindcss/vite": "^4.1.0",
     "@types/luxon": "^3.4.2",
@@ -59,11 +63,10 @@
     "@iconify/vue": "^5.0.0",
     "@muzakit/utils": "workspace:*",
     "@tanstack/vue-virtual": "^3.13.23",
-    "@vuepic/vue-datepicker": "^12.0.0",
+    "@vuepic/vue-datepicker": "^14.0.0",
     "@vueuse/core": "^14.2.1",
-    "keyv-browser": "^0.1.1",
     "luxon": "^3.5.0",
-    "vue-multiselect": "^3.0.0",
+    "vue-multiselect": "^3.5.0",
     "vue-sonner": "^2.0.9"
   }
 }

@@ -117,7 +117,7 @@ export const useTableCellMetadata = <TData extends Record<string, unknown>>(
       : null;
 
     const isExpandableRow = colIndex === 0 && toValue(isExpandable)
-      ? isRowExpandable(row as unknown as ExpandableRow)
+      ? isRowExpandable(row)
       : false;
 
     const metadata: CellMetadata = {

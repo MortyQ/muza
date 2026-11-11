@@ -18,8 +18,10 @@
     border-radius: 4px;
     border: 2px solid var(--ui-surface-sunken);
 
-    &:hover {
-      background: color-mix(in oklch, var(--ui-border) 50%, var(--ui-foreground-secondary) 50%);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: color-mix(in oklch, var(--ui-border) 50%, var(--ui-foreground-secondary) 50%);
+      }
     }
 
     &:active {
@@ -37,10 +39,6 @@
   -moz-user-select: none;
   -ms-user-select: none;
 }
-
-.v-table-transition-fast   { transition: all $transition-fast; }
-.v-table-transition-normal { transition: all $transition-normal; }
-.v-table-transition-slow   { transition: all $transition-slow; }
 
 @keyframes tableSkeleton {
   0%   { background-position: -200px 0; }
@@ -92,6 +90,20 @@
 .v-table-hover-lift {
   transition: transform $transition-fast;
 
-  &:hover  { transform: translateY(-1px); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover  { transform: translateY(-1px); }
+  }
   &:active { transform: translateY(0); }
+}
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .v-table-fade-in {
+    animation: none;
+  }
+
+  .v-table-hover-lift {
+    transition: none;
+    transform: none !important;
+  }
 }

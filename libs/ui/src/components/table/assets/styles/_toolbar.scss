@@ -89,8 +89,10 @@
   transition: background 0.15s ease;
   text-align: left;
 
-  &:hover:not(:disabled) {
-    background: var(--ui-surface-sunken);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background: var(--ui-surface-sunken);
+    }
   }
 
   &:disabled {
@@ -99,9 +101,21 @@
   }
 }
 
-.dropdown-enter-active,
+// VFloating content-class for the column picker / column setup popovers (teleported, so global)
+.v-table-popover {
+  border-radius: var(--ui-radius-xl);
+}
+
+.v-table-period-select {
+  width: 10rem;
+}
+
+.dropdown-enter-active {
+  transition: opacity 180ms ease-out, transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 .dropdown-leave-active {
-  transition: all 0.2s ease;
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
 }
 
 .dropdown-enter-from,
@@ -123,5 +137,13 @@
   .v-toolbar-search-split {
     flex: 1 1 100%;
     max-width: 100%;
+  }
+}
+
+/* Reduced motion: state changes land instantly, colour and opacity still ease. */
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-enter-from,
+  .dropdown-leave-to {
+    transform: none;
   }
 }

@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { useId, useTemplateRef } from "vue";
+
+import { useDialogFocus } from "../../composables/useDialogFocus";
 import { useModal } from "../../composables/useModal";
 import VIcon from "../base/VIcon.vue";
 
@@ -31,6 +34,9 @@ const emit = defineEmits<{
 
 const { isOpen, close, zIndex } = useModal(id);
 
+const titleId = `v-drawer-title-${useId()}`;
+const { trapTab } = useDialogFocus(isOpen, useTemplateRef<HTMLElement>("dialog"));
+
 const handleClose = () => {
   close();
   emit("close");
@@ -61,9 +67,15 @@ const handleKeydown = (event: KeyboardEvent) => {
         @keydown="handleKeydown"
       >
         <div
+          ref="dialog"
+          :aria-labelledby="title ? titleId : undefined"
           :class="[`v-drawer__container--width-${width}`, `v-drawer__container--${position}`]"
+          aria-modal="true"
           class="v-drawer__container"
+          role="dialog"
+          tabindex="-1"
           @click.stop
+          @keydown="trapTab"
         >
           <!-- Header -->
           <div
@@ -73,6 +85,7 @@ const handleKeydown = (event: KeyboardEvent) => {
             <slot name="header">
               <h3
                 v-if="title"
+                :id="titleId"
                 class="v-drawer__title"
               >
                 {{ title }}

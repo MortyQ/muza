@@ -126,8 +126,10 @@
     &:disabled {
       cursor: not-allowed;
 
-      &:hover {
-        background-color: transparent;
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: transparent;
+        }
       }
     }
   }

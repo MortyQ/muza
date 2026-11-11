@@ -1,15 +1,15 @@
 # Testing `@muzakit/ui`
 
-Two Vitest projects, one config (`libs/ui/vitest.config.ts`). Tests live in
+Three Vitest projects, one config (`libs/ui/vitest.config.ts`). Tests live in
 `libs/ui/tests/`, outside `src/` — `src/` is both the dts build input and the
 Tailwind `@source` scan root, and test files have no business in either.
 
-| | `unit` | `browser` |
-|---|---|---|
-| Environment | jsdom | real Chromium via Playwright |
-| Renderer | `@vue/test-utils` | `vitest-browser-vue` |
-| CSS | not applied | Tailwind + SCSS, compiled |
-| Covers | props, emits, models, slots, ARIA, keyboard | tokens, geometry, both themes |
+| | `unit` | `browser` | `types` |
+|---|---|---|---|
+| Environment | jsdom | real Chromium via Playwright | none — `tsc`, nothing runs |
+| Renderer | `@vue/test-utils` | `vitest-browser-vue` | — |
+| CSS | not applied | Tailwind + SCSS, compiled | — |
+| Covers | props, emits, models, slots, ARIA, keyboard | tokens, geometry, both themes | public type contracts |
 
 ## Commands
 
@@ -18,11 +18,13 @@ pnpm --filter @muzakit/ui test:unit            # jsdom, ~10s
 pnpm --filter @muzakit/ui test:tokens          # token contracts (the whole browser project)
 pnpm --filter @muzakit/ui test:visual          # same, every browser spec
 pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
+pnpm --filter @muzakit/ui test:types           # type contracts, tsc only, ~1s
 pnpm --filter @muzakit/ui test:visual:docker   # the browser project in CI's image
 ```
 
-A `pre-push` hook runs the unit project, and the token contracts when a Chromium
-is installed.
+No git hook runs tests. They run in CI, and only when a push or PR touches
+`libs/`, the root `package.json`, the lockfile, the workspace file or `ci.yml`.
+Run them locally before pushing a `libs/` change.
 
 ## What CI gates on
 
@@ -37,7 +39,7 @@ button, so the whole set was a record of a design that no longer exists. If it
 comes back, write it against the settled visuals, keep only a Linux set, and
 make it report rather than gate until its baselines are trusted.
 
-## The three layers
+## The layers
 
 **Convention guard** (`tests/conventions.spec.ts`) turns
 `ui-component-migration.md` into assertions: one scoped style block per
@@ -52,6 +54,14 @@ allowed only where the element is teleported out of the component's subtree and
 the block says `teleported:`.
 
 **Unit** — behaviour, not appearance.
+
+**Type contracts** (`tests/types/*.test-d.ts`) pin what a consumer's compiler
+must accept or reject — `expectTypeOf` for the positive cases, `// @ts-expect-error`
+for the negative ones. They exist because `libs/ui/tsconfig.json` covers `src/`
+only: a unit spec is never type-checked, so a type that silently widens to `any`
+passes every other layer. An unused `@ts-expect-error` is a failure, so a check
+that stops rejecting turns red. Type-only imports from `src/` — no `.vue` files,
+the project runs plain `tsc` (`tests/types/tsconfig.json`).
 
 **Token contracts** (`tests/visual/tokens/`) resolve a `--ui-*` token through a
 probe element and compare it against what the browser actually computed, in both
@@ -93,9 +103,10 @@ The image tag in `ci.yml` and `scripts/visual-docker.sh` must match the
    gives `6px`. For anything that is not a colour use `tokenAsValue()` from
    `tests/setup/tokens.ts`, which pushes both sides through the same probe.
 
-7. **The unit project needs jsdom, never `node`** — even for pure functions.
-   `@muzakit/utils` runs a module-scope `watch` on import that touches
-   `document` and `localStorage`.
+7. **The unit project needs jsdom, never `node`** — components and the theme
+   need `document` and `localStorage`. Importing the library touches neither
+   (`tests/unit/imports.spec.ts` keeps it that way); `useTheme()` does, on its
+   first call, and keeps that state for the rest of the file.
 
 8. **Module-level singletons survive between tests**: the `useModal` registry,
    `useTheme`. Clear them in `beforeEach`.
@@ -212,11 +223,10 @@ cross-product. Layout-dependent behaviour is in the browser project.
     `TablePagination` on its own is a baseline of an unstyled component — which
     looks plausible until someone compares it with the app.
 
-20. **`keyv-browser` has to be inlined** (`server.deps.inline` on the unit
-    project). Its ESM build imports `./keyv-idb` with no extension, which Node's
-    resolver rejects, so the storage module cannot be imported at all otherwise.
-    `fake-indexeddb/auto` in the unit setup then makes the default IndexedDB
-    branch testable rather than skipped.
+20. **IndexedDB is `fake-indexeddb/auto`** in the unit setup, so the storage
+    layer's default branch is tested rather than skipped. The adapter opens its
+    database on first use; a spec that wants a fresh one uses a namespace of
+    its own, since databases outlive a test within one file.
 
 21. **More module-level singletons**: the `useLinkedTables` registry, and
     `tableStorage`, whose `setStorageType` mutates global state. Reset both in

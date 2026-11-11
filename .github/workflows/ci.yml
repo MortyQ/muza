@@ -10,8 +10,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Decides whether the test jobs run. They test libs/ only, so a change confined to apps/ or
+  # docs skips them. A skipped job reports as passed, so it never blocks a required check.
+  changes:
+    name: detect lib changes
+    runs-on: ubuntu-latest
+    outputs:
+      libs: ${{ steps.diff.outputs.libs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: diff
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          # A new branch or a force push has no usable base: run everything.
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "No base commit — running the tests."
+            echo "libs=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # What the tests depend on: the libs themselves, the dependency graph, and this file.
+          if git diff --name-only "$BASE" HEAD | grep -qE \
+            '^(libs/|package\.json$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$|\.github/workflows/ci\.yml$)'; then
+            echo "libs=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes under libs/ — skipping the tests."
+            echo "libs=false" >> "$GITHUB_OUTPUT"
+          fi
+
   check:
-    name: build, types, lint, unit
+    name: build, types, lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +69,26 @@ jobs:
       - name: Lint
         run: pnpm exec eslint libs apps
 
+  unit:
+    name: unit tests
+    needs: changes
+    if: needs.changes.outputs.libs == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Type contracts
+        run: pnpm --filter @muzakit/ui test:types
+
       - name: Unit tests and coverage
         run: pnpm --filter @muzakit/ui test:coverage
 
@@ -49,6 +101,8 @@ jobs:
 
   visual:
     name: token contracts
+    needs: changes
+    if: needs.changes.outputs.libs == 'true'
     runs-on: ubuntu-latest
     # MUST match the `playwright` version in pnpm-lock.yaml, so the browser the
     # contracts run in is the one the lockfile installed.

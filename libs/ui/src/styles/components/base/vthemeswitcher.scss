@@ -61,10 +61,12 @@
   border-color 150ms ease,
   box-shadow 150ms ease;
 
-  &:hover {
-    color: var(--ui-foreground);
-    background-color: var(--ui-surface-hover);
-    border-color: var(--ui-border-strong);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground);
+      background-color: var(--ui-surface-hover);
+      border-color: var(--ui-border-strong);
+    }
   }
 
   &:active {
@@ -114,9 +116,11 @@
   background-color 150ms ease,
   box-shadow 150ms ease;
 
-  &:hover:not(.v-ts__item--active) {
-    color: var(--ui-foreground);
-    background: var(--ui-surface-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.v-ts__item--active) {
+      color: var(--ui-foreground);
+      background: var(--ui-surface-hover);
+    }
   }
 
   &--active {

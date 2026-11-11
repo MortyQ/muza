@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, type Slot } from "vue";
 
+import { clickOnActivationKey } from "../../../utils/a11y";
 import VIcon from "../../base/VIcon.vue";
 import VTooltip from "../../overlay/VTooltip.vue";
 import type { Column, SortOrder, TableHighlightInjection } from "../types";
@@ -98,8 +99,11 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
       <!-- Clickable label wrapper - only triggers onHeaderClick when clicking the label area -->
       <div
         :class="{ 'v-table-header-label-wrapper--clickable': column.onHeaderClick }"
+        :role="column.onHeaderClick ? 'button' : undefined"
+        :tabindex="column.onHeaderClick ? 0 : undefined"
         class="v-table-header-label-wrapper"
         @click="handleHeaderLabelClick"
+        @keydown="column.onHeaderClick && clickOnActivationKey($event)"
       >
         <!-- Custom icon slot (before label) -->
 
@@ -210,14 +214,16 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
 }
 
 .v-table-header-info-icon {
-  color: #9ca3af;
+  color: var(--ui-foreground-muted);
   cursor: help;
   flex-shrink: 0;
   margin-left: 4px;
   transition: color 0.15s ease;
 }
 
-.v-table-header-info-icon:hover {
-  color: #3b82f6;
+@media (hover: hover) and (pointer: fine) {
+  .v-table-header-info-icon:hover {
+    color: var(--ui-primary);
+  }
 }
 </style>
