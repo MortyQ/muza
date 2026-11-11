@@ -162,6 +162,13 @@
   border-radius: 7px;
   min-width: 0;
   height: 28px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+
+  // The input draws no outline of its own; the box carries the focus ring.
+  &:focus-within {
+    border-color: var(--ui-border-focus);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ui-ring) 35%, transparent);
+  }
 
   input {
     flex: 1;
@@ -211,7 +218,7 @@
 
   &--active {
     background: var(--ui-primary);
-    color: white;
+    color: var(--ui-primary-foreground);
   }
 }
 
@@ -268,9 +275,32 @@
     background: var(--ui-surface-raised);
   }
 
-  &:hover .cp-group-select-btn {
+  &:hover .cp-group-select-btn,
+  &:focus-within .cp-group-select-btn {
     opacity: 1;
   }
+}
+
+// Resets the native button; the label typography comes from .cp-group-label.
+.cp-group-toggle {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--ui-radius-xs);
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: 2px;
+  }
+}
+
+.cp-available-item:focus-visible,
+.cp-group-select-btn:focus-visible {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: -2px;
 }
 
 .cp-group-label {

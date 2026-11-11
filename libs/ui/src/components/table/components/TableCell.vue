@@ -112,7 +112,10 @@ const rootStyle = computed<Record<string, string | undefined> | undefined>(() =>
 
       <button
         v-if="metadata?.isExpandable"
+        :aria-expanded="isExpanded"
+        :aria-label="isExpanded ? 'Collapse row' : 'Expand row'"
         class="v-table-cell-expand-btn"
+        type="button"
         @click.stop="emit('toggle-expand')"
       >
         <VIcon

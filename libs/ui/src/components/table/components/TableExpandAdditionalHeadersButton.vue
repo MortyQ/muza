@@ -14,6 +14,8 @@ const emit = defineEmits<{
 
 <template>
   <button
+    :aria-expanded="isExpanded"
+    :aria-label="isExpanded ? 'Hide additional headers' : 'Show additional headers'"
     :class="{ 'is-expanded': isExpanded }"
     class="expand-button"
     type="button"

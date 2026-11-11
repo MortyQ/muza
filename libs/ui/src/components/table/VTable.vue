@@ -957,12 +957,14 @@ defineExpose({ visibleColumns: effectiveColumns });
               v-if="columnPickerConfig"
               ref="columnPickerPopoverRef"
               :offset="8"
-              content-class="rounded-xl"
+              content-class="v-table-popover"
               placement="bottom-right"
               unstyled
             >
               <template #trigger>
                 <VButton
+                  aria-haspopup="dialog"
+                  aria-label="Choose columns"
                   icon="lucide:columns"
                   variant="primary"
                 />
@@ -987,12 +989,14 @@ defineExpose({ visibleColumns: effectiveColumns });
               v-if="columnSetupEnabled"
               ref="columnSetupPopoverRef"
               :offset="8"
-              content-class="rounded-xl"
+              content-class="v-table-popover"
               placement="bottom-right"
               unstyled
             >
               <template #trigger>
                 <VButton
+                  aria-haspopup="dialog"
+                  aria-label="Column settings"
                   icon="lucide:table-2"
                   variant="primary"
                 />

@@ -71,8 +71,9 @@ describe("TablePeriodSelect", () => {
         .findComponent(VSelect).props("placeholder")).toBe("Pick a month");
     });
 
-    it("applies the default width class", () => {
-      expect(periodSelect().findComponent(VSelect).classes()).toContain("w-40");
+    it("adds no utility class of its own — the BEM wrapper sets the width", () => {
+      expect(periodSelect().findComponent(VSelect).classes()).not.toContain("w-40");
+      expect(periodSelect().find(".v-table-period-select").exists()).toBe(true);
     });
 
     it("takes a custom width class", () => {

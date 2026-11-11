@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from "vue";
 
+import { clickOnActivationKey } from "../../../utils/a11y";
 import VButton from "../../base/VButton.vue";
 import VIcon from "../../base/VIcon.vue";
 import VInput from "../../inputs/VInput.vue";
@@ -522,7 +523,9 @@ const handleCancel = () => {
             />
             <input
               v-model="leftSearch"
+              aria-label="Search columns"
               placeholder="Search…"
+              type="search"
             >
           </div>
           <div class="cp-sort-group">
@@ -572,10 +575,17 @@ const handleCancel = () => {
                 class="cp-group-header"
                 @click="toggleGroup(group.key)"
               >
-                <span
+                <!-- The header row stays clickable for the pointer; this is the keyboard and
+                     screen-reader entry point, kept apart from the nested Select-all button. -->
+                <button
+                  :aria-expanded="expandedGroups.has(group.key)"
                   :class="{ 'cp-group-label--has-selection': selectedCountForGroup(group) > 0 }"
-                  class="cp-group-label"
-                >{{ group.label }}</span>
+                  class="cp-group-label cp-group-toggle"
+                  type="button"
+                  @click.stop="toggleGroup(group.key)"
+                >
+                  {{ group.label }}
+                </button>
                 <button
                   class="cp-group-select-btn"
                   type="button"
@@ -620,10 +630,14 @@ const handleCancel = () => {
                   <!-- Item row -->
                   <div
                     v-else-if="entry.item"
+                    :aria-checked="selectedKeys.has(entry.item.key)"
                     :class="{ 'cp-available-item--selected': selectedKeys.has(entry.item.key) }"
                     :style="typeStyle(entry.item.icon)"
                     class="cp-available-item"
+                    role="checkbox"
+                    tabindex="0"
                     @click="toggleItem(entry.item)"
+                    @keydown="clickOnActivationKey"
                   >
                     <div
                       v-if="entry.item.icon"
@@ -802,7 +816,6 @@ const handleCancel = () => {
       </span>
       <VButton
         :disabled="!hasChanges"
-        class="h-[30px]"
         text="Apply"
         variant="primary"
         @click="handleApply"

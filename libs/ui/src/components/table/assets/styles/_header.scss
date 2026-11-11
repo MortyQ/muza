@@ -255,3 +255,10 @@
   top: 0;
   z-index: 3;
 }
+
+// Only a label with an onHeaderClick callback is focusable (TableHeader sets role/tabindex)
+.v-table-header-label-wrapper--clickable:focus-visible {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: 2px;
+  border-radius: var(--ui-radius-xs);
+}

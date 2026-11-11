@@ -120,7 +120,11 @@ const formattedDelta = computed(() => {
     }
   }
 
-  const formatted = absValue.toFixed(format?.decimals ?? 0);
+  const decimals = format?.decimals ?? 0;
+  const formatted = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(absValue);
 
   return deltaAsPercentage ? `${formatted}%` : formatted;
 });

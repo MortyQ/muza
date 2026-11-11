@@ -120,15 +120,3 @@ const itemClasses = computed(() => ({
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Remove browser default focus ring on router-link */
-.sidebar-item:focus {
-  outline: none;
-}
-
-.sidebar-item.router-link-active:focus,
-.sidebar-item.router-link-exact-active:focus {
-  outline: none;
-}
-</style>

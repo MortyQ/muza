@@ -192,6 +192,7 @@ const handleSingleExport = () => {
       <VButton
         v-if="config?.actions?.refresh"
         :loading="refreshLoading"
+        aria-label="Refresh"
         icon="lucide:refresh-cw"
         variant="primary"
         @click="handleRefresh"

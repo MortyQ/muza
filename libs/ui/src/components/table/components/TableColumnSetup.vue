@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue";
 
+import { clickOnActivationKey } from "../../../utils/a11y";
 import VButton from "../../base/VButton.vue";
 import VIcon from "../../base/VIcon.vue";
 import type { Column } from "../types";
@@ -427,8 +428,13 @@ const handleReset = async () => {
 
     <!-- Toggle-all row -->
     <div
+      :aria-checked="someVisible ? 'mixed' : allVisible"
+      aria-label="Show all columns"
       class="column-setup-toggle-all"
+      role="checkbox"
+      tabindex="0"
       @click="handleToggleAll"
+      @keydown="clickOnActivationKey"
     >
       <!-- 3-state eye: all visible / partial / none visible -->
       <div
@@ -646,7 +652,6 @@ const handleReset = async () => {
         :disabled="!hasUnsavedChanges"
         text="Apply"
         variant="primary"
-        class="h-[30px]"
         @click="handleApply"
       />
     </div>

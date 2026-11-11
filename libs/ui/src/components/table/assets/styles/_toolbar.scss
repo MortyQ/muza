@@ -99,6 +99,15 @@
   }
 }
 
+// VFloating content-class for the column picker / column setup popovers (teleported, so global)
+.v-table-popover {
+  border-radius: var(--ui-radius-xl);
+}
+
+.v-table-period-select {
+  width: 10rem;
+}
+
 .dropdown-enter-active {
   transition: opacity 180ms ease-out, transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
 }
