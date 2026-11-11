@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, type ComputedRef } from "vue";
 
 import { type RouteLocationRaw, type RouteRecordNormalized, useRouter } from "vue-router";
 
@@ -59,7 +59,7 @@ export function firstMenuTarget(items: readonly SidebarNavItem[]): RouteLocation
   return null;
 }
 
-export function useMenu() {
+export function useMenu(): { menuItems: ComputedRef<SidebarNavItem[]> } {
   const router = useRouter();
   const authStore = useAuthStore();
 

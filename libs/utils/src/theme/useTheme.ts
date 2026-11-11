@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { ref, watch, type Ref } from "vue";
 
 import { type ThemeType, THEMES, DEFAULT_THEME, THEME_STORAGE_KEY } from "./types";
 
@@ -21,7 +21,13 @@ watch(
   { immediate: true },
 );
 
-export function useTheme() {
+export interface UseThemeReturn {
+  theme: Ref<ThemeType>
+  setTheme: (theme: ThemeType) => void
+  toggleTheme: () => void
+}
+
+export function useTheme(): UseThemeReturn {
   function setTheme(theme: ThemeType): void {
     activeTheme.value = theme;
   }

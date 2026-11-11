@@ -6,7 +6,6 @@ import type {
   Router,
 } from "vue-router";
 
-import type { PermissionType } from "@/features/auth/config/permissions";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { UserRole } from "@/features/auth/types";
 
@@ -29,8 +28,9 @@ export function hasPermissions(
   if (!required || required.length === 0) return true;
   if (!store.isAuthenticated || !store.user) return false;
   if (store.user.role === UserRole.ADMIN || store.user.isAdmin) return true;
-  const userPermissions = store.user.permissions ?? [];
-  return required.every(p => userPermissions.includes(p as PermissionType));
+  // Widened to string so a route's plain-string requirement can be looked up without a cast.
+  const userPermissions: readonly string[] = store.user.permissions ?? [];
+  return required.every(p => userPermissions.includes(p));
 }
 
 export function hasAnyPermission(
@@ -41,8 +41,9 @@ export function hasAnyPermission(
   if (!required || required.length === 0) return true;
   if (!store.isAuthenticated || !store.user) return false;
   if (store.user.role === UserRole.ADMIN || store.user.isAdmin) return true;
-  const userPermissions = store.user.permissions ?? [];
-  return required.some(p => userPermissions.includes(p as PermissionType));
+  // Widened to string so a route's plain-string requirement can be looked up without a cast.
+  const userPermissions: readonly string[] = store.user.permissions ?? [];
+  return required.some(p => userPermissions.includes(p));
 }
 
 // ─── URL Validation ───────────────────────────────────────────────────────────
