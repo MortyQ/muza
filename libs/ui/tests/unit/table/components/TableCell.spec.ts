@@ -197,10 +197,10 @@ describe("TableCell in metadata mode", () => {
 
     it("turns the chevron down once expanded", () => {
       const collapsed = metadataCell({ isExpandable: true }, { isExpanded: false });
-      expect(collapsed.wrapper.findComponent(VIcon).props("icon")).toBe("mdi:chevron-right");
+      expect(collapsed.wrapper.findComponent(VIcon).props("icon")).toBe("lucide:chevron-right");
 
       const expanded = metadataCell({ isExpandable: true }, { isExpanded: true });
-      expect(expanded.wrapper.findComponent(VIcon).props("icon")).toBe("mdi:chevron-down");
+      expect(expanded.wrapper.findComponent(VIcon).props("icon")).toBe("lucide:chevron-down");
     });
   });
 

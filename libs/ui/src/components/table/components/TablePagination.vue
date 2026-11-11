@@ -152,7 +152,7 @@ const isNextDisabled = computed(() => loading || page >= totalPages.value);
       >
         <VIcon
           :size="15"
-          icon="mdi:chevron-left"
+          icon="lucide:chevron-left"
         />
       </button>
 
@@ -187,7 +187,7 @@ const isNextDisabled = computed(() => loading || page >= totalPages.value);
       >
         <VIcon
           :size="15"
-          icon="mdi:chevron-right"
+          icon="lucide:chevron-right"
         />
       </button>
     </div>

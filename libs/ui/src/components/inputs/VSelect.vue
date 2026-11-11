@@ -236,7 +236,7 @@ onBeforeUnmount(() => disableFloating());
           <VIcon
             :loading="loading"
             class="v-select__caret-icon"
-            icon="mdi:chevron-down"
+            icon="lucide:chevron-down"
           />
         </div>
       </template>

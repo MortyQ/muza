@@ -119,7 +119,7 @@ const rootStyle = computed<Record<string, string | undefined> | undefined>(() =>
         @click.stop="emit('toggle-expand')"
       >
         <VIcon
-          :icon="isExpanded ? 'mdi:chevron-down' : 'mdi:chevron-right'"
+          :icon="isExpanded ? 'lucide:chevron-down' : 'lucide:chevron-right'"
           :size="14"
         />
       </button>

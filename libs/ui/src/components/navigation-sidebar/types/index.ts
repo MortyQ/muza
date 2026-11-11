@@ -13,7 +13,7 @@ export interface SidebarNavItem {
   id: string
   /** Display label */
   label: string
-  /** Icon name (e.g., "mdi:home") */
+  /** Icon name (e.g., "lucide:house") */
   icon?: string
   /** Route destination */
   to?: RouteLocationRaw

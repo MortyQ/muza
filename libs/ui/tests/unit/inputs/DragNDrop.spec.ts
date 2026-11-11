@@ -187,11 +187,11 @@ describe("DragNDrop", () => {
 
   describe("file icons", () => {
     it.each([
-      ["report.pdf", "mdi:file-pdf-box"],
-      ["sheet.xlsx", "mdi:file-excel-box"],
-      ["photo.PNG", "mdi:file-image"],
-      ["archive.zip", "mdi:folder-zip"],
-      ["mystery.qqq", "mdi:file-document-outline"],
+      ["report.pdf", "lucide:file-text"],
+      ["sheet.xlsx", "lucide:file-spreadsheet"],
+      ["photo.PNG", "lucide:file-image"],
+      ["archive.zip", "lucide:file-archive"],
+      ["mystery.qqq", "lucide:file"],
     ])("picks the icon for %s", async (name, icon) => {
       // Iconify renders an empty <svg> until it has fetched the glyph, so the
       // name is only visible on the VIcon props, not in the markup.

@@ -36,22 +36,22 @@ const emit = defineEmits<{
 }>();
 
 const FILE_ICONS: Record<string, string> = {
-  pdf: "mdi:file-pdf-box",
-  doc: "mdi:file-word-box",
-  docx: "mdi:file-word-box",
-  xls: "mdi:file-excel-box",
-  xlsx: "mdi:file-excel-box",
-  ppt: "mdi:file-powerpoint-box",
-  pptx: "mdi:file-powerpoint-box",
-  zip: "mdi:folder-zip",
-  rar: "mdi:folder-zip",
-  jpg: "mdi:file-image",
-  jpeg: "mdi:file-image",
-  png: "mdi:file-image",
-  gif: "mdi:file-image",
-  svg: "mdi:file-image",
-  txt: "mdi:file-document",
-  csv: "mdi:file-delimited",
+  pdf: "lucide:file-text",
+  doc: "lucide:file-type",
+  docx: "lucide:file-type",
+  xls: "lucide:file-spreadsheet",
+  xlsx: "lucide:file-spreadsheet",
+  ppt: "lucide:file-chart-column",
+  pptx: "lucide:file-chart-column",
+  zip: "lucide:file-archive",
+  rar: "lucide:file-archive",
+  jpg: "lucide:file-image",
+  jpeg: "lucide:file-image",
+  png: "lucide:file-image",
+  gif: "lucide:file-image",
+  svg: "lucide:file-image",
+  txt: "lucide:file-text",
+  csv: "lucide:file-spreadsheet",
 };
 
 const inputId = useId();
@@ -64,7 +64,7 @@ const isBlocked = computed(() => disabled || loading);
 const canAddMore = computed(() => !multiple || files.value.length < maxFiles);
 
 const getFileIcon = (filename: string): string =>
-  FILE_ICONS[getFileExtension(filename).toLowerCase()] ?? "mdi:file-document-outline";
+  FILE_ICONS[getFileExtension(filename).toLowerCase()] ?? "lucide:file";
 
 const clearFiles = (): void => {
   files.value = [];
@@ -185,7 +185,7 @@ defineExpose({ clearFiles });
       >
         <div class="v-dragndrop__icon-wrapper">
           <VIcon
-            :icon="isDragging ? 'mdi:cloud-download' : 'mdi:cloud-upload-outline'"
+            :icon="isDragging ? 'lucide:cloud-download' : 'lucide:cloud-upload'"
             :size="48"
             class="v-dragndrop__icon"
           />
@@ -216,7 +216,7 @@ defineExpose({ clearFiles });
 
         <slot name="action">
           <VButton
-            icon="mdi:folder-open-outline"
+            icon="lucide:folder-open"
             text="Browse Files"
             variant="primary"
             @click.stop="triggerFileInput"
@@ -231,7 +231,7 @@ defineExpose({ clearFiles });
         <div class="v-dragndrop__preview-header">
           <VIcon
             :size="24"
-            icon="mdi:file-multiple-outline"
+            icon="lucide:files"
           />
           <span class="v-dragndrop__title">
             {{ files.length }} file{{ files.length > 1 ? "s" : "" }} selected
@@ -282,7 +282,7 @@ defineExpose({ clearFiles });
         >
           <VIcon
             :size="20"
-            icon="mdi:close-circle"
+            icon="lucide:circle-x"
           />
         </button>
       </div>
@@ -293,7 +293,7 @@ defineExpose({ clearFiles });
       class="v-dragndrop__actions"
     >
       <VButton
-        icon="mdi:check-circle-outline"
+        icon="lucide:circle-check"
         text="Submit Files"
         variant="primary"
         @click="submit"

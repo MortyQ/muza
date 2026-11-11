@@ -370,7 +370,7 @@ defineExpose({
               <VButton
                 :aria-label="`${overflowTabs.length} more tabs`"
                 aria-haspopup="menu"
-                icon="mdi:dots-horizontal"
+                icon="lucide:ellipsis"
               />
             </template>
           </VFloating>
