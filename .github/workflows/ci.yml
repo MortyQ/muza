@@ -86,6 +86,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Type contracts
+        run: pnpm --filter @muzakit/ui test:types
+
       - name: Unit tests and coverage
         run: pnpm --filter @muzakit/ui test:coverage
 

@@ -31,6 +31,7 @@ pnpm exec eslint libs apps
 # Tests — @muzakit/ui only (see testing.md)
 pnpm --filter @muzakit/ui test:unit        # jsdom
 pnpm --filter @muzakit/ui test:tokens      # token contracts, real Chromium
+pnpm --filter @muzakit/ui test:types       # type contracts, tsc only
 pnpm --filter @muzakit/ui test:coverage    # unit + thresholds
 pnpm --filter @muzakit/ui test:visual:docker
 ```
@@ -161,7 +162,7 @@ Always (job `check`):
 Only when `libs/`, the root `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml` or `ci.yml`
 changed (decided by job `changes`, diffing against the PR base or the previous push):
 
-5. `pnpm --filter @muzakit/ui test:coverage` (job `unit`)
+5. `pnpm --filter @muzakit/ui test:types`, then `test:coverage` (job `unit`)
 6. Token contracts, `pnpm --filter @muzakit/ui test:tokens` (job `visual`)
 
 A skipped job reports as passed, so it does not block a required check. All must pass before

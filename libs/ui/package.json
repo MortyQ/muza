@@ -23,7 +23,8 @@
     "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --project unit --coverage",
     "test:tokens": "vitest run --project browser tests/visual/tokens",
-    "test:visual:docker": "bash scripts/visual-docker.sh"
+    "test:visual:docker": "bash scripts/visual-docker.sh",
+    "test:types": "vitest run --project types"
   },
   "peerDependencies": {
     "vue": "^3.5.34",

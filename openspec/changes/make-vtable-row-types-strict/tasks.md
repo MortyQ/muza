@@ -7,9 +7,9 @@ any critical finding. Nothing here is visual, so the blocks need no new token co
 
 ## 1. Pin the contract first — `test(ui): pin the table's row typing contract`
 
-- [ ] 1.1 Add a `test:types` script to `libs/ui/package.json` (Vitest typecheck mode, `tests/types/**/*.test-d.ts`). Add it to the CI job in `.github/workflows/ci.yml`. Verify: `pnpm --filter @muzakit/ui test:types` runs and finds the file.
-- [ ] 1.2 Write `libs/ui/tests/types/table-row-typing.test-d.ts`, with one `expectTypeOf` / `@ts-expect-error` case per scenario in `specs/ui-table-row-typing/spec.md`. Verify: it **fails** on the current code. The untyped-column, undeclared-field and missing-field cases resolve to `any`, so their `@ts-expect-error` lines are unused. Record the failing output in the commit body.
-- [ ] 1.3 Document the type-test layer in `.agents/instructions/testing.md`: what it covers and the command to run it. Verify: `.agents/instructions/workflow.md` lists the command next to the other test commands.
+- [x] 1.1 Add a `test:types` script to `libs/ui/package.json` (Vitest typecheck mode, `tests/types/**/*.test-d.ts`). Add it to the CI job in `.github/workflows/ci.yml`. Verify: `pnpm --filter @muzakit/ui test:types` runs and finds the file.
+- [x] 1.2 Write `libs/ui/tests/types/table-row-typing.test-d.ts`, with one `expectTypeOf` / `@ts-expect-error` case per scenario in `specs/ui-table-row-typing/spec.md`. Verify: it **fails** on the current code. The untyped-column, undeclared-field and missing-field cases resolve to `any`, so their `@ts-expect-error` lines are unused. Record the failing output in the commit body.
+- [x] 1.3 Document the type-test layer in `.agents/instructions/testing.md`: what it covers and the command to run it. Verify: `.agents/instructions/workflow.md` lists the command next to the other test commands.
 
 ## 2. Strict row types — `refactor(ui): drop any from the table's row types`
 

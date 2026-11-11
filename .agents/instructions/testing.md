@@ -1,15 +1,15 @@
 # Testing `@muzakit/ui`
 
-Two Vitest projects, one config (`libs/ui/vitest.config.ts`). Tests live in
+Three Vitest projects, one config (`libs/ui/vitest.config.ts`). Tests live in
 `libs/ui/tests/`, outside `src/` — `src/` is both the dts build input and the
 Tailwind `@source` scan root, and test files have no business in either.
 
-| | `unit` | `browser` |
-|---|---|---|
-| Environment | jsdom | real Chromium via Playwright |
-| Renderer | `@vue/test-utils` | `vitest-browser-vue` |
-| CSS | not applied | Tailwind + SCSS, compiled |
-| Covers | props, emits, models, slots, ARIA, keyboard | tokens, geometry, both themes |
+| | `unit` | `browser` | `types` |
+|---|---|---|---|
+| Environment | jsdom | real Chromium via Playwright | none — `tsc`, nothing runs |
+| Renderer | `@vue/test-utils` | `vitest-browser-vue` | — |
+| CSS | not applied | Tailwind + SCSS, compiled | — |
+| Covers | props, emits, models, slots, ARIA, keyboard | tokens, geometry, both themes | public type contracts |
 
 ## Commands
 
@@ -18,6 +18,7 @@ pnpm --filter @muzakit/ui test:unit            # jsdom, ~10s
 pnpm --filter @muzakit/ui test:tokens          # token contracts (the whole browser project)
 pnpm --filter @muzakit/ui test:visual          # same, every browser spec
 pnpm --filter @muzakit/ui test:coverage        # unit + thresholds
+pnpm --filter @muzakit/ui test:types           # type contracts, tsc only, ~1s
 pnpm --filter @muzakit/ui test:visual:docker   # the browser project in CI's image
 ```
 
@@ -38,7 +39,7 @@ button, so the whole set was a record of a design that no longer exists. If it
 comes back, write it against the settled visuals, keep only a Linux set, and
 make it report rather than gate until its baselines are trusted.
 
-## The three layers
+## The layers
 
 **Convention guard** (`tests/conventions.spec.ts`) turns
 `ui-component-migration.md` into assertions: one scoped style block per
@@ -53,6 +54,14 @@ allowed only where the element is teleported out of the component's subtree and
 the block says `teleported:`.
 
 **Unit** — behaviour, not appearance.
+
+**Type contracts** (`tests/types/*.test-d.ts`) pin what a consumer's compiler
+must accept or reject — `expectTypeOf` for the positive cases, `// @ts-expect-error`
+for the negative ones. They exist because `libs/ui/tsconfig.json` covers `src/`
+only: a unit spec is never type-checked, so a type that silently widens to `any`
+passes every other layer. An unused `@ts-expect-error` is a failure, so a check
+that stops rejecting turns red. Type-only imports from `src/` — no `.vue` files,
+the project runs plain `tsc` (`tests/types/tsconfig.json`).
 
 **Token contracts** (`tests/visual/tokens/`) resolve a `--ui-*` token through a
 probe element and compare it against what the browser actually computed, in both

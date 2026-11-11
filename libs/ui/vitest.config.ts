@@ -45,6 +45,22 @@ export default defineConfig({
         },
       },
       {
+        // Compile-time contracts: `tsc` over `*.test-d.ts`, nothing is executed. Unit specs are
+        // not type-checked (`tsconfig.json` covers `src/` only), so a type a consumer relies on
+        // is pinned here instead.
+        extends: true,
+        test: {
+          name: "types",
+          include: [],
+          typecheck: {
+            enabled: true,
+            only: true,
+            include: ["tests/types/**/*.test-d.ts"],
+            tsconfig: "./tests/types/tsconfig.json",
+          },
+        },
+      },
+      {
         extends: true,
         test: {
           name: "browser",
