@@ -72,14 +72,30 @@ const isInteractive = computed(() => clickable || !!href || as === "button");
 
 const componentTag = computed(() => (href ? "a" : as));
 
-const linkAttrs = computed(() => {
-  if (!href) return {};
+// A clickable card on a non-native element needs the semantics a button gets for free:
+// a role, a tab stop, and Enter/Space activation (onKeydown below).
+const needsButtonRole = computed(() => clickable && !href && as !== "button" && as !== "a");
 
-  return {
-    href,
-    target,
-    rel: target === "_blank" ? "noopener noreferrer" : undefined,
-  };
+const elementAttrs = computed(() => {
+  if (href) {
+    return {
+      href,
+      target,
+      rel: target === "_blank" ? "noopener noreferrer" : undefined,
+    };
+  }
+
+  if (as === "button") return { type: "button", disabled: disabled || undefined };
+
+  if (needsButtonRole.value) {
+    return {
+      role: "button",
+      tabindex: disabled ? -1 : 0,
+      "aria-disabled": disabled || undefined,
+    };
+  }
+
+  return {};
 });
 
 const cardClasses = computed(() => [
@@ -101,14 +117,24 @@ const handleClick = (event: MouseEvent): void => {
 
   emit("click", event);
 };
+
+const onKeydown = (event: KeyboardEvent): void => {
+  if (!needsButtonRole.value || (event.key !== "Enter" && event.key !== " ")) return;
+  // Space would scroll the page; Enter on a div does nothing natively.
+  event.preventDefault();
+  // A native click keeps the emitted payload a MouseEvent and reuses handleClick's guards.
+  if (event.currentTarget instanceof HTMLElement) event.currentTarget.click();
+};
 </script>
 
 <template>
   <component
     :is="componentTag"
+    :aria-busy="loading || undefined"
     :class="cardClasses"
-    v-bind="linkAttrs"
+    v-bind="elementAttrs"
     @click="handleClick"
+    @keydown="onKeydown"
   >
     <div
       v-if="loading"
