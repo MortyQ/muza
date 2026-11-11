@@ -41,9 +41,11 @@
     color 150ms ease,
     border-color 150ms ease;
 
-  &:hover {
-    color: var(--ui-foreground);
-    border-color: var(--ui-border);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground);
+      border-color: var(--ui-border);
+    }
   }
 
   /* Instant feedback that the press registered — the clipboard write itself has

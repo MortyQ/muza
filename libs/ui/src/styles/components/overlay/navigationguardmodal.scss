@@ -98,9 +98,11 @@
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
 
-    &:hover {
-      background-color: var(--ui-surface-hover);
-      color: var(--ui-foreground);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--ui-surface-hover);
+        color: var(--ui-foreground);
+      }
     }
   }
 

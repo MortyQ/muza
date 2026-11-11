@@ -114,9 +114,11 @@
   flex-shrink: 0;
   color: var(--ui-foreground-muted);
 
-  &:hover {
-    color: var(--ui-foreground);
-    background-color: var(--ui-surface-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground);
+      background-color: var(--ui-surface-hover);
+    }
   }
 
   &:focus-visible {

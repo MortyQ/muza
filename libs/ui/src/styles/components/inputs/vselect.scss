@@ -141,8 +141,10 @@
   padding: var(--ui-space-xs) 1.75rem var(--ui-space-xs) var(--ui-control-px);
 }
 
-:deep(.multiselect__tags:hover) {
-  border-color: transparent !important;
+@media (hover: hover) and (pointer: fine) {
+  :deep(.multiselect__tags:hover) {
+    border-color: transparent !important;
+  }
 }
 
 /* ============================================
@@ -295,12 +297,16 @@
   line-height: 1;
 }
 
-:deep(.multiselect__tag-icon:hover) {
-  background-color: color-mix(in oklch, var(--ui-primary-foreground) 25%, transparent);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.multiselect__tag-icon:hover) {
+    background-color: color-mix(in oklch, var(--ui-primary-foreground) 25%, transparent);
+  }
 }
 
-:deep(.multiselect__tag-icon:hover::after) {
-  color: var(--ui-primary-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.multiselect__tag-icon:hover::after) {
+    color: var(--ui-primary-foreground);
+  }
 }
 
 /* ============================================

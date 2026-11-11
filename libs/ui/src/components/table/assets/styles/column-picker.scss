@@ -53,9 +53,11 @@
   transition: background 0.15s ease, color 0.15s ease;
   flex-shrink: 0;
 
-  &:hover {
-    background: color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
-    color: var(--ui-foreground);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
+      color: var(--ui-foreground);
+    }
   }
 }
 
@@ -117,13 +119,17 @@
   cursor: pointer;
   transition: color 0.15s ease;
 
-  &:hover {
-    color: var(--ui-foreground);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground);
+    }
   }
 
   &--danger {
-    &:hover {
-      color: var(--ui-danger);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--ui-danger);
+      }
     }
 
     &:disabled {
@@ -212,8 +218,10 @@
   transition: background 0.12s ease-out, color 0.12s ease-out;
   white-space: nowrap;
 
-  &:hover:not(.cp-sort-btn--active) {
-    color: var(--ui-foreground);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.cp-sort-btn--active) {
+      color: var(--ui-foreground);
+    }
   }
 
   &--active {
@@ -251,9 +259,11 @@
     border: 1px solid transparent;
     background-clip: padding-box;
 
-    &:hover {
-      background: var(--ui-border-strong);
-      background-clip: padding-box;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--ui-border-strong);
+        background-clip: padding-box;
+      }
     }
   }
 }
@@ -271,8 +281,10 @@
   transition: background 0.1s ease-out;
   user-select: none;
 
-  &:hover {
-    background: var(--ui-surface-raised);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ui-surface-raised);
+    }
   }
 
   &:hover .cp-group-select-btn,
@@ -335,8 +347,10 @@
   white-space: nowrap;
   transition: opacity 0.12s ease-out, background 0.12s ease-out;
 
-  &:hover {
-    background: color-mix(in oklch, var(--ui-primary) 18%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: color-mix(in oklch, var(--ui-primary) 18%, transparent);
+    }
   }
 }
 
@@ -390,12 +404,16 @@
     }
   }
 
-  &:hover {
-    background: var(--ui-surface-raised);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ui-surface-raised);
+    }
   }
 
-  &:hover .cp-available-item-toggle {
-    opacity: 1;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .cp-available-item-toggle {
+      opacity: 1;
+    }
   }
 
   // Left accent line
@@ -481,8 +499,10 @@
   border-radius: 6px;
   transition: background 0.1s ease-out;
 
-  &:hover {
-    background: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+    }
   }
 }
 
@@ -536,12 +556,18 @@
     }
   }
 
-  &:hover {
-    background: var(--ui-surface-raised);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ui-surface-raised);
+    }
   }
 
-  &:hover .cp-selected-item-drag    { opacity: 0.5; }
-  &:hover .cp-selected-item-remove  { opacity: 1; }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .cp-selected-item-drag    { opacity: 0.5; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .cp-selected-item-remove  { opacity: 1; }
+  }
 
   // Left accent line (type color)
   &::before {
@@ -634,13 +660,17 @@
   color: var(--ui-primary);
 }
 
-.cp-selected-item-pin:hover {
-  background: var(--ui-surface-raised);
-  color: var(--ui-primary);
+@media (hover: hover) and (pointer: fine) {
+  .cp-selected-item-pin:hover {
+    background: var(--ui-surface-raised);
+    color: var(--ui-primary);
+  }
 }
 
-.cp-selected-item-remove:hover {
-  color: var(--ui-danger);
+@media (hover: hover) and (pointer: fine) {
+  .cp-selected-item-remove:hover {
+    color: var(--ui-danger);
+  }
 }
 
 

@@ -27,17 +27,19 @@
   border-left: 2px solid color-mix(in oklch, var(--ui-primary) 70%, transparent);
 }
 
-.v-table-row-wrapper:hover {
-  .v-table-fixed-column {
-    background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
-  }
+@media (hover: hover) and (pointer: fine) {
+  .v-table-row-wrapper:hover {
+    .v-table-fixed-column {
+      background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
+    }
 
-  .v-table-fixed-left-last {
-    border-right-color: color-mix(in oklch, var(--ui-primary) 90%, transparent);
-  }
+    .v-table-fixed-left-last {
+      border-right-color: color-mix(in oklch, var(--ui-primary) 90%, transparent);
+    }
 
-  .v-table-fixed-right-first {
-    border-left-color: color-mix(in oklch, var(--ui-primary) 90%, transparent);
+    .v-table-fixed-right-first {
+      border-left-color: color-mix(in oklch, var(--ui-primary) 90%, transparent);
+    }
   }
 }
 

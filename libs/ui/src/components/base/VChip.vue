@@ -89,6 +89,9 @@ const activeColor = computed<Exclude<ChipColor, "default"> | "default">(() =>
   color === "default" && isSelected.value ? selectedColor : color,
 );
 
+// `click` is a declared emit, so the listener never reaches $attrs; the vnode still carries it.
+const hasClickListener = !!getCurrentInstance()?.vnode.props?.onClick;
+
 const rootClass = computed(() => [
   `v-chip--${size}`,
   `v-chip--${variant}`,
@@ -96,12 +99,10 @@ const rootClass = computed(() => [
   {
     "v-chip--selected": isSelected.value,
     "v-chip--disabled": disabled,
-    "v-chip--interactive": !disabled,
+    // Hover affordance only where a click does something — the same rule as rootAttrs.
+    "v-chip--interactive": !disabled && (isBound.value || hasClickListener),
   },
 ]);
-
-// `click` is a declared emit, so the listener never reaches $attrs; the vnode still carries it.
-const hasClickListener = !!getCurrentInstance()?.vnode.props?.onClick;
 
 /** A chip that does something is a button; one that only displays stays out of the tab order. */
 const rootAttrs = computed(() => {

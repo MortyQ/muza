@@ -182,9 +182,11 @@
   cursor: pointer;
   transition: color 150ms ease, background-color 150ms ease;
 
-  &:hover {
-    color: var(--ui-danger);
-    background-color: color-mix(in oklch, var(--ui-danger) 10%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-danger);
+      background-color: color-mix(in oklch, var(--ui-danger) 10%, transparent);
+    }
   }
 }
 
@@ -205,8 +207,10 @@
   cursor: pointer;
   transition: color 150ms ease, box-shadow 150ms ease;
 
-  &:hover {
-    color: var(--ui-foreground);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-foreground);
+    }
   }
 
   &:focus-visible {
@@ -307,8 +311,10 @@
   background-color: var(--ui-surface-sunken);
 }
 
-.v-input-container:hover .v-fieldset:not(.v-fieldset--active):not(.v-fieldset--error):not(.v-fieldset--disabled) {
-  border-color: var(--ui-border-strong);
+@media (hover: hover) and (pointer: fine) {
+  .v-input-container:hover .v-fieldset:not(.v-fieldset--active):not(.v-fieldset--error):not(.v-fieldset--disabled) {
+    border-color: var(--ui-border-strong);
+  }
 }
 
 /* ============================================

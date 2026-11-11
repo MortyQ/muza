@@ -155,9 +155,11 @@ $highlight-transition: 300ms ease;
     opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
     transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
 
-  &:hover {
-    color: var(--ui-primary-hover);
-    border-color: var(--ui-primary);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-primary-hover);
+      border-color: var(--ui-primary);
+    }
   }
 
   &:active {
@@ -181,10 +183,12 @@ $highlight-transition: 300ms ease;
 }
 
 // Reveal on hover — pure CSS, no JS listeners.
-.v-table-row-wrapper:hover > .v-table-cell .v-table-pin-button,
-.v-table-header-cell:hover .v-table-pin-button {
-  opacity: 1;
-  pointer-events: auto;
+@media (hover: hover) and (pointer: fine) {
+  .v-table-row-wrapper:hover > .v-table-cell .v-table-pin-button,
+  .v-table-header-cell:hover .v-table-pin-button {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 // The cell hosting the row pin button needs a positioning context.

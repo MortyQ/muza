@@ -24,9 +24,11 @@
     transition: border-color 0.3s ease, background-color 0.3s ease,
       transform 0.3s ease, box-shadow 0.3s ease;
 
-    &:hover:not(.v-dragndrop__dropzone--disabled) {
-      border-color: var(--ui-primary);
-      background-color: var(--ui-surface-hover);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(.v-dragndrop__dropzone--disabled) {
+        border-color: var(--ui-primary);
+        background-color: var(--ui-surface-hover);
+      }
     }
 
     &--dragging {
@@ -87,9 +89,11 @@
     background-color: var(--ui-surface-hover);
     transition: background-color 0.3s ease, transform 0.3s ease;
 
-    .v-dragndrop__dropzone:hover:not(.v-dragndrop__dropzone--disabled) & {
-      background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
-      transform: scale(1.1);
+    @media (hover: hover) and (pointer: fine) {
+      .v-dragndrop__dropzone:hover:not(.v-dragndrop__dropzone--disabled) & {
+        background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+        transform: scale(1.1);
+      }
     }
 
     .v-dragndrop__dropzone--dragging & {
@@ -144,9 +148,11 @@
     background-color: var(--ui-surface);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover {
-      border-color: color-mix(in oklch, var(--ui-primary) 50%, transparent);
-      box-shadow: var(--ui-shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: color-mix(in oklch, var(--ui-primary) 50%, transparent);
+        box-shadow: var(--ui-shadow-md);
+      }
     }
   }
 
@@ -194,9 +200,11 @@
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
 
-    &:hover:not(:disabled) {
-      background-color: var(--ui-danger-subtle);
-      color: var(--ui-danger);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background-color: var(--ui-danger-subtle);
+        color: var(--ui-danger);
+      }
     }
 
     &:disabled {

@@ -80,8 +80,10 @@
     background-color: var(--v-chip-tone-subtle);
     color: var(--v-chip-tone-hover);
 
-    &.v-chip--interactive:hover {
-      background-color: color-mix(in oklch, var(--v-chip-tone) 20%, var(--v-chip-tone-subtle));
+    @media (hover: hover) and (pointer: fine) {
+      &.v-chip--interactive:hover {
+        background-color: color-mix(in oklch, var(--v-chip-tone) 20%, var(--v-chip-tone-subtle));
+      }
     }
 
     &.v-chip--selected {
@@ -94,8 +96,10 @@
     background-color: var(--v-chip-tone);
     color: var(--v-chip-tone-fg);
 
-    &.v-chip--interactive:hover {
-      background-color: var(--v-chip-tone-hover);
+    @media (hover: hover) and (pointer: fine) {
+      &.v-chip--interactive:hover {
+        background-color: var(--v-chip-tone-hover);
+      }
     }
 
     &.v-chip--selected {
@@ -109,9 +113,11 @@
     background-color: transparent;
     color: var(--ui-foreground-secondary);
 
-    &.v-chip--interactive:hover {
-      border-color: var(--v-chip-tone);
-      color: var(--v-chip-tone);
+    @media (hover: hover) and (pointer: fine) {
+      &.v-chip--interactive:hover {
+        border-color: var(--v-chip-tone);
+        color: var(--v-chip-tone);
+      }
     }
 
     &.v-chip--selected {
@@ -183,9 +189,11 @@
     opacity: 0.7;
     transition: background-color 150ms ease, opacity 150ms ease;
 
-    &:hover:not(:disabled) {
-      background-color: color-mix(in oklch, currentcolor 15%, transparent);
-      opacity: 1;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background-color: color-mix(in oklch, currentcolor 15%, transparent);
+        opacity: 1;
+      }
     }
 
     &:disabled {

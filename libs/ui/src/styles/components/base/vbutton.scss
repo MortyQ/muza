@@ -100,9 +100,11 @@
   border-color: color-mix(in oklch, var(--ui-primary) 16%, transparent);
   color: var(--ui-primary-hover);
 
-  &:hover:not(:disabled) {
-    background-color: color-mix(in oklch, var(--ui-primary) 15%, transparent);
-    border-color: color-mix(in oklch, var(--ui-primary) 24%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklch, var(--ui-primary) 15%, transparent);
+      border-color: color-mix(in oklch, var(--ui-primary) 24%, transparent);
+    }
   }
 }
 
@@ -111,9 +113,11 @@
   border-color: color-mix(in oklch, var(--ui-info) 16%, transparent);
   color: var(--ui-info-hover);
 
-  &:hover:not(:disabled) {
-    background-color: color-mix(in oklch, var(--ui-info) 15%, transparent);
-    border-color: color-mix(in oklch, var(--ui-info) 24%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklch, var(--ui-info) 15%, transparent);
+      border-color: color-mix(in oklch, var(--ui-info) 24%, transparent);
+    }
   }
 }
 
@@ -122,9 +126,11 @@
   border-color: color-mix(in oklch, var(--ui-success) 16%, transparent);
   color: var(--ui-success-hover);
 
-  &:hover:not(:disabled) {
-    background-color: color-mix(in oklch, var(--ui-success) 15%, transparent);
-    border-color: color-mix(in oklch, var(--ui-success) 24%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklch, var(--ui-success) 15%, transparent);
+      border-color: color-mix(in oklch, var(--ui-success) 24%, transparent);
+    }
   }
 }
 
@@ -133,9 +139,11 @@
   border-color: color-mix(in oklch, var(--ui-warning) 16%, transparent);
   color: var(--ui-warning-hover);
 
-  &:hover:not(:disabled) {
-    background-color: color-mix(in oklch, var(--ui-warning) 15%, transparent);
-    border-color: color-mix(in oklch, var(--ui-warning) 24%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklch, var(--ui-warning) 15%, transparent);
+      border-color: color-mix(in oklch, var(--ui-warning) 24%, transparent);
+    }
   }
 }
 
@@ -144,9 +152,11 @@
   border-color: color-mix(in oklch, var(--ui-danger) 16%, transparent);
   color: var(--ui-danger-hover);
 
-  &:hover:not(:disabled) {
-    background-color: color-mix(in oklch, var(--ui-danger) 15%, transparent);
-    border-color: color-mix(in oklch, var(--ui-danger) 24%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklch, var(--ui-danger) 15%, transparent);
+      border-color: color-mix(in oklch, var(--ui-danger) 24%, transparent);
+    }
   }
 }
 
@@ -158,9 +168,11 @@
   border-color: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
   color: var(--ui-foreground);
 
-  &:hover:not(:disabled) {
-    background-color: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
-    border-color: color-mix(in oklch, var(--ui-foreground) 13%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+      border-color: color-mix(in oklch, var(--ui-foreground) 13%, transparent);
+    }
   }
 }
 
@@ -174,9 +186,11 @@
   border-color: var(--ui-border-strong);
   color: var(--ui-foreground-inverted);
 
-  &:hover:not(:disabled) {
-    background-color: var(--ui-foreground-muted);
-    border-color: var(--ui-foreground-muted);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: var(--ui-foreground-muted);
+      border-color: var(--ui-foreground-muted);
+    }
   }
 
   &:active:not(:disabled) {
@@ -268,8 +282,10 @@
      looks broken. */
   box-shadow: none;
 
-  &:hover:not(:disabled) {
-    box-shadow: none;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      box-shadow: none;
+    }
   }
 
   &:hover:not(:disabled),

@@ -41,8 +41,10 @@
   transition: border-color 0.2s ease;
 }
 
-.v-datepicker-container:hover .v-datepicker-fieldset {
-  border-color: var(--ui-border-strong);
+@media (hover: hover) and (pointer: fine) {
+  .v-datepicker-container:hover .v-datepicker-fieldset {
+    border-color: var(--ui-border-strong);
+  }
 }
 
 .v-datepicker-container:focus-within .v-datepicker-fieldset,
@@ -172,9 +174,11 @@
   color: var(--ui-primary);
 }
 
-.v-datepicker-arrow-icon:hover {
-  color: var(--ui-primary);
-  cursor: pointer;
+@media (hover: hover) and (pointer: fine) {
+  .v-datepicker-arrow-icon:hover {
+    color: var(--ui-primary);
+    cursor: pointer;
+  }
 }
 
 .v-datepicker-icon-wrapper {
@@ -197,9 +201,11 @@
   cursor: pointer;
   transition: color 0.15s ease, background-color 0.15s ease;
 
-  &:hover {
-    color: var(--ui-danger);
-    background-color: color-mix(in oklch, var(--ui-danger) 10%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ui-danger);
+      background-color: color-mix(in oklch, var(--ui-danger) 10%, transparent);
+    }
   }
 }
 
@@ -391,29 +397,39 @@
   background-color: var(--ui-primary);
 }
 
-:deep(.dp__overlay_cell:hover) {
-  background-color: var(--ui-surface-hover);
-  color: var(--ui-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.dp__overlay_cell:hover) {
+    background-color: var(--ui-surface-hover);
+    color: var(--ui-foreground);
+  }
 }
 
-:deep(.dp--preset-range:hover) {
-  background-color: var(--ui-surface-hover);
-  color: var(--ui-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.dp--preset-range:hover) {
+    background-color: var(--ui-surface-hover);
+    color: var(--ui-foreground);
+  }
 }
 
-:deep(.dp__overlay_cell_active:hover) {
-  background-color: var(--ui-primary);
-  color: var(--ui-primary-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.dp__overlay_cell_active:hover) {
+    background-color: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+  }
 }
 
-:deep(.dp__month_year_select:hover) {
-  background-color: var(--ui-surface-hover);
-  color: var(--ui-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.dp__month_year_select:hover) {
+    background-color: var(--ui-surface-hover);
+    color: var(--ui-foreground);
+  }
 }
 
-:deep(.dp--year-select:hover) {
-  background-color: var(--ui-surface-hover);
-  color: var(--ui-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.dp--year-select:hover) {
+    background-color: var(--ui-surface-hover);
+    color: var(--ui-foreground);
+  }
 }
 
 :deep(.dp__date_hover) {

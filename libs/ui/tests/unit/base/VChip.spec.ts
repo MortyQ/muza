@@ -250,3 +250,11 @@ describe("VChip keyboard and semantics", () => {
       .toBe("Remove Paris");
   });
 });
+
+describe("VChip hover affordance", () => {
+  it("is offered only by a chip that does something", () => {
+    expect(chip({ label: "Static" }).classes()).not.toContain("v-chip--interactive");
+    expect(mount(VChip, { props: { label: "A", onClick: () => undefined }, global: { stubs } })
+      .classes()).toContain("v-chip--interactive");
+  });
+});
