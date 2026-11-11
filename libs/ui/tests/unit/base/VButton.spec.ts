@@ -169,4 +169,28 @@ describe("VButton", () => {
       expect(w.attributes("tabindex")).toBeUndefined();
     });
   });
+
+  // The button reads RouterLink from the app instead of importing vue-router, so an app without
+  // a router can still use `to` — as a plain link.
+  describe("link mode without a router", () => {
+    it("renders a plain anchor for a string path", () => {
+      const w = mount(VButton, { props: { text: "Docs", to: "/docs" } });
+      expect(w.element.tagName).toBe("A");
+      expect(w.attributes("href")).toBe("/docs");
+      expect(w.attributes("type")).toBeUndefined();
+    });
+
+    it("drops the href while disabled, so the link cannot navigate", () => {
+      const w = mount(VButton, { props: { text: "Docs", to: "/docs", disabled: true } });
+      expect(w.attributes("href")).toBeUndefined();
+      expect(w.attributes("aria-disabled")).toBe("true");
+      expect(w.attributes("tabindex")).toBe("-1");
+    });
+
+    it("cannot resolve a route object, so it leaves the anchor without an href", () => {
+      const w = mount(VButton, { props: { text: "Go", to: { name: "target" } } });
+      expect(w.element.tagName).toBe("A");
+      expect(w.attributes("href")).toBeUndefined();
+    });
+  });
 });

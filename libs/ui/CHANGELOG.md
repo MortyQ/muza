@@ -50,6 +50,7 @@
   - A `Column<Product>` still fits wherever a plain `Column` is expected.
   - The unexported legacy `TableHeader` / `TableRow` types are removed.
   - Runtime behaviour is unchanged.
+- **`VButton` no longer imports vue-router.** It takes `RouterLink` from the app, which `app.use(router)` registers. In an app without a router, `to` renders a plain `<a>`: a string path becomes its `href`, a route object cannot be resolved, and a disabled link drops its `href`. With a router, nothing changes.
 - **`TablePeriodSelect`**: `widthClass` defaults to `""`, not the Tailwind class `w-40`. The library's own templates carry no utility classes. The wrapper is still 10rem wide, so nothing moves. Pass a class only for your app's own sizing.
 - **Raw colours replaced with tokens**: `white` on primary fills is now `--ui-primary-foreground`, in the same colour. The switch thumb uses that token too. The modal and drawer glass edge is foreground at 10% instead of `white` at 30%, so it shows in light mode and no longer glares in dark.
 
