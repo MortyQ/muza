@@ -207,3 +207,8 @@
     transform: none;
   }
 }
+
+/* Focused on open by useDialogFocus; not a control, so no ring of its own. */
+.v-drawer__container:focus {
+  outline: none;
+}

@@ -181,3 +181,9 @@
     transform: none;
   }
 }
+
+/* The container takes focus on open (useDialogFocus) so Escape and Tab land inside it. It is
+   not a control, so it draws no ring; the controls inside keep theirs. */
+.v-modal__container:focus {
+  outline: none;
+}

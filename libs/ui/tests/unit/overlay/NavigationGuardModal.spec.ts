@@ -13,7 +13,7 @@ const stubs = { Icon: true };
  * rendered inside a `<router-view>` — so the modal has to be mounted inside a
  * real route, with a real router.
  */
-async function guarded(props: Record<string, unknown> = {}) {
+async function guarded(props: Record<string, unknown> = {}, attach = false) {
   const when = ref(true);
 
   const Editor = defineComponent({
@@ -35,6 +35,7 @@ async function guarded(props: Record<string, unknown> = {}) {
 
   const w = mount(defineComponent({ template: "<RouterView />" }), {
     global: { plugins: [router], stubs },
+    ...(attach ? { attachTo: document.body } : {}),
   });
   await flushPromises();
 
@@ -104,6 +105,24 @@ describe("NavigationGuardModal", () => {
       expect(dialog(w).attributes("role")).toBe("dialog");
       expect(dialog(w).attributes("aria-modal")).toBe("true");
       expect(dialog(w).attributes("aria-label")).toBe("Hold on");
+    });
+
+    it("takes focus on open and hands it back to the trigger on cancel", async () => {
+      const trigger = document.createElement("button");
+      document.body.appendChild(trigger);
+      trigger.focus();
+
+      const { w, router } = await guarded({}, true);
+      router.push("/away");
+      await flushPromises();
+      expect(document.activeElement).toBe(dialog(w).element);
+
+      await dialog(w).trigger("keydown.esc");
+      await flushPromises();
+      expect(document.activeElement).toBe(trigger);
+
+      w.unmount();
+      trigger.remove();
     });
 
     it("is focusable, so focus can be moved into it", async () => {

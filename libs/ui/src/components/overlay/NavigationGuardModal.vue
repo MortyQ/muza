@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { type MaybeRefOrGetter, nextTick, toValue, useTemplateRef, watch } from "vue";
+import { type MaybeRefOrGetter, toValue, useTemplateRef } from "vue";
 
+import { useDialogFocus } from "../../composables/useDialogFocus";
 import { useNavigationGuard } from "../../composables/useNavigationGuard";
 import VButton from "../base/VButton.vue";
 import VIcon from "../base/VIcon.vue";
@@ -24,13 +25,8 @@ const {
 
 const { isPending, confirm, cancel } = useNavigationGuard({ when: () => toValue(when) });
 
-const dialogRef = useTemplateRef<HTMLDivElement>("dialog");
-
-watch(isPending, (pending) => {
-  if (pending) {
-    nextTick(() => dialogRef.value?.focus());
-  }
-});
+// Focus in on open, Tab kept inside, focus back to the trigger on close.
+const { trapTab } = useDialogFocus(isPending, useTemplateRef<HTMLDivElement>("dialog"));
 </script>
 
 <template>
@@ -45,6 +41,7 @@ watch(isPending, (pending) => {
         role="dialog"
         tabindex="-1"
         @click.self="cancel"
+        @keydown="trapTab"
         @keydown.esc="cancel"
       >
         <Transition
