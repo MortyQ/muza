@@ -50,6 +50,11 @@
   - A `Column<Product>` still fits wherever a plain `Column` is expected.
   - The unexported legacy `TableHeader` / `TableRow` types are removed.
   - Runtime behaviour is unchanged.
+- **`VDatepicker` runs on `@vuepic/vue-datepicker` 14** (was 12.1). `vue-multiselect` is pinned to `^3.5.0`, already the installed version.
+  - The library renamed every class from `dp__x_y` to `dp--x-y`. All overrides are moved over, so the picker keeps the design-system colours instead of falling back to the stock blue theme.
+  - The menu and calendar classes now go through the library's `ui` prop. The old `*-class-name` props no longer exist, and passed as attributes they fell on the root, so the menu's elevation and radius never applied. They do now.
+  - The hover tint on a date applies only on hover. It used to paint every selectable date.
+  - From the library: Shift+Tab no longer force-closes the menu unless `config.tabOutClosesMenu` is set, and the week start is now locale-based. `VDatepicker` still pins Sunday.
 - **`VButton` no longer imports vue-router.** It takes `RouterLink` from the app, which `app.use(router)` registers. In an app without a router, `to` renders a plain `<a>`: a string path becomes its `href`, a route object cannot be resolved, and a disabled link drops its `href`. With a router, nothing changes.
 - **`TablePeriodSelect`**: `widthClass` defaults to `""`, not the Tailwind class `w-40`. The library's own templates carry no utility classes. The wrapper is still 10rem wide, so nothing moves. Pass a class only for your app's own sizing.
 - **Raw colours replaced with tokens**: `white` on primary fills is now `--ui-primary-foreground`, in the same colour. The switch thumb uses that token too. The modal and drawer glass edge is foreground at 10% instead of `white` at 30%, so it shows in light mode and no longer glares in dark.

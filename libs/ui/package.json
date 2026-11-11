@@ -60,11 +60,11 @@
     "@iconify/vue": "^5.0.0",
     "@muzakit/utils": "workspace:*",
     "@tanstack/vue-virtual": "^3.13.23",
-    "@vuepic/vue-datepicker": "^12.0.0",
+    "@vuepic/vue-datepicker": "^14.0.0",
     "@vueuse/core": "^14.2.1",
     "keyv-browser": "^0.1.1",
     "luxon": "^3.5.0",
-    "vue-multiselect": "^3.0.0",
+    "vue-multiselect": "^3.5.0",
     "vue-sonner": "^2.0.9"
   }
 }

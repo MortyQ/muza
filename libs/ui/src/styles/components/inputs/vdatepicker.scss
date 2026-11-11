@@ -134,7 +134,7 @@
 /* A resting label stands where the placeholder would, so the placeholder waits
    until the label has moved out of the way — VInput does the same. */
 .v-datepicker-container--labelled:not(.v-datepicker-container--open):not(:focus-within) {
-  :deep(.dp__input::placeholder) {
+  :deep(.dp--input::placeholder) {
     color: transparent;
   }
 }
@@ -243,7 +243,7 @@
   --dp-preview-font-size: var(--ui-text-2xs);
   --dp-time-font-size: var(--ui-text-base);
 
-  /* The field's height is set on `.dp__input` below rather than derived from
+  /* The field's height is set on `.dp--input` below rather than derived from
      vertical padding, so it lands on the control scale exactly the way the
      button and the plain field do. The padding that remains is horizontal only:
      room for the calendar icon on the left and the clear button on the right. */
@@ -298,11 +298,11 @@
    control on the same scale as everything else, and the type is free to move
    inside it.
    ============================================ */
-:deep(.dp__input) {
+:deep(.dp--input) {
   height: var(--ui-control-h);
 }
 
-:deep(.dp__input_icon svg) {
+:deep(.dp--input-icon svg) {
   width: 0.9375rem;
   height: 0.9375rem;
 }
@@ -319,15 +319,15 @@
    font sizes, three padding quadruples and three icon sizes per size — is now
    one height each, because the padding and the type belong to the chrome.
    ============================================ */
-.v-datepicker--sm :deep(.dp__input) {
+.v-datepicker--sm :deep(.dp--input) {
   height: var(--ui-control-h-sm);
 }
 
-.v-datepicker--md :deep(.dp__input) {
+.v-datepicker--md :deep(.dp--input) {
   height: var(--ui-control-h-md);
 }
 
-.v-datepicker--lg :deep(.dp__input) {
+.v-datepicker--lg :deep(.dp--input) {
   height: var(--ui-control-h-lg);
 }
 
@@ -340,65 +340,64 @@
   border-color: var(--ui-border);
 }
 
-:deep(.dp__disabled) {
+:deep(.dp--disabled) {
   background-color: color-mix(in oklch, var(--ui-surface-hover) 30%, transparent);
   cursor: not-allowed;
   color: var(--ui-foreground-muted);
 }
 
-:deep(.dp__menu) {
+:deep(.dp--menu) {
   font-family: inherit;
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius);
   box-shadow: var(--ui-shadow-md);
 }
 
-:deep(.dp__menu_inner),
-:deep(.dp__instance_calendar),
-:deep(.dp__overlay),
+:deep(.dp--menu-inner),
+:deep(.dp--instance-calendar),
+:deep(.dp--overlay),
 :deep(.dp--overlay-relative) {
   background-color: var(--ui-surface-raised);
   border-radius: var(--ui-radius-xs);
 }
 
-:deep(.dp__menu_content_wrapper) {
+:deep(.dp--menu-content-wrapper) {
   background-color: var(--ui-surface-raised);
   border-radius: var(--ui-radius-xs);
   color: var(--ui-foreground);
   border: none;
 }
 
-:deep(.dp__btn),
+:deep(.dp--btn-base),
 :deep(.dp--preset-range),
-:deep(.dp__calendar_header_item),
-:deep(.dp__cell_inner),
-:deep(.dp__pointer .dp--future),
-:deep(.dp__overlay_cell),
-:deep(.dp__overlay_cell_pad) {
+:deep(.dp--calendar-header-item),
+:deep(.dp--cell-inner),
+:deep(.dp--pointer .dp--future),
+:deep(.dp--overlay-cell),
+:deep(.dp--overlay-cell-pad) {
   color: var(--ui-foreground);
 }
 
-:deep(.dp__overlay_cell_disabled) {
+:deep(.dp--overlay-cell-disabled) {
   background-color: var(--ui-surface-raised);
   color: color-mix(in oklch, var(--ui-foreground-muted) 50%, transparent);
 }
 
-:deep(.dp__range_between),
-:deep(.dp__cell_in_between) {
+:deep(.dp--range-between),
+:deep(.dp--cell-in-between) {
   color: var(--ui-foreground-muted);
   background-color: var(--ui-surface-hover);
   border: none;
 }
 
-:deep(.dp__range_end),
-:deep(.dp__range_start),
-:deep(.dp__overlay_cell_active) {
+:deep(.dp--active),
+:deep(.dp--overlay-cell-active) {
   color: var(--ui-primary-foreground);
   background-color: var(--ui-primary);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :deep(.dp__overlay_cell:hover) {
+  :deep(.dp--overlay-cell:hover) {
     background-color: var(--ui-surface-hover);
     color: var(--ui-foreground);
   }
@@ -412,14 +411,14 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :deep(.dp__overlay_cell_active:hover) {
+  :deep(.dp--overlay-cell-active:hover) {
     background-color: var(--ui-primary);
     color: var(--ui-primary-foreground);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :deep(.dp__month_year_select:hover) {
+  :deep(.dp--month-year-select:hover) {
     background-color: var(--ui-surface-hover);
     color: var(--ui-foreground);
   }
@@ -432,12 +431,14 @@
   }
 }
 
-:deep(.dp__date_hover) {
-  background-color: var(--ui-surface-hover);
-  color: var(--ui-foreground);
+@media (hover: hover) and (pointer: fine) {
+  :deep(.dp--date-hoverable:hover) {
+    background-color: var(--ui-surface-hover);
+    color: var(--ui-foreground);
+  }
 }
 
-:deep(.dp__input) {
+:deep(.dp--input) {
   width: 100%;
   border: 0;
   border-radius: var(--ui-radius-lg);
@@ -450,61 +451,55 @@
   transition: color 0.2s ease-out;
 }
 
-:deep(.dp__input::placeholder) {
+:deep(.dp--input::placeholder) {
   color: var(--ui-input-placeholder);
   transition: color 0.2s ease;
 }
 
-:deep(.dp__input:focus) {
+:deep(.dp--input:focus) {
   outline: none;
 }
 
-:deep(.dp__input:disabled),
-:deep(.dp__input.dp__disabled) {
+:deep(.dp--input:disabled),
+:deep(.dp--input.dp--disabled) {
   cursor: not-allowed;
   background-color: transparent;
   color: var(--ui-foreground-disabled);
 }
 
-:deep(.dp__arrow_top) {
+:deep(.dp--arrow-top) {
   background-color: var(--ui-surface-raised);
   border-top-color: var(--ui-border);
   border-left-color: var(--ui-border);
 }
 
-:deep(.dp__range_start),
-:deep(.dp__range_end) {
-  background-color: var(--ui-primary);
-  color: var(--ui-primary-foreground);
-}
-
-:deep(.dp__today) {
+:deep(.dp--today) {
   color: color-mix(in oklch, var(--ui-warning) 90%, transparent);
 }
 
-:deep(.dp__cell_disabled) {
+:deep(.dp--cell-disabled) {
   color: color-mix(in oklch, var(--ui-foreground-muted) 80%, transparent);
 }
 
 /* ============================================
    MENU / INPUT CONTAINER
    ============================================ */
-.v-datepicker-menu {
+:deep(.v-datepicker-menu) {
   box-shadow: var(--ui-shadow-xl);
   border-radius: var(--ui-radius-lg);
   overflow: hidden;
 }
 
-.v-datepicker-calendar {
+:deep(.v-datepicker-calendar) {
   font-family: inherit;
 }
 
-:deep(.dp__input_wrap) {
+:deep(.dp--input-wrap) {
   position: relative;
   border-radius: var(--ui-radius-lg);
 }
 
-:deep(.dp__input_icon) {
+:deep(.dp--input-icon) {
   position: absolute;
   left: 0.5rem;
   top: 50%;
@@ -512,7 +507,7 @@
   pointer-events: none;
 }
 
-:deep(.dp__clear_icon) {
+:deep(.dp--clear-btn) {
   position: absolute;
   right: 0.5rem;
   top: 50%;
@@ -524,7 +519,7 @@
    DARK THEME
    ============================================ */
 :global(.dark) .v-datepicker,
-.v-datepicker:global(.dp__theme_dark) {
+.v-datepicker:global(.dp--theme-dark) {
   --dp-background-color: var(--ui-nav);
   --dp-text-color: var(--ui-foreground-inverted);
   --dp-hover-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-nav));

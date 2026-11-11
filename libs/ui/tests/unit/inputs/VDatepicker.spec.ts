@@ -33,11 +33,21 @@ describe("VDatepicker", () => {
       expect(inner(picker({ autoApply: false })).props().autoApply).toBe(false);
     });
 
-    it("names its calendar and menu classes so the SCSS can reach them", () => {
-      // Not declared props on the library component, so they arrive as attrs.
-      const attrs = inner(picker()).attributes();
-      expect(attrs["calendar-class-name"]).toBe("v-datepicker-calendar");
-      expect(attrs["menu-class-name"]).toBe("v-datepicker-menu");
+    it("names its calendar, menu and input through the library's `ui` prop", () => {
+      // The `*-class-name` props are gone from the library; passed as attrs they fell on the root
+      // and the SCSS for the menu and calendar never matched anything.
+      const w = picker();
+      expect(inner(w).props().ui).toEqual({
+        menu: "v-datepicker-menu",
+        calendar: "v-datepicker-calendar",
+        input: "v-datepicker-input",
+      });
+      expect(inner(w).attributes("menu-class-name")).toBeUndefined();
+    });
+
+    it("adds the error class to the input once the field is invalid", () => {
+      const w = picker({ validation: { $error: true, $errors: [{ $message: "Required" }] } });
+      expect(inner(w).props().ui?.input).toEqual(["v-datepicker-input", "v-datepicker-input-error"]);
     });
   });
 
