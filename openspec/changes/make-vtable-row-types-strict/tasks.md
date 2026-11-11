@@ -13,11 +13,11 @@ any critical finding. Nothing here is visual, so the blocks need no new token co
 
 ## 2. Strict row types — `refactor(ui): drop any from the table's row types`
 
-- [ ] 2.1 In `types/index.ts`, turn the `Column` callbacks and `HeaderContext.onHeaderClick` into method signatures (design D1), each with its one-line comment. Default `Column` / `CellContext` to `Record<string, unknown>`. Verify: `grep -n "any" libs/ui/src/components/table/types/` returns no type usages and no `no-explicit-any` disables.
-- [ ] 2.2 Change `ExpandableRow` to `[key: string]: unknown` (design D2). Make `MultiSelectConfig.isRowSelectable` a method signature in `types/selection.ts`. Verify: `pnpm --filter @muzakit/ui type-check` lists the internal fallout.
-- [ ] 2.3 Fix that fallout in `VTable.vue`, `useTableSelection`, `useExpandableTable`, `useTableCellMetadata`, `useTableColumnConfig`, `useTableSort` and any subcomponent it reports. Narrow at the point of use, add no casts, and delete any `as unknown as` bridge that has become redundant. Read `.agents/skills/vtable/internals.md` first. If the fallout needs more than local narrowing in more than about five places, stop and revise `design.md` (see its Risks). Verify: `pnpm --filter @muzakit/ui type-check` passes.
-- [ ] 2.4 Delete the legacy `TableHeader` interface and the `TableRow` type (design D3). Verify: `grep -rn "TableRow\b" libs apps` matches only the `TableRow.vue` component.
-- [ ] 2.5 Verify: `pnpm --filter @muzakit/ui test:types` is now green, and `pnpm --filter @muzakit/ui test:unit` and `test:tokens` pass with no assertion edited (spec: runtime behaviour unchanged).
+- [x] 2.1 In `types/index.ts`, turn the `Column` callbacks and `HeaderContext.onHeaderClick` into method signatures (design D1), each with its one-line comment. Default `Column` / `CellContext` to `Record<string, unknown>`. Verify: `grep -n "any" libs/ui/src/components/table/types/` returns no type usages and no `no-explicit-any` disables.
+- [x] 2.2 Change `ExpandableRow` to `[key: string]: unknown` (design D2). Make `MultiSelectConfig.isRowSelectable` a method signature in `types/selection.ts`. Verify: `pnpm --filter @muzakit/ui type-check` lists the internal fallout.
+- [x] 2.3 Fix that fallout in `VTable.vue`, `useTableSelection`, `useExpandableTable`, `useTableCellMetadata`, `useTableColumnConfig`, `useTableSort` and any subcomponent it reports. Narrow at the point of use, add no casts, and delete any `as unknown as` bridge that has become redundant. Read `.agents/skills/vtable/internals.md` first. If the fallout needs more than local narrowing in more than about five places, stop and revise `design.md` (see its Risks). Verify: `pnpm --filter @muzakit/ui type-check` passes.
+- [x] 2.4 Delete the legacy `TableHeader` interface and the `TableRow` type (design D3). Verify: `grep -rn "TableRow\b" libs apps` matches only the `TableRow.vue` component.
+- [x] 2.5 Verify: `pnpm --filter @muzakit/ui test:types` is now green, and `pnpm --filter @muzakit/ui test:unit` and `test:tokens` pass with no assertion edited (spec: runtime behaviour unchanged).
 
 ## 3. Consumers and docs — `refactor(dashboard): type the table demo's rows`
 

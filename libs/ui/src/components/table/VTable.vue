@@ -473,7 +473,7 @@ const selectedRowsRef = computed({
 
 const selection = useTableSelection({
   config: multiSelectConfig,
-  flattenedData: displayData as unknown as Ref<FlattenedRow[]>,
+  flattenedData: displayData,
   selectedRows: selectedRowsRef as unknown as Ref<ExpandableRow[]>,
   onSelectionChange: (selected) => {
     emit("update:selected-rows", selected as unknown as TData[]);

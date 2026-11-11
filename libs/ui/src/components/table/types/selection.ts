@@ -44,10 +44,10 @@ export interface MultiSelectConfig {
   showHeaderCheckbox?: boolean
 
   /**
-     * Custom function to determine if a row can be selected
+     * Custom function to determine if a row can be selected. A method signature so that a check
+     * written for a narrower row type still fits (see `Column`).
      */
-
-  isRowSelectable?: (row: ExpandableRow) => boolean
+  isRowSelectable?(row: ExpandableRow): boolean
 
   /**
      * Select only visible rows (considering expand/collapse state)

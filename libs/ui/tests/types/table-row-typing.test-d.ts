@@ -13,11 +13,14 @@ import type { TableEmits, TableProps } from "../../src/components/table/types/pr
  * compile-time property, which is why it lives in the typecheck project and not in a unit spec.
  */
 
-interface Product extends Record<string, unknown> {
+// A type alias, not an interface: an object type alias gets an implicit index signature, so it
+// satisfies VTable's `TData extends Record<string, unknown>` while unknown fields stay errors. An
+// interface would need `extends ExpandableRow`, which brings an index signature of its own.
+type Product = {
   id: number
   name: string
   price: number
-}
+};
 
 describe("a declared row type", () => {
   it("reaches column callbacks", () => {
@@ -43,9 +46,17 @@ describe("a declared row type", () => {
   it("reaches the props and events", () => {
     expectTypeOf<TableProps<Product>["data"]>().toEqualTypeOf<Product[]>();
     expectTypeOf<TableProps<Product>["columns"]>().toEqualTypeOf<Column<Product>[]>();
-    expectTypeOf<TableEmits<Product>>().toBeCallableWith("row-click", {
-      id: 1, name: "Lamp", price: 10,
-    });
+  });
+
+  it("types the row-click payload", () => {
+    // TableEmits is an overloaded intersection, which expectTypeOf cannot resolve; a plain call
+    // goes through real overload resolution. Never invoked.
+    const check = (emit: TableEmits<Product>) => {
+      emit("row-click", { id: 1, name: "Lamp", price: 10 });
+      // @ts-expect-error — the payload is a Product, so `name` and `price` are required
+      emit("row-click", { id: 1 });
+    };
+    expectTypeOf(check).toBeFunction();
   });
 });
 
