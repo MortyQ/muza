@@ -32,8 +32,8 @@ any critical finding. Nothing here is visual, so the blocks need no new token co
 
 ## 4. Integration check
 
-- [ ] 4.1 Run the cold-build verify from `ui-component-migration.md` § Verify, plus `pnpm exec eslint libs apps` and `pnpm --filter @muzakit/ui test:coverage`. Verify: all clean.
-- [ ] 4.2 Run `REVIEW_MODE=feature .claude/hooks/review.sh <<< '{}'`. Verify: no R-TS-01 finding and no new critical finding.
+- [x] 4.1 Run the cold-build verify from `ui-component-migration.md` § Verify, plus `pnpm exec eslint libs apps` and `pnpm --filter @muzakit/ui test:coverage`. Verify: all clean.
+- [x] 4.2 Run `REVIEW_MODE=feature .claude/hooks/review.sh <<< '{}'`. Verify: no R-TS-01 finding and no new critical finding.
 
 ## Workflow follow-up
 
