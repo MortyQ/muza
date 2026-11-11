@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 
 import { useTimeoutFn, useWindowSize } from "@vueuse/core";
 
@@ -16,8 +16,8 @@ const { item } = defineProps<{
 const { closeMobile } = useSidebarState();
 
 const isOpen = ref(false);
-const buttonRef = ref<HTMLElement | null>(null);
-const flyoutRef = ref<HTMLElement | null>(null);
+const buttonRef = useTemplateRef<HTMLElement>("buttonRef");
+const flyoutRef = useTemplateRef<HTMLElement>("flyoutRef");
 const menuPosition = ref({ top: 0, left: 0, right: 0 });
 const showOnLeft = ref(false);
 
@@ -242,5 +242,13 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 .sidebar-flyout-leave-to {
   opacity: 0;
   transform: scale(0.97) translateX(-4px);
+}
+
+/* Reduced motion: the flyout fades in place */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-flyout-enter-from,
+  .sidebar-flyout-leave-to {
+    transform: none;
+  }
 }
 </style>
