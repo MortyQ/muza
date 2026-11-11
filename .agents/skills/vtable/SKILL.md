@@ -18,7 +18,7 @@ Source of truth for the contract: `libs/ui/src/components/table/types/props.ts` 
 | Columns | `:columns="Column[]"` — `{ key, label, width?, align?, sortable?, format?, fixed? }` |
 | Rows | `:data="rows"` straight from the composable (`ComputedRef<T[]>`) — no copy, see gotcha below |
 | Custom cell | `<template #cell-<columnKey>="{ value, row, rowIndex }">` |
-| Row click | `@row-click="(row) => …"` — payload is `Record<string, unknown>`, cast at the boundary |
+| Row click | `@row-click="(row) => …"` — `row` is your row type, inferred from `data` and `columns` |
 | Loading | `:loading="true"` — renders the built-in overlay; don't hand-roll one |
 | Empty state | built in (`TableEmptyState`) — don't wrap the table in your own `v-if="!rows.length"` |
 | Fixed column | `fixed: "left" | "right"` on the column |
@@ -56,15 +56,36 @@ If TS4104 appears, the source is wrong: make the composable return `T[]`, or —
 as a readonly prop — move the composable into the component that renders the table, so it owns its
 data. A `computed` is fine only when it transforms the rows (filter, map, sort, slice).
 
-`ExpandableRow` carries an index signature (`[key: string]: any`), so most row shapes assign to it
-without a cast. Going the other way — the `row-click` payload back to your type — does need one,
-because `Record<string, unknown>` doesn't structurally overlap enough for a single `as`:
+## Gotcha 1a — declare the row type, and type the columns with it
+
+`VTable` is generic over its row (`TData`), inferred from **both** `data` and `columns`. Rows then
+come back typed everywhere — `cell-*` slots, `sortValue` / `cellClass` / `cellStyle`, `row-click`,
+`update:selected-rows` — with no cast.
 
 ```ts
-const onRowClick = (row: Record<string, unknown>): void => {
-  emit("select", row as unknown as EmailDelivery);
-};
+interface OrderRow extends ExpandableRow {   // or a `type` alias of an object shape
+  id: number
+  status: OrderStatus
+  revenue: number
+}
+
+const columns: Column<OrderRow>[] = [ … ];   // not `Column[]`
+const { rows } = useOrders();                // ComputedRef<OrderRow[]>
 ```
+
+```vue
+<VTable :columns :data="rows" @row-click="(row) => open(row.id)">
+  <template #cell-status="{ row }"><VTag :color="STATUS_TONE[row.status]" … /></template>
+</VTable>
+```
+
+Two traps:
+
+- **`columns: Column[]` widens the inference** back to `Record<string, unknown>`, so `row.status`
+  in a slot is `unknown` again. Type the column list with the row.
+- **A plain `interface` without an index signature does not satisfy `TData`**
+  (`extends Record<string, unknown>`). Extend `ExpandableRow` or use a `type` alias. An
+  `ExpandableRow` reads every undeclared field as `unknown`, so declare what you read.
 
 ## Gotcha 2 — every row needs a stable `id`
 
@@ -198,8 +219,10 @@ answers none of the questions above.
 Two caveats when you do:
 - `internals.md`'s SCSS file list is stale. `libs/ui/src/components/table/README.md` has the
   current filenames; use `internals.md` for composable and component contracts.
-- `VTable.vue` is **not** generic — `Column`, `TableProps`, `TableEmits` take no `TData`. Adding one
-  is a real architecture change, not a bug fix; confirm intent with the user first.
+- `VTable.vue` is generic (`<script generic="TData …">`). Internals pass a bare `Column`; column
+  callbacks are **method signatures** on purpose (bivariant), so a `Column<Product>` fits there.
+  Turning one back into a function-typed property breaks that. The contract is pinned by
+  `libs/ui/tests/types/table-row-typing.test-d.ts` (`test:types`).
 
 For visual and interaction changes to the table, also apply the `emil-design-eng` skill, per
 `.agents/claude/behavior.md`.

@@ -21,14 +21,14 @@ any critical finding. Nothing here is visual, so the blocks need no new token co
 
 ## 3. Consumers and docs — `refactor(dashboard): type the table demo's rows`
 
-- [ ] 3.1 In `apps/muzakit-dashboard/src/pages/TableDemoPage.vue`, declare a row interface per fixture that extends `ExpandableRow` and replace the bare `ExpandableRow[]` types. Fix `HomePage.vue` if type-check reports it. Verify: `pnpm --filter @muzakit/dashboard exec vue-tsc --noEmit` passes.
-- [ ] 3.2 Update `.agents/skills/vtable/SKILL.md`:
+- [x] 3.1 In `apps/muzakit-dashboard/src/pages/TableDemoPage.vue`, declare a row interface per fixture that extends `ExpandableRow` and replace the bare `ExpandableRow[]` types. Fix `HomePage.vue` if type-check reports it. Verify: `pnpm --filter @muzakit/dashboard exec vue-tsc --noEmit` passes.
+- [x] 3.2 Update `.agents/skills/vtable/SKILL.md`:
   - drop "`VTable.vue` is not generic";
   - say that rows read through slots and callbacks take their type from `data`;
   - say that an `ExpandableRow` reads undeclared fields as `unknown`, so extend it.
 
   Verify: the `vtable` skill no longer contradicts `VTable.vue:1`.
-- [ ] 3.3 Add an entry to `libs/ui/CHANGELOG.md` under Changed, marked **BREAKING (types only)**, with the one-line migration. Note the removal of the unexported legacy types. Verify: the entry names `Column`, `CellContext` and `ExpandableRow`.
+- [x] 3.3 Add an entry to `libs/ui/CHANGELOG.md` under Changed, marked **BREAKING (types only)**, with the one-line migration. Note the removal of the unexported legacy types. Verify: the entry names `Column`, `CellContext` and `ExpandableRow`.
 
 ## 4. Integration check
 

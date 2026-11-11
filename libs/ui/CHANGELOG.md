@@ -44,6 +44,12 @@
 - **`VTable` column picker**:
   - In "group by type" mode, types follow the registry's sixteen-step order instead of a five-type list; for example, `decimal` now sits right after `number`.
   - Types keep their registry labels, so `url` reads "URL".
+- **BREAKING (types only) — table row types no longer use `any`**:
+  - `Column` and `CellContext` default to `Record<string, unknown>` instead of `any`. An untyped column's callbacks see `unknown` fields, which have to be narrowed.
+  - `ExpandableRow`'s index signature is `unknown`, so an undeclared field reads as `unknown`. **Migration:** declare the fields you read, with `interface OrderRow extends ExpandableRow { status: string }`, and type the column list with it: `Column<OrderRow>[]`. Rows then arrive typed in `cell-*` slots, column callbacks and `row-click`, with no cast.
+  - A `Column<Product>` still fits wherever a plain `Column` is expected.
+  - The unexported legacy `TableHeader` / `TableRow` types are removed.
+  - Runtime behaviour is unchanged.
 - **`TablePeriodSelect`**: `widthClass` defaults to `""`, not the Tailwind class `w-40`. The library's own templates carry no utility classes. The wrapper is still 10rem wide, so nothing moves. Pass a class only for your app's own sizing.
 - **Raw colours replaced with tokens**: `white` on primary fills is now `--ui-primary-foreground`, in the same colour. The switch thumb uses that token too. The modal and drawer glass edge is foreground at 10% instead of `white` at 30%, so it shows in light mode and no longer glares in dark.
 
