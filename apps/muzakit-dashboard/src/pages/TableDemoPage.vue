@@ -262,7 +262,7 @@ const makeOrders = (): OrderRow[] => Array.from({ length: 64 }, (_, i) => ({
   units: 40 + ((i * 37) % 900),
   revenue: 1200 + ((i * 7919) % 48000),
   delta: (((i * 13) % 41) - 18) / 100,
-  status: ORDER_STATUSES[(i * 5) % ORDER_STATUSES.length],
+  status: ORDER_STATUSES[(i * 3) % ORDER_STATUSES.length],
 }));
 
 const orderColumns: Column<OrderRow>[] = [
