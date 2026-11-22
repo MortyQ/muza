@@ -254,8 +254,8 @@
      button and the plain field do. The padding that remains is horizontal only:
      room for the calendar icon on the left and the clear button on the right. */
   --dp-font-size: var(--ui-text-base);
-  --dp-input-padding: 0 2rem 0 2rem;
-  --dp-input-icon-padding: 2rem;
+  --dp-input-padding: 0 var(--ui-space-3xl) 0 var(--ui-space-3xl);
+  --dp-input-icon-padding: var(--ui-space-3xl);
   /* The menu's own action buttons, not the field. */
   --dp-button-height: var(--ui-control-h-md);
 
@@ -315,7 +315,7 @@
 
 /* Without a clear button the right-hand gutter is dead space. */
 .v-datepicker-no-clear {
-  --dp-input-padding: 0 var(--ui-control-px) 0 2rem;
+  --dp-input-padding: 0 var(--ui-control-px) 0 var(--ui-space-3xl);
 }
 
 /* ============================================
@@ -528,9 +528,9 @@
 .v-datepicker:global(.dp--theme-dark) {
   --dp-background-color: var(--ui-nav);
   --dp-text-color: var(--ui-foreground-inverted);
-  --dp-hover-color: var(--ui-surface-hover);
-  --dp-hover-text-color: var(--ui-foreground);
-  --dp-hover-icon-color: var(--ui-foreground);
+  --dp-hover-color: var(--ui-nav-hover);
+  --dp-hover-text-color: var(--ui-foreground-inverted);
+  --dp-hover-icon-color: var(--ui-foreground-inverted);
   --dp-primary-color: var(--ui-primary);
   --dp-primary-disabled-color: color-mix(in oklch, var(--ui-primary) 40%, var(--ui-nav));
   --dp-primary-text-color: var(--ui-nav);

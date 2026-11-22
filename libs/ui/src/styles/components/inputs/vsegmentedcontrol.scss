@@ -88,8 +88,8 @@
     opacity: 1;
   }
 
-  /* Only once placed — see `isPillReady`. A strong ease-out: the pill should
-     arrive decisively and settle, not drift the whole way. */
+  /* Only once placed — see `isPillReady`. Ease-in-out: the pill moves along
+     its track, so it should start and settle smoothly rather than snap off. */
   &--ready {
     transition:
       transform var(--ui-duration-fast) var(--ui-ease-in-out),

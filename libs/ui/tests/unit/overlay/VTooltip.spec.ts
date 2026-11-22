@@ -5,6 +5,7 @@ import VTooltip from "../../../src/components/overlay/VTooltip.vue";
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 function tooltip(props: Record<string, unknown> = {}, slots: Record<string, string> = {}) {
@@ -15,6 +16,17 @@ function tooltip(props: Record<string, unknown> = {}, slots: Record<string, stri
 }
 
 const popper = (w: ReturnType<typeof tooltip>) => w.find(".v-tooltip__popper");
+
+/**
+ * jsdom never matches `:focus-visible`, so a keyboard focus is modelled by
+ * answering it for the duration of a test; without this, focus reads as a click.
+ */
+const asKeyboardFocus = () => {
+  const matches = Element.prototype.matches;
+  vi.spyOn(Element.prototype, "matches").mockImplementation(function (this: Element, selector: string) {
+    return selector === ":focus-visible" || matches.call(this, selector);
+  });
+};
 
 /** Show and let the open delay elapse. */
 async function reveal(w: ReturnType<typeof tooltip>, event = "mouseenter", ms = 300) {
@@ -83,6 +95,7 @@ describe("VTooltip", () => {
 
     it("hides when focus leaves", async () => {
       vi.useFakeTimers();
+      asKeyboardFocus();
       const w = tooltip();
       await reveal(w, "focusin");
       expect(popper(w).exists()).toBe(true);
@@ -96,6 +109,7 @@ describe("VTooltip", () => {
   describe("keyboard reachability", () => {
     it("opens on focus, so the tooltip is not mouse-only", async () => {
       vi.useFakeTimers();
+      asKeyboardFocus();
       const w = tooltip();
       await reveal(w, "focusin");
       expect(popper(w).exists()).toBe(true);
@@ -103,6 +117,7 @@ describe("VTooltip", () => {
 
     it("opens on focus without the hover delay", async () => {
       vi.useFakeTimers();
+      asKeyboardFocus();
       const w = tooltip({ delay: 800 });
       await reveal(w, "focusin", 0);
       expect(popper(w).exists()).toBe(true);
@@ -112,11 +127,37 @@ describe("VTooltip", () => {
       // `focus` does not bubble, so a listener for it on the wrapper never hears
       // the button inside; `focusin` does.
       vi.useFakeTimers();
+      asKeyboardFocus();
       const w = tooltip();
       await w.find(".trigger").trigger("focusin");
       vi.advanceTimersByTime(0);
       await w.vm.$nextTick();
       expect(popper(w).exists()).toBe(true);
+    });
+  });
+
+  describe("focus from a click", () => {
+    it("does not open: a click moves focus, but not visibly", async () => {
+      vi.useFakeTimers();
+      const w = tooltip();
+      await w.trigger("focusin");
+      vi.advanceTimersByTime(300);
+      await w.vm.$nextTick();
+      expect(popper(w).exists()).toBe(false);
+    });
+
+    it("leaves one pending reveal when hover and focus overlap", async () => {
+      // Hover, then keyboard focus, then the pointer leaves within the delay:
+      // the hover's timer must not fire afterwards.
+      vi.useFakeTimers();
+      asKeyboardFocus();
+      const w = tooltip();
+      await w.trigger("mouseenter");
+      await w.trigger("focusin");
+      await w.trigger("mouseleave");
+      vi.advanceTimersByTime(500);
+      await w.vm.$nextTick();
+      expect(popper(w).exists()).toBe(false);
     });
   });
 

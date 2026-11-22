@@ -1,6 +1,4 @@
 .v-scroll-panel {
-  --_ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-
   overflow-y: auto;
   max-height: var(--v-scroll-panel-max-height, none);
   padding: var(--ui-space-md);
@@ -36,8 +34,8 @@
   color: var(--ui-foreground-secondary);
   cursor: pointer;
   transition:
-    transform var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out),
-    opacity var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
     color var(--ui-duration-instant) var(--ui-ease-out),
     border-color var(--ui-duration-instant) var(--ui-ease-out);
 
@@ -85,8 +83,8 @@
   grid-area: 1 / 1;
   display: flex;
   transition:
-    opacity var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out),
-    transform var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out);
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 
   /* Starts small and turned rather than at zero — nothing in the world appears
      out of nothing, and a check that snaps in at full size reads as a different

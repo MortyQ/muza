@@ -6,7 +6,7 @@ $sidebar-mobile-breakpoint: 1024px;
 .sidebar {
   --sidebar-width: 15rem;
   --sidebar-collapsed-width: 3.5rem;
-  --sidebar-transition: 300ms ease-in-out;
+  --sidebar-transition: var(--ui-duration-fast) var(--ui-ease-in-out);
   // VButton's glyph size
   --sidebar-icon-size: 0.9375rem;
   --sidebar-guide-gap: var(--ui-space-sm);

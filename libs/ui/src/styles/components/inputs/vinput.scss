@@ -387,8 +387,7 @@
    `!important`s along with it.
 
    The inset fill masks the browser's yellow background; the 5000s background
-   transition keeps the UA style from ever landing. Elevation is unaffected —
-   it sits on .v-input-container, whose drop shadow paints outside the box. */
+   transition keeps the UA style from ever landing. */
 .v-input-field:-webkit-autofill,
 .v-input-field:-webkit-autofill:hover,
 .v-input-field:-webkit-autofill:focus,
@@ -398,7 +397,7 @@
   box-shadow: 0 0 0 1000px var(--ui-input-bg) inset;
   caret-color: var(--ui-foreground);
   font-family: inherit;
-  transition: background-color var(--ui-duration-instant) var(--ui-ease-out) 0s;
+  transition: background-color 5000s ease-in-out 0s; /* literal: keeps the autofill background from landing */
 }
 
 /* Firefox marks the field without forcing a background there is anything to

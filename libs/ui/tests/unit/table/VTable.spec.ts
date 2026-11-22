@@ -658,6 +658,14 @@ describe("VTable", () => {
         expect(grid(table({ highlight: true })).classes()).not.toContain("v-table-grid--highlight");
       });
 
+      it("keeps the fade rules on while nothing is pinned, so unpinning fades back", () => {
+        // The transitions live on `--highlightable`, which follows the prop, not
+        // the pin: on `--highlight` they would vanish with the last pin and the
+        // table would snap from 0.38 to full opacity.
+        expect(grid(table({ highlight: true })).classes()).toContain("v-table-grid--highlightable");
+        expect(grid(table()).classes()).not.toContain("v-table-grid--highlightable");
+      });
+
       it("dims around a row pin and stops when the pin is removed", async () => {
         const w = table({ highlight: true });
 

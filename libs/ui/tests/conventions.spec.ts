@@ -312,13 +312,14 @@ const literalLengths = (
   allowed: (value: string) => boolean,
 ): string[] => {
   const length = /(?:^|[\s(,])(-?(?:\d+\.?\d*|\.\d+)(?:px|rem|em))\b/g;
-  const declaration = new RegExp(`(?:^|[{;\\s])(${property.source})\\s*:\\s*([^;{}]+);`, "g");
-  return raw.split("\n")
-    .filter(line => !line.includes("/* literal:"))
-    .map(line => line.replace(/\/\/.*$/, "").replace(/\/\*[\s\S]*?\*\//g, ""))
-    .flatMap(line => [...line.matchAll(declaration)]
-      .filter(([, , value]) => [...value.matchAll(length)].some(m => !allowed(m[1])))
-      .map(([, name, value]) => `${name}: ${value.trim()}`));
+  // Matched over the whole source, so a value written across lines is read too;
+  // the marker sits after the declaration's semicolon, on its last line.
+  const declaration = new RegExp(`(?:^|[{;\\s])(${property.source})\\s*:\\s*([^;{}]+);([^\\n]*)`, "g");
+  return [...raw.replace(/\/\/[^\n]*/g, "").matchAll(declaration)]
+    .filter(([, , , rest]) => !rest.includes("/* literal:"))
+    .map(([, name, value]) => [name, value.replace(/\/\*[\s\S]*?\*\//g, "")])
+    .filter(([, value]) => [...value.matchAll(length)].some(m => !allowed(m[1])))
+    .map(([name, value]) => `${name}: ${value.replace(/\s+/g, " ").trim()}`);
 };
 
 describe("type values", () => {
@@ -363,7 +364,7 @@ describe("type values", () => {
 describe("spacing values", () => {
   // A 4px grid with 2px and 6px as the only half steps, all of it in
   // --ui-space-*. Zero and ±1px border compensation are the only literals.
-  const SPACING = /gap|row-gap|column-gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?/;
+  const SPACING = /gap|row-gap|column-gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?|inset(?:-[a-z-]+)?|--[\w-]*(?:padding|gap|margin)[\w-]*/;
   const isAllowed = (value: string) => /^-?0(?:px|rem|em)?$/.test(value) || /^-?1px$/.test(value);
 
   it.each(STYLE_FILES)("$file takes gap, padding and margin from tokens", ({ file, raw }) => {
@@ -396,6 +397,9 @@ describe("shadow values", () => {
   const isElevation = (layer: string): boolean => {
     const token = layer.match(/var\(--ui-shadow-([\w-]+)\)/);
     if (token) return !["sm", "lg"].includes(token[1]);
+    // A layer that is only a variable is a whole shadow handed over by name;
+    // the only names that may stand there are the two elevations.
+    if (/^var\(--[\w-]+(?:,[^()]*)?\)$/.test(layer.trim())) return true;
     // Drop colour functions and keywords; what is left are the lengths.
     const lengths = layer.replace(/[a-z-]+\([^()]*(?:\([^()]*\)[^()]*)*\)/g, "")
       .split(/\s+/).filter(part => part && part !== "inset" && part !== "none");
@@ -417,7 +421,8 @@ describe("motion values", () => {
   // Durations come from --ui-duration-*, curves from --ui-ease-*. A looping
   // animation keeps its own period, and a reduced-motion override its 1ms end
   // state, each marked `/* literal: <reason> */` on the line.
-  const DECLARATION = /(?<![\w-])(?:-webkit-)?(?:transition|animation)(?:-[a-z-]+)?\s*:\s*([^;{}]+);([^\n]*)/g;
+  // Custom properties that carry timing count too (`--sidebar-transition`).
+  const DECLARATION = /(?:(?<![\w-])(?:-webkit-)?(?:transition|animation)(?:-[a-z-]+)?|--[\w-]*(?:transition|duration|ease|curve)[\w-]*)\s*:\s*([^;{}]+);([^\n]*)/g;
   const isLiteral = (value: string) =>
     /(?<![\w.-])(?!0(?:m?s)\b)\d*\.?\d+m?s\b/.test(value)
     || /cubic-bezier\(|\bease(?:-in|-out|-in-out)?\b/.test(value);
@@ -428,6 +433,17 @@ describe("motion values", () => {
       .map(([, value]) => value.replace(/\s+/g, " ").trim());
     expect(offenders, `${file} hardcodes motion: ${offenders.join("; ")} — use --ui-duration-* / --ui-ease-*`)
       .toHaveLength(0);
+  });
+
+  it.each(STYLE_FILES)("$file gives each transition layer one curve", ({ file, raw }) => {
+    // Two timing functions in one layer make the whole declaration invalid at
+    // runtime, and the browser silently drops the transition.
+    const curve = /var\(--[\w-]*ease[\w-]*\)|cubic-bezier\([^)]*\)|\b(?:ease(?:-in|-out|-in-out)?|linear)\b/g;
+    const doubled = [...raw.replace(/\/\/[^\n]*/g, "").matchAll(DECLARATION)]
+      .flatMap(([, value]) => value.split(/,(?![^()]*\))/))
+      .filter(layer => (layer.match(curve) ?? []).length > 1)
+      .map(layer => layer.replace(/\s+/g, " ").trim());
+    expect(doubled, `${file} has layers with two curves: ${doubled.join("; ")}`).toHaveLength(0);
   });
 });
 

@@ -91,7 +91,7 @@ describe.each(THEME_CASES)("VTag tokens — %s theme", (theme) => {
     });
 
     it.each([
-      ["xs", "xs", "--ui-space-2xs"],
+      ["xs", "xs", null],
       ["sm", "xs", "--ui-space-2xs"],
       ["md", "xs", "--ui-space-xs"],
       ["lg", "base", "--ui-space-xs"],
@@ -100,7 +100,7 @@ describe.each(THEME_CASES)("VTag tokens — %s theme", (theme) => {
       const style = getComputedStyle(el);
       expect(style.fontSize).toBe(tokenAsValue("font-size", `--ui-text-${step}`));
       const lineBox = parseFloat(tokenAsValue("height", `--ui-leading-${step}`));
-      const pad = parseFloat(tokenAsValue("height", padding));
+      const pad = padding ? parseFloat(tokenAsValue("height", padding)) : 0;
       expect(style.height).toBe(`${lineBox + 2 * pad}px`);
     });
 

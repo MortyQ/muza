@@ -29,7 +29,7 @@
   }
 
   &:active > .v-table-cell {
-    background-color: color-mix(in oklch, var(--ui-primary) 6%, var(--ui-surface) 94%);
+    background-color: var(--ui-surface-active);
   }
 
   &--disabled {

@@ -33,8 +33,10 @@
   }
 
   /* ── Sizes: height = the line box plus the padding the step names ───── */
+  /* xs and sm share the xs type step since the 10px step went; xs stays the
+     smaller chip by dropping its vertical padding. */
   &--xs {
-    height: calc(var(--ui-leading-xs) + 2 * var(--ui-space-2xs));
+    height: var(--ui-leading-xs);
     padding: 0 var(--ui-space-sm);
     font-size: var(--ui-text-xs);
     line-height: var(--ui-leading-xs);

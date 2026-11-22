@@ -27,7 +27,8 @@
 - **`VTable` pinned columns keep a quieter accent**: a 1px edge at 55% (was 2px at 70%), rising to 85% on row hover, and a 3% tint. Row hover tints the surface instead of the accent, and its edge bar is neutral.
 - **BREAKING (tokens) — two elevations**: `--ui-shadow-sm` for resting cards and `--ui-shadow-lg` for anything that floats.
   - Removed: `--ui-shadow-xs` (controls now carry none; their border holds the edge), `--ui-shadow-md` (`-sm` on cards, the toolbar, the accordion, the switch thumb; `-lg` on the datepicker menu and a dragged column row), `--ui-shadow-xl` (`-lg` on modal, drawer, toaster and guard modal) and `--ui-shadow-inner` (a well is drawn by its fill). The Tailwind `shadow` and `inset-shadow` namespaces are reset to `sm` and `lg`.
-  - Hovering the drop zone or the fullscreen toggle changes the surface, not the elevation; the active pagination button lost its glow.
+  - Hover changes the surface, not the elevation: an interactive `VCard` no longer lifts, a toast no longer rises, and the drop zone, the fullscreen toggle and the pagination buttons tint their surface instead of raising a shadow. The active pagination button lost its glow.
+  - `VTag` `xs` keeps its smaller box by dropping its vertical padding, now that it shares the `xs` type step with `sm`.
 - **`VSegmentedControl` wears the field's chrome**: `--ui-input-bg`, `--ui-input-border` and the field's (no) shadow, so in a toolbar row it matches search, select and datepicker. The selected pill is `--ui-surface-active`, without a shadow.
 - **BREAKING (tokens) — the type scale is four working sizes and one for figures**: `xs` 11, `base` 13, `lg` 15, `xl` 20 and `display` 28px.
   - Removed: `--ui-text-2xs` (use `-xs`), `--ui-text-sm` (`-xs` for meta, `-base` for running text), `--ui-text-2xl` (`-xl`), `--ui-text-3xl` (`-display`), and their `--ui-leading-*`.
@@ -121,7 +122,7 @@ Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MOD
 - **Icon-only buttons are named**: `VTab`'s overflow button ("3 more tabs"), `VChip` close, file and list remove buttons, the table's refresh, row-expand, additional-headers and both column popover triggers. Disclosure buttons report `aria-expanded`.
 - **Keyboard focus**:
   - `VSwitch` draws a focus ring on its track; its input is visually hidden, so focus was invisible.
-  - `VTooltip` opens at once when its trigger takes focus. It also listens for `focusin`, so focus on the button inside the wrapper now opens it. The hover delay applies to the pointer only.
+  - `VTooltip` opens at once on keyboard focus (`:focus-visible`), including focus on the button inside its wrapper (`focusin`). A click moves focus too but opens nothing, and a hover followed by focus leaves only one pending reveal. The hover delay applies to the pointer only.
 - **Decorative graphics are hidden** (`aria-hidden="true"`): the six icons in column setup, and the canvas of `VAnimatedBackground`.
 - **Labels**:
   - `VSelect`'s floating label names its combobox.
@@ -132,7 +133,8 @@ Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MOD
 
 - **Motion tokens**: `--ui-duration-instant` (80ms), `-fast` (150ms) and `-overlay` (200ms), and `--ui-ease-out` / `--ui-ease-in-out`. Every transition and finite animation in the library uses them; the conventions spec fails on a literal duration or curve.
   - Table cells and headers answer hover in 80ms (they took 300ms, so the tint trailed a sweeping cursor).
-  - Modal, drawer and guard modal enter at 200ms and leave at 150ms; a toast slides in at 200ms. The drawer's 300ms is gone.
+  - Modal, drawer and guard modal enter at 200ms and leave at 150ms; a toast slides in at 200ms. The drawer's 300ms is gone. The sidebar collapses at 150ms (was 300ms).
+  - Unpinning the last row or column in a highlighted `VTable` fades back to full opacity instead of snapping.
   - No overshoot: `VThemeSwitcher`'s icon bounce and the toast's slide-in overshoot are gone.
   - `VCollapse` defaults to 150ms (was 200).
 - No `transition: all` remains. Every transition names its properties.

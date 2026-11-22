@@ -168,6 +168,9 @@ const calculatePosition = async () => {
 
 const showTooltip = (wait = delay) => {
   if (disabled || !text) return;
+  // One pending reveal at a time: a hover then a focus must not leave the
+  // first timer to fire after the pointer has gone.
+  if (timeout.value) clearTimeout(timeout.value);
 
   timeout.value = setTimeout(async () => {
     isVisible.value = true;
@@ -177,9 +180,12 @@ const showTooltip = (wait = delay) => {
 };
 
 // The hover delay keeps a sweeping pointer from popping every tooltip it crosses.
-// Focus is deliberate, so a keyboard user gets the hint at once.
+// Keyboard focus is deliberate, so it gets the hint at once. A click also moves
+// focus, but `:focus-visible` is false for it, so a click opens nothing.
 const onPointerEnter = () => showTooltip();
-const onFocusIn = () => showTooltip(0);
+const onFocusIn = (event: FocusEvent) => {
+  if (event.target instanceof Element && event.target.matches(":focus-visible")) showTooltip(0);
+};
 
 const hideTooltip = () => {
   if (timeout.value) {

@@ -82,13 +82,6 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  :global(.toast-custom:hover) {
-    box-shadow: var(--ui-shadow-lg);
-    transform: translateY(-2px);
-  }
-}
-
 /* ============================================
    TOAST CONTENT
    ============================================ */

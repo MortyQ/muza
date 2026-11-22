@@ -78,13 +78,8 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.v-table-pagination-btn--active) {
-      background: linear-gradient(
-        to bottom,
-        color-mix(in oklch, var(--ui-primary) 8%, transparent),
-        color-mix(in oklch, var(--ui-surface-sunken) 60%, transparent)
-      );
-      border-color: color-mix(in oklch, var(--ui-primary) 30%, transparent);
-      box-shadow: var(--ui-shadow-sm);
+      background: var(--ui-surface-hover);
+      border-color: var(--ui-border-strong);
     }
   }
 

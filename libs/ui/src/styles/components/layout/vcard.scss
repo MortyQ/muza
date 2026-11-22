@@ -168,12 +168,11 @@
   cursor: pointer;
 }
 
-/* Hover feedback belongs to cards that do something. A static card that lifts under the
-   pointer reads as clickable when it is not. */
+/* Hover feedback belongs to cards that do something, and it changes the surface,
+   not the elevation: a card that lifts reads as floating. */
 @media (hover: hover) and (pointer: fine) {
   .v-card--interactive:not(.v-card--disabled):not(.v-card--loading):hover {
-    transform: translateY(-2px);
-    box-shadow: var(--ui-shadow-lg);
+    background-color: var(--ui-surface-hover);
   }
 
   .v-card--interactive.v-card--outlined:not(.v-card--disabled):not(.v-card--loading):hover {

@@ -1,6 +1,6 @@
 // Table Highlight (pinned cross) Styles
 // ============================================
-// Everything here is scoped under .v-table-grid--highlight or --pinned so that
+// Everything here is scoped under .v-table-grid--highlight(able) or --pinned so that
 // tables without the `highlight` prop match none of it.
 //
 // PERFORMANCE: the ribbons are box-shadow: inset, never border. A border changes
@@ -12,12 +12,20 @@ $highlight-line: var(--ui-primary);
 $highlight-fill: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-surface));
 
 // ── Transition ───────────────────────────────────────────────────────────────
-// Only inside a highlight-enabled grid: other tables keep their existing
-// `transition: background-color var(--ui-duration-instant) var(--ui-ease-out) ease` from _cell.scss untouched. // PERFORMANCE: the property list is scoped to the cells that can actually // change each property, not declared wholesale on the grid. // // One pin click toggles .v-table-grid--highlight on the grid, so whatever is // declared here starts animating on EVERY cell at once — thousands of them. // `opacity` is compositable and cheap at that scale; `box-shadow`,
+// Only inside a grid with highlighting enabled (`--highlightable`, set whether
+// or not anything is pinned, so removing the last pin fades back instead of
+// snapping). Other tables keep the background-color transition of _cell.scss.
+//
+// PERFORMANCE: the property list is scoped to the cells that can actually
+// change each property, not declared wholesale on the grid.
+//
+// One pin click toggles .v-table-grid--highlight on the grid, so whatever is
+// declared here starts animating on EVERY cell at once — thousands of them.
+// `opacity` is compositable and cheap at that scale; `box-shadow`,
 // `background-color` and `border-color` force a repaint per frame per element.
 // Those three only ever change on the cross itself (one row + one column), so
 // declaring them for the whole grid animated thousands of cells for nothing.
-.v-table-grid--highlight {
+.v-table-grid--highlightable {
   // The dimmed majority — opacity only.
   .v-table-cell,
   .v-table-header-cell {
@@ -209,7 +217,7 @@ $highlight-fill: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-surface));
 // nothing to add for the column button.
 
 @media (prefers-reduced-motion: reduce) {
-  .v-table-grid--highlight {
+  .v-table-grid--highlightable {
     .v-table-cell,
     .v-table-header-cell {
       transition: none;
