@@ -42,8 +42,7 @@ $sidebar-mobile-breakpoint: 1024px;
     content: '';
     position: absolute;
     inset: 0;
-    box-shadow: 2px 0 8px color-mix(in oklch, var(--ui-foreground) 8%, transparent),
-    4px 0 16px color-mix(in oklch, var(--ui-foreground) 4%, transparent);
+    box-shadow: var(--ui-shadow-lg);
     pointer-events: none;
     z-index: -1;
   }

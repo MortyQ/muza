@@ -12,5 +12,5 @@
      sits beside the group — the track is a surface, the CTA is the action on it.
      The cells give up their own shadow (see `.v-button--grouped`); four of them
      each dropping one would draw shadow seams down the inside of the track. */
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
 }

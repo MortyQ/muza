@@ -88,23 +88,23 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 6. Two elevation levels and one toolbar chrome
 
-- [ ] 6.1 Cut the elevation tokens to two levels.
+- [x] 6.1 Cut the elevation tokens to two levels.
   - In `theme.css`, for both themes, remove `--elevation-xs`, `-md`, `-xl` and `-inner`.
   - In `@theme inline`, reset `--shadow-*` and `--inset-shadow-*` and map only `sm` and `lg`.
   - Mirror these changes in `tokens.css`.
   - Verify: a token contract asserts that `sm` and `lg` resolve in both themes.
-- [ ] 6.2 Apply the D4 table across the library.
+- [x] 6.2 Apply the D4 table across the library.
   - Remove hover rules that change `box-shadow`; use `--ui-surface-hover` instead.
   - Migrate the app's `shadow-md`.
   - Verify: the shadow guard (only `sm`, `lg` or `none`) passes, and the contracts for modal, drawer, toaster, datepicker menu and column picker assert `--ui-shadow-lg`.
-- [ ] 6.3 Give `VSegmentedControl` the field recipe.
+- [x] 6.3 Give `VSegmentedControl` the field recipe.
   - Track: `--ui-input-bg`, `--ui-input-border` and the fields' shadow.
   - Pill: `--ui-surface-active`, no shadow.
   - Verify: a browser contract asserts that the track's background, border colour and shadow equal `VInput`'s, in both themes, and that the selected pill stays visible in both.
-- [ ] 6.4 Check control edges in the dark theme now that `xs` is gone.
+- [x] 6.4 Check control edges in the dark theme now that `xs` is gone.
   - Fix: if a control has no visible edge, fix `--border` in the dark block of `theme.css`.
   - Verify: by eye on `/components-demo` in dark, and with the `VInput` and `VSelect` chrome contracts.
-- [ ] 6.5 Update the docs.
+- [x] 6.5 Update the docs.
   - Update the Shadow row in `ui-component-migration.md`.
   - Add CHANGELOG **BREAKING** entries.
   - Verify: the changelog maps each removed level to its replacement.

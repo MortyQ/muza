@@ -68,7 +68,7 @@ const tabs = [
   font-weight: 700;
   color: var(--ui-primary-foreground);
   margin-bottom: 0.25rem;
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
 }
 
 .auth-brand__title {

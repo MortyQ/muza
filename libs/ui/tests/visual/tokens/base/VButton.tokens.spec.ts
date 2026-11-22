@@ -168,13 +168,12 @@ describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
       .toBe(tokenAsValue("border-radius", "--ui-radius-lg"));
   });
 
-  it("carries one tier of elevation, the same for every variant", async () => {
-    // Resolved shadows serialise with the colour expanded, so assert it is
-    // neither absent nor different between two variants of the same rank.
-    const primary = getComputedStyle(await renderButton({ variant: "primary" })).boxShadow;
-    const warning = getComputedStyle(await renderButton({ variant: "warning" })).boxShadow;
-    expect(primary).not.toBe("none");
-    expect(warning).toBe(primary);
+  it("carries no elevation: its border holds the edge", async () => {
+    // Two levels of shadow, sm and lg, and a control is neither a card nor
+    // something that floats.
+    for (const variant of ["primary", "warning", "neutral"] as const) {
+      expect(getComputedStyle(await renderButton({ variant })).boxShadow).toBe("none");
+    }
   });
 
   it("takes its height from the control scale, not a literal", async () => {
@@ -249,21 +248,14 @@ describe.each(THEME_CASES)("VButtonGroup — %s theme", (theme) => {
       .toBe(Math.round(a.getBoundingClientRect().width + b.getBoundingClientRect().width - 1));
   });
 
-  it("moves the elevation from the cells onto the track", async () => {
-    // Four cells each dropping their own shadow would draw seams down the
-    // inside of the track — the one place per-button elevation looks broken.
+  it("draws no shadow on the track or its cells", async () => {
+    // A cell dropping its own shadow would draw seams down the inside of the
+    // track; with controls flat, neither carries one.
     const root = await renderGroup();
-    expect(getComputedStyle(root).boxShadow).not.toBe("none");
+    expect(getComputedStyle(root).boxShadow).toBe("none");
     for (const cell of cells(root)) {
       expect(getComputedStyle(cell).boxShadow).toBe("none");
     }
-  });
-
-  it("leaves a standalone button its own shadow", async () => {
-    await applyTheme(theme);
-    const el = render(VButton, { props: { text: "Solo", variant: "neutral" } })
-      .container.firstElementChild as HTMLElement;
-    expect(getComputedStyle(el).boxShadow).not.toBe("none");
   });
 
   it("keeps each cell's own variant colour inside the track", async () => {

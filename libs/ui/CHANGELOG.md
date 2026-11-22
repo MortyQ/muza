@@ -21,6 +21,10 @@
 
 ### Changed
 
+- **BREAKING (tokens) — two elevations**: `--ui-shadow-sm` for resting cards and `--ui-shadow-lg` for anything that floats.
+  - Removed: `--ui-shadow-xs` (controls now carry none; their border holds the edge), `--ui-shadow-md` (`-sm` on cards, the toolbar, the accordion, the switch thumb; `-lg` on the datepicker menu and a dragged column row), `--ui-shadow-xl` (`-lg` on modal, drawer, toaster and guard modal) and `--ui-shadow-inner` (a well is drawn by its fill). The Tailwind `shadow` and `inset-shadow` namespaces are reset to `sm` and `lg`.
+  - Hovering the drop zone or the fullscreen toggle changes the surface, not the elevation; the active pagination button lost its glow.
+- **`VSegmentedControl` wears the field's chrome**: `--ui-input-bg`, `--ui-input-border` and the field's (no) shadow, so in a toolbar row it matches search, select and datepicker. The selected pill is `--ui-surface-active`, without a shadow.
 - **BREAKING (tokens) — the type scale is four working sizes and one for figures**: `xs` 11, `base` 13, `lg` 15, `xl` 20 and `display` 28px.
   - Removed: `--ui-text-2xs` (use `-xs`), `--ui-text-sm` (`-xs` for meta, `-base` for running text), `--ui-text-2xl` (`-xl`), `--ui-text-3xl` (`-display`), and their `--ui-leading-*`.
   - `--ui-text-xl` is 20px (was 18) and `--ui-text-display` is new, for `VStat` only. `VStat` `md` sits on `xl`, `lg` on `display`. `VSkeleton` keeps its size names; `sm`, `2xl` and `3xl` draw `xs`, `xl` and `display`.

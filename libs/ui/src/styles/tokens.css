@@ -201,19 +201,15 @@
     /* ╔══════════════════════════════════════════════════════════╗
        ║  SHADOWS                                                 ║
        ╚══════════════════════════════════════════════════════════╝ */
-    /* Sourced from the theme so dark mode can tint them with the brand violet —
+    /* Two levels: sm for resting cards, lg for anything that floats. Hover
+       changes the surface, never the elevation. Sourced from the theme so dark
+       mode can tint them with the brand violet —
        a black shadow on a dark surface is invisible. Fallbacks are the light
        values, for anyone loading tokens.css without the theme. */
-    --ui-shadow-xs: var(--elevation-xs, 0 1px 2px 0 oklch(20% 0.02 280 / 0.05));
     --ui-shadow-sm: var(--elevation-sm,
         0 1px 3px 0 oklch(20% 0.02 280 / 0.09), 0 1px 2px -1px oklch(20% 0.02 280 / 0.07));
-    --ui-shadow-md: var(--elevation-md,
-        0 4px 8px -2px oklch(20% 0.02 280 / 0.11), 0 2px 4px -2px oklch(20% 0.02 280 / 0.08));
     --ui-shadow-lg: var(--elevation-lg,
         0 12px 20px -6px oklch(20% 0.02 280 / 0.14), 0 4px 8px -4px oklch(20% 0.02 280 / 0.09));
-    --ui-shadow-xl: var(--elevation-xl,
-        0 24px 40px -10px oklch(20% 0.02 280 / 0.18), 0 8px 16px -8px oklch(20% 0.02 280 / 0.10));
-    --ui-shadow-inner: var(--elevation-inner, inset 0 2px 4px 0 oklch(20% 0.02 280 / 0.06));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  FOCUS RING                                              ║

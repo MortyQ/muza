@@ -5,7 +5,7 @@
     overflow: hidden;
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface);
-    box-shadow: var(--ui-shadow-xs);
+    box-shadow: none;
 
     .v-accordion__panel {
       border-bottom: 1px solid var(--ui-border);
@@ -38,7 +38,7 @@
       margin-bottom: var(--ui-space-sm);
       border: 1px solid var(--ui-border);
       border-radius: var(--ui-radius-lg);
-      box-shadow: var(--ui-shadow-xs);
+      box-shadow: none;
 
       &:last-child {
         margin-bottom: 0;
@@ -55,13 +55,13 @@
       overflow: hidden;
       border: 1px solid var(--ui-border);
       border-radius: var(--ui-radius-lg);
-      box-shadow: var(--ui-shadow-xs);
+      box-shadow: none;
       transition:
         box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1),
         transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
 
       &.v-accordion__panel--active {
-        box-shadow: var(--ui-shadow-md);
+        box-shadow: var(--ui-shadow-sm);
         transform: scale(1.01);
       }
     }

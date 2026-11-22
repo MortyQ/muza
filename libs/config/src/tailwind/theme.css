@@ -82,15 +82,16 @@
     --color-badge-neutral-text: var(--badge-neutral-text);
 
     /* ─── Elevation ──────────────────────────────────────
-       Without these, shadow-sm/md/lg in app code fall back to Tailwind's own
+       Two levels: sm for resting cards, lg for anything that floats. The
+       namespaces are reset first, so a removed step (shadow-md, shadow-xl,
+       inset-shadow-sm) produces no utility at all. Without the mapping,
+       shadow-sm/lg in app code fall back to Tailwind's own
        black shadows, which are invisible on a dark surface. Raw values are
        named --elevation-* so they do not collide with this namespace. */
-    --shadow-xs:       var(--elevation-xs);
+    --shadow-*: initial;
+    --inset-shadow-*: initial;
     --shadow-sm:       var(--elevation-sm);
-    --shadow-md:       var(--elevation-md);
     --shadow-lg:       var(--elevation-lg);
-    --shadow-xl:       var(--elevation-xl);
-    --inset-shadow-sm: var(--elevation-inner);
 
     /* ─── Radius ─────────────────────────────────────────
        Same reason: rounded-lg should mean the design system's lg. Raw names
@@ -287,16 +288,10 @@
     /* ─── Elevation ───────────────────────────────────────────
        Neutral, cool-tinted shadows. Depth is what separates surfaces here;
        borders are only a hairline on top of it. */
-    --elevation-xs:    0 1px 2px 0 oklch(20% 0.02 280 / 0.05);
     --elevation-sm:    0 1px 3px 0 oklch(20% 0.02 280 / 0.09),
                     0 1px 2px -1px oklch(20% 0.02 280 / 0.07);
-    --elevation-md:    0 4px 8px -2px oklch(20% 0.02 280 / 0.11),
-                    0 2px 4px -2px oklch(20% 0.02 280 / 0.08);
     --elevation-lg:    0 12px 20px -6px oklch(20% 0.02 280 / 0.14),
                     0 4px 8px -4px oklch(20% 0.02 280 / 0.09);
-    --elevation-xl:    0 24px 40px -10px oklch(20% 0.02 280 / 0.18),
-                    0 8px 16px -8px oklch(20% 0.02 280 / 0.10);
-    --elevation-inner: inset 0 2px 4px 0 oklch(20% 0.02 280 / 0.06);
 }
 
 /* ─── Dark theme ─────────────────────────────────────────── */
@@ -372,16 +367,10 @@
        A black shadow on a dark surface is invisible, so dark mode carries the
        brand violet instead: the elevation reads as a glow rather than a drop
        shadow, and stays visible against every surface in the ramp. */
-    --elevation-xs:    0 1px 2px 0 oklch(45% 0.20 280 / 0.16);
     --elevation-sm:    0 1px 3px 0 oklch(45% 0.20 280 / 0.24),
                     0 1px 2px -1px oklch(0% 0 0 / 0.40);
-    --elevation-md:    0 4px 8px -2px oklch(48% 0.22 280 / 0.30),
-                    0 2px 4px -2px oklch(0% 0 0 / 0.45);
     --elevation-lg:    0 12px 20px -6px oklch(52% 0.24 280 / 0.38),
                     0 4px 8px -4px oklch(0% 0 0 / 0.50);
-    --elevation-xl:    0 24px 40px -10px oklch(55% 0.26 280 / 0.45),
-                    0 8px 16px -8px oklch(0% 0 0 / 0.55);
-    --elevation-inner: inset 0 2px 4px 0 oklch(0% 0 0 / 0.35);
 }
 
 

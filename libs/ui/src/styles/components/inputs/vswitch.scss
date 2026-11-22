@@ -95,7 +95,7 @@
   border-radius: var(--ui-radius-full);
   /* Light in both themes, like the text on a primary fill */
   background-color: var(--ui-primary-foreground);
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;

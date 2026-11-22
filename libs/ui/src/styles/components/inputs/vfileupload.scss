@@ -56,7 +56,7 @@
     &--dragging {
       border-color: var(--ui-primary);
       background-color: var(--ui-primary-subtle);
-      box-shadow: var(--ui-shadow-inner);
+      box-shadow: none;
     }
 
     &--disabled {
@@ -148,7 +148,7 @@
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         border-color: var(--ui-border);
-        box-shadow: var(--ui-shadow-xs);
+        box-shadow: none;
       }
     }
   }

@@ -162,7 +162,7 @@ Status      --ui-{success|warning|danger|info}  -hover  -foreground  -subtle  -m
 Inputs      --ui-input-bg  --ui-input-border  --ui-input-placeholder
 Badge       --ui-badge-neutral-bg  --ui-badge-neutral-text
 Radius      --ui-radius-xs  --ui-radius  -lg  -xl  -2xl  -full
-Shadow      --ui-shadow-xs  -sm  -md  -lg  -xl  -inner
+Shadow      --ui-shadow-sm (resting cards)  -lg (anything that floats)
 Focus ring  --ui-ring  --ui-ring-offset
 Type        --ui-text-xs  -base  -lg  -xl  -display      (11 13 15 20 28 px)
             --ui-leading-xs  -base  -lg  -xl  -display
@@ -229,15 +229,22 @@ tick, an active bar), allow-listed by file in `HAIRLINE_RADII`.
 
 ### Shadows and radii as Tailwind utilities
 
+Two elevations only: `sm` for a card at rest, `lg` for anything that floats
+(modal, drawer, dropdown, popover, tooltip, toast, a row being dragged).
+Controls carry none; their border holds the edge. A hover changes the surface
+(`--ui-surface-hover`), never the elevation. A ring or an inset line is not an
+elevation and may be written out; the conventions spec fails on any other
+blurred shadow, unless the line says `/* literal: <reason> */`.
+
 `theme.css` maps the design system onto Tailwind's own namespaces, so
-`shadow-lg`, `rounded-xl` and `inset-shadow-sm` in an app take these values
-rather than Tailwind's defaults. The raw variables are named `--elevation-*` and
+`shadow-sm`, `shadow-lg` and `rounded-xl` in an app take these values rather
+than Tailwind's defaults; the `shadow` and `inset-shadow` namespaces are reset,
+so `shadow-md` or `inset-shadow-sm` produce nothing. The raw variables are named `--elevation-*` and
 `--corner-*` precisely because `--shadow-*: var(--shadow-*)` inside
 `@theme inline` would be self-referential.
 
 The dark theme's elevations are tinted with the brand violet — a black drop
-shadow is invisible on a dark surface. This is why the project leans on shadow
-for separation and keeps borders thin, rather than the reverse.
+shadow is invisible on a dark surface.
 
 ---
 

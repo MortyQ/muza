@@ -49,7 +49,6 @@
     &:hover {
       color: var(--ui-primary-hover);
       border-color: var(--ui-primary);
-      box-shadow: 0 3px 8px -2px color-mix(in oklch, var(--ui-primary) 28%, transparent);
     }
   }
 

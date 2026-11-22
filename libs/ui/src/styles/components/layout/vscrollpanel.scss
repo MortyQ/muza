@@ -9,7 +9,7 @@
      content — cards, list rows — carries elevation of its own. A container that
      also casts a shadow puts two competing light sources in one component. */
   background-color: color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
-  box-shadow: var(--ui-shadow-inner);
+  box-shadow: none;
 }
 
 .v-scroll-panel__copy {

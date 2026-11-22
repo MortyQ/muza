@@ -373,6 +373,46 @@ describe("spacing values", () => {
   });
 });
 
+describe("shadow values", () => {
+  // Two elevations: --ui-shadow-sm for resting cards, --ui-shadow-lg for what
+  // floats. A ring or an inset line (no blur) is not an elevation and may be
+  // written out; a blurred shadow written out, or any other --ui-shadow-*, fails.
+  const splitLayers = (value: string): string[] => {
+    const layers: string[] = [];
+    let depth = 0;
+    let current = "";
+    for (const char of value) {
+      if (char === "(") depth++;
+      if (char === ")") depth--;
+      if (char === "," && depth === 0) {
+        layers.push(current.trim());
+        current = "";
+      }
+      else current += char;
+    }
+    return [...layers, current.trim()];
+  };
+
+  const isElevation = (layer: string): boolean => {
+    const token = layer.match(/var\(--ui-shadow-([\w-]+)\)/);
+    if (token) return !["sm", "lg"].includes(token[1]);
+    // Drop colour functions and keywords; what is left are the lengths.
+    const lengths = layer.replace(/[a-z-]+\([^()]*(?:\([^()]*\)[^()]*)*\)/g, "")
+      .split(/\s+/).filter(part => part && part !== "inset" && part !== "none");
+    const blur = lengths[2];
+    return blur !== undefined && !/^-?0(?:px)?$/.test(blur);
+  };
+
+  it.each(STYLE_FILES)("$file elevates only through --ui-shadow-sm / -lg", ({ file, raw }) => {
+    const offenders = [...raw.replace(/\/\/[^\n]*/g, "").matchAll(/box-shadow\s*:\s*([^;{}]+);([^\n]*)/g)]
+      .filter(([, , rest]) => !rest.includes("/* literal:"))
+      .map(([, value]) => value.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").trim())
+      .filter(value => splitLayers(value).some(isElevation));
+    expect(offenders, `${file} draws an elevation outside the two levels: ${offenders.join("; ")}`)
+      .toHaveLength(0);
+  });
+});
+
 describe("radius values", () => {
   // Radii come from --ui-radius-*. A nested corner is `calc(<outer> - <padding>)`
   // over tokens, so it follows outer = inner + padding by construction.

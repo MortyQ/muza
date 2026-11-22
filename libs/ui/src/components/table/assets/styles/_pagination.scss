@@ -63,7 +63,7 @@
     color-mix(in oklch, var(--ui-surface-sunken) 50%, transparent),
     color-mix(in oklch, var(--ui-surface) 80%, transparent)
   );
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
   color: var(--ui-foreground);
   font-size: $table-font-size-base;
   font-weight: $table-font-weight-medium;
@@ -103,20 +103,8 @@
     color: var(--ui-primary-foreground);
     border-color: var(--ui-primary);
     font-weight: $table-font-weight-semibold;
-    box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--ui-primary) 10%, transparent),
-      0 2px 4px 0 color-mix(in oklch, var(--ui-primary) 30%, transparent),
-      0 4px 12px -2px color-mix(in oklch, var(--ui-primary) 25%, transparent);
+    box-shadow: none;
     cursor: default;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        box-shadow:
-          0 0 0 1px color-mix(in oklch, var(--ui-primary) 15%, transparent),
-          0 2px 4px 0 color-mix(in oklch, var(--ui-primary) 35%, transparent),
-          0 6px 16px -2px color-mix(in oklch, var(--ui-primary) 30%, transparent);
-      }
-    }
   }
 
   &:focus-visible {

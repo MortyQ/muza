@@ -38,6 +38,20 @@ describe.each(THEME_CASES)("scales — %s theme", (theme) => {
     });
   });
 
+  describe("elevation", () => {
+    // Two levels: sm for resting cards, lg for anything that floats.
+    it.each(["sm", "lg"])("--ui-shadow-%s resolves to a drawn shadow", async (step) => {
+      await applyTheme(theme);
+      expect(tokenAsValue("box-shadow", `--ui-shadow-${step}`)).not.toBe("none");
+    });
+
+    it.each(["xs", "md", "xl", "inner"])("--ui-shadow-%s is gone", async (step) => {
+      await applyTheme(theme);
+      expect(getComputedStyle(document.documentElement).getPropertyValue(`--ui-shadow-${step}`))
+        .toBe("");
+    });
+  });
+
   describe("tracking", () => {
     it.each([["tight", "-0.01em"], ["caps", "0.04em"]])("--ui-tracking-%s is %s", async (step, em) => {
       await applyTheme(theme);

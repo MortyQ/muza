@@ -59,7 +59,7 @@
 .v-card--elevated {
   background-color: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
 }
 
 .v-card--outlined {
@@ -80,7 +80,7 @@
 .v-card--glass {
   background-color: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-border) 40%, transparent);
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
 
   @media (min-width: 768px) {
     background: color-mix(in oklch, var(--ui-surface) 10%, transparent);
@@ -108,7 +108,7 @@
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
 }
 
 /* ============================================

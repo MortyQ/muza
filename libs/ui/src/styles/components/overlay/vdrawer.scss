@@ -44,7 +44,7 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--ui-surface-overlay);
-  box-shadow: var(--ui-shadow-xl);
+  box-shadow: var(--ui-shadow-lg);
 
   @media (min-width: 768px) {
     border-radius: var(--ui-radius-xl);
@@ -53,9 +53,7 @@
     backdrop-filter: blur(10px) saturate(120%);
     -webkit-backdrop-filter: blur(10px) saturate(120%);
     border: 1px solid color-mix(in oklch, var(--ui-foreground) 10%, transparent);
-    box-shadow:
-      0 4px 16px color-mix(in oklch, var(--ui-primary) 8%, transparent),
-      0 8px 32px color-mix(in oklch, var(--ui-primary) 6%, transparent);
+    box-shadow: var(--ui-shadow-lg);
   }
 
   /* Width variants */

@@ -20,7 +20,7 @@
     border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
     border-radius: var(--ui-radius-xl);
     background-color: var(--ui-surface-overlay);
-    box-shadow: var(--ui-shadow-xl);
+    box-shadow: var(--ui-shadow-lg);
     backdrop-filter: blur(12px) saturate(120%);
     -webkit-backdrop-filter: blur(12px) saturate(120%);
   }

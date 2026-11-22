@@ -8,7 +8,7 @@
   /* Same field surface as VInput — the two sit next to each other in forms. */
   background: var(--ui-input-bg);
   border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
 }
 
 /* ============================================
@@ -54,7 +54,7 @@
   pointer-events: none;
   transition: border-color 200ms ease, border-width 200ms ease;
   border: 1px solid var(--ui-input-border);
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
   margin: 0;
   /* The legend is laid out from the fieldset's content box, so the text inside
      it starts at `padding-left + legend padding-left` — 7px + 3px — which is

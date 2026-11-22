@@ -54,7 +54,7 @@
     height: $table-shadow-offset;
     pointer-events: none;
     z-index: -1;
-    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent); /* literal: the sticky header's scroll edge, not an elevation */
   }
 }
 
@@ -116,7 +116,7 @@
     height: $table-shadow-offset;
     pointer-events: none;
     z-index: -1;
-    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent); /* literal: the sticky header's scroll edge, not an elevation */
   }
 }
 

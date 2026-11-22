@@ -14,9 +14,11 @@
   padding: var(--ui-space-2xs);
   gap: var(--ui-space-2xs);
   border-radius: var(--ui-radius-lg);
-  background: var(--ui-surface-sunken);
-  border: 1px solid var(--ui-border);
-  box-shadow: var(--ui-shadow-sm);
+  /* The field recipe: in a toolbar row this stands beside search, select and
+     datepicker, and the set reads as one only if they share a chrome. */
+  background: var(--ui-input-bg);
+  border: 1px solid var(--ui-input-border);
+  box-shadow: none;
 
   /* Height only, as everywhere else on the scale: the padding and the type
      belong to the chrome, so two sizes differ in exactly one dimension. */
@@ -77,8 +79,8 @@
   width: var(--v-sc-pill-w, 0);
   transform: translateX(var(--v-sc-pill-x, 0));
   border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs));
-  background: var(--ui-surface);
-  box-shadow: var(--ui-shadow-sm);
+  background: var(--ui-surface-active);
+  box-shadow: none;
   opacity: 0;
   pointer-events: none;
 

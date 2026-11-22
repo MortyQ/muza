@@ -151,7 +151,7 @@
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         border-color: color-mix(in oklch, var(--ui-primary) 50%, transparent);
-        box-shadow: var(--ui-shadow-md);
+        background-color: var(--ui-surface-hover);
       }
     }
   }
