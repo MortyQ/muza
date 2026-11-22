@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: var(--ui-space-xl);
   overflow-y: auto;
   background-color: var(--ui-overlay);
   backdrop-filter: blur(4px);
@@ -54,7 +54,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem;
+  padding: var(--ui-space-xl);
   border-bottom: 1px solid var(--ui-border);
   flex-shrink: 0;
 }
@@ -101,7 +101,7 @@
    CONTENT
    ============================================ */
 .v-modal__content {
-  padding: 1.25rem;
+  padding: var(--ui-space-xl);
   overflow-y: auto;
   flex: 1;
   color: var(--ui-foreground);
@@ -111,7 +111,7 @@
    FOOTER
    ============================================ */
 .v-modal__footer {
-  padding: 1rem 1.25rem;
+  padding: var(--ui-space-xl) var(--ui-space-xl);
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid var(--ui-border);
@@ -121,7 +121,7 @@
 .v-modal__footer-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ui-space-md);
 }
 
 /* ============================================
@@ -172,7 +172,7 @@
   .v-modal__header,
   .v-modal__content,
   .v-modal__footer {
-    padding: 1rem;
+    padding: var(--ui-space-xl);
   }
 }
 

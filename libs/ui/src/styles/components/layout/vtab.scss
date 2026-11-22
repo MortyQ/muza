@@ -142,7 +142,7 @@
 
 .v-tab__right {
   flex-shrink: 0;
-  margin-left: 1rem;
+  margin-left: var(--ui-space-xl);
 }
 
 .v-tab__panel {
@@ -154,7 +154,7 @@
 
 .v-tab-content-wrapper {
   /* Was Tailwind's `pt-4` — 4 × the 0.25rem spacing step. */
-  padding-top: 1rem;
+  padding-top: var(--ui-space-xl);
 }
 
 @keyframes v-tab-pulse {

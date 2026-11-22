@@ -209,7 +209,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
 :deep(.v-table-header-icon-slot) {
   display: inline-flex;
   align-items: center;
-  margin-right: 6px;
+  margin-right: var(--ui-space-sm);
   flex-shrink: 0;
 }
 
@@ -217,7 +217,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
   color: var(--ui-foreground-muted);
   cursor: help;
   flex-shrink: 0;
-  margin-left: 4px;
+  margin-left: var(--ui-space-xs);
   transition: color 0.15s ease;
 }
 

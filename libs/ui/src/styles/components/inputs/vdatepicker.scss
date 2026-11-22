@@ -34,7 +34,7 @@
   inset: 0;
   margin: 0;
   /* 7px + the legend's 3px = the 10px the raised label sits at, as on VInput. */
-  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem); /* literal: floating-label notch geometry */
   border: 1px solid var(--ui-input-border);
   border-radius: var(--ui-radius-lg);
   pointer-events: none;
@@ -123,7 +123,7 @@
 
   .v-datepicker-legend {
     max-width: 100%;
-    padding: 0 0.1875rem;
+    padding: 0 0.1875rem; /* literal: legend gap around the notched label */
   }
 }
 

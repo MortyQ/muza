@@ -181,7 +181,7 @@
 
   /* With a leading icon the body starts under the title, not under the icon. */
   &__panel:has(.v-accordion__leading-icon) &__content-inner {
-    padding-left: calc(var(--ui-control-px) + 1rem + var(--ui-control-gap));
+    padding-left: calc(var(--ui-control-px) + 1rem + var(--ui-control-gap)); /* literal: aligns with the 16px chevron */
   }
 
   &__text {

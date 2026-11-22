@@ -46,7 +46,7 @@
   height: var(--ui-control-h);
   padding: 0 var(--ui-control-px);
   // Indentation via CSS custom property (set inline: --depth)
-  padding-left: calc(var(--ui-control-px) + var(--depth, 0) * 0.875rem);
+  padding-left: calc(var(--ui-control-px) + var(--depth, 0) * 0.875rem); /* literal: one nesting step, matched to the icon */
   border: 1px solid transparent;
   border-radius: var(--ui-radius-lg);
   color: var(--ui-foreground-secondary);

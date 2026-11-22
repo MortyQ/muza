@@ -218,7 +218,7 @@
 .v-table-resize-indicator {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--ui-space-2xs);
   opacity: 0;
   transition: opacity 0.15s ease;
   z-index: 1;

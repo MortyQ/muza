@@ -48,7 +48,7 @@
 
   @media (min-width: 768px) {
     border-radius: var(--ui-radius-xl);
-    padding: 1.5rem;
+    padding: var(--ui-space-2xl);
     background: color-mix(in oklch, var(--ui-surface-overlay) 95%, transparent);
     backdrop-filter: blur(10px) saturate(120%);
     -webkit-backdrop-filter: blur(10px) saturate(120%);
@@ -84,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem;
+  padding: var(--ui-space-xl);
   flex-shrink: 0;
   border-bottom: 1px solid var(--ui-border);
 }
@@ -131,7 +131,7 @@
    CONTENT
    ============================================ */
 .v-drawer__content {
-  padding: 1.25rem;
+  padding: var(--ui-space-xl);
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
@@ -142,9 +142,9 @@
    FOOTER
    ============================================ */
 .v-drawer__footer {
-  padding: 1rem 1.25rem;
+  padding: var(--ui-space-xl) var(--ui-space-xl);
   display: flex;
-  gap: 0.75rem;
+  gap: var(--ui-space-lg);
   justify-content: flex-end;
   flex-shrink: 0;
   border-top: 1px solid var(--ui-border);
@@ -196,7 +196,7 @@
   .v-drawer__header,
   .v-drawer__content,
   .v-drawer__footer {
-    padding: 1rem;
+    padding: var(--ui-space-xl);
   }
 }
 

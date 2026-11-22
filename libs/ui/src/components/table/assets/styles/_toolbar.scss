@@ -69,7 +69,7 @@
   border: 1px solid var(--ui-border-subtle);
   border-radius: 0.5rem;
   box-shadow: var(--ui-shadow-md);
-  padding: 0.5rem;
+  padding: var(--ui-space-md);
   z-index: 50;
   overflow: hidden;
 }
@@ -77,9 +77,9 @@
 .v-toolbar-export-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-lg);
   width: 100%;
-  padding: 0.625rem 0.75rem;
+  padding: var(--ui-space-md) var(--ui-space-lg);
   font-size: var(--ui-text-base);
   color: var(--ui-foreground);
   background: transparent;

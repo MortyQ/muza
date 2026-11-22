@@ -25,7 +25,7 @@
     display: inline-flex;
     flex-shrink: 0;
     /* Centres a 20px glyph on the title's first line. */
-    margin-top: calc((var(--ui-leading-base) - 1.25rem) / 2);
+    margin-top: calc((var(--ui-leading-base) - 1.25rem) / 2); /* literal: centres a 20px icon on the first line */
     color: var(--v-notice-tone);
   }
 

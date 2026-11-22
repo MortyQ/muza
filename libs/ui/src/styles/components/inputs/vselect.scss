@@ -59,7 +59,7 @@
   /* The legend is laid out from the fieldset's content box, so the text inside
      it starts at `padding-left + legend padding-left` — 7px + 3px — which is
      exactly the `left: 0.625rem` the active label sits at. */
-  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem); /* literal: floating-label notch geometry */
   top: 0;
 
   /* 2px, and no spread ring: a `box-shadow` ring is drawn around the whole
@@ -95,8 +95,8 @@
 
   &--visible {
     max-width: 100%;
-    padding-left: 0.1875rem;
-    padding-right: 0.1875rem;
+    padding-left: 0.1875rem; /* literal: legend gap around the notched label */
+    padding-right: 0.1875rem; /* literal: legend gap around the notched label */
   }
 }
 
@@ -138,7 +138,7 @@
   min-height: var(--ui-control-h);
   /* Right padding clears the caret box; the vertical centring is the
      line-height's job, so a 30px control needs no top padding to look balanced. */
-  padding: var(--ui-space-xs) 1.75rem var(--ui-space-xs) var(--ui-control-px);
+  padding: var(--ui-space-xs) 1.75rem var(--ui-space-xs) var(--ui-control-px); /* literal: room reserved for the caret */
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -267,11 +267,11 @@
   line-height: var(--ui-leading-base);
   border-radius: var(--ui-radius-xs);
   margin-bottom: 0;
-  margin-right: 0.25rem;
+  margin-right: var(--ui-space-xs);
   display: inline-flex;
   align-items: center;
   border: none;
-  padding: 0 1.25rem 0 0.375rem;
+  padding: 0 1.25rem 0 0.375rem; /* literal: room reserved for the clear button */
 }
 
 :deep(.multiselect__tag-icon) {
@@ -325,7 +325,7 @@
   border: 1px solid var(--ui-border-subtle);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow-lg);
-  margin-top: 0.375rem;
+  margin-top: var(--ui-space-sm);
   overflow-y: auto;
   overflow-x: hidden;
   border-top: none !important;
@@ -344,7 +344,7 @@
   font-weight: var(--ui-weight-regular);
   min-height: 0;
   line-height: var(--ui-leading-base);
-  padding: 0.3125rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   transition: color 150ms ease, background-color 150ms ease;
   cursor: pointer;
   background-color: transparent;
@@ -387,7 +387,7 @@
   color: var(--ui-primary);
   font-weight: var(--ui-weight-strong);
   cursor: pointer;
-  padding: 0.3125rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
 }
 
 :deep(.multiselect__option.multiselect__option--group:hover),

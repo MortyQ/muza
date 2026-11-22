@@ -169,13 +169,22 @@ Type        --ui-text-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
             (2xl/3xl are headline figures only — VStat — never a heading)
 Weight      --ui-weight-regular (450)  -medium (500)  -strong (600)
 Control     --ui-control-h  -sm  -md  -lg   --ui-control-px  --ui-control-gap
-Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl
+Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl  -3xl  -4xl
+            (2 4 6 8 12 16 24 32 40 px: a 4px grid, 2 and 6 the only half steps)
 ```
 
 The last three groups are not colours, and the rule for them is the same: a
 `font-size`, a control height or a gap written as a literal under
 `styles/components/` is the same defect a raw `oklch()` is — it reads as a
 decision when it is a value nobody has revisited.
+
+Spacing is enforced, not only advised: every `gap`, `padding` and `margin` in
+`libs/ui/src` takes a `--ui-space-*` token (zero and ±1px border compensation
+aside), and `tests/conventions.spec.ts` fails on a literal. A value that only
+looks like spacing (room reserved for a caret, a notch matched to a floating
+label, a nesting step tied to an icon) stays a literal with
+`/* literal: <reason> */` on the same line, so the exception is argued in place.
+Past 40px, use a multiple of a step: `calc(var(--ui-space-4xl) * 2)`.
 
 `--ui-text-base` is 13px, which is what the button, the field and the select
 stand at. **14px is deliberately not a step**: it is the size the system is

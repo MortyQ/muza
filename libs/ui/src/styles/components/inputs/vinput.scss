@@ -94,12 +94,12 @@
 
   /* With left icon */
   &--with-left-icon {
-    padding-left: 2rem;
+    padding-left: var(--ui-space-3xl);
   }
 
   /* With right icon */
   &--with-right-icon {
-    padding-right: 2rem;
+    padding-right: var(--ui-space-3xl);
   }
 
   /* Date input */
@@ -281,7 +281,7 @@
   /* The legend is laid out from the fieldset's content box, so the text inside
      it starts at `padding-left + legend padding-left` — 7px + 3px — which is
      exactly the `left: 0.625rem` the active label sits at. */
-  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem); /* literal: floating-label notch geometry */
   border-radius: var(--ui-radius-lg);
   border-width: 1px;
   border-style: solid;
@@ -342,8 +342,8 @@
 
   &--visible {
     max-width: 100%;
-    padding-left: 0.1875rem;
-    padding-right: 0.1875rem;
+    padding-left: 0.1875rem; /* literal: legend gap around the notched label */
+    padding-right: 0.1875rem; /* literal: legend gap around the notched label */
   }
 }
 
@@ -351,7 +351,7 @@
    HELPER TEXT
    ============================================ */
 .v-input-helper-text {
-  margin-left: 0.75rem;
+  margin-left: var(--ui-space-lg);
   font-size: var(--ui-text-sm);
   line-height: 1rem;
   color: var(--ui-foreground-secondary);
@@ -361,7 +361,7 @@
    ERROR MESSAGE
    ============================================ */
 .v-input-error-message {
-  margin-left: 0.75rem;
+  margin-left: var(--ui-space-lg);
   font-size: var(--ui-text-sm);
   line-height: 1rem;
   font-weight: var(--ui-weight-medium);
@@ -424,8 +424,8 @@
 
   .v-legend {
     max-width: 100%;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    padding-left: var(--ui-space-xs);
+    padding-right: var(--ui-space-xs);
   }
 }
 

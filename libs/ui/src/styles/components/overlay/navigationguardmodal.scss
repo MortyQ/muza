@@ -16,7 +16,7 @@
     overflow: hidden;
     width: 100%;
     max-width: 24rem;
-    margin: 0 1rem;
+    margin: 0 var(--ui-space-xl);
     border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
     border-radius: var(--ui-radius-xl);
     background-color: var(--ui-surface-overlay);
@@ -40,13 +40,13 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    padding: 1.25rem;
+    padding: var(--ui-space-xl);
   }
 
   &__head {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: var(--ui-space-lg);
   }
 
   &__badge {
@@ -56,7 +56,7 @@
     justify-content: center;
     width: 2.25rem;
     height: 2.25rem;
-    margin-top: 0.125rem;
+    margin-top: var(--ui-space-2xs);
     border: 1px solid var(--ui-warning-muted);
     border-radius: var(--ui-radius-full);
     background-color: var(--ui-warning-subtle);
@@ -69,7 +69,7 @@
   }
 
   &__title {
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--ui-space-xs);
     font-size: var(--ui-text-base);
     font-weight: var(--ui-weight-strong);
     line-height: 1.375;
@@ -89,8 +89,8 @@
     justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
-    margin-top: -0.125rem;
-    margin-right: -0.25rem;
+    margin-top: calc(-1 * var(--ui-space-2xs));
+    margin-right: calc(-1 * var(--ui-space-xs));
     border: 0;
     border-radius: var(--ui-radius);
     background-color: transparent;
@@ -110,9 +110,9 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
+    gap: var(--ui-space-md);
+    margin-top: var(--ui-space-xl);
+    padding-top: var(--ui-space-xl);
     border-top: 1px solid var(--ui-border-subtle);
   }
 }

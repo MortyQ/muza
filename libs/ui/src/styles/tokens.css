@@ -199,6 +199,8 @@
     --ui-space-lg:  var(--space-lg, 0.75rem);
     --ui-space-xl:  var(--space-xl, 1rem);
     --ui-space-2xl: var(--space-2xl, 1.5rem);
+    --ui-space-3xl: var(--space-3xl, 2rem);
+    --ui-space-4xl: var(--space-4xl, 2.5rem);
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  SHADOWS                                                 ║

@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: var(--ui-space-lg) var(--ui-space-xl);
   border-bottom: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
   background: var(--ui-surface);
   border-radius: 12px 12px 0 0;
@@ -31,7 +31,7 @@
 .column-picker-header-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--ui-space-md);
   font-weight: var(--ui-weight-strong);
   font-size: var(--ui-text-base);
   color: var(--ui-foreground);
@@ -91,7 +91,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 0;
+  padding: var(--ui-space-md) var(--ui-space-xl) 0;
   flex-shrink: 0;
 }
 
@@ -109,7 +109,7 @@
 .column-picker-text-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ui-space-xs);
   padding: 0;
   border: none;
   background: transparent;
@@ -143,7 +143,7 @@
 // ── Right panel search wrapper ───────────────────────────────────
 
 .column-picker-panel-search {
-  padding: 8px 12px;
+  padding: var(--ui-space-md) var(--ui-space-lg);
   flex-shrink: 0;
 }
 
@@ -152,16 +152,16 @@
 .cp-toolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 9px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-sm) var(--ui-space-md);
   flex-shrink: 0;
 }
 
 .cp-search {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 9px;
+  gap: var(--ui-space-xs);
+  padding: var(--ui-space-xs) var(--ui-space-md);
   flex: 1;
   background: var(--ui-surface-raised);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
@@ -206,7 +206,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
+  padding: 0 var(--ui-space-md);
   height: 100%;
   border: none;
   cursor: pointer;
@@ -242,7 +242,7 @@
 .column-picker-panel-list {
   flex: 1;
   overflow-y: auto;
-  padding: 0 8px 8px;
+  padding: 0 var(--ui-space-md) var(--ui-space-md);
   min-height: 0;
 
   &::-webkit-scrollbar {
@@ -273,9 +273,9 @@
 .cp-group-header {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 8px 5px;
-  margin-top: 3px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-sm) var(--ui-space-md) var(--ui-space-xs);
+  margin-top: var(--ui-space-2xs);
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.1s ease-out;
@@ -335,7 +335,7 @@
   opacity: 0;
   display: flex;
   align-items: center;
-  padding: 1px 6px;
+  padding: 1px var(--ui-space-sm);
   border-radius: 5px;
   border: none;
   font-size: var(--ui-text-2xs);
@@ -357,7 +357,7 @@
 .cp-group-badge {
   font-size: var(--ui-text-2xs);
   font-weight: var(--ui-weight-strong);
-  padding: 1px 5px;
+  padding: 1px var(--ui-space-xs);
   border-radius: 9px;
   flex-shrink: 0;
 
@@ -388,8 +388,8 @@
 .cp-available-item {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 4px 8px 4px 14px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-xs) var(--ui-space-md) var(--ui-space-xs) var(--ui-space-lg);
   border-radius: 7px;
   cursor: pointer;
   margin-bottom: 1px;
@@ -488,7 +488,7 @@
 .cp-show-more-btn {
   display: block;
   width: 100%;
-  padding: 4px 8px;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   border: none;
   background: transparent;
   cursor: pointer;
@@ -511,8 +511,8 @@
 .cp-type-group-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 8px 3px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-sm) var(--ui-space-md) var(--ui-space-2xs);
 }
 
 .cp-type-group-dot {
@@ -542,8 +542,8 @@
 .cp-selected-item {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 5px 10px 5px 14px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-xs) var(--ui-space-md) var(--ui-space-xs) var(--ui-space-lg);
   border-radius: 7px;
   background: transparent;
   position: relative;
@@ -676,7 +676,7 @@
 
 
 .column-picker-empty {
-  padding: 24px 16px;
+  padding: var(--ui-space-2xl) var(--ui-space-xl);
   text-align: center;
   font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
@@ -688,7 +688,7 @@
   height: 36px;
   border-radius: 7px;
   background: var(--ui-surface-raised);
-  margin-bottom: 4px;
+  margin-bottom: var(--ui-space-xs);
   animation: columnPickerPulse 1.4s ease-in-out infinite;
 
   @for $i from 1 through 6 {
@@ -705,8 +705,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: var(--ui-space-md);
+  padding: var(--ui-space-lg) var(--ui-space-xl);
   border-top: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
   background: var(--ui-surface);
   border-radius: 0 0 12px 12px;
@@ -716,7 +716,7 @@
 .column-picker-footer-hint {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ui-space-xs);
   flex: 1;
   font-size: var(--ui-text-xs);
   color: var(--ui-foreground-secondary);

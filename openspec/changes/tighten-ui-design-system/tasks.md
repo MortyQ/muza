@@ -28,17 +28,17 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 3. Spacing scale and guard
 
-- [ ] 3.1 Add the two new spacing steps.
+- [x] 3.1 Add the two new spacing steps.
   - Change: `--space-3xl` (2rem) and `--space-4xl` (2.5rem) in `theme.css`, and their `--ui-space-*` wrappers in `tokens.css`.
   - Leave the control tokens unchanged.
   - Verify: a token contract asserts all nine spacing tokens compute to 2/4/6/8/12/16/24/32/40px in both themes.
-- [ ] 3.2 Add the spacing guard to `tests/conventions.spec.ts` (D3).
+- [x] 3.2 Add the spacing guard to `tests/conventions.spec.ts` (D3).
   - Rule: a literal `gap`, `padding*`, `margin*` or `inset*` fails, except `±1px`.
   - Verify: it fails on the current tree and lists the 192 declarations.
-- [ ] 3.3 Replace every literal spacing value with a token, mapping each value by hand (D2).
+- [x] 3.3 Replace every literal spacing value with a token, mapping each value by hand (D2).
   - Scope: `libs/ui/src/styles/**` and `components/table/assets/styles/**`.
   - Verify: the spacing guard passes, and `test:unit` and `test:tokens` stay green.
-- [ ] 3.4 Update the docs and contracts.
+- [x] 3.4 Update the docs and contracts.
   - Re-point any token contract that pinned a literal spacing value.
   - Update the Rhythm row of the token table in `ui-component-migration.md`.
   - Add a CHANGELOG entry for the new steps.

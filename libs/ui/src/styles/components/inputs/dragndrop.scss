@@ -55,15 +55,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 2rem;
+    gap: var(--ui-space-md);
+    padding: var(--ui-space-3xl);
     text-align: center;
   }
 
   &__loading,
   &__content {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    padding-top: calc(var(--ui-space-2xl) * 2);
+    padding-bottom: calc(var(--ui-space-2xl) * 2);
   }
 
   &__loading {
@@ -71,20 +71,20 @@
   }
 
   &__preview {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding-top: var(--ui-space-2xl);
+    padding-bottom: var(--ui-space-2xl);
 
     &-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--ui-space-md);
       color: var(--ui-primary);
     }
   }
 
   &__icon-wrapper {
-    margin-bottom: 1rem;
-    padding: 1rem;
+    margin-bottom: var(--ui-space-xl);
+    padding: var(--ui-space-xl);
     border-radius: var(--ui-radius-full);
     background-color: var(--ui-surface-hover);
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -108,7 +108,7 @@
   }
 
   &__text {
-    margin-bottom: 1rem;
+    margin-bottom: var(--ui-space-xl);
   }
 
   &__title {
@@ -130,19 +130,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--ui-space-md);
     width: 100%;
-    margin-top: 1rem;
+    margin-top: var(--ui-space-xl);
   }
 
   &__file {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--ui-space-lg);
     width: 100%;
     min-height: 60px;
-    padding: 0.75rem;
+    padding: var(--ui-space-lg);
     border: 1px solid var(--ui-border);
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface);
@@ -192,7 +192,7 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    padding: 0.25rem;
+    padding: var(--ui-space-xs);
     border: 0;
     border-radius: var(--ui-radius-full);
     background-color: transparent;
@@ -215,7 +215,7 @@
 
   &__actions {
     display: flex;
-    margin-top: 1rem;
+    margin-top: var(--ui-space-xl);
 
     :deep(.v-button) {
       width: 100%;

@@ -278,28 +278,51 @@ describe("stylesheet conventions", () => {
   });
 });
 
-describe("type values", () => {
-  // Every stylesheet in the library, the table's partials and the sidebar's
-  // included, plus the style blocks inside .vue files — a literal type value
-  // is the same defect wherever it lives.
-  function walk(dir: string): string[] {
-    return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-      const path = join(dir, entry.name);
-      if (entry.isDirectory()) return walk(path);
-      return /\.(scss|vue)$/.test(entry.name) ? [path] : [];
-    });
-  }
-
-  const FILES = walk(SRC).map((path) => {
-    const source = readFileSync(path, "utf8");
-    const css = path.endsWith(".vue")
-      ? [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join("\n")
-      : source;
-    return {
-      file: path.slice(SRC.length + 1),
-      code: css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""),
-    };
+// Every stylesheet in the library, the table's partials and the sidebar's
+// included, plus the style blocks inside .vue files — a literal value is the
+// same defect wherever it lives. `raw` keeps comments, for the guards that read
+// a `/* literal: … */` marker; `code` has them stripped.
+const walkStyles = (dir: string): string[] =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return walkStyles(path);
+    return /\.(scss|vue)$/.test(entry.name) ? [path] : [];
   });
+
+const STYLE_FILES = walkStyles(SRC).map((path) => {
+  const source = readFileSync(path, "utf8");
+  const raw = path.endsWith(".vue")
+    ? [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join("\n")
+    : source;
+  return {
+    file: path.slice(SRC.length + 1),
+    raw,
+    code: raw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""),
+  };
+});
+
+/**
+ * Declarations of `property` whose value holds a literal length, skipping lines
+ * that carry a `/* literal: <reason> *\/` marker — a size or a geometry coupling
+ * that only looks like spacing, argued in place.
+ */
+const literalLengths = (
+  raw: string,
+  property: RegExp,
+  allowed: (value: string) => boolean,
+): string[] => {
+  const length = /(?:^|[\s(,])(-?(?:\d+\.?\d*|\.\d+)(?:px|rem|em))\b/g;
+  const declaration = new RegExp(`(?:^|[{;\\s])(${property.source})\\s*:\\s*([^;{}]+);`, "g");
+  return raw.split("\n")
+    .filter(line => !line.includes("/* literal:"))
+    .map(line => line.replace(/\/\/.*$/, "").replace(/\/\*[\s\S]*?\*\//g, ""))
+    .flatMap(line => [...line.matchAll(declaration)]
+      .filter(([, , value]) => [...value.matchAll(length)].some(m => !allowed(m[1])))
+      .map(([, name, value]) => `${name}: ${value.trim()}`));
+};
+
+describe("type values", () => {
+  const FILES = STYLE_FILES;
 
   it("finds the files", () => {
     expect(FILES.length).toBeGreaterThan(80);
@@ -312,6 +335,19 @@ describe("type values", () => {
       ...code.matchAll(/\$[\w-]*font-weight[\w-]*:\s*\d{3}\b/g),
     ].map(m => m[0]);
     expect(literals, `${file} hardcodes type: ${literals.join(", ")} — use --ui-text-* / --ui-weight-*`)
+      .toHaveLength(0);
+  });
+});
+
+describe("spacing values", () => {
+  // A 4px grid with 2px and 6px as the only half steps, all of it in
+  // --ui-space-*. Zero and ±1px border compensation are the only literals.
+  const SPACING = /gap|row-gap|column-gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?/;
+  const isAllowed = (value: string) => /^-?0(?:px|rem|em)?$/.test(value) || /^-?1px$/.test(value);
+
+  it.each(STYLE_FILES)("$file takes gap, padding and margin from tokens", ({ file, raw }) => {
+    const literals = literalLengths(raw, SPACING, isAllowed);
+    expect(literals, `${file} hardcodes spacing: ${literals.join("; ")} — use --ui-space-*, or mark a size with /* literal: <reason> */`)
       .toHaveLength(0);
   });
 });

@@ -43,7 +43,7 @@
 
 /* ── Options ────────────────────────────────────────────────────────────── */
 .multiselect__content-wrapper.v-ms-floating .multiselect__option {
-  padding: 0.625rem 1rem;
+  padding: var(--ui-space-md) var(--ui-space-xl);
   font-size: var(--ui-text-base);
   color: var(--ui-foreground);
   font-weight: var(--ui-weight-regular);
@@ -89,7 +89,7 @@
   color: var(--ui-primary);
   font-weight: var(--ui-weight-strong);
   cursor: pointer;
-  padding: 8px 16px;
+  padding: var(--ui-space-md) var(--ui-space-xl);
 }
 
 .multiselect__content-wrapper.v-ms-floating
@@ -118,8 +118,8 @@
   justify-content: center;
   font-size: var(--ui-text-2xs) !important;
   text-align: center;
-  margin-bottom: 2px;
-  margin-left: .5px;
+  margin-bottom: var(--ui-space-2xs);
+  margin-left: .5px; /* literal: optical half-pixel nudge */
 }
 
 /* ── Disabled options ───────────────────────────────────────────────────── */
@@ -145,7 +145,7 @@
    ============================================ */
 .multiselect__content-wrapper.v-ms-floating {
   border-radius: var(--ui-radius-lg);
-  padding: 0.1875rem;
+  padding: var(--ui-space-2xs);
 }
 
 /* See the `min-height: 0` note in vselect.scss — the library's 40px floor is why
@@ -154,7 +154,7 @@
   font-size: var(--ui-text-base);
   min-height: 0;
   line-height: 1.125rem;
-  padding: 0.3125rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   /* Rounded rows need the panel's own 3px padding above to keep the corners off
      its border. */
   border-radius: var(--ui-radius);
@@ -166,7 +166,7 @@
   text-transform: uppercase;
   min-height: 0;
   line-height: 1rem;
-  padding: 0.25rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   border-radius: var(--ui-radius);
 }
 

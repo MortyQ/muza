@@ -3,7 +3,7 @@
 
   overflow-y: auto;
   max-height: var(--v-scroll-panel-max-height, none);
-  padding: 0.625rem;
+  padding: var(--ui-space-md);
   border-radius: var(--ui-radius-xl);
   /* The depth is drawn inward, never as a drop shadow: this is a well, and its
      content — cards, list rows — carries elevation of its own. A container that

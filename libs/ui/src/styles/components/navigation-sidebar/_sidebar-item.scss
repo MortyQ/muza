@@ -168,7 +168,7 @@
   flex-direction: column;
   gap: var(--ui-space-2xs);
   // border + padding + half the icon: the line runs through the icon's centre
-  margin-left: calc(1px + var(--ui-control-px) + var(--sidebar-icon-size) / 2 - 0.5px);
+  margin-left: calc(1px + var(--ui-control-px) + var(--sidebar-icon-size) / 2 - 0.5px); /* literal: centres the tree line under the icon */
   padding: var(--ui-space-2xs) 0 var(--ui-space-2xs) var(--sidebar-guide-gap);
   background: linear-gradient(var(--sidebar-guide-color), var(--sidebar-guide-color)) left / 1px 100% no-repeat;
 }

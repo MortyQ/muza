@@ -191,17 +191,17 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 
 .sidebar-flyout-bridge--right {
   right: 100%;
-  margin-right: -1rem;
+  margin-right: calc(-1 * var(--ui-space-xl));
 }
 
 .sidebar-flyout-bridge--left {
   left: 100%;
-  margin-left: -1rem;
+  margin-left: calc(-1 * var(--ui-space-xl));
 }
 
 .sidebar-flyout-content {
   position: relative;
-  margin-left: 0.5rem;
+  margin-left: var(--ui-space-md);
   /* WebKit: GPU compositing for smooth flyout animation */
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;

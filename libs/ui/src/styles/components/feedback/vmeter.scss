@@ -1,7 +1,7 @@
 .v-meter {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-lg);
 }
 
 .v-meter__track {
@@ -52,7 +52,7 @@
 .v-meter__value {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--ui-space-sm);
   flex-shrink: 0;
   font-size: var(--ui-text-sm);
   font-variant-numeric: tabular-nums;

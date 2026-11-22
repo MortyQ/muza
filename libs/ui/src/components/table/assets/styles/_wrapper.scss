@@ -115,6 +115,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5rem 0;
+  padding: calc(var(--ui-space-4xl) * 2) 0;
   min-height: 300px;
 }

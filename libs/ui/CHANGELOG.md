@@ -21,6 +21,7 @@
 
 ### Changed
 
+- **Spacing is on one scale.** Every gap, padding and margin in the library takes a `--ui-space-*` token. 190 literal values moved onto it; values between steps rounded down, the library is moving denser (10px → 8, 14px → 12, 20px → 16, so modal, drawer and guard-modal padding is 16px). `--ui-space-3xl` (32px) and `--ui-space-4xl` (40px) are new. The conventions spec fails on a new literal.
 - **`VTag`** now uses a single geometry:
   - Sizes sit on the type scale: `xs` 10, `sm` 11, `md` 12 and `lg` 13px, down one step from before. Height is the line box plus a spacing token. Every variant has the same box.
   - Soft, outline and ghost read the tone's `-hover` on a `-subtle` fill. `-foreground` is used on solid fills only.
