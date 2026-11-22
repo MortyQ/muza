@@ -352,6 +352,37 @@ describe("spacing values", () => {
   });
 });
 
+describe("radius values", () => {
+  // Radii come from --ui-radius-*. A nested corner is `calc(<outer> - <padding>)`
+  // over tokens, so it follows outer = inner + padding by construction.
+  const RADIUS = /border(?:-[a-z-]+)?-radius|\$[\w-]*radius[\w-]*|--[\w-]*radius[\w-]*/;
+
+  // 1–2px corners on marks too small to carry a scale step, by file.
+  const HAIRLINE_RADII = new Set([
+    "styles/components/base/vbutton.scss", // the focus inset's corner
+    "styles/components/inputs/vcheckbox.scss", // the tick and the dash
+    "styles/components/layout/vcard.scss", // the accent bar
+    "styles/components/navigation-sidebar/_sidebar-nav.scss", // the active bar
+    "components/table/assets/styles/_header.scss", // the resize divider
+    "components/table/assets/styles/_wrapper.scss", // inner corner, 1px border
+    "components/table/assets/styles/column-picker.scss", // the selection bar
+  ]);
+
+  it.each(STYLE_FILES)("$file takes its radii from tokens", ({ file, raw }) => {
+    const isAllowed = (value: string) =>
+      /^0(?:px|rem)?$/.test(value)
+      || (HAIRLINE_RADII.has(file) && /^(?:1px|2px|0\.125rem)$/.test(value));
+    const literals = literalLengths(raw, RADIUS, isAllowed);
+    expect(literals, `${file} hardcodes a radius: ${literals.join("; ")} — use --ui-radius-*`)
+      .toHaveLength(0);
+  });
+
+  it("keeps no stale entries in HAIRLINE_RADII", () => {
+    const files = new Set(STYLE_FILES.map(({ file }) => file));
+    expect([...HAIRLINE_RADII].filter(file => !files.has(file))).toEqual([]);
+  });
+});
+
 describe("global component registration", () => {
   it("declares every globally registered component with a matching import path", () => {
     const declared = [...GLOBALS.matchAll(/(\w+): typeof import\("([^"]+)"\)/g)];

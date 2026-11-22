@@ -33,7 +33,7 @@
   height: 30px;
   display: grid;
   place-items: center;
-  border-radius: 9px;
+  border-radius: var(--ui-radius-lg);
   background: color-mix(in oklch, var(--ui-surface) 100%, transparent);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
   color: var(--ui-foreground-secondary);

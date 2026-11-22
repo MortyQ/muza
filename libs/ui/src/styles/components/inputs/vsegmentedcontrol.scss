@@ -76,7 +76,7 @@
   left: 0;
   width: var(--v-sc-pill-w, 0);
   transform: translateX(var(--v-sc-pill-x, 0));
-  border-radius: calc(var(--ui-radius-lg) - 2px);
+  border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs));
   background: var(--ui-surface);
   box-shadow: var(--ui-shadow-sm);
   opacity: 0;
@@ -116,7 +116,7 @@
   padding: 0 var(--ui-control-px);
   gap: var(--ui-control-gap);
   font-size: var(--ui-text-base);
-  border-radius: calc(var(--ui-radius-lg) - 2px);
+  border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs));
   font-weight: var(--ui-weight-medium);
   font-family: inherit;
   white-space: nowrap;

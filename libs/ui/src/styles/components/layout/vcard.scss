@@ -131,11 +131,11 @@
 }
 
 .v-card--radius-xl {
-  border-radius: 0.75rem !important;
+  border-radius: var(--ui-radius-xl) !important;
 }
 
 .v-card--radius-full {
-  border-radius: 9999px !important;
+  border-radius: var(--ui-radius-full) !important;
 }
 
 /* ============================================

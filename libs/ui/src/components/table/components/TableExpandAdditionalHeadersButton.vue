@@ -46,7 +46,7 @@ const emit = defineEmits<{
   cursor: pointer;
 
   /* Modern rounded style */
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
 
   color: var(--ui-primary);
 

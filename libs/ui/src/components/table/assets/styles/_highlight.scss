@@ -141,7 +141,7 @@ $highlight-transition: 300ms ease;
   width: 20px;
   height: 20px;
   padding: 0;
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
   background: color-mix(in oklch, var(--ui-surface) 100%, transparent);
   color: var(--ui-foreground-secondary);

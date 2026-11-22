@@ -9,7 +9,7 @@
     flex-direction: column;
     background: var(--ui-surface);
     border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
-    border-radius: 12px;
+    border-radius: var(--ui-radius-xl);
     box-shadow: var(--ui-shadow-lg);
     overflow: hidden;
     position: relative;
@@ -18,7 +18,7 @@
     @media (max-width: 400px) {
         max-width: 100%;
         max-height: 60vh;
-        border-radius: 8px;
+        border-radius: var(--ui-radius-lg);
     }
 }
 
@@ -52,7 +52,7 @@
     height: 26px;
     padding: 0;
     border: none;
-    border-radius: 7px;
+    border-radius: var(--ui-radius);
     background: transparent;
     color: var(--ui-foreground-secondary);
     cursor: pointer;
@@ -148,7 +148,7 @@
 
     &::-webkit-scrollbar-thumb {
         background: var(--ui-surface-hover);
-        border-radius: 10px;
+        border-radius: var(--ui-radius-lg);
         border: 1px solid transparent;
         background-clip: padding-box;
 
@@ -169,7 +169,7 @@
     gap: var(--ui-space-xs);
     padding: var(--ui-space-sm) var(--ui-space-sm);
     margin-bottom: var(--ui-space-2xs);
-    border-radius: 8px;
+    border-radius: var(--ui-radius-lg);
     cursor: move;
     transition: background 0.1s ease;
     animation: columnSetupFadeIn 0.2s ease backwards;
@@ -253,7 +253,7 @@
     height: 24px;
     padding: 0;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--ui-radius);
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
@@ -317,7 +317,7 @@
     height: 22px;
     padding: 0;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--ui-radius-xs);
     background: transparent;
     color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
     cursor: pointer;
@@ -354,7 +354,7 @@
     display: flex;
     align-items: center;
     padding: var(--ui-space-2xs) var(--ui-space-sm);
-    border-radius: 4px;
+    border-radius: var(--ui-radius-xs);
     background: var(--ui-surface-raised);
     color: var(--ui-foreground-secondary);
     font-size: var(--ui-text-2xs);

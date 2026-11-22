@@ -46,12 +46,12 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 4. Radius rule and guard
 
-- [ ] 4.1 Add the radius guard with a commented `HAIRLINE_RADII` allow-list (D3).
+- [x] 4.1 Add the radius guard with a commented `HAIRLINE_RADII` allow-list (D3).
   - Verify: it fails on the current tree with the expected list.
-- [ ] 4.2 Replace literal radii with tokens.
+- [x] 4.2 Replace literal radii with tokens.
   - Nested inner radii become `calc(<outer token> - <padding token>)`. This covers `VSegmentedControl`'s `- 2px`, `vcard.scss` and `vtab.scss`.
   - Verify: the guard passes, and a token contract asserts the segmented pill's radius equals the track radius minus the track padding.
-- [ ] 4.3 Document "outer = inner + padding" under Step 6 of `ui-component-migration.md`.
+- [x] 4.3 Document "outer = inner + padding" under Step 6 of `ui-component-migration.md`.
   - Verify: the doc names the guard.
 
 ## 5. Type scale and tracking

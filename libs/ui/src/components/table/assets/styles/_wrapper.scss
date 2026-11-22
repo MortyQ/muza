@@ -4,7 +4,7 @@
 
 .v-table-wrapper {
   // One source for the card radius; .v-table-container-wrapper derives its own.
-  --v-table-radius: 1rem;
+  --v-table-radius: var(--ui-radius-2xl);
 
   width: 100%;
   position: relative;
@@ -88,12 +88,12 @@
 
   &::-webkit-scrollbar-track {
     background: var(--ui-surface-sunken);
-    border-radius: 4px;
+    border-radius: var(--ui-radius-xs);
   }
 
   &::-webkit-scrollbar-thumb {
     background: color-mix(in oklch, var(--ui-border) 70%, var(--ui-foreground-secondary) 30%);
-    border-radius: 4px;
+    border-radius: var(--ui-radius-xs);
     border: 2px solid var(--ui-surface-sunken);
 
     @media (hover: hover) and (pointer: fine) {

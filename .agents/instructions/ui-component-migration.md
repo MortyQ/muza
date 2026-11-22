@@ -198,6 +198,16 @@ control differ in exactly one dimension.
 
 The status colour is `--ui-danger`, not `--ui-error` or `text-negative`.
 
+### Nested corners: outer = inner + padding
+
+A rounded element inside a rounded, padded container takes the container's
+radius minus that padding, written over tokens:
+`border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs))`. Equal radii
+on both look pinched at the corners; the subtraction keeps the gap even all the
+way round. `tests/conventions.spec.ts` rejects a literal radius, so the inner
+corner can only be expressed this way. The one exception is a 1–2px mark (a
+tick, an active bar), allow-listed by file in `HAIRLINE_RADII`.
+
 ### v3 → v4 mapping
 
 | v3 | v4 |

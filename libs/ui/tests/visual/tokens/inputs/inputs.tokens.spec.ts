@@ -163,6 +163,15 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
       }
     });
 
+    it("nests the pill's corner inside the track's: outer = inner + padding", async () => {
+      const el = await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" });
+      const pill = el.querySelector(".v-sc__pill") as HTMLElement;
+      const track = getComputedStyle(el);
+
+      expect(parseFloat(getComputedStyle(pill).borderTopLeftRadius))
+        .toBe(parseFloat(track.borderTopLeftRadius) - parseFloat(track.paddingTop));
+    });
+
     describe("the sliding pill", () => {
       // Segments are transparent when active; the pill is the active surface.
       // So the geometry that matters is the pill's against the chosen segment,

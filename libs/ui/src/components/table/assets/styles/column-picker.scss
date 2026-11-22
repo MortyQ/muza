@@ -8,7 +8,7 @@
   flex-direction: column;
   background: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
-  border-radius: 12px;
+  border-radius: var(--ui-radius-xl);
   box-shadow: var(--ui-shadow-lg);
   overflow: hidden;
   position: relative;
@@ -24,7 +24,7 @@
   padding: var(--ui-space-lg) var(--ui-space-xl);
   border-bottom: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
   background: var(--ui-surface);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--ui-radius-xl) var(--ui-radius-xl) 0 0;
   flex-shrink: 0;
 }
 
@@ -46,7 +46,7 @@
   height: 28px;
   padding: 0;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
@@ -165,7 +165,7 @@
   flex: 1;
   background: var(--ui-surface-raised);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   min-width: 0;
   height: 28px;
   transition: border-color 120ms ease, box-shadow 120ms ease;
@@ -197,7 +197,7 @@
   height: 28px;
   background: var(--ui-surface-raised);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -255,7 +255,7 @@
 
   &::-webkit-scrollbar-thumb {
     background: var(--ui-surface-hover);
-    border-radius: 10px;
+    border-radius: var(--ui-radius-lg);
     border: 1px solid transparent;
     background-clip: padding-box;
 
@@ -276,7 +276,7 @@
   gap: var(--ui-space-sm);
   padding: var(--ui-space-sm) var(--ui-space-md) var(--ui-space-xs);
   margin-top: var(--ui-space-2xs);
-  border-radius: 8px;
+  border-radius: var(--ui-radius-lg);
   cursor: pointer;
   transition: background 0.1s ease-out;
   user-select: none;
@@ -336,7 +336,7 @@
   display: flex;
   align-items: center;
   padding: 1px var(--ui-space-sm);
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   border: none;
   font-size: var(--ui-text-2xs);
   font-weight: var(--ui-weight-strong);
@@ -358,7 +358,7 @@
   font-size: var(--ui-text-2xs);
   font-weight: var(--ui-weight-strong);
   padding: 1px var(--ui-space-xs);
-  border-radius: 9px;
+  border-radius: var(--ui-radius-lg);
   flex-shrink: 0;
 
   &--selected {
@@ -390,7 +390,7 @@
   align-items: center;
   gap: var(--ui-space-sm);
   padding: var(--ui-space-xs) var(--ui-space-md) var(--ui-space-xs) var(--ui-space-lg);
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   cursor: pointer;
   margin-bottom: 1px;
   position: relative;
@@ -468,7 +468,7 @@
 .cp-available-item-toggle {
   width: 18px;
   height: 18px;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -496,7 +496,7 @@
   font-weight: var(--ui-weight-medium);
   color: var(--ui-primary);
   text-align: left;
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   transition: background 0.1s ease-out;
 
   @media (hover: hover) and (pointer: fine) {
@@ -544,7 +544,7 @@
   align-items: center;
   gap: var(--ui-space-sm);
   padding: var(--ui-space-xs) var(--ui-space-md) var(--ui-space-xs) var(--ui-space-lg);
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   background: transparent;
   position: relative;
   transition: background 0.12s ease-out;
@@ -637,7 +637,7 @@
   height: 18px;
   padding: 0;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
@@ -686,7 +686,7 @@
 
 .column-picker-skeleton {
   height: 36px;
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   background: var(--ui-surface-raised);
   margin-bottom: var(--ui-space-xs);
   animation: columnPickerPulse 1.4s ease-in-out infinite;
@@ -709,7 +709,7 @@
   padding: var(--ui-space-lg) var(--ui-space-xl);
   border-top: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
   background: var(--ui-surface);
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--ui-radius-xl) var(--ui-radius-xl);
   flex-shrink: 0;
 }
 
@@ -733,7 +733,7 @@
 .cp-type-icon {
   width: 18px;
   height: 18px;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   background: color-mix(in oklch, var(--cp-type-color) 12%, transparent);
   color: var(--cp-type-color);
   display: flex;

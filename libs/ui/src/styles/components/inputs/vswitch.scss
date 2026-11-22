@@ -45,7 +45,7 @@
   height: 1.125rem;
   display: flex;
   align-items: center;
-  border-radius: 9999px;
+  border-radius: var(--ui-radius-full);
   border: 2px solid;
   box-sizing: border-box;
   background-color: var(--ui-border-subtle);
@@ -92,7 +92,7 @@
   justify-content: center;
   width: 0.75rem;
   height: 0.75rem;
-  border-radius: 9999px;
+  border-radius: var(--ui-radius-full);
   /* Light in both themes, like the text on a primary fill */
   background-color: var(--ui-primary-foreground);
   box-shadow: var(--ui-shadow-md);

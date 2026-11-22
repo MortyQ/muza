@@ -52,7 +52,7 @@ $table-font-weight-bold: var(--ui-weight-strong);
 // ════════════════════════════════════════════════════════════════
 
 $table-border-width: 1px;
-$table-border-radius: 0.75rem; // 12px - modern, softer corners
+$table-border-radius: var(--ui-radius-xl);
 $table-total-border-width: 1px; // Changed from 2px for consistency
 
 // ════════════════════════════════════════════════════════════════
