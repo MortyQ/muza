@@ -8,7 +8,7 @@
   flex-direction: column;
   background: var(--ui-surface);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
-  border-radius: 12px;
+  border-radius: var(--ui-radius-xl);
   box-shadow: var(--ui-shadow-lg);
   overflow: hidden;
   position: relative;
@@ -21,21 +21,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: var(--ui-space-lg) var(--ui-space-xl);
   border-bottom: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
   background: var(--ui-surface);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--ui-radius-xl) var(--ui-radius-xl) 0 0;
   flex-shrink: 0;
 }
 
 .column-picker-header-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--ui-space-md);
   font-weight: var(--ui-weight-strong);
   font-size: var(--ui-text-base);
   color: var(--ui-foreground);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
 }
 
 .column-picker-close-btn {
@@ -46,11 +46,13 @@
   height: 28px;
   padding: 0;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
   flex-shrink: 0;
 
   @media (hover: hover) and (pointer: fine) {
@@ -91,15 +93,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 0;
+  padding: var(--ui-space-md) var(--ui-space-xl) 0;
   flex-shrink: 0;
 }
 
 .column-picker-panel-count {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   color: var(--ui-foreground-secondary);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
 
   &--limit {
     color: var(--ui-warning);
@@ -109,15 +111,15 @@
 .column-picker-text-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ui-space-xs);
   padding: 0;
   border: none;
   background: transparent;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -143,7 +145,7 @@
 // ── Right panel search wrapper ───────────────────────────────────
 
 .column-picker-panel-search {
-  padding: 8px 12px;
+  padding: var(--ui-space-md) var(--ui-space-lg);
   flex-shrink: 0;
 }
 
@@ -152,23 +154,25 @@
 .cp-toolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 9px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-sm) var(--ui-space-md);
   flex-shrink: 0;
 }
 
 .cp-search {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 9px;
+  gap: var(--ui-space-xs);
+  padding: var(--ui-space-xs) var(--ui-space-md);
   flex: 1;
   background: var(--ui-surface-raised);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   min-width: 0;
   height: 28px;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  transition:
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   // The input draws no outline of its own; the box carries the focus ring.
   &:focus-within {
@@ -197,7 +201,7 @@
   height: 28px;
   background: var(--ui-surface-raised);
   border: 1px solid color-mix(in oklch, var(--ui-surface-hover) 50%, transparent);
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -206,16 +210,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
+  padding: 0 var(--ui-space-md);
   height: 100%;
   border: none;
   cursor: pointer;
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
   background: transparent;
   color: var(--ui-foreground-secondary);
-  transition: background 0.12s ease-out, color 0.12s ease-out;
+  transition:
+    background var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
   white-space: nowrap;
 
   @media (hover: hover) and (pointer: fine) {
@@ -242,7 +248,7 @@
 .column-picker-panel-list {
   flex: 1;
   overflow-y: auto;
-  padding: 0 8px 8px;
+  padding: 0 var(--ui-space-md) var(--ui-space-md);
   min-height: 0;
 
   &::-webkit-scrollbar {
@@ -255,7 +261,7 @@
 
   &::-webkit-scrollbar-thumb {
     background: var(--ui-surface-hover);
-    border-radius: 10px;
+    border-radius: var(--ui-radius-lg);
     border: 1px solid transparent;
     background-clip: padding-box;
 
@@ -273,12 +279,12 @@
 .cp-group-header {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 8px 5px;
-  margin-top: 3px;
-  border-radius: 8px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-sm) var(--ui-space-md) var(--ui-space-xs);
+  margin-top: var(--ui-space-2xs);
+  border-radius: var(--ui-radius-lg);
   cursor: pointer;
-  transition: background 0.1s ease-out;
+  transition: background var(--ui-duration-instant) var(--ui-ease-out);
   user-select: none;
 
   @media (hover: hover) and (pointer: fine) {
@@ -317,10 +323,10 @@
 
 .cp-group-label {
   flex: 1;
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ui-tracking-caps);
   color: color-mix(in oklch, var(--ui-foreground-secondary) 45%, transparent);
   white-space: nowrap;
   overflow: hidden;
@@ -335,30 +341,32 @@
   opacity: 0;
   display: flex;
   align-items: center;
-  padding: 1px 6px;
-  border-radius: 5px;
+  padding: 1px var(--ui-space-sm);
+  border-radius: var(--ui-radius-xs);
   border: none;
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
-  letter-spacing: -0.01em;
-  background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
-  color: var(--ui-primary);
+  letter-spacing: var(--ui-tracking-tight);
+  background: transparent;
+  color: var(--ui-foreground-secondary);
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.12s ease-out, background 0.12s ease-out;
+  transition:
+    opacity var(--ui-duration-instant) var(--ui-ease-out),
+    background var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: color-mix(in oklch, var(--ui-primary) 18%, transparent);
+      background: var(--ui-surface-hover);
     }
   }
 }
 
 .cp-group-badge {
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
-  padding: 1px 5px;
-  border-radius: 9px;
+  padding: 1px var(--ui-space-xs);
+  border-radius: var(--ui-radius-lg);
   flex-shrink: 0;
 
   &--selected {
@@ -374,7 +382,7 @@
 
 .cp-group-chevron {
   color: color-mix(in oklch, var(--ui-foreground-secondary) 30%, transparent);
-  transition: transform 0.15s ease-out;
+  transition: transform var(--ui-duration-fast) var(--ui-ease-out);
   flex-shrink: 0;
 
   &--open {
@@ -388,15 +396,15 @@
 .cp-available-item {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 4px 8px 4px 14px;
-  border-radius: 7px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-xs) var(--ui-space-md) var(--ui-space-xs) var(--ui-space-lg);
+  border-radius: var(--ui-radius);
   cursor: pointer;
   margin-bottom: 1px;
   position: relative;
   overflow: hidden;
-  transition: background 0.1s ease-out;
-  animation: columnPickerFadeIn 0.15s ease backwards;
+  transition: background var(--ui-duration-instant) var(--ui-ease-out);
+  animation: columnPickerFadeIn var(--ui-duration-fast) var(--ui-ease-out) backwards;
 
   @for $i from 1 through 20 {
     &:nth-child(#{$i}) {
@@ -426,7 +434,7 @@
     width: 2px;
     border-radius: 0 2px 2px 0;
     background: var(--cp-type-color);
-    transition: opacity 0.12s ease-out;
+    transition: opacity var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   &:not(.cp-available-item--selected)::before {
@@ -448,12 +456,12 @@
 
 .cp-available-item-label {
   flex: 1;
-  font-size: var(--ui-text-sm);
-  letter-spacing: -0.01em;
+  font-size: var(--ui-text-base);
+  letter-spacing: var(--ui-tracking-tight);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.12s ease-out;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .cp-available-item--selected .cp-available-item-label {
@@ -468,7 +476,7 @@
 .cp-available-item-toggle {
   width: 18px;
   height: 18px;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -476,7 +484,10 @@
   background: transparent;
   color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
   opacity: 0;
-  transition: opacity 0.12s ease-out, background 0.12s ease-out, color 0.12s ease-out;
+  transition:
+    opacity var(--ui-duration-instant) var(--ui-ease-out),
+    background var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .cp-available-item--selected .cp-available-item-toggle {
@@ -488,20 +499,20 @@
 .cp-show-more-btn {
   display: block;
   width: 100%;
-  padding: 4px 8px;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
   text-align: left;
-  border-radius: 6px;
-  transition: background 0.1s ease-out;
+  border-radius: var(--ui-radius);
+  transition: background var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+      background: var(--ui-surface-hover);
     }
   }
 }
@@ -511,8 +522,8 @@
 .cp-type-group-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 8px 3px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-sm) var(--ui-space-md) var(--ui-space-2xs);
 }
 
 .cp-type-group-dot {
@@ -525,10 +536,10 @@
 }
 
 .cp-type-group-label {
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--ui-tracking-caps);
   color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
 }
 
@@ -542,13 +553,13 @@
 .cp-selected-item {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 5px 10px 5px 14px;
-  border-radius: 7px;
+  gap: var(--ui-space-sm);
+  padding: var(--ui-space-xs) var(--ui-space-md) var(--ui-space-xs) var(--ui-space-lg);
+  border-radius: var(--ui-radius);
   background: transparent;
   position: relative;
-  transition: background 0.12s ease-out;
-  animation: columnPickerFadeIn 0.2s ease backwards;
+  transition: background var(--ui-duration-instant) var(--ui-ease-out);
+  animation: columnPickerFadeIn var(--ui-duration-fast) var(--ui-ease-out) backwards;
 
   @for $i from 1 through 20 {
     &:nth-child(#{$i}) {
@@ -585,7 +596,7 @@
     opacity: 0.6;
     cursor: grabbing;
     transform: scale(1.02);
-    box-shadow: var(--ui-shadow-md);
+    box-shadow: var(--ui-shadow-lg);
   }
 
   &--drag-over {
@@ -606,7 +617,7 @@
   cursor: grab;
   opacity: 0.2;
   flex-shrink: 0;
-  transition: opacity 0.12s ease-out;
+  transition: opacity var(--ui-duration-instant) var(--ui-ease-out);
 
   &:active { cursor: grabbing; }
 }
@@ -619,9 +630,9 @@
 
 .cp-selected-item-label {
   flex: 1;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-medium);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
   color: var(--ui-foreground);
   white-space: nowrap;
   overflow: hidden;
@@ -637,13 +648,16 @@
   height: 18px;
   padding: 0;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
   opacity: 0;
   flex-shrink: 0;
-  transition: opacity 0.12s ease-out, color 0.12s ease-out, background 0.12s ease-out;
+  transition:
+    opacity var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .cp-selected-item-pin {
@@ -676,7 +690,7 @@
 
 
 .column-picker-empty {
-  padding: 24px 16px;
+  padding: var(--ui-space-2xl) var(--ui-space-xl);
   text-align: center;
   font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
@@ -686,10 +700,10 @@
 
 .column-picker-skeleton {
   height: 36px;
-  border-radius: 7px;
+  border-radius: var(--ui-radius);
   background: var(--ui-surface-raised);
-  margin-bottom: 4px;
-  animation: columnPickerPulse 1.4s ease-in-out infinite;
+  margin-bottom: var(--ui-space-xs);
+  animation: columnPickerPulse 1.4s ease-in-out infinite; /* literal: loop period */
 
   @for $i from 1 through 6 {
     &:nth-child(#{$i}) {
@@ -705,18 +719,18 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: var(--ui-space-md);
+  padding: var(--ui-space-lg) var(--ui-space-xl);
   border-top: 1px solid color-mix(in oklch, var(--ui-surface-hover) 40%, transparent);
   background: var(--ui-surface);
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--ui-radius-xl) var(--ui-radius-xl);
   flex-shrink: 0;
 }
 
 .column-picker-footer-hint {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ui-space-xs);
   flex: 1;
   font-size: var(--ui-text-xs);
   color: var(--ui-foreground-secondary);
@@ -733,14 +747,14 @@
 .cp-type-icon {
   width: 18px;
   height: 18px;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-xs);
   background: color-mix(in oklch, var(--cp-type-color) 12%, transparent);
   color: var(--cp-type-color);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: opacity 0.12s ease-out;
+  transition: opacity var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 // ── Animations ────────────────────────────────────────────────────

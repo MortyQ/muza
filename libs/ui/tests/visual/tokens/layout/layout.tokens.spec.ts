@@ -105,10 +105,10 @@ describe.each(THEME_CASES)("layout tokens — %s theme", (theme) => {
       expect(computedValue(icon, "--v-notice-tone")).toBe(rawToken(token));
     });
 
-    it("defaults to the primary tone", async () => {
+    it("defaults to the info tone: a notice is semantic colour, not the accent", async () => {
       const el = await mountIt(VInfoNotice, { title: "T" });
       const icon = el.querySelector(".v-info-notice__icon") as HTMLElement;
-      expect(computedValue(icon, "--v-notice-tone")).toBe(rawToken("--ui-primary"));
+      expect(computedValue(icon, "--v-notice-tone")).toBe(rawToken("--ui-info"));
     });
 
     it("tones each feature icon independently", async () => {
@@ -125,11 +125,12 @@ describe.each(THEME_CASES)("layout tokens — %s theme", (theme) => {
   });
 
   describe("VScrollPanel", () => {
-    it("scrolls vertically and carries the inner elevation", async () => {
+    it("scrolls vertically and draws its well with a fill, not a shadow", async () => {
       const el = await mountIt(VScrollPanel, {});
       const style = getComputedStyle(el);
       expect(style.overflowY).toBe("auto");
-      expect(style.boxShadow).not.toBe("none");
+      expect(style.boxShadow).toBe("none");
+      expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
     });
 
     it("is unbounded without maxHeight", async () => {

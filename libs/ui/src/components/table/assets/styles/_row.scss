@@ -8,13 +8,13 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover > .v-table-cell {
-      background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
-      border-bottom-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-border) 80%);
+      background-color: var(--ui-surface-hover);
+      border-bottom-color: var(--ui-border);
 
       // An inset shadow, not a border: a border needs padding-left shaved to
       // compensate, which overrides the tree indent and re-lays the grid.
       &:first-child {
-        box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ui-primary) 80%, transparent);
+        box-shadow: inset 3px 0 0 var(--ui-border-strong);
       }
 
       &[data-custom-row="true"] {
@@ -22,14 +22,14 @@
         border-bottom-color: var(--ui-border);
 
         &:first-child {
-          box-shadow: inset 3px 0 0 var(--ui-primary);
+          box-shadow: inset 3px 0 0 var(--ui-border-strong);
         }
       }
     }
   }
 
   &:active > .v-table-cell {
-    background-color: color-mix(in oklch, var(--ui-primary) 6%, var(--ui-surface) 94%);
+    background-color: var(--ui-surface-active);
   }
 
   &--disabled {
@@ -71,11 +71,11 @@
   display: contents;
 
   &--entering > .v-table-cell {
-    animation: expandRowIn $transition-normal cubic-bezier(0.4, 0, 0.2, 1);
+    animation: expandRowIn var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   &--leaving > .v-table-cell {
-    animation: expandRowOut $transition-fast ease-out;
+    animation: expandRowOut var(--ui-duration-fast) var(--ui-ease-out);
   }
 }
 
@@ -92,6 +92,6 @@
 @media (prefers-reduced-motion: reduce) {
   .v-table-row-expandable--entering > .v-table-cell,
   .v-table-row-expandable--leaving > .v-table-cell {
-    animation-duration: 1ms;
+    animation-duration: 1ms; /* literal: reduced-motion end state */
   }
 }

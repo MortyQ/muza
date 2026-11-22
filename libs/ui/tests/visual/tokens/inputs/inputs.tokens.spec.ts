@@ -98,6 +98,26 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
       expect(getComputedStyle(track).backgroundColor).not.toBe("rgb(22, 163, 74)");
     });
 
+    it("rings the track in the focus token on keyboard focus", async () => {
+      const el = await mountIt(VSwitch, { modelValue: false });
+      const input = el.querySelector(".v-switch__input") as HTMLInputElement;
+      const track = el.querySelector(".v-switch__track") as HTMLElement;
+
+      expect(getComputedStyle(track).outlineStyle).toBe("none");
+      input.focus({ focusVisible: true } as FocusOptions);
+      expect(getComputedStyle(track).outlineStyle).toBe("solid");
+      expect(getComputedStyle(track).outlineColor).toBe(tokenAsColor("--ui-ring"));
+      input.blur();
+    });
+
+    it("draws no ring when the input is focused without :focus-visible", async () => {
+      const el = await mountIt(VSwitch, { modelValue: false });
+      const input = el.querySelector(".v-switch__input") as HTMLInputElement;
+      input.focus({ focusVisible: false } as FocusOptions);
+      expect(getComputedStyle(el.querySelector(".v-switch__track") as HTMLElement).outlineStyle).toBe("none");
+      input.blur();
+    });
+
     it("gives the thumb a theme-aware shadow, not a black one", async () => {
       // A hardcoded black drop shadow is invisible on a dark surface — this is
       // exactly the defect the convention guard turned up.
@@ -143,6 +163,34 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
       }
     });
 
+    it("wears the field's chrome, so a toolbar row reads as one set", async () => {
+      const track = getComputedStyle(await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" }));
+      const input = await mountIt(VInput, {});
+      const container = getComputedStyle(input.querySelector(".v-input-container") as HTMLElement);
+      const fieldset = getComputedStyle(input.querySelector(".v-fieldset") as HTMLElement);
+
+      expect(track.backgroundColor).toBe(container.backgroundColor);
+      expect(track.borderTopColor).toBe(fieldset.borderTopColor);
+      expect(track.boxShadow).toBe(container.boxShadow);
+    });
+
+    it("sets the selected pill off by surface, without a shadow", async () => {
+      const el = await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" });
+      const pill = getComputedStyle(el.querySelector(".v-sc__pill") as HTMLElement);
+      expect(pill.backgroundColor).toBe(tokenAsColor("--ui-surface-active"));
+      expect(pill.backgroundColor).not.toBe(getComputedStyle(el).backgroundColor);
+      expect(pill.boxShadow).toBe("none");
+    });
+
+    it("nests the pill's corner inside the track's: outer = inner + padding", async () => {
+      const el = await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" });
+      const pill = el.querySelector(".v-sc__pill") as HTMLElement;
+      const track = getComputedStyle(el);
+
+      expect(parseFloat(getComputedStyle(pill).borderTopLeftRadius))
+        .toBe(parseFloat(track.borderTopLeftRadius) - parseFloat(track.paddingTop));
+    });
+
     describe("the sliding pill", () => {
       // Segments are transparent when active; the pill is the active surface.
       // So the geometry that matters is the pill's against the chosen segment,
@@ -180,9 +228,9 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
         expect(Math.round(box(pill).width)).toBe(Math.round(box(target).width));
       });
 
-      it("is the active surface, drawn from the surface token", async () => {
+      it("is the active surface, drawn from the surface-active token", async () => {
         const { el, pill } = await mountPill("day");
-        expect(getComputedStyle(pill).backgroundColor).toBe(tokenAsColor("--ui-surface"));
+        expect(getComputedStyle(pill).backgroundColor).toBe(tokenAsColor("--ui-surface-active"));
         // Which is why the segment itself must not paint one: it would cut to
         // it instantly and the slide would be invisible underneath.
         expect(getComputedStyle(segment(el, 0)).backgroundColor).toBe("rgba(0, 0, 0, 0)");

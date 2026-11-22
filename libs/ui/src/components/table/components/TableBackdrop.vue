@@ -33,7 +33,7 @@ const emit = defineEmits<{
 
 .v-table-backdrop-enter-active,
 .v-table-backdrop-leave-active {
-  transition: opacity 200ms ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-table-backdrop-enter-from,

@@ -212,7 +212,7 @@ const onLogout = (): void => {
   border-radius: var(--ui-radius-lg);
   background: linear-gradient(135deg, var(--tile-tone-deep), var(--tile-tone));
   color: var(--tile-fg);
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: 700;
   letter-spacing: 0.02em;
 
@@ -220,7 +220,7 @@ const onLogout = (): void => {
     width: 1.25rem;
     height: 1.25rem;
     border-radius: var(--ui-radius);
-    font-size: 0.5625rem;
+    font-size: var(--ui-text-xs);
   }
 
   &--lg {
@@ -304,9 +304,9 @@ const onLogout = (): void => {
 
   &__mode {
     overflow: hidden;
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     font-weight: 600;
-    line-height: var(--ui-leading-sm);
+    line-height: var(--ui-leading-xs);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -314,8 +314,8 @@ const onLogout = (): void => {
   &__user {
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     color: var(--ui-foreground-muted);
     white-space: nowrap;
   }
@@ -385,7 +385,7 @@ const onLogout = (): void => {
 
   &__heading {
     padding: var(--ui-space-xs) var(--ui-space-sm) var(--ui-space-2xs);
-    font-size: var(--ui-text-2xs);
+    font-size: var(--ui-text-xs);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;

@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--ui-space-md);
 
   &.v-loader--fullscreen {
     position: fixed;
@@ -27,7 +27,7 @@
     background: var(--_g) left,
     var(--_g) right;
     background-size: 20% 100%;
-    animation: v-loader-anim 1s infinite;
+    animation: v-loader-anim 1s infinite; /* literal: loop period */
   }
 
   &::after {

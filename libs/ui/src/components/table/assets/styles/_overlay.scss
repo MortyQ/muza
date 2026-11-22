@@ -41,7 +41,7 @@
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.25s ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .fade-enter-from,

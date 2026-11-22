@@ -162,20 +162,38 @@ Status      --ui-{success|warning|danger|info}  -hover  -foreground  -subtle  -m
 Inputs      --ui-input-bg  --ui-input-border  --ui-input-placeholder
 Badge       --ui-badge-neutral-bg  --ui-badge-neutral-text
 Radius      --ui-radius-xs  --ui-radius  -lg  -xl  -2xl  -full
-Shadow      --ui-shadow-xs  -sm  -md  -lg  -xl  -inner
+Shadow      --ui-shadow-sm (resting cards)  -lg (anything that floats)
 Focus ring  --ui-ring  --ui-ring-offset
-Type        --ui-text-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
-            --ui-leading-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
-            (2xl/3xl are headline figures only — VStat — never a heading)
+Type        --ui-text-xs  -base  -lg  -xl  -display      (11 13 15 20 28 px)
+            --ui-leading-xs  -base  -lg  -xl  -display
+            (display is headline figures only — VStat — never a heading)
+Tracking    --ui-tracking-tight (-1%, body and UI text)  -caps (+4%, uppercase labels)
+Motion      --ui-duration-instant (80ms, hover and press colour)
+            --ui-duration-fast (150ms, every in-place change)
+            --ui-duration-overlay (200ms, a modal, drawer or toast entering; it leaves at fast)
+            --ui-ease-out (arrivals)  --ui-ease-in-out (a pill or thumb moving along its track)
+            (no overshoot anywhere; a loop keeps its period, marked /* literal: loop period */)
 Weight      --ui-weight-regular (450)  -medium (500)  -strong (600)
 Control     --ui-control-h  -sm  -md  -lg   --ui-control-px  --ui-control-gap
-Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl
+Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl  -3xl  -4xl
+            (2 4 6 8 12 16 24 32 40 px: a 4px grid, 2 and 6 the only half steps)
 ```
 
 The last three groups are not colours, and the rule for them is the same: a
 `font-size`, a control height or a gap written as a literal under
 `styles/components/` is the same defect a raw `oklch()` is — it reads as a
 decision when it is a value nobody has revisited.
+
+Spacing is enforced, not only advised: every `gap`, `padding` and `margin` in
+`libs/ui/src` takes a `--ui-space-*` token (zero and ±1px border compensation
+aside), and `tests/conventions.spec.ts` fails on a literal. A value that only
+looks like spacing (room reserved for a caret, a notch matched to a floating
+label, a nesting step tied to an icon) stays a literal with
+`/* literal: <reason> */` on the same line, so the exception is argued in place.
+Past 40px, use a multiple of a step: `calc(var(--ui-space-4xl) * 2)`.
+
+Four working sizes and one for figures: never a size in between. A former 12px
+use is meta (→ `xs`) or running text (→ `base`), decided at its site.
 
 `--ui-text-base` is 13px, which is what the button, the field and the select
 stand at. **14px is deliberately not a step**: it is the size the system is
@@ -188,6 +206,50 @@ padding and the type belong to the chrome, not to the size, so two sizes of one
 control differ in exactly one dimension.
 
 The status colour is `--ui-danger`, not `--ui-error` or `text-negative`.
+
+### Accent roles: where `--ui-primary` may appear
+
+The accent marks three things and nothing else:
+
+1. **the primary action**: `VButton` `primary`, the toast's action, a link
+   (`VButton` `link`, the file upload's action, the drop zone's call to action);
+2. **a current or selected state**: the active nav item and tab, the selected
+   day and range, a checked checkbox, an on switch, a selected segment, the
+   selected multiselect tags, the current page, an active sort and its index,
+   a pinned table row, column or cross, a dragged-over target, a running
+   progress bar or loader;
+3. **focus**: rings and the focused field's border and label.
+
+Everything else (hover tints, decorative icons, empty-state titles, group
+headings, secondary text buttons) takes foreground, muted or surface tokens.
+A hover changes the surface, never the accent.
+
+Three uses stand outside the roles on purpose: the sidebar's brand mark, the
+avatar palette (identity colour, tone 0 and 5), and the table's header and
+total-row gradients, which the owner chose to keep. `VTag`, `VChip`,
+`VInfoNotice` and `VProgressBar` take the accent only through an explicit
+`primary` tone; `VInfoNotice` defaults to `info`.
+
+Files that still read `--ui-primary`, all within the roles above:
+table `_fixed`, `_fullscreen` (focus), `_header` (resize line), `_highlight`,
+`_pagination`, `_row` (selected), `_sort`, `_total`, column picker and setup
+(selected, dragged over), `TableExpandAdditionalHeadersButton` (expanded,
+focus); `vavatar`, `vbutton`, `vchip`, `vtag`, `vloader`, `vprogressbar`,
+`vtoaster`, `dragndrop`, `vcheckbox`, `vcomposer`, `vdatepicker`, `vfileupload`,
+`vinput`, `vlisteditor`, `vselect`, `vselect-floating`, `vswitch`, `vaccordion`
+(focus), `vanimatedbackground` (brand backdrop), `vinfonotice` (tone), `vtab`,
+the sidebar partials, `vfloating` (selected item). Review a new use against
+this list; nothing checks it automatically.
+
+### Nested corners: outer = inner + padding
+
+A rounded element inside a rounded, padded container takes the container's
+radius minus that padding, written over tokens:
+`border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs))`. Equal radii
+on both look pinched at the corners; the subtraction keeps the gap even all the
+way round. `tests/conventions.spec.ts` rejects a literal radius, so the inner
+corner can only be expressed this way. The one exception is a 1–2px mark (a
+tick, an active bar), allow-listed by file in `HAIRLINE_RADII`.
 
 ### v3 → v4 mapping
 
@@ -206,15 +268,22 @@ The status colour is `--ui-danger`, not `--ui-error` or `text-negative`.
 
 ### Shadows and radii as Tailwind utilities
 
+Two elevations only: `sm` for a card at rest, `lg` for anything that floats
+(modal, drawer, dropdown, popover, tooltip, toast, a row being dragged).
+Controls carry none; their border holds the edge. A hover changes the surface
+(`--ui-surface-hover`), never the elevation. A ring or an inset line is not an
+elevation and may be written out; the conventions spec fails on any other
+blurred shadow, unless the line says `/* literal: <reason> */`.
+
 `theme.css` maps the design system onto Tailwind's own namespaces, so
-`shadow-lg`, `rounded-xl` and `inset-shadow-sm` in an app take these values
-rather than Tailwind's defaults. The raw variables are named `--elevation-*` and
+`shadow-sm`, `shadow-lg` and `rounded-xl` in an app take these values rather
+than Tailwind's defaults; the `shadow` and `inset-shadow` namespaces are reset,
+so `shadow-md` or `inset-shadow-sm` produce nothing. The raw variables are named `--elevation-*` and
 `--corner-*` precisely because `--shadow-*: var(--shadow-*)` inside
 `@theme inline` would be self-referential.
 
 The dark theme's elevations are tinted with the brand violet — a black drop
-shadow is invisible on a dark surface. This is why the project leans on shadow
-for separation and keeps borders thin, rather than the reverse.
+shadow is invisible on a dark surface.
 
 ---
 

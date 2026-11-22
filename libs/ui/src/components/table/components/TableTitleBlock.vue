@@ -60,7 +60,7 @@ const { title = "", icon = "" } = defineProps<{
   container-name: title-block;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-lg);
   width: 100%;
 
   min-width: 0;
@@ -69,7 +69,7 @@ const { title = "", icon = "" } = defineProps<{
   &__title-section {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: var(--ui-space-md);
 
     flex: 0 1 auto;
 
@@ -78,7 +78,7 @@ const { title = "", icon = "" } = defineProps<{
   }
 
   &__icon {
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
     flex-shrink: 0;
   }
 
@@ -95,14 +95,14 @@ const { title = "", icon = "" } = defineProps<{
     width: 1px;
     height: 1.25rem;
     background: var(--ui-border);
-    margin: 0 0.25rem;
+    margin: 0 var(--ui-space-xs);
     flex-shrink: 0;
   }
 
   &__actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--ui-space-md);
 
     flex: 1 1 auto;
     min-width: 0;
@@ -115,7 +115,7 @@ const { title = "", icon = "" } = defineProps<{
 
     &__title-section {
       width: 100%;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--ui-space-md);
     }
 
     &__actions {

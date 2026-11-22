@@ -46,9 +46,9 @@
     color-mix(in oklch, var(--ui-primary) 80%, var(--ui-surface)),
     var(--ui-primary)
   );
-  box-shadow: var(--ui-shadow-xs), inset 0 1px 0 color-mix(in oklch, var(--ui-primary-foreground) 25%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--ui-primary-foreground) 25%, transparent);
   color: var(--ui-primary-foreground);
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   line-height: 1;
   font-weight: var(--ui-weight-strong);
 }
@@ -57,7 +57,7 @@
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
   font-weight: var(--ui-weight-strong);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -82,7 +82,10 @@
   background: transparent;
   color: var(--ui-foreground-muted);
   cursor: pointer;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {

@@ -23,18 +23,23 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   user-select: none;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
 
   /* ── Sizes: height = the line box plus the padding the step names ───── */
+  /* xs and sm share the xs type step since the 10px step went; xs stays the
+     smaller chip by dropping its vertical padding. */
   &--xs {
-    height: calc(var(--ui-leading-2xs) + 2 * var(--ui-space-2xs));
+    height: var(--ui-leading-xs);
     padding: 0 var(--ui-space-sm);
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
   }
 
   &--sm {
@@ -45,10 +50,10 @@
   }
 
   &--md {
-    height: calc(var(--ui-leading-sm) + 2 * var(--ui-space-xs));
+    height: calc(var(--ui-leading-xs) + 2 * var(--ui-space-xs));
     padding: 0 var(--ui-space-md);
-    font-size: var(--ui-text-sm);
-    line-height: var(--ui-leading-sm);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
   }
 
   &--lg {

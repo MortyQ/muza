@@ -18,14 +18,15 @@
   border-radius: var(--ui-radius-lg);
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   text-decoration: none;
   cursor: pointer;
-  box-shadow: var(--ui-shadow-xs);
-  transition: background-color 120ms ease,
-  color 120ms ease,
-  border-color 120ms ease,
-  box-shadow 120ms ease;
+  box-shadow: none;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   &:active:not(:disabled) {
     transform: translateY(0.5px);
@@ -41,7 +42,7 @@
 
 .v-button__label {
   /* Was Tailwind's `gap-0.75` — 0.75 × the 0.25rem spacing step. */
-  gap: 0.1875rem;
+  gap: var(--ui-space-2xs);
 }
 
 .v-button--icon-only {
@@ -228,7 +229,9 @@
     background: linear-gradient(90deg, var(--ui-primary), var(--ui-primary-hover));
     opacity: 0.2;
     border-radius: 1px;
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition:
+      opacity var(--ui-duration-instant) var(--ui-ease-out),
+      transform var(--ui-duration-instant) var(--ui-ease-out);
     transform: scaleX(0.6);
     transform-origin: left;
   }
@@ -348,6 +351,6 @@
   }
 
   .v-button--link::after {
-    transition: opacity 120ms ease;
+    transition: opacity var(--ui-duration-instant) var(--ui-ease-out);
   }
 }

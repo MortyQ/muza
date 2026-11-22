@@ -17,6 +17,10 @@ describe("VAnimatedBackground", () => {
     expect(w.find(".v-animated-background__tint").exists()).toBe(true);
   });
 
+  it("hides its canvas from assistive technology", () => {
+    expect(mount(VAnimatedBackground).find("canvas").attributes("aria-hidden")).toBe("true");
+  });
+
   it("styles itself through classes, never inline", () => {
     const w = mount(VAnimatedBackground);
     expect(w.find("canvas").attributes("style")).toBeUndefined();

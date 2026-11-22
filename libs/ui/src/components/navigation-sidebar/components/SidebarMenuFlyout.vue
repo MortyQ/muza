@@ -191,17 +191,17 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 
 .sidebar-flyout-bridge--right {
   right: 100%;
-  margin-right: -1rem;
+  margin-right: calc(-1 * var(--ui-space-xl));
 }
 
 .sidebar-flyout-bridge--left {
   left: 100%;
-  margin-left: -1rem;
+  margin-left: calc(-1 * var(--ui-space-xl));
 }
 
 .sidebar-flyout-content {
   position: relative;
-  margin-left: 0.5rem;
+  margin-left: var(--ui-space-md);
   /* WebKit: GPU compositing for smooth flyout animation */
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
@@ -216,8 +216,8 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 /* Transition classes */
 .sidebar-flyout-enter-active {
   transition:
-    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .sidebar-flyout-enter-from {
@@ -231,7 +231,9 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 }
 
 .sidebar-flyout-leave-active {
-  transition: opacity 120ms ease-out, transform 120ms ease-out;
+  transition:
+    opacity var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .sidebar-flyout-leave-from {

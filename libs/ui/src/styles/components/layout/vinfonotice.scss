@@ -1,5 +1,6 @@
 .v-info-notice {
-  --v-notice-tone: var(--ui-primary);
+  /* An info notice is semantic colour, not the accent; tone-primary opts in. */
+  --v-notice-tone: var(--ui-info);
 
   &__stack {
     display: flex;
@@ -25,7 +26,7 @@
     display: inline-flex;
     flex-shrink: 0;
     /* Centres a 20px glyph on the title's first line. */
-    margin-top: calc((var(--ui-leading-base) - 1.25rem) / 2);
+    margin-top: calc((var(--ui-leading-base) - 1.25rem) / 2); /* literal: centres a 20px icon on the first line */
     color: var(--v-notice-tone);
   }
 
@@ -36,8 +37,8 @@
 
   &__subtitle {
     margin-top: var(--ui-space-2xs);
-    font-size: var(--ui-text-sm);
-    line-height: var(--ui-leading-sm);
+    font-size: var(--ui-text-base);
+    line-height: var(--ui-leading-base);
     color: var(--ui-foreground-secondary);
   }
 
@@ -88,7 +89,7 @@
 
   &__feature-description {
     overflow: hidden;
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-base);
     color: var(--ui-foreground-secondary);
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -100,7 +101,7 @@
     gap: var(--ui-space-sm);
     padding-top: var(--ui-space-md);
     border-top: 1px solid color-mix(in oklch, var(--ui-border) 30%, transparent);
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 

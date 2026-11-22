@@ -192,7 +192,7 @@ const itemClasses = computed(() => ({
 <style scoped>
 /* Label fade transition */
 .sidebar-label-enter-active {
-  transition: opacity 200ms ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .sidebar-label-enter-from {
@@ -204,7 +204,7 @@ const itemClasses = computed(() => ({
 }
 
 .sidebar-label-leave-active {
-  transition: opacity 150ms ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .sidebar-label-leave-from {

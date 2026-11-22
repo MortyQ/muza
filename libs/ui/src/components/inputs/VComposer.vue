@@ -261,7 +261,7 @@ watch(() => status, (value, previous) => {
           <span
             v-if="status === 'error'"
             class="v-composer__failed"
-          >Couldn't send — your text is kept</span>
+          >Couldn’t send. Your text is kept.</span>
           <span
             v-else
             class="v-composer__hint"

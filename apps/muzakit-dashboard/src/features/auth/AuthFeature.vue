@@ -64,22 +64,22 @@ const tabs = [
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: var(--ui-text-xl);
   font-weight: 700;
   color: var(--ui-primary-foreground);
   margin-bottom: 0.25rem;
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
 }
 
 .auth-brand__title {
-  font-size: 1.375rem;
+  font-size: var(--ui-text-xl);
   font-weight: 700;
   color: var(--ui-foreground);
   letter-spacing: -0.02em;
 }
 
 .auth-brand__subtitle {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-muted);
   max-width: 260px;
   line-height: 1.5;

@@ -14,9 +14,11 @@
   padding: var(--ui-space-2xs);
   gap: var(--ui-space-2xs);
   border-radius: var(--ui-radius-lg);
-  background: var(--ui-surface-sunken);
-  border: 1px solid var(--ui-border);
-  box-shadow: var(--ui-shadow-sm);
+  /* The field recipe: in a toolbar row this stands beside search, select and
+     datepicker, and the set reads as one only if they share a chrome. */
+  background: var(--ui-input-bg);
+  border: 1px solid var(--ui-input-border);
+  box-shadow: none;
 
   /* Height only, as everywhere else on the scale: the padding and the type
      belong to the chrome, so two sizes differ in exactly one dimension. */
@@ -76,9 +78,9 @@
   left: 0;
   width: var(--v-sc-pill-w, 0);
   transform: translateX(var(--v-sc-pill-x, 0));
-  border-radius: calc(var(--ui-radius-lg) - 2px);
-  background: var(--ui-surface);
-  box-shadow: var(--ui-shadow-sm);
+  border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs));
+  background: var(--ui-surface-active);
+  box-shadow: none;
   opacity: 0;
   pointer-events: none;
 
@@ -86,18 +88,18 @@
     opacity: 1;
   }
 
-  /* Only once placed — see `isPillReady`. A strong ease-out: the pill should
-     arrive decisively and settle, not drift the whole way. */
+  /* Only once placed — see `isPillReady`. Ease-in-out: the pill moves along
+     its track, so it should start and settle smoothly rather than snap off. */
   &--ready {
     transition:
-      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      width 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 150ms ease-out;
+      transform var(--ui-duration-fast) var(--ui-ease-in-out),
+      width var(--ui-duration-fast) var(--ui-ease-in-out),
+      opacity var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   @media (prefers-reduced-motion: reduce) {
     &--ready {
-      transition: opacity 150ms ease-out;
+      transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
     }
   }
 }
@@ -116,7 +118,7 @@
   padding: 0 var(--ui-control-px);
   gap: var(--ui-control-gap);
   font-size: var(--ui-text-base);
-  border-radius: calc(var(--ui-radius-lg) - 2px);
+  border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs));
   font-weight: var(--ui-weight-medium);
   font-family: inherit;
   white-space: nowrap;
@@ -125,9 +127,10 @@
   background: transparent;
   border: none;
   outline: none;
-  transition: color 150ms ease-in-out,
-  background-color 150ms ease-in-out,
-  box-shadow 150ms ease-in-out;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.v-sc__item--active) {
@@ -178,7 +181,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--ui-control-gap);
-  transition: opacity 150ms ease-in-out;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-sc__item--pending .v-sc__label {

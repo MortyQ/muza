@@ -26,9 +26,9 @@ describe.each(THEME_CASES)("VDatepicker chrome — %s theme", (theme) => {
     return el;
   };
 
-  it("reaches the menu through the `ui` class and gives it the xl elevation", async () => {
+  it("reaches the menu through the `ui` class and gives it the floating elevation", async () => {
     const menu = find(await renderPicker(), ".v-datepicker-menu");
-    expect(getComputedStyle(menu).boxShadow).toBe(tokenAsValue("box-shadow", "--ui-shadow-xl"));
+    expect(getComputedStyle(menu).boxShadow).toBe(tokenAsValue("box-shadow", "--ui-shadow-lg"));
     expect(getComputedStyle(menu).borderRadius)
       .toBe(tokenAsValue("border-radius", "--ui-radius-lg"));
   });

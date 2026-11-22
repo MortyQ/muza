@@ -21,12 +21,15 @@
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface);
     cursor: pointer;
-    transition: border-color 0.3s ease, background-color 0.3s ease,
-      transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      border-color var(--ui-duration-instant) var(--ui-ease-out),
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      transform var(--ui-duration-fast) var(--ui-ease-out),
+      box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(.v-dragndrop__dropzone--disabled) {
-        border-color: var(--ui-primary);
+        border-color: var(--ui-border-strong);
         background-color: var(--ui-surface-hover);
       }
     }
@@ -55,15 +58,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 2rem;
+    gap: var(--ui-space-md);
+    padding: var(--ui-space-3xl);
     text-align: center;
   }
 
   &__loading,
   &__content {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    padding-top: calc(var(--ui-space-2xl) * 2);
+    padding-bottom: calc(var(--ui-space-2xl) * 2);
   }
 
   &__loading {
@@ -71,27 +74,29 @@
   }
 
   &__preview {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding-top: var(--ui-space-2xl);
+    padding-bottom: var(--ui-space-2xl);
 
     &-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      color: var(--ui-primary);
+      gap: var(--ui-space-md);
+      color: var(--ui-foreground);
     }
   }
 
   &__icon-wrapper {
-    margin-bottom: 1rem;
-    padding: 1rem;
+    margin-bottom: var(--ui-space-xl);
+    padding: var(--ui-space-xl);
     border-radius: var(--ui-radius-full);
     background-color: var(--ui-surface-hover);
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition:
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      transform var(--ui-duration-fast) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       .v-dragndrop__dropzone:hover:not(.v-dragndrop__dropzone--disabled) & {
-        background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+        background-color: var(--ui-surface-active);
         transform: scale(1.1);
       }
     }
@@ -103,12 +108,12 @@
   }
 
   &__icon {
-    color: var(--ui-primary);
-    transition: color 0.3s ease;
+    color: var(--ui-foreground-secondary);
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   &__text {
-    margin-bottom: 1rem;
+    margin-bottom: var(--ui-space-xl);
   }
 
   &__title {
@@ -122,7 +127,7 @@
   }
 
   &__hint {
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 
@@ -130,28 +135,30 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--ui-space-md);
     width: 100%;
-    margin-top: 1rem;
+    margin-top: var(--ui-space-xl);
   }
 
   &__file {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--ui-space-lg);
     width: 100%;
     min-height: 60px;
-    padding: 0.75rem;
+    padding: var(--ui-space-lg);
     border: 1px solid var(--ui-border);
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color var(--ui-duration-instant) var(--ui-ease-out),
+      box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        border-color: color-mix(in oklch, var(--ui-primary) 50%, transparent);
-        box-shadow: var(--ui-shadow-md);
+        border-color: var(--ui-border-strong);
+        background-color: var(--ui-surface-hover);
       }
     }
   }
@@ -165,7 +172,7 @@
     height: 2rem;
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface-hover);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
   }
 
   &__file-info {
@@ -183,7 +190,7 @@
   }
 
   &__file-size {
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 
@@ -192,13 +199,15 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    padding: 0.25rem;
+    padding: var(--ui-space-xs);
     border: 0;
     border-radius: var(--ui-radius-full);
     background-color: transparent;
     color: var(--ui-foreground-secondary);
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      color var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
@@ -215,7 +224,7 @@
 
   &__actions {
     display: flex;
-    margin-top: 1rem;
+    margin-top: var(--ui-space-xl);
 
     :deep(.v-button) {
       width: 100%;
@@ -225,7 +234,9 @@
 
 .v-dragndrop-file-enter-active,
 .v-dragndrop-file-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-dragndrop-file-leave-active {
@@ -241,7 +252,7 @@
 }
 
 .v-dragndrop-file-move {
-  transition: transform 0.3s ease;
+  transition: transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 /* Reduced motion: state changes land instantly, colour and opacity still ease. */

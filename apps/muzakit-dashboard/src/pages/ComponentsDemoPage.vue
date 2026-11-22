@@ -623,27 +623,27 @@ const hasUnsavedChanges = ref(false);
 
 .components-demo__title {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--ui-text-lg);
   font-weight: 600;
   color: var(--ui-foreground);
 }
 
 .components-demo__desc {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   line-height: 1.5;
   color: var(--ui-foreground-secondary);
 }
 
 .components-demo__hint {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: var(--ui-text-xs);
   color: var(--ui-foreground-muted);
 }
 
 .components-demo__error {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-danger);
 }
 
@@ -675,7 +675,7 @@ const hasUnsavedChanges = ref(false);
 
 .components-demo__popover {
   padding: 0.75rem 1rem;
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground);
 }
 
@@ -683,6 +683,6 @@ code {
   padding: 0.05rem 0.3rem;
   border-radius: var(--ui-radius-xs);
   background-color: var(--ui-surface-hover);
-  font-size: 0.8125rem;
+  font-size: var(--ui-text-base);
 }
 </style>

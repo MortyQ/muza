@@ -5,7 +5,7 @@
   position: fixed !important;
   z-index: 9999 !important;
   pointer-events: none;
-  padding: 16px;
+  padding: var(--ui-space-xl);
   border: none !important;
   outline: none !important;
   background: transparent !important;
@@ -41,15 +41,15 @@
    ============================================ */
 :global([data-sonner-toast]) {
   pointer-events: auto;
-  animation: slideIn 0.3s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+  animation: slideIn var(--ui-duration-overlay) var(--ui-ease-out) forwards;
 }
 
 :global([data-sonner-toast][data-removed='true']) {
-  animation: slideOut 0.2s ease-out forwards;
+  animation: slideOut var(--ui-duration-fast) var(--ui-ease-out) forwards;
 }
 
 :global([data-sonner-toast]:not(:last-child)) {
-  margin-bottom: 12px;
+  margin-bottom: var(--ui-space-lg);
 }
 
 /* ============================================
@@ -58,15 +58,17 @@
 :global(.toast-custom) {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: var(--ui-space-lg);
+  padding: var(--ui-space-xl);
   border-radius: var(--ui-radius-lg);
   background-color: var(--ui-surface-overlay);
   border: 1px solid var(--ui-border);
-  box-shadow: var(--ui-shadow-xl);
+  box-shadow: var(--ui-shadow-lg);
   min-width: 320px;
   max-width: 450px;
-  transition: box-shadow 200ms ease, background-color 200ms ease;
+  transition:
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
   font-family: inherit;
 }
 
@@ -77,13 +79,6 @@
     backdrop-filter: blur(12px) saturate(150%);
     -webkit-backdrop-filter: blur(12px) saturate(150%);
     border: 1px solid color-mix(in oklch, var(--ui-border) 50%, transparent);
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  :global(.toast-custom:hover) {
-    box-shadow: var(--ui-shadow-xl);
-    transform: translateY(-2px);
   }
 }
 
@@ -98,9 +93,9 @@
 }
 
 :global(.toast-description) {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
-  margin-top: 0.25rem;
+  margin-top: var(--ui-space-xs);
   line-height: 1.5;
 }
 
@@ -159,7 +154,10 @@
   top: 0.5rem;
   right: 0.5rem;
   opacity: 0.7;
-  transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
   color: var(--ui-foreground-muted);
   width: 1.25rem;
   height: 1.25rem;
@@ -192,16 +190,16 @@
 }
 
 :global(.toast-action) {
-  padding: 0.375rem 0.75rem;
-  font-size: var(--ui-text-sm);
+  padding: var(--ui-space-sm) var(--ui-space-lg);
+  font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-medium);
   border-radius: var(--ui-radius);
   background-color: var(--ui-primary);
   color: var(--ui-primary-foreground);
   border: none;
   cursor: pointer;
-  margin-top: 0.5rem;
-  transition: background-color 0.2s;
+  margin-top: var(--ui-space-md);
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -216,17 +214,17 @@
 }
 
 :global(.toast-cancel) {
-  padding: 0.375rem 0.75rem;
-  font-size: var(--ui-text-sm);
+  padding: var(--ui-space-sm) var(--ui-space-lg);
+  font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-medium);
   border-radius: var(--ui-radius);
   background-color: var(--ui-surface-raised);
   color: var(--ui-foreground);
   border: none;
   cursor: pointer;
-  margin-top: 0.5rem;
-  margin-left: 0.5rem;
-  transition: background-color 0.2s;
+  margin-top: var(--ui-space-md);
+  margin-left: var(--ui-space-md);
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -244,7 +242,7 @@
    ANIMATIONS
    ============================================ */
 :global([data-loading-icon]) {
-  animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite; /* literal: loop period */
 }
 
 @keyframes spin {
@@ -283,6 +281,6 @@
   :global([data-sonner-toast]),
   :global([data-sonner-toast][data-removed='true']) {
     animation-name: none;
-    transition: opacity 150ms ease-out;
+    transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
   }
 }

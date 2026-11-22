@@ -31,7 +31,7 @@
   width: 100%;
   background: var(--ui-input-bg);
   border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
 }
 
 /* ============================================
@@ -51,12 +51,14 @@
   padding: 0 var(--ui-control-px);
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   position: relative;
   z-index: 10;
   /* Not `all`: that animates background-color, which fights the 5000s
      transition the autofill block below relies on. */
-  transition: color 0.2s ease-out, padding 0.2s ease-out;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
   -webkit-appearance: none;
   appearance: none;
 
@@ -94,12 +96,12 @@
 
   /* With left icon */
   &--with-left-icon {
-    padding-left: 2rem;
+    padding-left: var(--ui-space-3xl);
   }
 
   /* With right icon */
   &--with-right-icon {
-    padding-right: 2rem;
+    padding-right: var(--ui-space-3xl);
   }
 
   /* Date input */
@@ -127,7 +129,7 @@
   pointer-events: none;
   z-index: 20;
   color: var(--ui-input-placeholder);
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 
   &-left {
     left: 0.5rem;
@@ -157,7 +159,7 @@
   width: 0.9375rem;
   height: 0.9375rem;
   flex-shrink: 0;
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 
   &--sm {
     width: 0.8125rem;
@@ -180,7 +182,9 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -205,7 +209,9 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 150ms ease, box-shadow 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -238,12 +244,12 @@
   line-height: var(--ui-leading-base);
   color: color-mix(in oklch, var(--ui-foreground) 60%, transparent);
   transition:
-    top 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    left 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    font-size 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    line-height 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    color 150ms ease;
+    top var(--ui-duration-fast) var(--ui-ease-out),
+    left var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    font-size var(--ui-duration-fast) var(--ui-ease-out),
+    line-height var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   &--with-icon {
     left: 2rem;
@@ -259,11 +265,11 @@
   &--active {
     top: 0;
     left: var(--ui-control-px);
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     transform: translateY(-50%);
     font-weight: var(--ui-weight-medium);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
   }
 
   &--error {
@@ -281,13 +287,15 @@
   /* The legend is laid out from the fieldset's content box, so the text inside
      it starts at `padding-left + legend padding-left` — 7px + 3px — which is
      exactly the `left: 0.625rem` the active label sits at. */
-  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem); /* literal: floating-label notch geometry */
   border-radius: var(--ui-radius-lg);
   border-width: 1px;
   border-style: solid;
   border-color: var(--ui-input-border);
   pointer-events: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   &--active {
     border-width: 2px;
@@ -326,14 +334,16 @@
   width: auto;
   padding: 0;
   border: none;
-  font-size: var(--ui-text-2xs);
-  line-height: var(--ui-leading-2xs);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-xs);
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
   font-weight: var(--ui-weight-medium);
   white-space: nowrap;
   overflow: hidden;
-  transition: max-width 200ms cubic-bezier(0.23, 1, 0.32, 1), padding 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    max-width var(--ui-duration-fast) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
 
   span {
     display: inline-block;
@@ -342,8 +352,8 @@
 
   &--visible {
     max-width: 100%;
-    padding-left: 0.1875rem;
-    padding-right: 0.1875rem;
+    padding-left: 0.1875rem; /* literal: legend gap around the notched label */
+    padding-right: 0.1875rem; /* literal: legend gap around the notched label */
   }
 }
 
@@ -351,8 +361,8 @@
    HELPER TEXT
    ============================================ */
 .v-input-helper-text {
-  margin-left: 0.75rem;
-  font-size: var(--ui-text-sm);
+  margin-left: var(--ui-space-lg);
+  font-size: var(--ui-text-xs);
   line-height: 1rem;
   color: var(--ui-foreground-secondary);
 }
@@ -361,8 +371,8 @@
    ERROR MESSAGE
    ============================================ */
 .v-input-error-message {
-  margin-left: 0.75rem;
-  font-size: var(--ui-text-sm);
+  margin-left: var(--ui-space-lg);
+  font-size: var(--ui-text-xs);
   line-height: 1rem;
   font-weight: var(--ui-weight-medium);
   color: var(--ui-danger);
@@ -377,8 +387,7 @@
    `!important`s along with it.
 
    The inset fill masks the browser's yellow background; the 5000s background
-   transition keeps the UA style from ever landing. Elevation is unaffected —
-   it sits on .v-input-container, whose drop shadow paints outside the box. */
+   transition keeps the UA style from ever landing. */
 .v-input-field:-webkit-autofill,
 .v-input-field:-webkit-autofill:hover,
 .v-input-field:-webkit-autofill:focus,
@@ -388,7 +397,7 @@
   box-shadow: 0 0 0 1000px var(--ui-input-bg) inset;
   caret-color: var(--ui-foreground);
   font-family: inherit;
-  transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s; /* literal: keeps the autofill background from landing */
 }
 
 /* Firefox marks the field without forcing a background there is anything to
@@ -415,7 +424,7 @@
     left: 0.75rem;
     transform: translateY(-50%) scale(0.75);
     font-weight: var(--ui-weight-medium);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
 
     &.v-label--error {
       color: var(--ui-danger);
@@ -424,8 +433,8 @@
 
   .v-legend {
     max-width: 100%;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    padding-left: var(--ui-space-xs);
+    padding-right: var(--ui-space-xs);
   }
 }
 
@@ -434,7 +443,9 @@
    ============================================ */
 .error-slide-enter-active,
 .error-slide-leave-active {
-  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .error-slide-enter-from,
@@ -449,4 +460,10 @@
   .error-slide-leave-to {
     transform: none;
   }
+}
+
+/* The accent marks focus: a raised label takes it only while the field is
+   focused, not merely because it holds a value. */
+.v-input-container:focus-within .v-label--active:not(.v-label--error) {
+  color: var(--ui-primary);
 }

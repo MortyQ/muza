@@ -21,6 +21,26 @@
 
 ### Changed
 
+- **BREAKING — `VTag` defaults to the `neutral` tone** (was `primary`), and `VInfoNotice` to `info` (was `primary`): the accent is opt-in through `color="primary"` / `tone="primary"`.
+- **A raised field label takes the accent only while the field has focus** (`VInput`, `VSelect`, `VDatepicker`); with a value and no focus it is secondary text.
+- **`VCard` `radius="sm"`** is 4px (`--ui-radius-xs`), the scale's smallest step; it was a 2px literal.
+- **BREAKING — `VIcon` defaults to 16px** (was 24), the size that sits on a line of base text, and centres on the line it sits in (`vertical-align: middle`). Pass `size` where 24 was meant; every icon inside the library already sets its own size.
+- **`VTable` cells set tabular figures**, so a numeric column lines up digit for digit.
+- **The accent has three roles**: the primary action, a current or selected state, and focus. 55 other uses turned neutral: hover tints (table rows, the sort control, drop zones, datepicker days, menu items), decorative icons (card, accordion, title block, drag-and-drop, file items), the empty-state title, select group headings and the column picker's text buttons. `VInfoNotice` defaults to the `info` tone.
+- **`VTable` pinned columns keep a quieter accent**: a 1px edge at 55% (was 2px at 70%), rising to 85% on row hover, and a 3% tint. Row hover tints the surface instead of the accent, and its edge bar is neutral.
+- **BREAKING (tokens) — two elevations**: `--ui-shadow-sm` for resting cards and `--ui-shadow-lg` for anything that floats.
+  - Removed: `--ui-shadow-xs` (controls now carry none; their border holds the edge), `--ui-shadow-md` (`-sm` on cards, the toolbar, the accordion, the switch thumb; `-lg` on the datepicker menu and a dragged column row), `--ui-shadow-xl` (`-lg` on modal, drawer, toaster and guard modal) and `--ui-shadow-inner` (a well is drawn by its fill). The Tailwind `shadow` and `inset-shadow` namespaces are reset to `sm` and `lg`.
+  - Hover changes the surface, not the elevation: an interactive `VCard` no longer lifts, a toast no longer rises, and the drop zone, the fullscreen toggle and the pagination buttons tint their surface instead of raising a shadow. The active pagination button lost its glow.
+  - `VTag` `xs` keeps its smaller box by dropping its vertical padding, now that it shares the `xs` type step with `sm`.
+- **`VSegmentedControl` wears the field's chrome**: `--ui-input-bg`, `--ui-input-border` and the field's (no) shadow, so in a toolbar row it matches search, select and datepicker. The selected pill is `--ui-surface-active`, without a shadow.
+- **BREAKING (tokens) — the type scale is four working sizes and one for figures**: `xs` 11, `base` 13, `lg` 15, `xl` 20 and `display` 28px.
+  - Removed: `--ui-text-2xs` (use `-xs`), `--ui-text-sm` (`-xs` for meta, `-base` for running text), `--ui-text-2xl` (`-xl`), `--ui-text-3xl` (`-display`), and their `--ui-leading-*`.
+  - `--ui-text-xl` is 20px (was 18) and `--ui-text-display` is new, for `VStat` only. `VStat` `md` sits on `xl`, `lg` on `display`. `VSkeleton` keeps its size names; `sm`, `2xl` and `3xl` draw `xs`, `xl` and `display`.
+  - The Tailwind theme resets the `text` namespace: `text-2xs`, `text-sm`, `text-2xl` and `text-3xl` no longer produce a utility (they used to fall back to Tailwind's 14px and up). `text-display` is new.
+  - `--ui-tracking-tight` (-0.01em) and `--ui-tracking-caps` (0.04em) replace eight literal letter-spacings.
+- **Copy**: `VComposer`'s failure line reads "Couldn’t send. Your text is kept."; `VListEditor`'s hint lists separators in words, without middle dots.
+- **Radii are on one scale.** 50 literal radii moved onto `--ui-radius-*` (between steps rounded down: 5px → 4, 7px → 6, 9–10px → 8), and nested corners are `calc(<outer> - <padding>)` over tokens. The conventions spec fails on a new literal radius; 1–2px marks are allow-listed by file.
+- **Spacing is on one scale.** Every gap, padding and margin in the library takes a `--ui-space-*` token. 190 literal values moved onto it; values between steps rounded down, the library is moving denser (10px → 8, 14px → 12, 20px → 16, so modal, drawer and guard-modal padding is 16px). `--ui-space-3xl` (32px) and `--ui-space-4xl` (40px) are new. The conventions spec fails on a new literal.
 - **`VTag`** now uses a single geometry:
   - Sizes sit on the type scale: `xs` 10, `sm` 11, `md` 12 and `lg` 13px, down one step from before. Height is the line box plus a spacing token. Every variant has the same box.
   - Soft, outline and ghost read the tone's `-hover` on a `-subtle` fill. `-foreground` is used on solid fills only.
@@ -70,6 +90,7 @@
 ### Fixed
 
 - `VTable` no longer shows "No data to display" while its first load is still running.
+- `VTable` with `highlight` on no longer renders at 38% opacity before anything is pinned. Rows and columns dim only while a row or a column is pinned.
 - `VTable`, sorting and paging:
   - Clearing a front sort shows the current data again. It used to restore a snapshot of the first load, so a refetch, a page change or an edit made before the sort was lost.
   - Refresh and reset-sort ask for page 1. They asked for `pagination.page`, so a table that did not own its page refetched the page it was leaving.
@@ -102,6 +123,10 @@ Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MOD
   - "show all" in column setup is a tri-state checkbox;
   - a header label with `onHeaderClick` is a button.
 - **Icon-only buttons are named**: `VTab`'s overflow button ("3 more tabs"), `VChip` close, file and list remove buttons, the table's refresh, row-expand, additional-headers and both column popover triggers. Disclosure buttons report `aria-expanded`.
+- **Keyboard focus**:
+  - `VSwitch` draws a focus ring on its track; its input is visually hidden, so focus was invisible.
+  - `VTooltip` opens at once on keyboard focus (`:focus-visible`), including focus on the button inside its wrapper (`focusin`). A click moves focus too but opens nothing, and a hover followed by focus leaves only one pending reveal. The hover delay applies to the pointer only.
+- **Decorative graphics are hidden** (`aria-hidden="true"`): the six icons in column setup, and the canvas of `VAnimatedBackground`.
 - **Labels**:
   - `VSelect`'s floating label names its combobox.
   - `VCheckbox` keeps its label association when disabled.
@@ -109,6 +134,12 @@ Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MOD
 
 ### Motion
 
+- **Motion tokens**: `--ui-duration-instant` (80ms), `-fast` (150ms) and `-overlay` (200ms), and `--ui-ease-out` / `--ui-ease-in-out`. Every transition and finite animation in the library uses them; the conventions spec fails on a literal duration or curve.
+  - Table cells and headers answer hover in 80ms (they took 300ms, so the tint trailed a sweeping cursor).
+  - Modal, drawer and guard modal enter at 200ms and leave at 150ms; a toast slides in at 200ms. The drawer's 300ms is gone. The sidebar collapses at 150ms (was 300ms).
+  - Unpinning the last row or column in a highlighted `VTable` fades back to full opacity instead of snapping.
+  - No overshoot: `VThemeSwitcher`'s icon bounce and the toast's slide-in overshoot are gone.
+  - `VCollapse` defaults to 150ms (was 200).
 - No `transition: all` remains. Every transition names its properties.
 - Exits use ease-out instead of ease-in (tooltip, guard modal, mobile sidebar backdrop).
 - Modals and drawers leave faster than they enter. Drawers and the mobile sidebar use the drawer curve.

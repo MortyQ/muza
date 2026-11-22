@@ -278,28 +278,52 @@ describe("stylesheet conventions", () => {
   });
 });
 
-describe("type values", () => {
-  // Every stylesheet in the library, the table's partials and the sidebar's
-  // included, plus the style blocks inside .vue files — a literal type value
-  // is the same defect wherever it lives.
-  function walk(dir: string): string[] {
-    return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-      const path = join(dir, entry.name);
-      if (entry.isDirectory()) return walk(path);
-      return /\.(scss|vue)$/.test(entry.name) ? [path] : [];
-    });
-  }
-
-  const FILES = walk(SRC).map((path) => {
-    const source = readFileSync(path, "utf8");
-    const css = path.endsWith(".vue")
-      ? [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join("\n")
-      : source;
-    return {
-      file: path.slice(SRC.length + 1),
-      code: css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""),
-    };
+// Every stylesheet in the library, the table's partials and the sidebar's
+// included, plus the style blocks inside .vue files — a literal value is the
+// same defect wherever it lives. `raw` keeps comments, for the guards that read
+// a `/* literal: … */` marker; `code` has them stripped.
+const walkStyles = (dir: string): string[] =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return walkStyles(path);
+    return /\.(scss|vue)$/.test(entry.name) ? [path] : [];
   });
+
+const STYLE_FILES = walkStyles(SRC).map((path) => {
+  const source = readFileSync(path, "utf8");
+  const raw = path.endsWith(".vue")
+    ? [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join("\n")
+    : source;
+  return {
+    file: path.slice(SRC.length + 1),
+    raw,
+    code: raw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""),
+  };
+});
+
+/**
+ * Declarations of `property` whose value holds a literal length, skipping lines
+ * that carry a `/* literal: <reason> *\/` marker — a size or a geometry coupling
+ * that only looks like spacing, argued in place.
+ */
+const literalLengths = (
+  raw: string,
+  property: RegExp,
+  allowed: (value: string) => boolean,
+): string[] => {
+  const length = /(?:^|[\s(,])(-?(?:\d+\.?\d*|\.\d+)(?:px|rem|em))\b/g;
+  // Matched over the whole source, so a value written across lines is read too;
+  // the marker sits after the declaration's semicolon, on its last line.
+  const declaration = new RegExp(`(?:^|[{;\\s])(${property.source})\\s*:\\s*([^;{}]+);([^\\n]*)`, "g");
+  return [...raw.replace(/\/\/[^\n]*/g, "").matchAll(declaration)]
+    .filter(([, , , rest]) => !rest.includes("/* literal:"))
+    .map(([, name, value]) => [name, value.replace(/\/\*[\s\S]*?\*\//g, "")])
+    .filter(([, value]) => [...value.matchAll(length)].some(m => !allowed(m[1])))
+    .map(([name, value]) => `${name}: ${value.replace(/\s+/g, " ").trim()}`);
+};
+
+describe("type values", () => {
+  const FILES = STYLE_FILES;
 
   it("finds the files", () => {
     expect(FILES.length).toBeGreaterThan(80);
@@ -313,6 +337,143 @@ describe("type values", () => {
     ].map(m => m[0]);
     expect(literals, `${file} hardcodes type: ${literals.join(", ")} — use --ui-text-* / --ui-weight-*`)
       .toHaveLength(0);
+  });
+
+  it.each(FILES)("$file sets letter-spacing from the tracking tokens", ({ file, code }) => {
+    const literals = [...code.matchAll(/letter-spacing:\s*(-?[\d.]+(?:px|rem|em))/g)]
+      .map(m => m[0])
+      .filter(value => !/:\s*-?0(?:px|rem|em)?$/.test(value));
+    expect(literals, `${file} hardcodes tracking: ${literals.join(", ")} — use --ui-tracking-*`)
+      .toHaveLength(0);
+  });
+
+  // The display size is for headline figures, and only VStat draws one. The
+  // skeleton mirrors it so a loading figure takes the same line box.
+  const DISPLAY_SIZE = new Set([
+    "styles/components/base/vstat.scss",
+    "styles/components/feedback/vskeleton.scss",
+  ]);
+
+  it.each(FILES)("$file keeps the display size for headline figures", ({ file, code }) => {
+    if (DISPLAY_SIZE.has(file)) return;
+    expect(code, `${file} uses --ui-text-display, which only VStat and VSkeleton may`)
+      .not.toMatch(/--ui-(?:text|leading)-display\b/);
+  });
+});
+
+describe("spacing values", () => {
+  // A 4px grid with 2px and 6px as the only half steps, all of it in
+  // --ui-space-*. Zero and ±1px border compensation are the only literals.
+  const SPACING = /gap|row-gap|column-gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?|inset(?:-[a-z-]+)?|--[\w-]*(?:padding|gap|margin)[\w-]*/;
+  const isAllowed = (value: string) => /^-?0(?:px|rem|em)?$/.test(value) || /^-?1px$/.test(value);
+
+  it.each(STYLE_FILES)("$file takes gap, padding and margin from tokens", ({ file, raw }) => {
+    const literals = literalLengths(raw, SPACING, isAllowed);
+    expect(literals, `${file} hardcodes spacing: ${literals.join("; ")} — use --ui-space-*, or mark a size with /* literal: <reason> */`)
+      .toHaveLength(0);
+  });
+});
+
+describe("shadow values", () => {
+  // Two elevations: --ui-shadow-sm for resting cards, --ui-shadow-lg for what
+  // floats. A ring or an inset line (no blur) is not an elevation and may be
+  // written out; a blurred shadow written out, or any other --ui-shadow-*, fails.
+  const splitLayers = (value: string): string[] => {
+    const layers: string[] = [];
+    let depth = 0;
+    let current = "";
+    for (const char of value) {
+      if (char === "(") depth++;
+      if (char === ")") depth--;
+      if (char === "," && depth === 0) {
+        layers.push(current.trim());
+        current = "";
+      }
+      else current += char;
+    }
+    return [...layers, current.trim()];
+  };
+
+  const isElevation = (layer: string): boolean => {
+    const token = layer.match(/var\(--ui-shadow-([\w-]+)\)/);
+    if (token) return !["sm", "lg"].includes(token[1]);
+    // A layer that is only a variable is a whole shadow handed over by name;
+    // the only names that may stand there are the two elevations.
+    if (/^var\(--[\w-]+(?:,[^()]*)?\)$/.test(layer.trim())) return true;
+    // Drop colour functions and keywords; what is left are the lengths.
+    const lengths = layer.replace(/[a-z-]+\([^()]*(?:\([^()]*\)[^()]*)*\)/g, "")
+      .split(/\s+/).filter(part => part && part !== "inset" && part !== "none");
+    const blur = lengths[2];
+    return blur !== undefined && !/^-?0(?:px)?$/.test(blur);
+  };
+
+  it.each(STYLE_FILES)("$file elevates only through --ui-shadow-sm / -lg", ({ file, raw }) => {
+    const offenders = [...raw.replace(/\/\/[^\n]*/g, "").matchAll(/box-shadow\s*:\s*([^;{}]+);([^\n]*)/g)]
+      .filter(([, , rest]) => !rest.includes("/* literal:"))
+      .map(([, value]) => value.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").trim())
+      .filter(value => splitLayers(value).some(isElevation));
+    expect(offenders, `${file} draws an elevation outside the two levels: ${offenders.join("; ")}`)
+      .toHaveLength(0);
+  });
+});
+
+describe("motion values", () => {
+  // Durations come from --ui-duration-*, curves from --ui-ease-*. A looping
+  // animation keeps its own period, and a reduced-motion override its 1ms end
+  // state, each marked `/* literal: <reason> */` on the line.
+  // Custom properties that carry timing count too (`--sidebar-transition`).
+  const DECLARATION = /(?:(?<![\w-])(?:-webkit-)?(?:transition|animation)(?:-[a-z-]+)?|--[\w-]*(?:transition|duration|ease|curve)[\w-]*)\s*:\s*([^;{}]+);([^\n]*)/g;
+  const isLiteral = (value: string) =>
+    /(?<![\w.-])(?!0(?:m?s)\b)\d*\.?\d+m?s\b/.test(value)
+    || /cubic-bezier\(|\bease(?:-in|-out|-in-out)?\b/.test(value);
+
+  it.each(STYLE_FILES)("$file times its motion with the motion tokens", ({ file, raw }) => {
+    const offenders = [...raw.replace(/\/\/[^\n]*/g, "").matchAll(DECLARATION)]
+      .filter(([, value, rest]) => !rest.includes("/* literal:") && isLiteral(value.replace(/var\([^)]*\)/g, "")))
+      .map(([, value]) => value.replace(/\s+/g, " ").trim());
+    expect(offenders, `${file} hardcodes motion: ${offenders.join("; ")} — use --ui-duration-* / --ui-ease-*`)
+      .toHaveLength(0);
+  });
+
+  it.each(STYLE_FILES)("$file gives each transition layer one curve", ({ file, raw }) => {
+    // Two timing functions in one layer make the whole declaration invalid at
+    // runtime, and the browser silently drops the transition.
+    const curve = /var\(--[\w-]*ease[\w-]*\)|cubic-bezier\([^)]*\)|\b(?:ease(?:-in|-out|-in-out)?|linear)\b/g;
+    const doubled = [...raw.replace(/\/\/[^\n]*/g, "").matchAll(DECLARATION)]
+      .flatMap(([, value]) => value.split(/,(?![^()]*\))/))
+      .filter(layer => (layer.match(curve) ?? []).length > 1)
+      .map(layer => layer.replace(/\s+/g, " ").trim());
+    expect(doubled, `${file} has layers with two curves: ${doubled.join("; ")}`).toHaveLength(0);
+  });
+});
+
+describe("radius values", () => {
+  // Radii come from --ui-radius-*. A nested corner is `calc(<outer> - <padding>)`
+  // over tokens, so it follows outer = inner + padding by construction.
+  const RADIUS = /border(?:-[a-z-]+)?-radius|\$[\w-]*radius[\w-]*|--[\w-]*radius[\w-]*/;
+
+  // 1–2px corners on marks too small to carry a scale step, by file.
+  const HAIRLINE_RADII = new Set([
+    "styles/components/base/vbutton.scss", // the focus inset's corner
+    "styles/components/inputs/vcheckbox.scss", // the tick and the dash
+    "styles/components/navigation-sidebar/_sidebar-nav.scss", // the active bar
+    "components/table/assets/styles/_header.scss", // the resize divider
+    "components/table/assets/styles/_wrapper.scss", // inner corner, 1px border
+    "components/table/assets/styles/column-picker.scss", // the selection bar
+  ]);
+
+  it.each(STYLE_FILES)("$file takes its radii from tokens", ({ file, raw }) => {
+    const isAllowed = (value: string) =>
+      /^0(?:px|rem)?$/.test(value)
+      || (HAIRLINE_RADII.has(file) && /^(?:1px|2px|0\.125rem)$/.test(value));
+    const literals = literalLengths(raw, RADIUS, isAllowed);
+    expect(literals, `${file} hardcodes a radius: ${literals.join("; ")} — use --ui-radius-*`)
+      .toHaveLength(0);
+  });
+
+  it("keeps no stale entries in HAIRLINE_RADII", () => {
+    const files = new Set(STYLE_FILES.map(({ file }) => file));
+    expect([...HAIRLINE_RADII].filter(file => !files.has(file))).toEqual([]);
   });
 });
 

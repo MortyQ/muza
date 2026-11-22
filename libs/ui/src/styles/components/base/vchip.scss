@@ -20,10 +20,13 @@
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
   line-height: var(--ui-leading-base);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   white-space: nowrap;
   user-select: none;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   /* ── Colours ────────────────────────────────────────────── */
   &--color-default {
@@ -134,7 +137,7 @@
   &--sm {
     height: calc(var(--ui-control-h) - var(--ui-space-sm));
     padding: 0 var(--ui-space-md);
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
   }
 
   &--md {
@@ -187,7 +190,9 @@
     color: inherit;
     cursor: pointer;
     opacity: 0.7;
-    transition: background-color 150ms ease, opacity 150ms ease;
+    transition:
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      opacity var(--ui-duration-fast) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {

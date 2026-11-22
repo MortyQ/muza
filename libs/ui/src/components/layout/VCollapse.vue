@@ -7,8 +7,8 @@
  * header is a `<button>`, so it cannot host interactive children (status
  * controls, links), and a card header usually has to.
  */
-const { duration = 200, unmount = false } = defineProps<{
-  /** Transition duration in ms. Keep it under 300 — this is UI, not marketing. */
+const { duration = 150, unmount = false } = defineProps<{
+  /** Transition duration in ms. Defaults to the fast step (150ms), as every in-place change. */
   duration?: number
   /**
    * Remove the content from the DOM while collapsed. Off by default: keeping it

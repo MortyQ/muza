@@ -43,12 +43,14 @@
 
 /* ── Options ────────────────────────────────────────────────────────────── */
 .multiselect__content-wrapper.v-ms-floating .multiselect__option {
-  padding: 0.625rem 1rem;
+  padding: var(--ui-space-md) var(--ui-space-xl);
   font-size: var(--ui-text-base);
   color: var(--ui-foreground);
   font-weight: var(--ui-weight-regular);
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
   background: transparent;
 }
 
@@ -86,10 +88,10 @@
 /* ── Grouped options ────────────────────────────────────────────────────── */
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--group {
   background-color: var(--ui-surface-sunken);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
   font-weight: var(--ui-weight-strong);
   cursor: pointer;
-  padding: 8px 16px;
+  padding: var(--ui-space-md) var(--ui-space-xl);
 }
 
 .multiselect__content-wrapper.v-ms-floating
@@ -97,7 +99,7 @@
 .multiselect__content-wrapper.v-ms-floating
 .multiselect__option.multiselect__option--group.multiselect__option--highlight {
   background-color: var(--ui-border-subtle);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
 }
 
 .multiselect__content-wrapper.v-ms-floating
@@ -116,10 +118,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--ui-text-2xs) !important;
+  font-size: var(--ui-text-xs) !important;
   text-align: center;
-  margin-bottom: 2px;
-  margin-left: .5px;
+  margin-bottom: var(--ui-space-2xs);
+  margin-left: .5px; /* literal: optical half-pixel nudge */
 }
 
 /* ── Disabled options ───────────────────────────────────────────────────── */
@@ -145,7 +147,7 @@
    ============================================ */
 .multiselect__content-wrapper.v-ms-floating {
   border-radius: var(--ui-radius-lg);
-  padding: 0.1875rem;
+  padding: var(--ui-space-2xs);
 }
 
 /* See the `min-height: 0` note in vselect.scss — the library's 40px floor is why
@@ -154,7 +156,7 @@
   font-size: var(--ui-text-base);
   min-height: 0;
   line-height: 1.125rem;
-  padding: 0.3125rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   /* Rounded rows need the panel's own 3px padding above to keep the corners off
      its border. */
   border-radius: var(--ui-radius);
@@ -162,11 +164,11 @@
 
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--group {
   font-size: var(--ui-text-xs);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--ui-tracking-caps);
   text-transform: uppercase;
   min-height: 0;
   line-height: 1rem;
-  padding: 0.25rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
   border-radius: var(--ui-radius);
 }
 

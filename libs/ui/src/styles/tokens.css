@@ -137,32 +137,28 @@
     /* ╔══════════════════════════════════════════════════════════╗
        ║  TYPE SCALE                                              ║
        ╚══════════════════════════════════════════════════════════╝ */
-    /* Six steps, one job each — see theme.css for what each is for. `base` is
-       13px, which is what the button, the field and the select already stand
-       at; 14px is deliberately not a step, because it is the size this system
-       is moving off and a name would keep it in use.
+    /* Four working sizes and one for figures — see theme.css for what each
+       is for. Never a size in between; 14px is deliberately not a step.
 
        Every font-size under styles/components/ resolves through these. A
        literal there is the same defect a raw colour is: it reads as a decision
        when it is really a value nobody has revisited. */
-    --ui-text-2xs:  var(--type-2xs, 0.625rem);
-    --ui-text-xs:   var(--type-xs, 0.6875rem);
-    --ui-text-sm:   var(--type-sm, 0.75rem);
-    --ui-text-base: var(--type-base, 0.8125rem);
-    --ui-text-lg:   var(--type-lg, 0.9375rem);
-    --ui-text-xl:   var(--type-xl, 1.125rem);
-    /* Headline figures only — never a heading. */
-    --ui-text-2xl:  var(--type-2xl, 1.5rem);
-    --ui-text-3xl:  var(--type-3xl, 1.875rem);
+    --ui-text-xs:      var(--type-xs, 0.6875rem);
+    --ui-text-base:    var(--type-base, 0.8125rem);
+    --ui-text-lg:      var(--type-lg, 0.9375rem);
+    --ui-text-xl:      var(--type-xl, 1.25rem);
+    /* Headline figures only (VStat) — never a heading. */
+    --ui-text-display: var(--type-display, 1.75rem);
 
-    --ui-leading-2xs:  var(--type-2xs--line-height, 0.875rem);
-    --ui-leading-xs:   var(--type-xs--line-height, 1rem);
-    --ui-leading-sm:   var(--type-sm--line-height, 1rem);
-    --ui-leading-base: var(--type-base--line-height, 1.125rem);
-    --ui-leading-lg:   var(--type-lg--line-height, 1.375rem);
-    --ui-leading-xl:   var(--type-xl--line-height, 1.5rem);
-    --ui-leading-2xl:  var(--type-2xl--line-height, 2rem);
-    --ui-leading-3xl:  var(--type-3xl--line-height, 2.25rem);
+    --ui-leading-xs:      var(--type-xs--line-height, 1rem);
+    --ui-leading-base:    var(--type-base--line-height, 1.125rem);
+    --ui-leading-lg:      var(--type-lg--line-height, 1.375rem);
+    --ui-leading-xl:      var(--type-xl--line-height, 1.75rem);
+    --ui-leading-display: var(--type-display--line-height, 2.25rem);
+
+    /* Tracking: tight for body and UI text, caps for uppercase labels. */
+    --ui-tracking-tight: var(--tracking-tight, -0.01em);
+    --ui-tracking-caps:  var(--tracking-caps, 0.04em);
 
     /* Three weights — see theme.css. A heading is `strong` over `regular`
        text; a literal font-weight under styles/components/ is the same defect
@@ -199,23 +195,37 @@
     --ui-space-lg:  var(--space-lg, 0.75rem);
     --ui-space-xl:  var(--space-xl, 1rem);
     --ui-space-2xl: var(--space-2xl, 1.5rem);
+    --ui-space-3xl: var(--space-3xl, 2rem);
+    --ui-space-4xl: var(--space-4xl, 2.5rem);
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  SHADOWS                                                 ║
        ╚══════════════════════════════════════════════════════════╝ */
-    /* Sourced from the theme so dark mode can tint them with the brand violet —
+    /* Two levels: sm for resting cards, lg for anything that floats. Hover
+       changes the surface, never the elevation. Sourced from the theme so dark
+       mode can tint them with the brand violet —
        a black shadow on a dark surface is invisible. Fallbacks are the light
        values, for anyone loading tokens.css without the theme. */
-    --ui-shadow-xs: var(--elevation-xs, 0 1px 2px 0 oklch(20% 0.02 280 / 0.05));
     --ui-shadow-sm: var(--elevation-sm,
         0 1px 3px 0 oklch(20% 0.02 280 / 0.09), 0 1px 2px -1px oklch(20% 0.02 280 / 0.07));
-    --ui-shadow-md: var(--elevation-md,
-        0 4px 8px -2px oklch(20% 0.02 280 / 0.11), 0 2px 4px -2px oklch(20% 0.02 280 / 0.08));
     --ui-shadow-lg: var(--elevation-lg,
         0 12px 20px -6px oklch(20% 0.02 280 / 0.14), 0 4px 8px -4px oklch(20% 0.02 280 / 0.09));
-    --ui-shadow-xl: var(--elevation-xl,
-        0 24px 40px -10px oklch(20% 0.02 280 / 0.18), 0 8px 16px -8px oklch(20% 0.02 280 / 0.10));
-    --ui-shadow-inner: var(--elevation-inner, inset 0 2px 4px 0 oklch(20% 0.02 280 / 0.06));
+
+    /* ╔══════════════════════════════════════════════════════════╗
+       ║  MOTION                                                  ║
+       ╚══════════════════════════════════════════════════════════╝ */
+    /* Three durations, two curves, no overshoot.
+         instant  80ms   hover and press feedback: a colour, a border
+         fast    150ms   every in-place change: fades, collapses, a pill
+                         sliding, a menu opening
+         overlay 200ms   a modal, drawer or toast entering; it leaves at fast
+       A spinner or a skeleton pulse keeps its own period, marked
+       `literal:` where it is written. Reduced motion is handled per component. */
+    --ui-duration-instant: 80ms;
+    --ui-duration-fast:    150ms;
+    --ui-duration-overlay: 200ms;
+    --ui-ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+    --ui-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  FOCUS RING                                              ║

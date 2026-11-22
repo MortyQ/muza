@@ -411,6 +411,7 @@ const handleReset = async () => {
         @click="handleReset"
       >
         <svg
+          aria-hidden="true"
           fill="none"
           height="13"
           stroke="currentColor"
@@ -446,6 +447,7 @@ const handleReset = async () => {
         <!-- All visible: eye with circle pupil -->
         <svg
           v-if="allVisible"
+          aria-hidden="true"
           fill="none"
           height="14"
           stroke="currentColor"
@@ -466,6 +468,7 @@ const handleReset = async () => {
         <!-- Partial (indeterminate): eye outline with horizontal dash -->
         <svg
           v-else-if="someVisible"
+          aria-hidden="true"
           fill="none"
           height="14"
           stroke="currentColor"
@@ -487,6 +490,7 @@ const handleReset = async () => {
         <!-- None visible: eye-off -->
         <svg
           v-else
+          aria-hidden="true"
           fill="none"
           height="14"
           stroke="currentColor"
@@ -556,6 +560,7 @@ const handleReset = async () => {
           <!-- Visible: eye open -->
           <svg
             v-if="item.visible"
+            aria-hidden="true"
             fill="none"
             height="14"
             stroke="currentColor"
@@ -576,6 +581,7 @@ const handleReset = async () => {
           <!-- Hidden: eye-off -->
           <svg
             v-else
+            aria-hidden="true"
             fill="none"
             height="14"
             stroke="currentColor"

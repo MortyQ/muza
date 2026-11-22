@@ -56,6 +56,13 @@ async function dragRow(w: ReturnType<typeof setup>, from: number, to: number) {
 }
 
 describe("TableColumnSetup", () => {
+  it("hides its decorative icons from assistive technology", () => {
+    // The eye and reset glyphs sit inside buttons that already carry a title.
+    const svgs = setup().findAll("svg");
+    expect(svgs.length).toBeGreaterThan(0);
+    expect(svgs.filter(svg => svg.attributes("aria-hidden") !== "true")).toEqual([]);
+  });
+
   describe("the initial list", () => {
     it("lists every column", () => {
       expect(labels(setup())).toEqual(["ID", "Name", "Status", "Revenue", "Updated"]);

@@ -16,7 +16,7 @@ export interface NoticeFeature {
 
 const {
   icon = "lucide:info",
-  tone = "primary",
+  tone = "info",
   title = undefined,
   subtitle = undefined,
   card = true,
@@ -42,7 +42,7 @@ const {
 
 const hasFeatures = computed(() => !!features && features.length > 0);
 
-const toneClass = (value: NoticeTone = "primary"): string => `v-info-notice--tone-${value}`;
+const toneClass = (value: NoticeTone = "info"): string => `v-info-notice--tone-${value}`;
 </script>
 
 <template>

@@ -16,7 +16,7 @@
   background-clip: content-box;
 
   @media (prefers-reduced-motion: no-preference) {
-    animation: v-skeleton-pulse 1.6s ease-in-out infinite;
+    animation: v-skeleton-pulse 1.6s ease-in-out infinite; /* literal: loop period */
   }
 
   &--line {
@@ -44,8 +44,8 @@
   }
 
   &--sm {
-    --v-skeleton-text: var(--ui-text-sm);
-    --v-skeleton-leading: var(--ui-leading-sm);
+    --v-skeleton-text: var(--ui-text-xs);
+    --v-skeleton-leading: var(--ui-leading-xs);
   }
 
   &--lg {
@@ -59,13 +59,13 @@
   }
 
   &--2xl {
-    --v-skeleton-text: var(--ui-text-2xl);
-    --v-skeleton-leading: var(--ui-leading-2xl);
+    --v-skeleton-text: var(--ui-text-xl);
+    --v-skeleton-leading: var(--ui-leading-xl);
   }
 
   &--3xl {
-    --v-skeleton-text: var(--ui-text-3xl);
-    --v-skeleton-leading: var(--ui-leading-3xl);
+    --v-skeleton-text: var(--ui-text-display);
+    --v-skeleton-leading: var(--ui-leading-display);
   }
 }
 

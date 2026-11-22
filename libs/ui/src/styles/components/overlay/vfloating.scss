@@ -34,7 +34,7 @@
   }
 
   &:not(.v-floating--positioning) {
-    animation: floatingFadeIn 0.15s ease-out;
+    animation: floatingFadeIn var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   &.v-floating--updating {
@@ -79,12 +79,12 @@
   }
 
   &.v-floating--dropdown {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    padding-top: var(--ui-space-xs);
+    padding-bottom: var(--ui-space-xs);
   }
 
   &.v-floating--popover {
-    padding: 1rem;
+    padding: var(--ui-space-xl);
   }
 
   &.v-floating--unstyled {
@@ -111,28 +111,30 @@
    ============================================ */
 .v-floating-item {
   width: 100%;
-  padding: 0.625rem 1rem;
+  padding: var(--ui-space-md) var(--ui-space-xl);
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-lg);
   color: var(--ui-foreground);
   border: none;
   background-color: transparent;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(&--disabled):not(&--loading) {
       background-color: var(--ui-surface-hover);
 
       .v-floating-item-icon {
-        color: var(--ui-primary);
+        color: var(--ui-foreground);
         transform: scale(1.1);
       }
 
       .v-floating-item-label {
-        color: var(--ui-primary);
+        color: var(--ui-foreground);
       }
     }
   }
@@ -164,7 +166,9 @@
   display: flex;
   align-items: center;
   color: var(--ui-foreground-secondary);
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-floating-item-label {
@@ -172,7 +176,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 0.2s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-floating-item-loading {
@@ -187,7 +191,7 @@
   }
 
   .v-floating-item-icon {
-    transition: color 0.2s ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
     transform: none !important;
   }
 }

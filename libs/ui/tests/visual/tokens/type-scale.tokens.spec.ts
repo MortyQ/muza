@@ -39,11 +39,11 @@ describe("type scale — headings", () => {
     expect(weights).toEqual(["450", "500", "600"]);
   });
 
-  it("VCard title is lg/strong, its subtitle sm/regular", async () => {
+  it("VCard title is lg/strong, its subtitle xs/regular", async () => {
     const screen = render(VCard, { props: { title: "Revenue", subtitle: "This month" } });
     const root = screen.container;
     expectStep(root.querySelector(".v-card__title"), "lg", "strong");
-    expectStep(root.querySelector(".v-card__subtitle"), "sm", "regular");
+    expectStep(root.querySelector(".v-card__subtitle"), "xs", "regular");
   });
 
   it.each([

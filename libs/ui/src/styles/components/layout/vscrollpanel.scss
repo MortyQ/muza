@@ -1,15 +1,13 @@
 .v-scroll-panel {
-  --_ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-
   overflow-y: auto;
   max-height: var(--v-scroll-panel-max-height, none);
-  padding: 0.625rem;
+  padding: var(--ui-space-md);
   border-radius: var(--ui-radius-xl);
   /* The depth is drawn inward, never as a drop shadow: this is a well, and its
      content — cards, list rows — carries elevation of its own. A container that
      also casts a shadow puts two competing light sources in one component. */
   background-color: color-mix(in oklch, var(--ui-surface-hover) 60%, transparent);
-  box-shadow: var(--ui-shadow-inner);
+  box-shadow: none;
 }
 
 .v-scroll-panel__copy {
@@ -36,10 +34,10 @@
   color: var(--ui-foreground-secondary);
   cursor: pointer;
   transition:
-    transform 150ms var(--_ease-out),
-    opacity 150ms var(--_ease-out),
-    color 150ms ease,
-    border-color 150ms ease;
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -84,7 +82,9 @@
 .v-scroll-panel__copy-glyph {
   grid-area: 1 / 1;
   display: flex;
-  transition: opacity 160ms var(--_ease-out), transform 160ms var(--_ease-out);
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 
   /* Starts small and turned rather than at zero — nothing in the world appears
      out of nothing, and a check that snaps in at full size reads as a different

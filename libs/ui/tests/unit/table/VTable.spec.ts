@@ -648,6 +648,44 @@ describe("VTable", () => {
       expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(true);
     });
 
+    // `.v-table-grid--highlight` is what dims every cell outside the pinned cross,
+    // so it must be absent until something is pinned: otherwise the whole table
+    // renders at 38% opacity on load.
+    describe("dimming", () => {
+      const grid = (w: ReturnType<typeof table>) => w.find(".v-table-grid");
+
+      it("does not dim the table while nothing is pinned", () => {
+        expect(grid(table({ highlight: true })).classes()).not.toContain("v-table-grid--highlight");
+      });
+
+      it("keeps the fade rules on while nothing is pinned, so unpinning fades back", () => {
+        // The transitions live on `--highlightable`, which follows the prop, not
+        // the pin: on `--highlight` they would vanish with the last pin and the
+        // table would snap from 0.38 to full opacity.
+        expect(grid(table({ highlight: true })).classes()).toContain("v-table-grid--highlightable");
+        expect(grid(table()).classes()).not.toContain("v-table-grid--highlightable");
+      });
+
+      it("dims around a row pin and stops when the pin is removed", async () => {
+        const w = table({ highlight: true });
+
+        await w.find(".v-table-row-wrapper .v-table-pin-button").trigger("click");
+        expect(grid(w).classes()).toContain("v-table-grid--highlight");
+
+        // Re-queried: the pinned row re-renders, so the first wrapper is stale.
+        await w.find(".v-table-row-wrapper--pinned .v-table-pin-button").trigger("click");
+        expect(w.find(".v-table-row-wrapper--pinned").exists()).toBe(false);
+        expect(grid(w).classes()).not.toContain("v-table-grid--highlight");
+      });
+
+      it("dims around a column pin", async () => {
+        const w = table({ highlight: { row: false } });
+        await w.findAll(".v-table-header-cell .v-table-pin-button")[1].trigger("click");
+
+        expect(grid(w).classes()).toContain("v-table-grid--highlight");
+      });
+    });
+
     describe("a pin does not outlive the rows it was set on", () => {
       // Each of these replaces the rows on screen, so a row pinned by id
       // would point at a row that is gone or at a different one entirely.

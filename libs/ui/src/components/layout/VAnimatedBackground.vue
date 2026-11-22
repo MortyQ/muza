@@ -139,6 +139,7 @@ onUnmounted(() => {
 <template>
   <canvas
     ref="canvasRef"
+    aria-hidden="true"
     class="v-animated-background__canvas"
   />
   <div class="v-animated-background__tint" />

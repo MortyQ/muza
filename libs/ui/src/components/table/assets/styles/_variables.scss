@@ -52,7 +52,7 @@ $table-font-weight-bold: var(--ui-weight-strong);
 // ════════════════════════════════════════════════════════════════
 
 $table-border-width: 1px;
-$table-border-radius: 0.75rem; // 12px - modern, softer corners
+$table-border-radius: var(--ui-radius-xl);
 $table-total-border-width: 1px; // Changed from 2px for consistency
 
 // ════════════════════════════════════════════════════════════════
@@ -98,9 +98,6 @@ $z-index-header-fixed: 15; // Fixed header highest!
 // TRANSITIONS - Smooth, performant animations
 // ════════════════════════════════════════════════════════════════
 
-$transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1); // Snappy
-$transition-normal: 0.2s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
-$transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Elegant
 
 // ════════════════════════════════════════════════════════════════
 // OPACITY VALUES - Consistent transparency scale

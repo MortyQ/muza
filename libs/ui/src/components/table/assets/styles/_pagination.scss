@@ -15,8 +15,8 @@
     color-mix(in oklch, var(--ui-surface) 50%, transparent)
   );
   border-top: 1px solid color-mix(in oklch, var(--ui-border-subtle) 40%, transparent);
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: var(--ui-radius-2xl);
+  border-bottom-right-radius: var(--ui-radius-2xl);
   // One control row and its padding
   min-height: calc(var(--ui-control-h) + 2 * var(--ui-space-md));
 
@@ -63,28 +63,23 @@
     color-mix(in oklch, var(--ui-surface-sunken) 50%, transparent),
     color-mix(in oklch, var(--ui-surface) 80%, transparent)
   );
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
   color: var(--ui-foreground);
   font-size: $table-font-size-base;
   font-weight: $table-font-weight-medium;
   line-height: 1;
   cursor: pointer;
   transition:
-    border-color $transition-normal,
-    box-shadow $transition-normal,
-    color $transition-normal,
-    transform $transition-fast;
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
   outline: none;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.v-table-pagination-btn--active) {
-      background: linear-gradient(
-        to bottom,
-        color-mix(in oklch, var(--ui-primary) 8%, transparent),
-        color-mix(in oklch, var(--ui-surface-sunken) 60%, transparent)
-      );
-      border-color: color-mix(in oklch, var(--ui-primary) 30%, transparent);
-      box-shadow: var(--ui-shadow-sm);
+      background: var(--ui-surface-hover);
+      border-color: var(--ui-border-strong);
     }
   }
 
@@ -103,20 +98,8 @@
     color: var(--ui-primary-foreground);
     border-color: var(--ui-primary);
     font-weight: $table-font-weight-semibold;
-    box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--ui-primary) 10%, transparent),
-      0 2px 4px 0 color-mix(in oklch, var(--ui-primary) 30%, transparent),
-      0 4px 12px -2px color-mix(in oklch, var(--ui-primary) 25%, transparent);
+    box-shadow: none;
     cursor: default;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        box-shadow:
-          0 0 0 1px color-mix(in oklch, var(--ui-primary) 15%, transparent),
-          0 2px 4px 0 color-mix(in oklch, var(--ui-primary) 35%, transparent),
-          0 6px 16px -2px color-mix(in oklch, var(--ui-primary) 30%, transparent);
-      }
-    }
   }
 
   &:focus-visible {

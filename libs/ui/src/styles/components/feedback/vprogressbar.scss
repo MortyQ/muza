@@ -41,8 +41,8 @@
   &__step {
     overflow: hidden;
     min-width: 0;
-    font-size: var(--ui-text-sm);
-    line-height: var(--ui-leading-sm);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground-secondary);
     text-overflow: ellipsis;
@@ -55,12 +55,12 @@
     align-items: center;
     gap: var(--ui-space-2xs);
     margin-inline-start: auto;
-    font-size: var(--ui-text-sm);
-    line-height: var(--ui-leading-sm);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     font-weight: var(--ui-weight-strong);
     font-variant-numeric: tabular-nums;
     color: var(--ui-foreground);
-    transition: color 0.2s ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   &--completed &__percentage {
@@ -81,8 +81,8 @@
     border-radius: inherit;
     background-color: var(--v-progress-accent);
     transition:
-      width 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-      background-color 0.2s ease;
+      width var(--ui-duration-fast) var(--ui-ease-out),
+      background-color var(--ui-duration-instant) var(--ui-ease-out);
   }
 }
 

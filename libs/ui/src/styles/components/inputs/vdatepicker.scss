@@ -22,7 +22,7 @@
   width: 100%;
   border-radius: var(--ui-radius-lg);
   background: var(--ui-input-bg);
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
 
   &--disabled {
     background-color: var(--ui-surface-sunken);
@@ -34,11 +34,11 @@
   inset: 0;
   margin: 0;
   /* 7px + the legend's 3px = the 10px the raised label sits at, as on VInput. */
-  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem); /* literal: floating-label notch geometry */
   border: 1px solid var(--ui-input-border);
   border-radius: var(--ui-radius-lg);
   pointer-events: none;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -71,11 +71,13 @@
   padding: 0;
   overflow: hidden;
   /* Same face as the raised label, or the notch closes over its last glyph. */
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
-  line-height: var(--ui-leading-2xs);
+  line-height: var(--ui-leading-xs);
   white-space: nowrap;
-  transition: max-width 0.2s ease, padding 0.2s ease;
+  transition:
+    max-width var(--ui-duration-fast) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
 
   span {
     display: inline-block;
@@ -99,11 +101,11 @@
   pointer-events: none;
   transform: translateY(-50%);
   transition:
-    top 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    left 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    font-size 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    line-height 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    color 150ms ease;
+    top var(--ui-duration-fast) var(--ui-ease-out),
+    left var(--ui-duration-fast) var(--ui-ease-out),
+    font-size var(--ui-duration-fast) var(--ui-ease-out),
+    line-height var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 /* Raised: a value is set, the field has focus, or the calendar is open — and
@@ -115,15 +117,15 @@
   .v-datepicker-label {
     top: 0;
     left: var(--ui-control-px);
-    font-size: var(--ui-text-2xs);
+    font-size: var(--ui-text-xs);
     font-weight: var(--ui-weight-medium);
-    line-height: var(--ui-leading-2xs);
-    color: var(--ui-primary);
+    line-height: var(--ui-leading-xs);
+    color: var(--ui-foreground-secondary);
   }
 
   .v-datepicker-legend {
     max-width: 100%;
-    padding: 0 0.1875rem;
+    padding: 0 0.1875rem; /* literal: legend gap around the notched label */
   }
 }
 
@@ -143,14 +145,14 @@
    HELPER TEXT & ERRORS
    ============================================ */
 .v-datepicker-helper-text {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   color: var(--ui-foreground-muted);
   margin-top: var(--ui-space-2xs);
-  transition: color 0.2s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .form-error {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   color: var(--ui-danger);
   font-weight: var(--ui-weight-medium);
   margin-top: var(--ui-space-2xs);
@@ -166,7 +168,7 @@
   width: 0.9375rem;
   height: 0.9375rem;
   color: var(--ui-input-placeholder);
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-datepicker-container:focus-within .v-datepicker-icon,
@@ -176,7 +178,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .v-datepicker-arrow-icon:hover {
-    color: var(--ui-primary);
+    color: var(--ui-foreground);
     cursor: pointer;
   }
 }
@@ -199,7 +201,9 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -219,7 +223,9 @@
    ============================================ */
 .error-slide-enter-active,
 .error-slide-leave-active {
-  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .error-slide-enter-from,
@@ -240,7 +246,7 @@
   --dp-cell-size: 2rem;
   --dp-cell-padding: var(--ui-space-xs);
   --dp-common-padding: var(--ui-space-md);
-  --dp-preview-font-size: var(--ui-text-2xs);
+  --dp-preview-font-size: var(--ui-text-xs);
   --dp-time-font-size: var(--ui-text-base);
 
   /* The field's height is set on `.dp--input` below rather than derived from
@@ -248,24 +254,24 @@
      button and the plain field do. The padding that remains is horizontal only:
      room for the calendar icon on the left and the clear button on the right. */
   --dp-font-size: var(--ui-text-base);
-  --dp-input-padding: 0 2rem 0 2rem;
-  --dp-input-icon-padding: 2rem;
+  --dp-input-padding: 0 var(--ui-space-3xl) 0 var(--ui-space-3xl);
+  --dp-input-icon-padding: var(--ui-space-3xl);
   /* The menu's own action buttons, not the field. */
   --dp-button-height: var(--ui-control-h-md);
 
   /* Colors → --ui-* tokens */
   --dp-background-color: var(--ui-input-bg);
   --dp-text-color: var(--ui-foreground);
-  --dp-hover-color: var(--ui-primary-subtle);
-  --dp-hover-text-color: var(--ui-primary);
-  --dp-hover-icon-color: var(--ui-primary);
+  --dp-hover-color: var(--ui-surface-hover);
+  --dp-hover-text-color: var(--ui-foreground);
+  --dp-hover-icon-color: var(--ui-foreground);
   --dp-primary-color: var(--ui-primary);
   --dp-primary-disabled-color: var(--ui-primary-muted);
   --dp-primary-text-color: var(--ui-primary-foreground);
   --dp-secondary-color: var(--ui-foreground-subtle);
   --dp-border-color: var(--ui-input-border);
   --dp-menu-border-color: var(--ui-border);
-  --dp-border-color-hover: var(--ui-primary);
+  --dp-border-color-hover: var(--ui-border-strong);
   --dp-border-color-focus: var(--ui-primary);
   --dp-disabled-color: var(--ui-border);
   --dp-disabled-color-text: var(--ui-foreground-subtle);
@@ -309,7 +315,7 @@
 
 /* Without a clear button the right-hand gutter is dead space. */
 .v-datepicker-no-clear {
-  --dp-input-padding: 0 var(--ui-control-px) 0 2rem;
+  --dp-input-padding: 0 var(--ui-control-px) 0 var(--ui-space-3xl);
 }
 
 /* ============================================
@@ -350,7 +356,7 @@
   font-family: inherit;
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius);
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-lg);
 }
 
 :deep(.dp--menu-inner),
@@ -447,13 +453,13 @@
   font-family: inherit;
   /* VInput's type: 13px at 450, a hair tighter. */
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
-  transition: color 0.2s ease-out;
+  letter-spacing: var(--ui-tracking-tight);
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.dp--input::placeholder) {
   color: var(--ui-input-placeholder);
-  transition: color 0.2s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.dp--input:focus) {
@@ -485,7 +491,7 @@
    MENU / INPUT CONTAINER
    ============================================ */
 :deep(.v-datepicker-menu) {
-  box-shadow: var(--ui-shadow-xl);
+  box-shadow: var(--ui-shadow-lg);
   border-radius: var(--ui-radius-lg);
   overflow: hidden;
 }
@@ -522,16 +528,16 @@
 .v-datepicker:global(.dp--theme-dark) {
   --dp-background-color: var(--ui-nav);
   --dp-text-color: var(--ui-foreground-inverted);
-  --dp-hover-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-nav));
-  --dp-hover-text-color: var(--ui-primary-muted);
-  --dp-hover-icon-color: var(--ui-primary);
+  --dp-hover-color: var(--ui-nav-hover);
+  --dp-hover-text-color: var(--ui-foreground-inverted);
+  --dp-hover-icon-color: var(--ui-foreground-inverted);
   --dp-primary-color: var(--ui-primary);
   --dp-primary-disabled-color: color-mix(in oklch, var(--ui-primary) 40%, var(--ui-nav));
   --dp-primary-text-color: var(--ui-nav);
   --dp-secondary-color: var(--ui-foreground-muted);
   --dp-border-color: var(--ui-nav-border);
   --dp-menu-border-color: var(--ui-nav-border);
-  --dp-border-color-hover: var(--ui-primary);
+  --dp-border-color-hover: var(--ui-border-strong);
   --dp-border-color-focus: var(--ui-primary);
   --dp-disabled-color: var(--ui-nav-hover);
   --dp-disabled-color-text: var(--ui-foreground-muted);
@@ -553,4 +559,11 @@
   .error-slide-leave-to {
     transform: none;
   }
+}
+
+/* The accent marks focus: the raised label takes it while the field is focused
+   or the calendar is open, not merely because a date is set. */
+.v-datepicker-container--labelled:focus-within .v-datepicker-label,
+.v-datepicker-container--labelled.v-datepicker-container--open .v-datepicker-label {
+  color: var(--ui-primary);
 }

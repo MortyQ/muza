@@ -45,16 +45,16 @@
   height: 1.125rem;
   display: flex;
   align-items: center;
-  border-radius: 9999px;
+  border-radius: var(--ui-radius-full);
   border: 2px solid;
   box-sizing: border-box;
   background-color: var(--ui-border-subtle);
   border-color: var(--ui-border-subtle);
   box-shadow: var(--ui-shadow-sm);
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   &--checked {
     background-color: var(--ui-primary);
@@ -73,6 +73,13 @@
   }
 }
 
+/* The input is visually hidden, so its focus has to show on the track. An
+   outline, not a shadow: it is not on the transition list, so it appears at once. */
+.v-switch__input:focus-visible + .v-switch__track {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: 2px;
+}
+
 /* ============================================
    THUMB
    ============================================ */
@@ -85,13 +92,13 @@
   justify-content: center;
   width: 0.75rem;
   height: 0.75rem;
-  border-radius: 9999px;
+  border-radius: var(--ui-radius-full);
   /* Light in both themes, like the text on a primary fill */
   background-color: var(--ui-primary-foreground);
-  box-shadow: var(--ui-shadow-md);
+  box-shadow: var(--ui-shadow-sm);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--ui-duration-fast) var(--ui-ease-in-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
   transform: translateX(0);
 
   &--checked {
@@ -111,6 +118,6 @@
 /* Reduced motion: state changes land instantly, colour and opacity still ease. */
 @media (prefers-reduced-motion: reduce) {
   .v-switch__thumb {
-    transition: box-shadow 0.2s ease;
+    transition: box-shadow var(--ui-duration-instant) var(--ui-ease-out);
   }
 }

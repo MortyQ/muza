@@ -24,8 +24,8 @@
 .sidebar-flyout__title {
   padding: var(--ui-space-sm) var(--ui-control-px) var(--ui-space-xs);
   color: var(--ui-foreground);
-  font-size: var(--ui-text-sm);
-  line-height: var(--ui-leading-sm);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-xs);
   font-weight: var(--ui-weight-strong);
 }
 
@@ -46,18 +46,21 @@
   height: var(--ui-control-h);
   padding: 0 var(--ui-control-px);
   // Indentation via CSS custom property (set inline: --depth)
-  padding-left: calc(var(--ui-control-px) + var(--depth, 0) * 0.875rem);
+  padding-left: calc(var(--ui-control-px) + var(--depth, 0) * 0.875rem); /* literal: one nesting step, matched to the icon */
   border: 1px solid transparent;
   border-radius: var(--ui-radius-lg);
   color: var(--ui-foreground-secondary);
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   text-decoration: none;
   cursor: pointer;
   outline: none;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(&--disabled):not(&--parent):not(&--active) {
@@ -95,11 +98,11 @@
     padding-top: var(--ui-space-md);
     padding-bottom: var(--ui-space-2xs);
     color: var(--ui-foreground-muted);
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     font-weight: var(--ui-weight-strong);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--ui-tracking-caps);
     cursor: default;
     pointer-events: none;
 
@@ -132,8 +135,8 @@
   border-radius: var(--ui-radius-full);
   background-color: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
   color: var(--ui-foreground-secondary);
-  font-size: var(--ui-text-2xs);
-  line-height: var(--ui-leading-2xs);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-xs);
   font-weight: var(--ui-weight-strong);
   font-variant-numeric: tabular-nums;
 }

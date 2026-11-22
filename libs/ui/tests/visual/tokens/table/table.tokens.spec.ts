@@ -52,12 +52,10 @@ describe.each(THEME_CASES)("table tokens — %s theme", (theme) => {
         .toBe(tokenAsColor("--ui-surface"));
     });
 
-    it("rounds the wrapper at 16px — a literal, not a token", async () => {
-      // `_wrapper.scss` writes `border-radius: 1rem` rather than reaching for
-      // `--ui-radius-*`, and the pagination bar repeats the same literal so the
-      // two corners agree. Pinned as the literal it is; making it a token is a
-      // design-system change, not a test fix.
-      expect((await styleOf(".v-table-wrapper")).borderTopLeftRadius).toBe("16px");
+    it("rounds the wrapper on the 2xl radius", async () => {
+      // The pagination bar takes the same token, so the two corners agree.
+      expect((await styleOf(".v-table-wrapper")).borderTopLeftRadius)
+        .toBe(tokenAsValue("border-top-left-radius", "--ui-radius-2xl"));
     });
 
     it("borders the wrapper on the subtle border token", async () => {
@@ -99,11 +97,21 @@ describe.each(THEME_CASES)("table tokens — %s theme", (theme) => {
       expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
     });
 
-    it("marks the last pinned column with a brand-tinted edge", async () => {
+    // Pinning is a state, so the edge keeps the accent, quietly: 1px at 55%.
+    const accentAt = (percent: number): string => {
+      const probe = document.createElement("div");
+      probe.style.color = `color-mix(in oklch, var(--ui-primary) ${percent}%, transparent)`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+
+    it("marks the last pinned column with a 1px edge in the accent at 55%", async () => {
       const style = await styleOf(".v-table-fixed-left-last", { columns: makeFixedColumns() });
 
-      expect(style.borderRightWidth).toBe("2px");
-      expect(style.borderRightColor).not.toBe(tokenAsColor("--ui-border"));
+      expect(style.borderRightWidth).toBe("1px");
+      expect(style.borderRightColor).toBe(accentAt(55));
     });
   });
 
@@ -174,14 +182,14 @@ describe.each(THEME_CASES)("table tokens — %s theme", (theme) => {
   });
 
   describe("empty state", () => {
-    it("draws its title on the primary token", async () => {
+    it("draws its title on the foreground token: the accent is for actions and state", async () => {
       await applyTheme(theme);
       const screen = render(TableEmptyState, {
         props: { title: "Nothing here", description: "Adjust the filters." },
       });
       const title = screen.container.querySelector(".v-table-empty-state-title") as HTMLElement;
 
-      expect(getComputedStyle(title).color).toBe(tokenAsColor("--ui-primary"));
+      expect(getComputedStyle(title).color).toBe(tokenAsColor("--ui-foreground"));
     });
 
     it("draws its description on the secondary text token", async () => {

@@ -8,7 +8,7 @@
   /* Same field surface as VInput — the two sit next to each other in forms. */
   background: var(--ui-input-bg);
   border-radius: var(--ui-radius-lg);
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
 }
 
 /* ============================================
@@ -24,7 +24,11 @@
   color: var(--ui-foreground-muted);
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
-  transition: top 200ms ease, font-size 200ms ease, color 200ms ease, font-weight 200ms ease;
+  transition:
+    top var(--ui-duration-fast) var(--ui-ease-out),
+    font-size var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    font-weight var(--ui-duration-fast) var(--ui-ease-out);
   pointer-events: none;
   transform: translateY(-50%);
   z-index: 20;
@@ -37,11 +41,17 @@
      blurry at subpixel sizes where a declared 10px is drawn crisp. */
   &--active {
     top: 0;
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
-    color: var(--ui-primary);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
+    color: var(--ui-foreground-secondary);
     font-weight: var(--ui-weight-medium);
   }
+}
+
+/* The accent marks focus: a raised label takes it only while the select is
+   focused, not merely because it holds a value. */
+.v-select:focus-within .v-select__label--active {
+  color: var(--ui-primary);
 }
 
 /* ============================================
@@ -52,14 +62,16 @@
   inset: 0;
   border-radius: var(--ui-radius-lg);
   pointer-events: none;
-  transition: border-color 200ms ease, border-width 200ms ease;
+  transition:
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-width var(--ui-duration-instant) var(--ui-ease-out);
   border: 1px solid var(--ui-input-border);
-  box-shadow: var(--ui-shadow-xs);
+  box-shadow: none;
   margin: 0;
   /* The legend is laid out from the fieldset's content box, so the text inside
      it starts at `padding-left + legend padding-left` — 7px + 3px — which is
      exactly the `left: 0.625rem` the active label sits at. */
-  padding: 0 calc(var(--ui-control-px) - 0.1875rem);
+  padding: 0 calc(var(--ui-control-px) - 0.1875rem); /* literal: floating-label notch geometry */
   top: 0;
 
   /* 2px, and no spread ring: a `box-shadow` ring is drawn around the whole
@@ -75,12 +87,14 @@
 
 .v-select__legend {
   height: 0;
-  font-size: var(--ui-text-2xs);
-  line-height: var(--ui-leading-2xs);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-xs);
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
   font-weight: var(--ui-weight-medium);
-  transition: max-width 200ms ease, padding 200ms ease;
+  transition:
+    max-width var(--ui-duration-fast) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
   border: none;
   padding: 0;
   max-width: 0;
@@ -95,8 +109,8 @@
 
   &--visible {
     max-width: 100%;
-    padding-left: 0.1875rem;
-    padding-right: 0.1875rem;
+    padding-left: 0.1875rem; /* literal: legend gap around the notched label */
+    padding-right: 0.1875rem; /* literal: legend gap around the notched label */
   }
 }
 
@@ -107,7 +121,9 @@
   width: 0.875rem;
   height: 0.875rem;
   color: var(--ui-foreground-muted);
-  transition: transform 200ms ease, color 200ms ease;
+  transition:
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.multiselect--active) .v-select__caret-icon {
@@ -134,11 +150,11 @@
   box-shadow: none !important;
   color: var(--ui-foreground);
   border-radius: var(--ui-radius-lg);
-  transition: color 200ms ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
   min-height: var(--ui-control-h);
   /* Right padding clears the caret box; the vertical centring is the
      line-height's job, so a 30px control needs no top padding to look balanced. */
-  padding: var(--ui-space-xs) 1.75rem var(--ui-space-xs) var(--ui-control-px);
+  padding: var(--ui-space-xs) 1.75rem var(--ui-space-xs) var(--ui-control-px); /* literal: room reserved for the caret */
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -155,7 +171,7 @@
   color: var(--ui-foreground);
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   margin-bottom: 0;
   line-height: 1.375rem;
   padding-top: 0;
@@ -171,7 +187,7 @@
   color: var(--ui-foreground);
   font-size: var(--ui-text-base);
   line-height: 1.375rem;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   border: none;
   outline: none;
   box-shadow: none;
@@ -191,7 +207,7 @@
 :deep(.multiselect__placeholder) {
   font-size: var(--ui-text-base);
   line-height: 1.375rem;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   font-weight: var(--ui-weight-regular);
   margin-bottom: 0;
   padding-top: 0;
@@ -212,7 +228,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
   background: transparent !important;
 }
 
@@ -267,11 +283,11 @@
   line-height: var(--ui-leading-base);
   border-radius: var(--ui-radius-xs);
   margin-bottom: 0;
-  margin-right: 0.25rem;
+  margin-right: var(--ui-space-xs);
   display: inline-flex;
   align-items: center;
   border: none;
-  padding: 0 1.25rem 0 0.375rem;
+  padding: 0 1.25rem 0 var(--ui-space-sm); /* literal: 1.25rem is room reserved for the clear button */
 }
 
 :deep(.multiselect__tag-icon) {
@@ -287,7 +303,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 150ms ease;
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.multiselect__tag-icon::after) {
@@ -325,7 +341,7 @@
   border: 1px solid var(--ui-border-subtle);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow-lg);
-  margin-top: 0.375rem;
+  margin-top: var(--ui-space-sm);
   overflow-y: auto;
   overflow-x: hidden;
   border-top: none !important;
@@ -344,8 +360,10 @@
   font-weight: var(--ui-weight-regular);
   min-height: 0;
   line-height: var(--ui-leading-base);
-  padding: 0.3125rem 0.5rem;
-  transition: color 150ms ease, background-color 150ms ease;
+  padding: var(--ui-space-xs) var(--ui-space-md);
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
   cursor: pointer;
   background-color: transparent;
 }
@@ -384,16 +402,16 @@
    ============================================ */
 :deep(.multiselect__option.multiselect__option--group) {
   background-color: var(--ui-surface-sunken);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
   font-weight: var(--ui-weight-strong);
   cursor: pointer;
-  padding: 0.3125rem 0.5rem;
+  padding: var(--ui-space-xs) var(--ui-space-md);
 }
 
 :deep(.multiselect__option.multiselect__option--group:hover),
 :deep(.multiselect__option.multiselect__option--group.multiselect__option--highlight) {
   background-color: var(--ui-border-subtle);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
 }
 
 :deep(.multiselect__option.multiselect__option--group.multiselect__option--selected) {
@@ -413,6 +431,6 @@
 /* Reduced motion: state changes land instantly, colour and opacity still ease. */
 @media (prefers-reduced-motion: reduce) {
   .v-select__caret-icon {
-    transition: color 200ms ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 }

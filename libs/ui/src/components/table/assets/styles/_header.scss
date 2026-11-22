@@ -31,7 +31,7 @@
   line-height: $table-line-height-header;
   color: var(--ui-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ui-tracking-caps);
   text-align: center;
   overflow: hidden;
   min-width: 0;
@@ -54,7 +54,7 @@
     height: $table-shadow-offset;
     pointer-events: none;
     z-index: -1;
-    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent); /* literal: the sticky header's scroll edge, not an elevation */
   }
 }
 
@@ -86,7 +86,7 @@
   line-height: $table-line-height-header;
   color: var(--ui-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--ui-tracking-caps);
   overflow: hidden;
   min-width: 0;
 
@@ -116,7 +116,7 @@
     height: $table-shadow-offset;
     pointer-events: none;
     z-index: -1;
-    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    box-shadow: 0 $table-shadow-offset $table-shadow-blur 0 color-mix(in oklch, var(--ui-foreground) 8%, transparent); /* literal: the sticky header's scroll edge, not an elevation */
   }
 }
 
@@ -218,9 +218,9 @@
 .v-table-resize-indicator {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--ui-space-2xs);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
   z-index: 1;
 
   @media (hover: hover) and (pointer: fine) {
@@ -247,7 +247,7 @@
   background-color: color-mix(in oklch, var(--ui-border-strong) 60%, transparent);
   border-radius: 1px;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 // The corner over a hidden header checkbox. TableHeaderCheckbox styles the

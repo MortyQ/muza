@@ -1,7 +1,7 @@
 .v-meter {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ui-space-lg);
 }
 
 .v-meter__track {
@@ -30,7 +30,9 @@
   /* Strong ease-out, under 300ms: the bar moves when a new measurement lands and
      the eye is already on the number beside it, so it must arrive rather than
      travel. */
-  transition: transform 250ms cubic-bezier(0.23, 1, 0.32, 1), background-color 250ms ease;
+  transition:
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-meter__fill--met {
@@ -52,9 +54,9 @@
 .v-meter__value {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--ui-space-sm);
   flex-shrink: 0;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-variant-numeric: tabular-nums;
   color: var(--ui-foreground-secondary);
 }
@@ -73,6 +75,6 @@
    it just stops being animated movement. */
 @media (prefers-reduced-motion: reduce) {
   .v-meter__fill {
-    transition-duration: 1ms;
+    transition-duration: 1ms; /* literal: reduced-motion end state */
   }
 }

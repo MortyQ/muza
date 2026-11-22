@@ -72,12 +72,23 @@ describe.each(THEME_CASES)("VInput chrome — %s theme", (theme) => {
     }
   });
 
-  it("sets its type from the scale's base step, and the label from the 2xs one", async () => {
+  it("sets its type from the scale's base step, and the label from the xs one", async () => {
     const el = await renderInput({ name: "Marketplace", modelValue: "Amazon" });
     expect(getComputedStyle(find(el, ".v-input-field")).fontSize)
       .toBe(tokenAsValue("font-size", "--ui-text-base"));
     expect(getComputedStyle(find(el, ".v-label")).fontSize)
-      .toBe(tokenAsValue("font-size", "--ui-text-2xs"));
+      .toBe(tokenAsValue("font-size", "--ui-text-xs"));
+  });
+
+  it("tints the raised label with the accent only while the field has focus", async () => {
+    // The accent marks focus, not "has a value".
+    const el = await renderInput({ name: "Marketplace", modelValue: "Amazon" });
+    const label = find(el, ".v-label");
+    expect(getComputedStyle(label).color).toBe(tokenAsColor("--ui-foreground-secondary"));
+
+    find(el, ".v-input-field").focus();
+    expect(getComputedStyle(label).color).toBe(tokenAsColor("--ui-primary"));
+    find(el, ".v-input-field").blur();
   });
 
   it("renders the floating label and opens the notch on a value", async () => {
