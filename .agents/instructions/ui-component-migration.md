@@ -168,6 +168,11 @@ Type        --ui-text-xs  -base  -lg  -xl  -display      (11 13 15 20 28 px)
             --ui-leading-xs  -base  -lg  -xl  -display
             (display is headline figures only — VStat — never a heading)
 Tracking    --ui-tracking-tight (-1%, body and UI text)  -caps (+4%, uppercase labels)
+Motion      --ui-duration-instant (80ms, hover and press colour)
+            --ui-duration-fast (150ms, every in-place change)
+            --ui-duration-overlay (200ms, a modal, drawer or toast entering; it leaves at fast)
+            --ui-ease-out (arrivals)  --ui-ease-in-out (a pill or thumb moving along its track)
+            (no overshoot anywhere; a loop keeps its period, marked /* literal: loop period */)
 Weight      --ui-weight-regular (450)  -medium (500)  -strong (600)
 Control     --ui-control-h  -sm  -md  -lg   --ui-control-px  --ui-control-gap
 Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl  -3xl  -4xl

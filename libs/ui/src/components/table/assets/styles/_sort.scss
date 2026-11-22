@@ -8,7 +8,7 @@
   flex-shrink: 0;
   padding: var(--ui-space-2xs);
   border-radius: var(--ui-radius-xs);
-  transition: background-color 0.15s ease;
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -33,7 +33,9 @@
 
 .v-sort-icon {
   opacity: 0.45;
-  transition: opacity 0.2s ease, color 0.2s ease;
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
   color: var(--ui-foreground-secondary);
 
   &--active {

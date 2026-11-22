@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { applyTheme, THEME_CASES } from "../../setup/theme";
-import { tokenAsValue } from "../../setup/tokens";
+import { rawToken, tokenAsValue } from "../../setup/tokens";
 
 /**
  * The scales themselves. Component contracts check that a component reads a
@@ -49,6 +49,29 @@ describe.each(THEME_CASES)("scales — %s theme", (theme) => {
       await applyTheme(theme);
       expect(getComputedStyle(document.documentElement).getPropertyValue(`--ui-shadow-${step}`))
         .toBe("");
+    });
+  });
+
+  describe("motion", () => {
+    // Three durations; no curve may overshoot.
+    // Read raw: the browser project disables every transition, so a computed
+    // duration is always 0s (testing.md, trap 10).
+    it.each([["instant", "80ms"], ["fast", "150ms"], ["overlay", "200ms"]])(
+      "--ui-duration-%s is %s",
+      async (step, value) => {
+        await applyTheme(theme);
+        expect(rawToken(`--ui-duration-${step}`)).toBe(value);
+      },
+    );
+
+    it.each(["out", "in-out"])("--ui-ease-%s stays inside 0–1 on the progress axis", async (step) => {
+      await applyTheme(theme);
+      const curve = rawToken(`--ui-ease-${step}`);
+      const [, y1, , y2] = curve.match(/cubic-bezier\(([^)]+)\)/)![1].split(",").map(Number);
+      for (const y of [y1, y2]) {
+        expect(y).toBeGreaterThanOrEqual(0);
+        expect(y).toBeLessThanOrEqual(1);
+      }
     });
   });
 

@@ -16,7 +16,7 @@
   background-clip: content-box;
 
   @media (prefers-reduced-motion: no-preference) {
-    animation: v-skeleton-pulse 1.6s ease-in-out infinite;
+    animation: v-skeleton-pulse 1.6s ease-in-out infinite; /* literal: loop period */
   }
 
   &--line {

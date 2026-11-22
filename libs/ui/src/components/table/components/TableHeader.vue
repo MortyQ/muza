@@ -218,7 +218,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
   cursor: help;
   flex-shrink: 0;
   margin-left: var(--ui-space-xs);
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {

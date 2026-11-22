@@ -29,7 +29,7 @@ $sidebar-mobile-breakpoint: 1024px;
   z-index: 50;
 
   // Smooth slide-in/out via transform (not display:none)
-  transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform var(--ui-duration-fast) var(--ui-ease-out);
   transform: translateX(-100%);
 
   // WebKit GPU promotion
@@ -128,7 +128,9 @@ $sidebar-mobile-breakpoint: 1024px;
   background: transparent;
   color: var(--ui-foreground-muted);
   cursor: pointer;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {

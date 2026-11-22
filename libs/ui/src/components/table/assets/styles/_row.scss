@@ -71,11 +71,11 @@
   display: contents;
 
   &--entering > .v-table-cell {
-    animation: expandRowIn $transition-normal cubic-bezier(0.4, 0, 0.2, 1);
+    animation: expandRowIn var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   &--leaving > .v-table-cell {
-    animation: expandRowOut $transition-fast ease-out;
+    animation: expandRowOut var(--ui-duration-fast) var(--ui-ease-out);
   }
 }
 
@@ -92,6 +92,6 @@
 @media (prefers-reduced-motion: reduce) {
   .v-table-row-expandable--entering > .v-table-cell,
   .v-table-row-expandable--leaving > .v-table-cell {
-    animation-duration: 1ms;
+    animation-duration: 1ms; /* literal: reduced-motion end state */
   }
 }

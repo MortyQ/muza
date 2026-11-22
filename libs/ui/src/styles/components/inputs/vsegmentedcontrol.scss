@@ -92,14 +92,14 @@
      arrive decisively and settle, not drift the whole way. */
   &--ready {
     transition:
-      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      width 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 150ms ease-out;
+      transform var(--ui-duration-fast) var(--ui-ease-in-out),
+      width var(--ui-duration-fast) var(--ui-ease-in-out),
+      opacity var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   @media (prefers-reduced-motion: reduce) {
     &--ready {
-      transition: opacity 150ms ease-out;
+      transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
     }
   }
 }
@@ -127,9 +127,10 @@
   background: transparent;
   border: none;
   outline: none;
-  transition: color 150ms ease-in-out,
-  background-color 150ms ease-in-out,
-  box-shadow 150ms ease-in-out;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.v-sc__item--active) {
@@ -180,7 +181,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--ui-control-gap);
-  transition: opacity 150ms ease-in-out;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-sc__item--pending .v-sc__label {

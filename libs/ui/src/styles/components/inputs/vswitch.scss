@@ -52,9 +52,9 @@
   border-color: var(--ui-border-subtle);
   box-shadow: var(--ui-shadow-sm);
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   &--checked {
     background-color: var(--ui-primary);
@@ -97,8 +97,8 @@
   background-color: var(--ui-primary-foreground);
   box-shadow: var(--ui-shadow-sm);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--ui-duration-fast) var(--ui-ease-in-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
   transform: translateX(0);
 
   &--checked {
@@ -118,6 +118,6 @@
 /* Reduced motion: state changes land instantly, colour and opacity still ease. */
 @media (prefers-reduced-motion: reduce) {
   .v-switch__thumb {
-    transition: box-shadow 0.2s ease;
+    transition: box-shadow var(--ui-duration-instant) var(--ui-ease-out);
   }
 }

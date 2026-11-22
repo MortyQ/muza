@@ -10,17 +10,10 @@
 
 $highlight-line: var(--ui-primary);
 $highlight-fill: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-surface));
-$highlight-transition: 300ms ease;
 
 // ── Transition ───────────────────────────────────────────────────────────────
 // Only inside a highlight-enabled grid: other tables keep their existing
-// `transition: background-color 0.15s ease` from _cell.scss untouched.
-// PERFORMANCE: the property list is scoped to the cells that can actually
-// change each property, not declared wholesale on the grid.
-//
-// One pin click toggles .v-table-grid--highlight on the grid, so whatever is
-// declared here starts animating on EVERY cell at once — thousands of them.
-// `opacity` is compositable and cheap at that scale; `box-shadow`,
+// `transition: background-color var(--ui-duration-instant) var(--ui-ease-out) ease` from _cell.scss untouched. // PERFORMANCE: the property list is scoped to the cells that can actually // change each property, not declared wholesale on the grid. // // One pin click toggles .v-table-grid--highlight on the grid, so whatever is // declared here starts animating on EVERY cell at once — thousands of them. // `opacity` is compositable and cheap at that scale; `box-shadow`,
 // `background-color` and `border-color` force a repaint per frame per element.
 // Those three only ever change on the cross itself (one row + one column), so
 // declaring them for the whole grid animated thousands of cells for nothing.
@@ -28,7 +21,7 @@ $highlight-transition: 300ms ease;
   // The dimmed majority — opacity only.
   .v-table-cell,
   .v-table-header-cell {
-    transition: opacity $highlight-transition;
+    transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   // Fixed cells are dimmed via `color` instead of opacity (_fixed.scss), and
@@ -37,10 +30,10 @@ $highlight-transition: 300ms ease;
   .v-table-cell.v-table-fixed-column,
   .v-table-header-cell.v-table-fixed-column {
     transition:
-      opacity $highlight-transition,
-      color $highlight-transition,
-      background-color $highlight-transition,
-      border-color $highlight-transition;
+      opacity var(--ui-duration-fast) var(--ui-ease-out),
+      color var(--ui-duration-instant) var(--ui-ease-out),
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      border-color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   // The cross itself — a couple of dozen cells. Full set, including the
@@ -51,11 +44,11 @@ $highlight-transition: 300ms ease;
   .v-table-header-cell.v-table-cell--pinned-col,
   .v-table-header-cell--pinned-col {
     transition:
-      opacity $highlight-transition,
-      box-shadow $highlight-transition,
-      background-color $highlight-transition,
-      border-color $highlight-transition,
-      color $highlight-transition;
+      opacity var(--ui-duration-fast) var(--ui-ease-out),
+      box-shadow var(--ui-duration-instant) var(--ui-ease-out),
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      border-color var(--ui-duration-instant) var(--ui-ease-out),
+      color var(--ui-duration-instant) var(--ui-ease-out);
   }
 }
 
@@ -150,10 +143,10 @@ $highlight-transition: 300ms ease;
   pointer-events: none;
   transform: translateY(-50%);
   transition:
-    color 150ms cubic-bezier(0.23, 1, 0.32, 1),
-    border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -227,9 +220,9 @@ $highlight-transition: 300ms ease;
   // reduced motion means less movement, not no feedback.
   .v-table-pin-button {
     transition:
-      color 150ms cubic-bezier(0.23, 1, 0.32, 1),
-      border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+      color var(--ui-duration-instant) var(--ui-ease-out),
+      border-color var(--ui-duration-instant) var(--ui-ease-out),
+      opacity var(--ui-duration-fast) var(--ui-ease-out);
 
     &:active {
       transform: translateY(-50%);

@@ -23,7 +23,10 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   user-select: none;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;

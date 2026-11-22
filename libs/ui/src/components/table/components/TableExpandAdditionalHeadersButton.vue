@@ -51,7 +51,9 @@ const emit = defineEmits<{
   color: var(--ui-primary);
 
   /* Smooth transitions */
-  transition: background-color 150ms ease, transform 150ms ease-out;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 
   /* Hover state - subtle background with primary color */
 
@@ -76,7 +78,7 @@ const emit = defineEmits<{
 
 /* Icon rotation animation */
 .expand-icon {
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 /* Expanded state - chevron points the other way */
@@ -87,7 +89,7 @@ const emit = defineEmits<{
 @media (prefers-reduced-motion: reduce) {
   .expand-button,
   .expand-icon {
-    transition: background-color 150ms ease;
+    transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   .expand-button:active {

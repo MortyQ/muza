@@ -21,8 +21,11 @@
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface);
     cursor: pointer;
-    transition: border-color 0.3s ease, background-color 0.3s ease,
-      transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      border-color var(--ui-duration-instant) var(--ui-ease-out),
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      transform var(--ui-duration-fast) var(--ui-ease-out),
+      box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(.v-dragndrop__dropzone--disabled) {
@@ -87,7 +90,9 @@
     padding: var(--ui-space-xl);
     border-radius: var(--ui-radius-full);
     background-color: var(--ui-surface-hover);
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition:
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      transform var(--ui-duration-fast) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       .v-dragndrop__dropzone:hover:not(.v-dragndrop__dropzone--disabled) & {
@@ -104,7 +109,7 @@
 
   &__icon {
     color: var(--ui-primary);
-    transition: color 0.3s ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   &__text {
@@ -146,7 +151,9 @@
     border: 1px solid var(--ui-border);
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color var(--ui-duration-instant) var(--ui-ease-out),
+      box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
@@ -198,7 +205,9 @@
     background-color: transparent;
     color: var(--ui-foreground-secondary);
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      color var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
@@ -225,7 +234,9 @@
 
 .v-dragndrop-file-enter-active,
 .v-dragndrop-file-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-dragndrop-file-leave-active {
@@ -241,7 +252,7 @@
 }
 
 .v-dragndrop-file-move {
-  transition: transform 0.3s ease;
+  transition: transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 /* Reduced motion: state changes land instantly, colour and opacity still ease. */

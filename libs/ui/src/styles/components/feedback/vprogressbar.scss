@@ -60,7 +60,7 @@
     font-weight: var(--ui-weight-strong);
     font-variant-numeric: tabular-nums;
     color: var(--ui-foreground);
-    transition: color 0.2s ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
   &--completed &__percentage {
@@ -81,8 +81,8 @@
     border-radius: inherit;
     background-color: var(--v-progress-accent);
     transition:
-      width 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-      background-color 0.2s ease;
+      width var(--ui-duration-fast) var(--ui-ease-out),
+      background-color var(--ui-duration-instant) var(--ui-ease-out);
   }
 }
 

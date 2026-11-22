@@ -57,7 +57,7 @@ const iconSize = computed(() =>
 }
 
 .v-icon--spin {
-  animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite; /* literal: loop period */
 }
 
 @keyframes spin {

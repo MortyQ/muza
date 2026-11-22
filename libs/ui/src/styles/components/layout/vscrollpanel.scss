@@ -36,10 +36,10 @@
   color: var(--ui-foreground-secondary);
   cursor: pointer;
   transition:
-    transform 150ms var(--_ease-out),
-    opacity 150ms var(--_ease-out),
-    color 150ms ease,
-    border-color 150ms ease;
+    transform var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out),
+    opacity var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -84,7 +84,9 @@
 .v-scroll-panel__copy-glyph {
   grid-area: 1 / 1;
   display: flex;
-  transition: opacity 160ms var(--_ease-out), transform 160ms var(--_ease-out);
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out) var(--_ease-out);
 
   /* Starts small and turned rather than at zero — nothing in the world appears
      out of nothing, and a check that snaps in at full size reads as a different

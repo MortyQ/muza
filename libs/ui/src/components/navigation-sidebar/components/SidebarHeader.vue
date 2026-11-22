@@ -63,7 +63,7 @@ const brandInitial = options.brandName.charAt(0).toUpperCase();
 
 <style scoped>
 .sidebar-label-enter-active {
-  transition: opacity 200ms ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .sidebar-label-enter-from {
@@ -75,7 +75,7 @@ const brandInitial = options.brandName.charAt(0).toUpperCase();
 }
 
 .sidebar-label-leave-active {
-  transition: opacity 150ms ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .sidebar-label-leave-from {

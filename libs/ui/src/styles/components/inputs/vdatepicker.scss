@@ -38,7 +38,7 @@
   border: 1px solid var(--ui-input-border);
   border-radius: var(--ui-radius-lg);
   pointer-events: none;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -75,7 +75,9 @@
   font-weight: var(--ui-weight-medium);
   line-height: var(--ui-leading-xs);
   white-space: nowrap;
-  transition: max-width 0.2s ease, padding 0.2s ease;
+  transition:
+    max-width var(--ui-duration-fast) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
 
   span {
     display: inline-block;
@@ -99,11 +101,11 @@
   pointer-events: none;
   transform: translateY(-50%);
   transition:
-    top 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    left 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    font-size 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    line-height 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    color 150ms ease;
+    top var(--ui-duration-fast) var(--ui-ease-out),
+    left var(--ui-duration-fast) var(--ui-ease-out),
+    font-size var(--ui-duration-fast) var(--ui-ease-out),
+    line-height var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 /* Raised: a value is set, the field has focus, or the calendar is open — and
@@ -146,7 +148,7 @@
   font-size: var(--ui-text-xs);
   color: var(--ui-foreground-muted);
   margin-top: var(--ui-space-2xs);
-  transition: color 0.2s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .form-error {
@@ -166,7 +168,7 @@
   width: 0.9375rem;
   height: 0.9375rem;
   color: var(--ui-input-placeholder);
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-datepicker-container:focus-within .v-datepicker-icon,
@@ -199,7 +201,9 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -219,7 +223,9 @@
    ============================================ */
 .error-slide-enter-active,
 .error-slide-leave-active {
-  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .error-slide-enter-from,
@@ -448,12 +454,12 @@
   /* VInput's type: 13px at 450, a hair tighter. */
   font-weight: var(--ui-weight-regular);
   letter-spacing: var(--ui-tracking-tight);
-  transition: color 0.2s ease-out;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.dp--input::placeholder) {
   color: var(--ui-input-placeholder);
-  transition: color 0.2s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.dp--input:focus) {

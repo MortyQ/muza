@@ -22,10 +22,11 @@
   text-decoration: none;
   cursor: pointer;
   box-shadow: none;
-  transition: background-color 120ms ease,
-  color 120ms ease,
-  border-color 120ms ease,
-  box-shadow 120ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   &:active:not(:disabled) {
     transform: translateY(0.5px);
@@ -228,7 +229,9 @@
     background: linear-gradient(90deg, var(--ui-primary), var(--ui-primary-hover));
     opacity: 0.2;
     border-radius: 1px;
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition:
+      opacity var(--ui-duration-instant) var(--ui-ease-out),
+      transform var(--ui-duration-instant) var(--ui-ease-out);
     transform: scaleX(0.6);
     transform-origin: left;
   }
@@ -348,6 +351,6 @@
   }
 
   .v-button--link::after {
-    transition: opacity 120ms ease;
+    transition: opacity var(--ui-duration-instant) var(--ui-ease-out);
   }
 }

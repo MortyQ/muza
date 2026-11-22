@@ -32,7 +32,7 @@ describe("VCollapse", () => {
   });
 
   it("hands the duration to CSS as a custom property", () => {
-    expect(collapse().attributes("style")).toContain("--v-collapse-duration: 200ms");
+    expect(collapse().attributes("style")).toContain("--v-collapse-duration: 150ms");
     expect(collapse({ duration: 80 }).attributes("style")).toContain("--v-collapse-duration: 80ms");
   });
 

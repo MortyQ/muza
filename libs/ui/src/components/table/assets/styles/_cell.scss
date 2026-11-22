@@ -12,7 +12,7 @@
   line-height: $table-line-height-base;
   font-weight: $table-font-weight-regular;
   min-width: 0;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   .v-table-grid.v-is-resizing & {
     transition: none !important;
@@ -89,7 +89,10 @@
   background: none;
   border-radius: var(--ui-radius);
   flex-shrink: 0;
-  transition: background-color $transition-fast, color $transition-fast, transform $transition-fast;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
   cursor: pointer;
   color: var(--ui-foreground-secondary);
 
@@ -105,7 +108,7 @@
   }
 
   :deep(svg) {
-    transition: transform $transition-normal;
+    transition: transform var(--ui-duration-fast) var(--ui-ease-out);
   }
 }
 

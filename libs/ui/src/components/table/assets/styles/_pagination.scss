@@ -70,10 +70,10 @@
   line-height: 1;
   cursor: pointer;
   transition:
-    border-color $transition-normal,
-    box-shadow $transition-normal,
-    color $transition-normal,
-    transform $transition-fast;
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
   outline: none;
 
   @media (hover: hover) and (pointer: fine) {

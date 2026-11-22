@@ -212,6 +212,22 @@
         0 12px 20px -6px oklch(20% 0.02 280 / 0.14), 0 4px 8px -4px oklch(20% 0.02 280 / 0.09));
 
     /* ╔══════════════════════════════════════════════════════════╗
+       ║  MOTION                                                  ║
+       ╚══════════════════════════════════════════════════════════╝ */
+    /* Three durations, two curves, no overshoot.
+         instant  80ms   hover and press feedback: a colour, a border
+         fast    150ms   every in-place change: fades, collapses, a pill
+                         sliding, a menu opening
+         overlay 200ms   a modal, drawer or toast entering; it leaves at fast
+       A spinner or a skeleton pulse keeps its own period, marked
+       `literal:` where it is written. Reduced motion is handled per component. */
+    --ui-duration-instant: 80ms;
+    --ui-duration-fast:    150ms;
+    --ui-duration-overlay: 200ms;
+    --ui-ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+    --ui-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+    /* ╔══════════════════════════════════════════════════════════╗
        ║  FOCUS RING                                              ║
        ╚══════════════════════════════════════════════════════════╝ */
     --ui-ring: var(--ui-primary);

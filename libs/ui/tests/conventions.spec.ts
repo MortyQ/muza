@@ -413,6 +413,24 @@ describe("shadow values", () => {
   });
 });
 
+describe("motion values", () => {
+  // Durations come from --ui-duration-*, curves from --ui-ease-*. A looping
+  // animation keeps its own period, and a reduced-motion override its 1ms end
+  // state, each marked `/* literal: <reason> */` on the line.
+  const DECLARATION = /(?<![\w-])(?:-webkit-)?(?:transition|animation)(?:-[a-z-]+)?\s*:\s*([^;{}]+);([^\n]*)/g;
+  const isLiteral = (value: string) =>
+    /(?<![\w.-])(?!0(?:m?s)\b)\d*\.?\d+m?s\b/.test(value)
+    || /cubic-bezier\(|\bease(?:-in|-out|-in-out)?\b/.test(value);
+
+  it.each(STYLE_FILES)("$file times its motion with the motion tokens", ({ file, raw }) => {
+    const offenders = [...raw.replace(/\/\/[^\n]*/g, "").matchAll(DECLARATION)]
+      .filter(([, value, rest]) => !rest.includes("/* literal:") && isLiteral(value.replace(/var\([^)]*\)/g, "")))
+      .map(([, value]) => value.replace(/\s+/g, " ").trim());
+    expect(offenders, `${file} hardcodes motion: ${offenders.join("; ")} — use --ui-duration-* / --ui-ease-*`)
+      .toHaveLength(0);
+  });
+});
+
 describe("radius values", () => {
   // Radii come from --ui-radius-*. A nested corner is `calc(<outer> - <padding>)`
   // over tokens, so it follows outer = inner + padding by construction.

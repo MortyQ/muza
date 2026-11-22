@@ -19,7 +19,9 @@
   letter-spacing: 0;
   background-color: var(--v-avatar-bg);
   color: var(--v-avatar-fg);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 

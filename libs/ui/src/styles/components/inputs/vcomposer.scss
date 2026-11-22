@@ -11,9 +11,9 @@
   border-radius: var(--ui-radius-lg);
   background-color: var(--ui-surface);
   transition:
-    border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
-    box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1),
-    background-color 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 /* The row is a click target for a pointer only — the CTA inside it is the

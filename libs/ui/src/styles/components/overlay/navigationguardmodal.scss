@@ -96,7 +96,9 @@
     background-color: transparent;
     color: var(--ui-foreground-secondary);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition:
+      background-color var(--ui-duration-instant) var(--ui-ease-out),
+      color var(--ui-duration-instant) var(--ui-ease-out);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
@@ -118,11 +120,11 @@
 }
 
 .v-nav-guard-fade-enter-active {
-  transition: opacity 0.2s ease-out;
+  transition: opacity var(--ui-duration-overlay) var(--ui-ease-out);
 }
 
 .v-nav-guard-fade-leave-active {
-  transition: opacity 0.15s ease-out;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-nav-guard-fade-enter-from,
@@ -131,11 +133,15 @@
 }
 
 .v-nav-guard-pop-enter-active {
-  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  transition:
+    opacity var(--ui-duration-overlay) var(--ui-ease-out),
+    transform var(--ui-duration-overlay) var(--ui-ease-out);
 }
 
 .v-nav-guard-pop-leave-active {
-  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-nav-guard-pop-enter-from,

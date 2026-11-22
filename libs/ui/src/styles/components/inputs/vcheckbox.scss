@@ -19,9 +19,9 @@
   border: 1.5px solid var(--ui-border-strong);
   background: var(--ui-input-bg);
   transition:
-    border-color 0.18s cubic-bezier(0.4, 0, 0.2, 1),
-    background 0.18s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    background var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
   appearance: none;
   display: inline-block;
   vertical-align: middle;

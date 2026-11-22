@@ -126,6 +126,11 @@ Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MOD
 
 ### Motion
 
+- **Motion tokens**: `--ui-duration-instant` (80ms), `-fast` (150ms) and `-overlay` (200ms), and `--ui-ease-out` / `--ui-ease-in-out`. Every transition and finite animation in the library uses them; the conventions spec fails on a literal duration or curve.
+  - Table cells and headers answer hover in 80ms (they took 300ms, so the tint trailed a sweeping cursor).
+  - Modal, drawer and guard modal enter at 200ms and leave at 150ms; a toast slides in at 200ms. The drawer's 300ms is gone.
+  - No overshoot: `VThemeSwitcher`'s icon bounce and the toast's slide-in overshoot are gone.
+  - `VCollapse` defaults to 150ms (was 200).
 - No `transition: all` remains. Every transition names its properties.
 - Exits use ease-out instead of ease-in (tooltip, guard modal, mobile sidebar backdrop).
 - Modals and drawers leave faster than they enter. Drawers and the mobile sidebar use the drawer curve.

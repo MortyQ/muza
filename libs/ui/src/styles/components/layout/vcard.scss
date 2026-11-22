@@ -9,10 +9,10 @@
   color: var(--ui-foreground);
   background-color: var(--ui-surface);
   transition:
-    box-shadow 200ms ease,
-    background-color 200ms ease,
-    border-color 200ms ease,
-    transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 /* ============================================

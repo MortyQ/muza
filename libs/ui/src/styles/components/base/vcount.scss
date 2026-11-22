@@ -6,7 +6,7 @@
 */
 
 .v-count {
-  --v-count-curve: cubic-bezier(0.45, 0, 0.1, 1);
+  --v-count-curve: var(--ui-ease-in-out);
 
   position: relative;
   display: inline-flex;
@@ -44,7 +44,8 @@
   &__reel {
     display: flex;
     flex-direction: column;
-    animation: v-count-roll-up var(--v-count-duration) var(--v-count-curve) var(--v-count-delay, 0ms) both;
+    animation:
+      v-count-roll-up var(--v-count-duration) var(--v-count-curve) var(--v-count-delay, 0ms) both;
 
     &--down {
       animation-name: v-count-roll-down;

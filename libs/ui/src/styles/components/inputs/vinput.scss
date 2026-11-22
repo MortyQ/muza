@@ -56,7 +56,9 @@
   z-index: 10;
   /* Not `all`: that animates background-color, which fights the 5000s
      transition the autofill block below relies on. */
-  transition: color 0.2s ease-out, padding 0.2s ease-out;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
   -webkit-appearance: none;
   appearance: none;
 
@@ -127,7 +129,7 @@
   pointer-events: none;
   z-index: 20;
   color: var(--ui-input-placeholder);
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 
   &-left {
     left: 0.5rem;
@@ -157,7 +159,7 @@
   width: 0.9375rem;
   height: 0.9375rem;
   flex-shrink: 0;
-  transition: color 0.15s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 
   &--sm {
     width: 0.8125rem;
@@ -180,7 +182,9 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -205,7 +209,9 @@
   background: transparent;
   color: var(--ui-foreground-secondary);
   cursor: pointer;
-  transition: color 150ms ease, box-shadow 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -238,12 +244,12 @@
   line-height: var(--ui-leading-base);
   color: color-mix(in oklch, var(--ui-foreground) 60%, transparent);
   transition:
-    top 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    left 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    font-size 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    line-height 200ms cubic-bezier(0.23, 1, 0.32, 1),
-    color 150ms ease;
+    top var(--ui-duration-fast) var(--ui-ease-out),
+    left var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    font-size var(--ui-duration-fast) var(--ui-ease-out),
+    line-height var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   &--with-icon {
     left: 2rem;
@@ -287,7 +293,9 @@
   border-style: solid;
   border-color: var(--ui-input-border);
   pointer-events: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 
   &--active {
     border-width: 2px;
@@ -333,7 +341,9 @@
   font-weight: var(--ui-weight-medium);
   white-space: nowrap;
   overflow: hidden;
-  transition: max-width 200ms cubic-bezier(0.23, 1, 0.32, 1), padding 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    max-width var(--ui-duration-fast) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
 
   span {
     display: inline-block;
@@ -388,7 +398,7 @@
   box-shadow: 0 0 0 1000px var(--ui-input-bg) inset;
   caret-color: var(--ui-foreground);
   font-family: inherit;
-  transition: background-color 5000s ease-in-out 0s;
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out) 0s;
 }
 
 /* Firefox marks the field without forcing a background there is anything to
@@ -434,7 +444,9 @@
    ============================================ */
 .error-slide-enter-active,
 .error-slide-leave-active {
-  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .error-slide-enter-from,

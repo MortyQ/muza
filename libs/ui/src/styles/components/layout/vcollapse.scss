@@ -4,7 +4,7 @@
 .v-collapse {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows var(--v-collapse-duration) cubic-bezier(0.23, 1, 0.32, 1);
+  transition: grid-template-rows var(--v-collapse-duration) var(--ui-ease-out);
 
   &--expanded {
     grid-template-rows: 1fr;
@@ -19,7 +19,7 @@
      responding, not the user deciding. */
   &__content {
     opacity: 0;
-    transition: opacity calc(var(--v-collapse-duration) * 0.6) ease-out;
+    transition: opacity calc(var(--v-collapse-duration) * 0.6) var(--ui-ease-out);
   }
 
   &--expanded &__content {
@@ -31,7 +31,7 @@
 @media (prefers-reduced-motion: reduce) {
   .v-collapse,
   .v-collapse__content {
-    transition-duration: 1ms;
+    transition-duration: 1ms; /* literal: reduced-motion end state */
     transition-delay: 0ms;
   }
 }

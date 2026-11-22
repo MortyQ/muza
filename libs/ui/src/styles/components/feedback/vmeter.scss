@@ -30,7 +30,9 @@
   /* Strong ease-out, under 300ms: the bar moves when a new measurement lands and
      the eye is already on the number beside it, so it must arrive rather than
      travel. */
-  transition: transform 250ms cubic-bezier(0.23, 1, 0.32, 1), background-color 250ms ease;
+  transition:
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-meter__fill--met {
@@ -73,6 +75,6 @@
    it just stops being animated movement. */
 @media (prefers-reduced-motion: reduce) {
   .v-meter__fill {
-    transition-duration: 1ms;
+    transition-duration: 1ms; /* literal: reduced-motion end state */
   }
 }

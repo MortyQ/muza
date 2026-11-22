@@ -6,7 +6,9 @@
   z-index: $z-index-fixed-cell;
   will-change: transform;
   background-color: color-mix(in oklch, var(--ui-primary) 2%, var(--ui-surface) 98%);
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-table-fixed-left {

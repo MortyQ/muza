@@ -24,7 +24,11 @@
   color: var(--ui-foreground-muted);
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
-  transition: top 200ms ease, font-size 200ms ease, color 200ms ease, font-weight 200ms ease;
+  transition:
+    top var(--ui-duration-fast) var(--ui-ease-out),
+    font-size var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    font-weight var(--ui-duration-fast) var(--ui-ease-out);
   pointer-events: none;
   transform: translateY(-50%);
   z-index: 20;
@@ -52,7 +56,9 @@
   inset: 0;
   border-radius: var(--ui-radius-lg);
   pointer-events: none;
-  transition: border-color 200ms ease, border-width 200ms ease;
+  transition:
+    border-color var(--ui-duration-instant) var(--ui-ease-out),
+    border-width var(--ui-duration-instant) var(--ui-ease-out);
   border: 1px solid var(--ui-input-border);
   box-shadow: none;
   margin: 0;
@@ -80,7 +86,9 @@
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
   font-weight: var(--ui-weight-medium);
-  transition: max-width 200ms ease, padding 200ms ease;
+  transition:
+    max-width var(--ui-duration-fast) var(--ui-ease-out),
+    padding var(--ui-duration-fast) var(--ui-ease-out);
   border: none;
   padding: 0;
   max-width: 0;
@@ -107,7 +115,9 @@
   width: 0.875rem;
   height: 0.875rem;
   color: var(--ui-foreground-muted);
-  transition: transform 200ms ease, color 200ms ease;
+  transition:
+    transform var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.multiselect--active) .v-select__caret-icon {
@@ -134,7 +144,7 @@
   box-shadow: none !important;
   color: var(--ui-foreground);
   border-radius: var(--ui-radius-lg);
-  transition: color 200ms ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
   min-height: var(--ui-control-h);
   /* Right padding clears the caret box; the vertical centring is the
      line-height's job, so a 30px control needs no top padding to look balanced. */
@@ -212,7 +222,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
   background: transparent !important;
 }
 
@@ -287,7 +297,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 150ms ease;
+  transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 :deep(.multiselect__tag-icon::after) {
@@ -345,7 +355,9 @@
   min-height: 0;
   line-height: var(--ui-leading-base);
   padding: var(--ui-space-xs) var(--ui-space-md);
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
   cursor: pointer;
   background-color: transparent;
 }
@@ -413,6 +425,6 @@
 /* Reduced motion: state changes land instantly, colour and opacity still ease. */
 @media (prefers-reduced-motion: reduce) {
   .v-select__caret-icon {
-    transition: color 200ms ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 }

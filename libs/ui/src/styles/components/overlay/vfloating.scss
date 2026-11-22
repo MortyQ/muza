@@ -34,7 +34,7 @@
   }
 
   &:not(.v-floating--positioning) {
-    animation: floatingFadeIn 0.15s ease-out;
+    animation: floatingFadeIn var(--ui-duration-fast) var(--ui-ease-out);
   }
 
   &.v-floating--updating {
@@ -120,7 +120,9 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color var(--ui-duration-instant) var(--ui-ease-out),
+    color var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(&--disabled):not(&--loading) {
@@ -164,7 +166,9 @@
   display: flex;
   align-items: center;
   color: var(--ui-foreground-secondary);
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .v-floating-item-label {
@@ -172,7 +176,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 0.2s ease;
+  transition: color var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .v-floating-item-loading {
@@ -187,7 +191,7 @@
   }
 
   .v-floating-item-icon {
-    transition: color 0.2s ease;
+    transition: color var(--ui-duration-instant) var(--ui-ease-out);
     transform: none !important;
   }
 }

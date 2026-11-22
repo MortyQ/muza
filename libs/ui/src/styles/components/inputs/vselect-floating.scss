@@ -48,7 +48,9 @@
   color: var(--ui-foreground);
   font-weight: var(--ui-weight-regular);
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color var(--ui-duration-instant) var(--ui-ease-out),
+    background-color var(--ui-duration-instant) var(--ui-ease-out);
   background: transparent;
 }
 

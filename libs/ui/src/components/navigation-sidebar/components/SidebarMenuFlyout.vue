@@ -216,8 +216,8 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 /* Transition classes */
 .sidebar-flyout-enter-active {
   transition:
-    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    opacity var(--ui-duration-fast) var(--ui-ease-out),
+    transform var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 .sidebar-flyout-enter-from {
@@ -231,7 +231,9 @@ const handleLinkClick = (child: SidebarNavItem): void => {
 }
 
 .sidebar-flyout-leave-active {
-  transition: opacity 120ms ease-out, transform 120ms ease-out;
+  transition:
+    opacity var(--ui-duration-instant) var(--ui-ease-out),
+    transform var(--ui-duration-instant) var(--ui-ease-out);
 }
 
 .sidebar-flyout-leave-from {

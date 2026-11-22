@@ -111,16 +111,16 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 7. Motion tokens
 
-- [ ] 7.1 Add the motion tokens to `tokens.css` (D5).
+- [x] 7.1 Add the motion tokens to `tokens.css` (D5).
   - Durations: `--ui-duration-instant` (80ms), `-fast` (150ms) and `-overlay` (200ms).
   - Easings: `--ui-ease-out` and `--ui-ease-in-out`.
   - Verify: a token contract for the three durations.
-- [ ] 7.2 Replace every literal duration and easing in library styles.
+- [x] 7.2 Replace every literal duration and easing in library styles.
   - Table cells and headers use `instant`; this covers `$highlight-transition` and `$transition-slow`.
   - Overlays use `overlay` on enter and `fast` on exit.
   - Remove the `vthemeswitcher.scss` overshoot.
   - Verify: the duration and easing guard passes, a table cell computes an 80ms transition, `VCollapse`'s geometry spec still passes, and the reduced-motion branches are unchanged.
-- [ ] 7.3 Update the docs.
+- [x] 7.3 Update the docs.
   - Add a Motion row to the token table in `ui-component-migration.md`.
   - Add a CHANGELOG entry.
   - Verify: the doc states the overlay exception.

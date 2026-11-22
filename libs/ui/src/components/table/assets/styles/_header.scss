@@ -220,7 +220,7 @@
   flex-direction: column;
   gap: var(--ui-space-2xs);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
   z-index: 1;
 
   @media (hover: hover) and (pointer: fine) {
@@ -247,7 +247,7 @@
   background-color: color-mix(in oklch, var(--ui-border-strong) 60%, transparent);
   border-radius: 1px;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
 }
 
 // The corner over a hidden header checkbox. TableHeaderCheckbox styles the

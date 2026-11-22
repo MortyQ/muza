@@ -512,6 +512,31 @@ describe("VTable — row accent", () => {
     expect(hovered.borderLeftWidth).toBe(getComputedStyle(second).borderLeftWidth);
     expect(hovered.boxShadow).toContain("inset");
   });
+
+  it("answers hover at once: every cell rule transitions on the instant step", async () => {
+    // A row the pointer sweeps across hundreds of times a day; at 300ms the
+    // tint trailed the cursor. Read from the stylesheet, because this project
+    // disables transitions at runtime (testing.md, trap 10).
+    await table({ data: makeRows(5) });
+    // A shorthand holding var() keeps its longhands unresolved, so read the
+    // shorthand itself.
+    const transitions = [...document.styleSheets]
+      .flatMap(sheet => [...sheet.cssRules])
+      .filter((rule): rule is CSSStyleRule => rule instanceof CSSStyleRule)
+      .filter(rule => /\.v-table-cell(?![\w-])/.test(rule.selectorText))
+      .map(rule => rule.style.getPropertyValue("transition"))
+      .filter(value => value && value !== "none");
+
+    // The hover feedback is colour: those layers run on the instant step. An
+    // opacity fade (the pin reveal, the highlight dim) is in-place, on fast.
+    const colourLayers = transitions
+      .flatMap(value => value.split(/,\s*(?![^()]*\))/))
+      .filter(layer => /^(?:background-color|color|border-color|box-shadow)\s/.test(layer.trim()));
+
+    expect(colourLayers.length).toBeGreaterThan(0);
+    for (const layer of colourLayers) expect(layer).toContain("var(--ui-duration-instant)");
+    for (const value of transitions) expect(value).not.toMatch(/\d(?:ms|s)\b/);
+  });
 });
 
 describe("VTable — resizing", () => {
