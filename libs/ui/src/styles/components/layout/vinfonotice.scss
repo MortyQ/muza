@@ -1,5 +1,6 @@
 .v-info-notice {
-  --v-notice-tone: var(--ui-primary);
+  /* An info notice is semantic colour, not the accent; tone-primary opts in. */
+  --v-notice-tone: var(--ui-info);
 
   &__stack {
     display: flex;

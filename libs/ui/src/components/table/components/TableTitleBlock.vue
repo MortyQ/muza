@@ -78,7 +78,7 @@ const { title = "", icon = "" } = defineProps<{
   }
 
   &__icon {
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
     flex-shrink: 0;
   }
 

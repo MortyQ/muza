@@ -65,7 +65,7 @@ defineProps<{
 }
 
 .v-table-empty-state-icon {
-  color: color-mix(in oklch, var(--ui-primary) 40%, transparent);
+  color: var(--ui-foreground-subtle);
 }
 
 .v-table-empty-state-title {
@@ -73,7 +73,7 @@ defineProps<{
   font-size: var(--ui-text-lg);
   line-height: var(--ui-leading-lg);
   font-weight: var(--ui-weight-strong);
-  color: var(--ui-primary);
+  color: var(--ui-foreground);
   white-space: nowrap;
 }
 

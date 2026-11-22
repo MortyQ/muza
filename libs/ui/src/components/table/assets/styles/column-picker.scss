@@ -347,8 +347,8 @@
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   letter-spacing: var(--ui-tracking-tight);
-  background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
-  color: var(--ui-primary);
+  background: transparent;
+  color: var(--ui-foreground-secondary);
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -357,7 +357,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: color-mix(in oklch, var(--ui-primary) 18%, transparent);
+      background: var(--ui-surface-hover);
     }
   }
 }
@@ -505,14 +505,14 @@
   cursor: pointer;
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
   text-align: left;
   border-radius: var(--ui-radius);
   transition: background var(--ui-duration-instant) var(--ui-ease-out);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+      background: var(--ui-surface-hover);
     }
   }
 }

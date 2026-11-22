@@ -5,7 +5,7 @@
 .v-table-fixed-column {
   z-index: $z-index-fixed-cell;
   will-change: transform;
-  background-color: color-mix(in oklch, var(--ui-primary) 2%, var(--ui-surface) 98%);
+  background-color: color-mix(in oklch, var(--ui-primary) 3%, var(--ui-surface) 97%);
   transition:
     background-color var(--ui-duration-instant) var(--ui-ease-out),
     border-color var(--ui-duration-instant) var(--ui-ease-out);
@@ -21,33 +21,35 @@
   right: 0;
 }
 
+/* Pinning is a state, so the edge keeps the accent; at 1px and 55% it marks
+   the column without competing with the data beside it. */
 .v-table-fixed-left-last {
-  border-right: 2px solid color-mix(in oklch, var(--ui-primary) 70%, transparent);
+  border-right: 1px solid color-mix(in oklch, var(--ui-primary) 55%, transparent);
 }
 
 .v-table-fixed-right-first {
-  border-left: 2px solid color-mix(in oklch, var(--ui-primary) 70%, transparent);
+  border-left: 1px solid color-mix(in oklch, var(--ui-primary) 55%, transparent);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .v-table-row-wrapper:hover {
     .v-table-fixed-column {
-      background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
+      background-color: color-mix(in oklch, var(--ui-primary) 5%, var(--ui-surface) 95%);
     }
 
     .v-table-fixed-left-last {
-      border-right-color: color-mix(in oklch, var(--ui-primary) 90%, transparent);
+      border-right-color: color-mix(in oklch, var(--ui-primary) 85%, transparent);
     }
 
     .v-table-fixed-right-first {
-      border-left-color: color-mix(in oklch, var(--ui-primary) 90%, transparent);
+      border-left-color: color-mix(in oklch, var(--ui-primary) 85%, transparent);
     }
   }
 }
 
 .v-table-cell.v-table-fixed-column {
   z-index: $z-index-fixed-cell !important;
-  background-color: color-mix(in oklch, var(--ui-primary) 2%, var(--ui-surface) 98%);
+  background-color: color-mix(in oklch, var(--ui-primary) 3%, var(--ui-surface) 97%);
 }
 
 .v-table-header-cell.v-table-fixed-column {

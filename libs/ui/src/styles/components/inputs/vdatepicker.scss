@@ -178,7 +178,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .v-datepicker-arrow-icon:hover {
-    color: var(--ui-primary);
+    color: var(--ui-foreground);
     cursor: pointer;
   }
 }
@@ -262,16 +262,16 @@
   /* Colors → --ui-* tokens */
   --dp-background-color: var(--ui-input-bg);
   --dp-text-color: var(--ui-foreground);
-  --dp-hover-color: var(--ui-primary-subtle);
-  --dp-hover-text-color: var(--ui-primary);
-  --dp-hover-icon-color: var(--ui-primary);
+  --dp-hover-color: var(--ui-surface-hover);
+  --dp-hover-text-color: var(--ui-foreground);
+  --dp-hover-icon-color: var(--ui-foreground);
   --dp-primary-color: var(--ui-primary);
   --dp-primary-disabled-color: var(--ui-primary-muted);
   --dp-primary-text-color: var(--ui-primary-foreground);
   --dp-secondary-color: var(--ui-foreground-subtle);
   --dp-border-color: var(--ui-input-border);
   --dp-menu-border-color: var(--ui-border);
-  --dp-border-color-hover: var(--ui-primary);
+  --dp-border-color-hover: var(--ui-border-strong);
   --dp-border-color-focus: var(--ui-primary);
   --dp-disabled-color: var(--ui-border);
   --dp-disabled-color-text: var(--ui-foreground-subtle);
@@ -528,16 +528,16 @@
 .v-datepicker:global(.dp--theme-dark) {
   --dp-background-color: var(--ui-nav);
   --dp-text-color: var(--ui-foreground-inverted);
-  --dp-hover-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-nav));
-  --dp-hover-text-color: var(--ui-primary-muted);
-  --dp-hover-icon-color: var(--ui-primary);
+  --dp-hover-color: var(--ui-surface-hover);
+  --dp-hover-text-color: var(--ui-foreground);
+  --dp-hover-icon-color: var(--ui-foreground);
   --dp-primary-color: var(--ui-primary);
   --dp-primary-disabled-color: color-mix(in oklch, var(--ui-primary) 40%, var(--ui-nav));
   --dp-primary-text-color: var(--ui-nav);
   --dp-secondary-color: var(--ui-foreground-muted);
   --dp-border-color: var(--ui-nav-border);
   --dp-menu-border-color: var(--ui-nav-border);
-  --dp-border-color-hover: var(--ui-primary);
+  --dp-border-color-hover: var(--ui-border-strong);
   --dp-border-color-focus: var(--ui-primary);
   --dp-disabled-color: var(--ui-nav-hover);
   --dp-disabled-color-text: var(--ui-foreground-muted);

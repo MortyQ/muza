@@ -129,12 +129,12 @@
       background-color: var(--ui-surface-hover);
 
       .v-floating-item-icon {
-        color: var(--ui-primary);
+        color: var(--ui-foreground);
         transform: scale(1.1);
       }
 
       .v-floating-item-label {
-        color: var(--ui-primary);
+        color: var(--ui-foreground);
       }
     }
   }

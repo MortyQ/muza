@@ -12,11 +12,11 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+      background-color: var(--ui-surface-hover);
 
       .v-sort-icon:not(.v-sort-icon--active) {
         opacity: 0.6;
-        color: var(--ui-primary);
+        color: var(--ui-foreground);
       }
     }
   }

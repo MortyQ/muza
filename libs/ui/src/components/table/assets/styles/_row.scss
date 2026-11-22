@@ -8,13 +8,13 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover > .v-table-cell {
-      background-color: color-mix(in oklch, var(--ui-primary) 4%, var(--ui-surface) 96%);
-      border-bottom-color: color-mix(in oklch, var(--ui-primary) 20%, var(--ui-border) 80%);
+      background-color: var(--ui-surface-hover);
+      border-bottom-color: var(--ui-border);
 
       // An inset shadow, not a border: a border needs padding-left shaved to
       // compensate, which overrides the tree indent and re-lays the grid.
       &:first-child {
-        box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ui-primary) 80%, transparent);
+        box-shadow: inset 3px 0 0 var(--ui-border-strong);
       }
 
       &[data-custom-row="true"] {
@@ -22,7 +22,7 @@
         border-bottom-color: var(--ui-border);
 
         &:first-child {
-          box-shadow: inset 3px 0 0 var(--ui-primary);
+          box-shadow: inset 3px 0 0 var(--ui-border-strong);
         }
       }
     }

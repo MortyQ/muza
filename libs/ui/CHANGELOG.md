@@ -21,6 +21,8 @@
 
 ### Changed
 
+- **The accent has three roles**: the primary action, a current or selected state, and focus. 55 other uses turned neutral: hover tints (table rows, the sort control, drop zones, datepicker days, menu items), decorative icons (card, accordion, title block, drag-and-drop, file items), the empty-state title, select group headings and the column picker's text buttons. `VInfoNotice` defaults to the `info` tone.
+- **`VTable` pinned columns keep a quieter accent**: a 1px edge at 55% (was 2px at 70%), rising to 85% on row hover, and a 3% tint. Row hover tints the surface instead of the accent, and its edge bar is neutral.
 - **BREAKING (tokens) — two elevations**: `--ui-shadow-sm` for resting cards and `--ui-shadow-lg` for anything that floats.
   - Removed: `--ui-shadow-xs` (controls now carry none; their border holds the edge), `--ui-shadow-md` (`-sm` on cards, the toolbar, the accordion, the switch thumb; `-lg` on the datepicker menu and a dragged column row), `--ui-shadow-xl` (`-lg` on modal, drawer, toaster and guard modal) and `--ui-shadow-inner` (a well is drawn by its fill). The Tailwind `shadow` and `inset-shadow` namespaces are reset to `sm` and `lg`.
   - Hovering the drop zone or the fullscreen toggle changes the surface, not the elevation; the active pagination button lost its glow.

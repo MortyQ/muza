@@ -127,18 +127,18 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 8. Accent roles and the fixed column
 
-- [ ] 8.1 Give the fixed column the quieter accent from D7, in `_fixed.scss`.
+- [x] 8.1 Give the fixed column the quieter accent from D7, in `_fixed.scss`.
   - Edge: 1px at 55%; 85% on row hover.
   - Tint: 3%.
   - Leave the grid's vertical rules, the header and total gradients, and the sort icons unchanged.
   - Verify: a `table.tokens` contract asserts the edge width and colour at rest and on row hover.
-- [ ] 8.2 Audit every `--ui-primary*` use against the three roles (D6).
+- [x] 8.2 Audit every `--ui-primary*` use against the three roles (D6).
   - The roles: primary action, current or selected state (a pinned column included), focus.
   - Turn the uses outside those roles to foreground, muted or surface tokens.
   - Verify:
     - on `/components-demo`, the accent appears only in those roles;
     - `test:tokens` is green after re-pointing contracts that pinned a decorative primary.
-- [ ] 8.3 Record the role list and the surviving uses per component in `ui-component-migration.md`.
+- [x] 8.3 Record the role list and the surviving uses per component in `ui-component-migration.md`.
   - Verify: every remaining `--ui-primary` file appears in that list.
 
 ## 9. Icons and alignment

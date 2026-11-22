@@ -223,7 +223,7 @@ const handleSortKeyDown = (event: KeyboardEvent) => {
 
 @media (hover: hover) and (pointer: fine) {
   .v-table-header-info-icon:hover {
-    color: var(--ui-primary);
+    color: var(--ui-foreground);
   }
 }
 </style>

@@ -27,8 +27,8 @@
       box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
     &:hover:not(.v-file-upload__dropzone--disabled, .v-file-upload__dropzone--loading) {
-      border-color: var(--ui-primary);
-      background-color: color-mix(in oklch, var(--ui-primary) 5%, var(--ui-surface));
+      border-color: var(--ui-border-strong);
+      background-color: var(--ui-surface-hover);
 
       .v-file-upload__icon-wrapper {
         transform: scale(1.1);
@@ -173,8 +173,8 @@
     width: 1.75rem;
     height: 1.75rem;
     border-radius: var(--ui-radius-xs);
-    background-color: var(--ui-primary-subtle);
-    color: var(--ui-primary);
+    background-color: var(--ui-surface-sunken);
+    color: var(--ui-foreground-secondary);
   }
 
   &__item-text {

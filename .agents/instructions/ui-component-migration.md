@@ -207,6 +207,40 @@ control differ in exactly one dimension.
 
 The status colour is `--ui-danger`, not `--ui-error` or `text-negative`.
 
+### Accent roles: where `--ui-primary` may appear
+
+The accent marks three things and nothing else:
+
+1. **the primary action**: `VButton` `primary`, the toast's action, a link
+   (`VButton` `link`, the file upload's action, the drop zone's call to action);
+2. **a current or selected state**: the active nav item and tab, the selected
+   day and range, a checked checkbox, an on switch, a selected segment, the
+   selected multiselect tags, the current page, an active sort and its index,
+   a pinned table row, column or cross, a dragged-over target, a running
+   progress bar or loader;
+3. **focus**: rings and the focused field's border and label.
+
+Everything else (hover tints, decorative icons, empty-state titles, group
+headings, secondary text buttons) takes foreground, muted or surface tokens.
+A hover changes the surface, never the accent.
+
+Three uses stand outside the roles on purpose: the sidebar's brand mark, the
+avatar palette (identity colour, tone 0 and 5), and the table's header and
+total-row gradients, which the owner chose to keep. `VTag`, `VChip`,
+`VInfoNotice` and `VProgressBar` take the accent only through an explicit
+`primary` tone; `VInfoNotice` defaults to `info`.
+
+Files that still read `--ui-primary`, all within the roles above:
+table `_fixed`, `_fullscreen` (focus), `_header` (resize line), `_highlight`,
+`_pagination`, `_row` (selected), `_sort`, `_total`, column picker and setup
+(selected, dragged over), `TableExpandAdditionalHeadersButton` (expanded,
+focus); `vavatar`, `vbutton`, `vchip`, `vtag`, `vloader`, `vprogressbar`,
+`vtoaster`, `dragndrop`, `vcheckbox`, `vcomposer`, `vdatepicker`, `vfileupload`,
+`vinput`, `vlisteditor`, `vselect`, `vselect-floating`, `vswitch`, `vaccordion`
+(focus), `vanimatedbackground` (brand backdrop), `vinfonotice` (tone), `vtab`,
+the sidebar partials, `vfloating` (selected item). Review a new use against
+this list; nothing checks it automatically.
+
 ### Nested corners: outer = inner + padding
 
 A rounded element inside a rounded, padded container takes the container's

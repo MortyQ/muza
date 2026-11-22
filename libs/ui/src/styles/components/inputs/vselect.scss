@@ -396,7 +396,7 @@
    ============================================ */
 :deep(.multiselect__option.multiselect__option--group) {
   background-color: var(--ui-surface-sunken);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
   font-weight: var(--ui-weight-strong);
   cursor: pointer;
   padding: var(--ui-space-xs) var(--ui-space-md);
@@ -405,7 +405,7 @@
 :deep(.multiselect__option.multiselect__option--group:hover),
 :deep(.multiselect__option.multiselect__option--group.multiselect__option--highlight) {
   background-color: var(--ui-border-subtle);
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
 }
 
 :deep(.multiselect__option.multiselect__option--group.multiselect__option--selected) {

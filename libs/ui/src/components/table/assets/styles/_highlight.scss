@@ -150,8 +150,8 @@ $highlight-fill: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-surface));
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      color: var(--ui-primary-hover);
-      border-color: var(--ui-primary);
+      color: var(--ui-foreground);
+      border-color: var(--ui-border-strong);
     }
   }
 

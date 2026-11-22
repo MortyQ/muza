@@ -29,7 +29,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(.v-dragndrop__dropzone--disabled) {
-        border-color: var(--ui-primary);
+        border-color: var(--ui-border-strong);
         background-color: var(--ui-surface-hover);
       }
     }
@@ -81,7 +81,7 @@
       display: flex;
       align-items: center;
       gap: var(--ui-space-md);
-      color: var(--ui-primary);
+      color: var(--ui-foreground);
     }
   }
 
@@ -96,7 +96,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       .v-dragndrop__dropzone:hover:not(.v-dragndrop__dropzone--disabled) & {
-        background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+        background-color: var(--ui-surface-active);
         transform: scale(1.1);
       }
     }
@@ -108,7 +108,7 @@
   }
 
   &__icon {
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
     transition: color var(--ui-duration-instant) var(--ui-ease-out);
   }
 
@@ -157,7 +157,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        border-color: color-mix(in oklch, var(--ui-primary) 50%, transparent);
+        border-color: var(--ui-border-strong);
         background-color: var(--ui-surface-hover);
       }
     }
@@ -172,7 +172,7 @@
     height: 2rem;
     border-radius: var(--ui-radius-lg);
     background-color: var(--ui-surface-hover);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
   }
 
   &__file-info {

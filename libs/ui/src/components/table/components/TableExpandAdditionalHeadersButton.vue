@@ -48,7 +48,7 @@ const emit = defineEmits<{
   /* Modern rounded style */
   border-radius: var(--ui-radius);
 
-  color: var(--ui-primary);
+  color: var(--ui-foreground-secondary);
 
   /* Smooth transitions */
   transition:
@@ -58,7 +58,7 @@ const emit = defineEmits<{
   /* Hover state - subtle background with primary color */
 
   &:hover {
-    background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+    background-color: var(--ui-surface-hover);
   }
 
   /* Active state - micro interaction */

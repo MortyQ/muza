@@ -20,7 +20,7 @@
    keyboard entry point — so the hover cue is gated on a real pointer. */
 @media (hover: hover) and (pointer: fine) {
   .v-composer:not(.v-composer--open):hover {
-    border-color: color-mix(in oklch, var(--ui-primary) 45%, transparent);
+    border-color: var(--ui-border-strong);
   }
 
   .v-composer--sent:not(.v-composer--open):hover {

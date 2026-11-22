@@ -78,7 +78,7 @@
     width: 0.5rem;
     height: 0.5rem;
     border-radius: var(--ui-radius-full);
-    background-color: var(--ui-primary);
+    background-color: var(--ui-foreground-subtle);
 
     &--primary {
       background-color: var(--ui-primary);
@@ -269,9 +269,9 @@
 
   .v-list-editor__add:not(:disabled):hover {
     border-style: solid;
-    border-color: var(--ui-primary-muted);
-    background-color: var(--ui-primary-subtle);
-    color: var(--ui-primary-hover);
+    border-color: var(--ui-border-strong);
+    background-color: var(--ui-surface-hover);
+    color: var(--ui-foreground);
   }
 
   .v-list-editor__clear:hover {
