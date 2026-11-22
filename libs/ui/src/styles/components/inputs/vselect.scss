@@ -37,8 +37,8 @@
      blurry at subpixel sizes where a declared 10px is drawn crisp. */
   &--active {
     top: 0;
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     color: var(--ui-primary);
     font-weight: var(--ui-weight-medium);
   }
@@ -75,8 +75,8 @@
 
 .v-select__legend {
   height: 0;
-  font-size: var(--ui-text-2xs);
-  line-height: var(--ui-leading-2xs);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-xs);
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
   font-weight: var(--ui-weight-medium);
@@ -155,7 +155,7 @@
   color: var(--ui-foreground);
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   margin-bottom: 0;
   line-height: 1.375rem;
   padding-top: 0;
@@ -171,7 +171,7 @@
   color: var(--ui-foreground);
   font-size: var(--ui-text-base);
   line-height: 1.375rem;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   border: none;
   outline: none;
   box-shadow: none;
@@ -191,7 +191,7 @@
 :deep(.multiselect__placeholder) {
   font-size: var(--ui-text-base);
   line-height: 1.375rem;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   font-weight: var(--ui-weight-regular);
   margin-bottom: 0;
   padding-top: 0;

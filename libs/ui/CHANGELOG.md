@@ -21,6 +21,12 @@
 
 ### Changed
 
+- **BREAKING (tokens) — the type scale is four working sizes and one for figures**: `xs` 11, `base` 13, `lg` 15, `xl` 20 and `display` 28px.
+  - Removed: `--ui-text-2xs` (use `-xs`), `--ui-text-sm` (`-xs` for meta, `-base` for running text), `--ui-text-2xl` (`-xl`), `--ui-text-3xl` (`-display`), and their `--ui-leading-*`.
+  - `--ui-text-xl` is 20px (was 18) and `--ui-text-display` is new, for `VStat` only. `VStat` `md` sits on `xl`, `lg` on `display`. `VSkeleton` keeps its size names; `sm`, `2xl` and `3xl` draw `xs`, `xl` and `display`.
+  - The Tailwind theme resets the `text` namespace: `text-2xs`, `text-sm`, `text-2xl` and `text-3xl` no longer produce a utility (they used to fall back to Tailwind's 14px and up). `text-display` is new.
+  - `--ui-tracking-tight` (-0.01em) and `--ui-tracking-caps` (0.04em) replace eight literal letter-spacings.
+- **Copy**: `VComposer`'s failure line reads "Couldn’t send. Your text is kept."; `VListEditor`'s hint lists separators in words, without middle dots.
 - **Radii are on one scale.** 50 literal radii moved onto `--ui-radius-*` (between steps rounded down: 5px → 4, 7px → 6, 9–10px → 8), and nested corners are `calc(<outer> - <padding>)` over tokens. The conventions spec fails on a new literal radius; 1–2px marks are allow-listed by file.
 - **Spacing is on one scale.** Every gap, padding and margin in the library takes a `--ui-space-*` token. 190 literal values moved onto it; values between steps rounded down, the library is moving denser (10px → 8, 14px → 12, 20px → 16, so modal, drawer and guard-modal padding is 16px). `--ui-space-3xl` (32px) and `--ui-space-4xl` (40px) are new. The conventions spec fails on a new literal.
 - **`VTag`** now uses a single geometry:

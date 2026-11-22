@@ -24,13 +24,18 @@ describe.each(THEME_CASES)("VSkeleton tokens — %s theme", (theme) => {
     expect(tokenAsColor("--ui-surface-sunken")).not.toBe(tokenAsColor("--ui-surface"));
   });
 
-  it.each(["xs", "sm", "base", "lg", "xl", "2xl", "3xl"] as const)(
-    "a %s line is exactly the line box of its step, painting the glyph band",
-    async (size) => {
+  // The skeleton keeps its size names; sm, 2xl and 3xl draw the step each
+  // collapsed onto when the type scale lost them.
+  it.each([
+    ["xs", "xs"], ["sm", "xs"], ["base", "base"], ["lg", "lg"],
+    ["xl", "xl"], ["2xl", "xl"], ["3xl", "display"],
+  ] as const)(
+    "a %s line is exactly the line box of the %s step, painting the glyph band",
+    async (size, step) => {
       const el = await renderIt({ size, width: "6rem" });
       const style = getComputedStyle(el);
-      const leading = px(`--ui-leading-${size}`);
-      const text = px(`--ui-text-${size}`);
+      const leading = px(`--ui-leading-${step}`);
+      const text = px(`--ui-text-${step}`);
       expect(el.getBoundingClientRect().height).toBeCloseTo(leading, 1);
       expect(parseFloat(style.paddingTop)).toBeCloseTo((leading - text) / 2, 1);
       expect(style.backgroundClip).toBe("content-box");

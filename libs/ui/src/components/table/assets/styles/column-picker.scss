@@ -35,7 +35,7 @@
   font-weight: var(--ui-weight-strong);
   font-size: var(--ui-text-base);
   color: var(--ui-foreground);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
 }
 
 .column-picker-close-btn {
@@ -96,10 +96,10 @@
 }
 
 .column-picker-panel-count {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   color: var(--ui-foreground-secondary);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
 
   &--limit {
     color: var(--ui-warning);
@@ -113,7 +113,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
   color: var(--ui-foreground-secondary);
   cursor: pointer;
@@ -212,7 +212,7 @@
   cursor: pointer;
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
   background: transparent;
   color: var(--ui-foreground-secondary);
   transition: background 0.12s ease-out, color 0.12s ease-out;
@@ -317,10 +317,10 @@
 
 .cp-group-label {
   flex: 1;
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ui-tracking-caps);
   color: color-mix(in oklch, var(--ui-foreground-secondary) 45%, transparent);
   white-space: nowrap;
   overflow: hidden;
@@ -338,9 +338,9 @@
   padding: 1px var(--ui-space-sm);
   border-radius: var(--ui-radius-xs);
   border: none;
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
   background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
   color: var(--ui-primary);
   cursor: pointer;
@@ -355,7 +355,7 @@
 }
 
 .cp-group-badge {
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   padding: 1px var(--ui-space-xs);
   border-radius: var(--ui-radius-lg);
@@ -448,8 +448,8 @@
 
 .cp-available-item-label {
   flex: 1;
-  font-size: var(--ui-text-sm);
-  letter-spacing: -0.01em;
+  font-size: var(--ui-text-base);
+  letter-spacing: var(--ui-tracking-tight);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -525,10 +525,10 @@
 }
 
 .cp-type-group-label {
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-strong);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--ui-tracking-caps);
   color: color-mix(in oklch, var(--ui-foreground-secondary) 40%, transparent);
 }
 
@@ -619,9 +619,9 @@
 
 .cp-selected-item-label {
   flex: 1;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-medium);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ui-tracking-tight);
   color: var(--ui-foreground);
   white-space: nowrap;
   overflow: hidden;

@@ -366,9 +366,8 @@ defineExpose({ focusRow });
       />
 
       <p class="v-list-editor__hint">
-        Separate by: newline · , · ; · | · / · tab
+        Separate by newline, comma, semicolon, pipe, slash or tab.
         <template v-if="detectedSeparators.length">
-          ·
           <span class="v-list-editor__hint-detected">
             Detected: {{ detectedSeparators.map(s => s.label).join(", ") }}
           </span>

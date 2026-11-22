@@ -16,7 +16,7 @@ const title = computed(() => String(route.meta.title ?? route.name ?? ""));
       <h2 class="text-lg font-semibold text-foreground">
         {{ title }}
       </h2>
-      <p class="mt-1 text-sm text-foreground-muted">
+      <p class="mt-1 text-base text-foreground-muted">
         Placeholder page — this route exists to show nested navigation in the sidebar.
       </p>
       <code class="mt-3 inline-block text-xs text-foreground-secondary">{{ route.path }}</code>

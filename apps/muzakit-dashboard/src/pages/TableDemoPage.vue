@@ -808,7 +808,7 @@ const orgTotal: Record<string, unknown> = {
 }
 
 .table-demo-page__title {
-  font-size: 1rem;
+  font-size: var(--ui-text-lg);
   font-weight: 600;
   color: var(--ui-foreground);
   margin: 0;
@@ -822,7 +822,7 @@ const orgTotal: Record<string, unknown> = {
 }
 
 .table-demo-page__desc {
-  font-size: 0.875rem;
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
   margin: 0;
   line-height: 1.5;

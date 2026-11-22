@@ -31,7 +31,7 @@
   line-height: $table-line-height-header;
   color: var(--ui-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ui-tracking-caps);
   text-align: center;
   overflow: hidden;
   min-width: 0;
@@ -86,7 +86,7 @@
   line-height: $table-line-height-header;
   color: var(--ui-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--ui-tracking-caps);
   overflow: hidden;
   min-width: 0;
 

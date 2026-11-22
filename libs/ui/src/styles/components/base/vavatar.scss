@@ -1,6 +1,6 @@
 .v-avatar {
   --v-avatar-size: var(--ui-control-h-md);
-  --v-avatar-font-size: var(--ui-text-sm);
+  --v-avatar-font-size: var(--ui-text-xs);
   --v-avatar-status-size: 0.5rem;
   --v-avatar-bg: var(--ui-surface-raised);
   --v-avatar-fg: var(--ui-foreground-secondary);
@@ -16,7 +16,7 @@
   font-size: var(--v-avatar-font-size);
   font-weight: var(--ui-weight-medium);
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   background-color: var(--v-avatar-bg);
   color: var(--v-avatar-fg);
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -35,7 +35,7 @@
      beside it; the ends of the scale are avatar-only steps. */
   &--xs {
     --v-avatar-size: 1.25rem;
-    --v-avatar-font-size: var(--ui-text-2xs);
+    --v-avatar-font-size: var(--ui-text-xs);
     --v-avatar-status-size: 0.3125rem;
   }
 
@@ -47,7 +47,7 @@
 
   &--md {
     --v-avatar-size: var(--ui-control-h-md);
-    --v-avatar-font-size: var(--ui-text-sm);
+    --v-avatar-font-size: var(--ui-text-xs);
     --v-avatar-status-size: 0.5rem;
   }
 

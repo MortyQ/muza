@@ -118,13 +118,13 @@
   }
 
   &__hint {
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 
   &__sub-label {
     margin-top: var(--ui-space-xs);
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 
@@ -188,7 +188,7 @@
   }
 
   &__item-size {
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 

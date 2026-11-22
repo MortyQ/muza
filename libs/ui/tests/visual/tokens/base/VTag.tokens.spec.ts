@@ -91,9 +91,9 @@ describe.each(THEME_CASES)("VTag tokens — %s theme", (theme) => {
     });
 
     it.each([
-      ["xs", "2xs", "--ui-space-2xs"],
+      ["xs", "xs", "--ui-space-2xs"],
       ["sm", "xs", "--ui-space-2xs"],
-      ["md", "sm", "--ui-space-xs"],
+      ["md", "xs", "--ui-space-xs"],
       ["lg", "base", "--ui-space-xs"],
     ] as const)("%s sits on text-%s, its line box plus padding", async (size, step, padding) => {
       const el = await renderTag({ size });

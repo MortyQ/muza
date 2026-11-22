@@ -21,4 +21,33 @@ describe.each(THEME_CASES)("scales — %s theme", (theme) => {
       expect(tokenAsValue("padding-top", `--ui-space-${step}`)).toBe(`${px}px`);
     });
   });
+
+  describe("type", () => {
+    // Four working sizes and one for headline figures; nothing in between.
+    const TYPE = [["xs", 11], ["base", 13], ["lg", 15], ["xl", 20], ["display", 28]] as const;
+
+    it.each(TYPE)("--ui-text-%s is %ipx", async (step, px) => {
+      await applyTheme(theme);
+      expect(tokenAsValue("font-size", `--ui-text-${step}`)).toBe(`${px}px`);
+    });
+
+    it.each(["2xs", "sm", "2xl", "3xl"])("--ui-text-%s is gone", async (step) => {
+      await applyTheme(theme);
+      expect(getComputedStyle(document.documentElement).getPropertyValue(`--ui-text-${step}`))
+        .toBe("");
+    });
+  });
+
+  describe("tracking", () => {
+    it.each([["tight", "-0.01em"], ["caps", "0.04em"]])("--ui-tracking-%s is %s", async (step, em) => {
+      await applyTheme(theme);
+      // At a 100px font-size an em is 100px, so the computed length reads as the em value.
+      const probe = document.createElement("span");
+      probe.style.fontSize = "100px";
+      probe.style.letterSpacing = `var(--ui-tracking-${step})`;
+      document.body.append(probe);
+      expect(getComputedStyle(probe).letterSpacing).toBe(`${parseFloat(em) * 100}px`);
+      probe.remove();
+    });
+  });
 });

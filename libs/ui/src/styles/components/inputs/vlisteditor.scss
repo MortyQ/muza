@@ -65,7 +65,7 @@
 
   &__error {
     margin-left: var(--ui-space-lg);
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     font-weight: var(--ui-weight-medium);
     line-height: 1rem;
     color: var(--ui-danger);
@@ -143,7 +143,7 @@
     border: 1px dashed var(--ui-border);
     border-radius: var(--ui-radius);
     background: transparent;
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-base);
     font-weight: var(--ui-weight-medium);
     line-height: 1;
     color: var(--ui-foreground-secondary);
@@ -166,7 +166,7 @@
   }
 
   &__hint {
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 
@@ -182,7 +182,7 @@
   }
 
   &__count {
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
     color: var(--ui-foreground-secondary);
   }
 
@@ -193,7 +193,7 @@
     border: none;
     border-radius: var(--ui-radius);
     background: transparent;
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-base);
     font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground-secondary);
     cursor: pointer;

@@ -31,10 +31,10 @@
 
   /* ── Sizes: height = the line box plus the padding the step names ───── */
   &--xs {
-    height: calc(var(--ui-leading-2xs) + 2 * var(--ui-space-2xs));
+    height: calc(var(--ui-leading-xs) + 2 * var(--ui-space-2xs));
     padding: 0 var(--ui-space-sm);
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
   }
 
   &--sm {
@@ -45,10 +45,10 @@
   }
 
   &--md {
-    height: calc(var(--ui-leading-sm) + 2 * var(--ui-space-xs));
+    height: calc(var(--ui-leading-xs) + 2 * var(--ui-space-xs));
     padding: 0 var(--ui-space-md);
-    font-size: var(--ui-text-sm);
-    line-height: var(--ui-leading-sm);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
   }
 
   &--lg {

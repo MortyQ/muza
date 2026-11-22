@@ -337,6 +337,27 @@ describe("type values", () => {
     expect(literals, `${file} hardcodes type: ${literals.join(", ")} — use --ui-text-* / --ui-weight-*`)
       .toHaveLength(0);
   });
+
+  it.each(FILES)("$file sets letter-spacing from the tracking tokens", ({ file, code }) => {
+    const literals = [...code.matchAll(/letter-spacing:\s*(-?[\d.]+(?:px|rem|em))/g)]
+      .map(m => m[0])
+      .filter(value => !/:\s*-?0(?:px|rem|em)?$/.test(value));
+    expect(literals, `${file} hardcodes tracking: ${literals.join(", ")} — use --ui-tracking-*`)
+      .toHaveLength(0);
+  });
+
+  // The display size is for headline figures, and only VStat draws one. The
+  // skeleton mirrors it so a loading figure takes the same line box.
+  const DISPLAY_SIZE = new Set([
+    "styles/components/base/vstat.scss",
+    "styles/components/feedback/vskeleton.scss",
+  ]);
+
+  it.each(FILES)("$file keeps the display size for headline figures", ({ file, code }) => {
+    if (DISPLAY_SIZE.has(file)) return;
+    expect(code, `${file} uses --ui-text-display, which only VStat and VSkeleton may`)
+      .not.toMatch(/--ui-(?:text|leading)-display\b/);
+  });
 });
 
 describe("spacing values", () => {

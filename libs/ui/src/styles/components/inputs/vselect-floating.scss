@@ -116,7 +116,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--ui-text-2xs) !important;
+  font-size: var(--ui-text-xs) !important;
   text-align: center;
   margin-bottom: var(--ui-space-2xs);
   margin-left: .5px; /* literal: optical half-pixel nudge */
@@ -162,7 +162,7 @@
 
 .multiselect__content-wrapper.v-ms-floating .multiselect__option.multiselect__option--group {
   font-size: var(--ui-text-xs);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--ui-tracking-caps);
   text-transform: uppercase;
   min-height: 0;
   line-height: 1rem;

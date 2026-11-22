@@ -18,7 +18,7 @@ describe.each(THEME_CASES)("VStat tokens — %s theme", (theme) => {
     return getComputedStyle(el);
   }
 
-  it.each([["md", "2xl"], ["lg", "3xl"]] as const)("a %s figure sits on the %s step", async (size, step) => {
+  it.each([["md", "xl"], ["lg", "display"]] as const)("a %s figure sits on the %s step", async (size, step) => {
     const figure = part(await renderStat({ size }), "figure");
     expect(figure.fontSize).toBe(tokenAsValue("font-size", `--ui-text-${step}`));
     expect(figure.lineHeight).toBe(tokenAsValue("line-height", `--ui-leading-${step}`));

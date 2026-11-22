@@ -103,25 +103,21 @@
     --radius-2xl: var(--corner-2xl);
 
     /* ─── Type scale ─────────────────────────────────────
-       Same reason again, and the raw names are --type-* so they do not collide.
-       Note the steps this remaps rather than adds: Tailwind's own `text-base`
-       is 16px and its `text-sm` 14px, where the design system's are 13 and 12.
-       That is deliberate — the system is denser than Tailwind's default — but
-       it means `text-sm` in app code is 12px, not the 14px a Tailwind reader
-       expects. Steps this block leaves out (`text-2xl` and up) keep Tailwind's
-       values, so the scale is only continuous up to `xl`. */
-    --text-2xs: var(--type-2xs);
-    --text-2xs--line-height: var(--type-2xs--line-height);
+       The namespace is reset first, so a step this system removed (`text-sm`,
+       `text-2xl`, …) produces no utility at all instead of falling back to
+       Tailwind's own size. Note the steps it remaps: Tailwind's `text-base` is
+       16px, the design system's is 13. */
+    --text-*: initial;
     --text-xs: var(--type-xs);
     --text-xs--line-height: var(--type-xs--line-height);
-    --text-sm: var(--type-sm);
-    --text-sm--line-height: var(--type-sm--line-height);
     --text-base: var(--type-base);
     --text-base--line-height: var(--type-base--line-height);
     --text-lg: var(--type-lg);
     --text-lg--line-height: var(--type-lg--line-height);
     --text-xl: var(--type-xl);
     --text-xl--line-height: var(--type-xl--line-height);
+    --text-display: var(--type-display);
+    --text-display--line-height: var(--type-display--line-height);
 }
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -137,43 +133,38 @@
     --corner-2xl: 1.5rem;
 
     /* ─── Type scale (theme-independent) ──────────────────────
-       Six steps, one job each, rather than a geometric ramp nobody can place a
-       value on:
+       Four working sizes and one for figures, one job each. Never a size in
+       between: two steps 1px apart cannot be told apart, so they only blur
+       the hierarchy they are meant to draw.
 
-         2xs 10px  the active floating label and the legend that notches for it
-         xs  11px  hints, keycaps, chip labels
-         sm  12px  secondary text — helper lines, meta rows, captions
-         base 13px the control chrome and body copy: buttons, fields, selects
-         lg  15px  card and section headings
-         xl  18px  modal and drawer titles
+         xs      11px  meta: labels, hints, helper lines, badges, table heads
+         base    13px  the control chrome and running text: buttons, fields,
+                       selects, tooltips, toasts, descriptions
+         lg      15px  card and section headings
+         xl      20px  modal, drawer and page titles; VStat at size md
+         display 28px  headline figures only (VStat at size lg)
 
-       13px as the base is what the button, the field and the select already
-       stand at, so the scale describes the components rather than asking them
-       to move. 14px is deliberately absent: it is the size this system is
-       moving off, and leaving it named would keep it in use.
+       A former 12px use is meta (→ xs) or running text (→ base), decided at
+       its site. 13px as the base is what the button, the field and the select
+       stand at. 14px is deliberately absent: it is the size this system moved
+       off, and leaving it named would keep it in use.
 
-       Line heights ride along because a size without one is only half a step —
+       Line heights ride along because a size without one is only half a step,
        and because Tailwind's `--text-*--line-height` pairs need them to exist. */
-    --type-2xs: 0.625rem;
-    --type-2xs--line-height: 0.875rem;
     --type-xs: 0.6875rem;
     --type-xs--line-height: 1rem;
-    --type-sm: 0.75rem;
-    --type-sm--line-height: 1rem;
     --type-base: 0.8125rem;
     --type-base--line-height: 1.125rem;
     --type-lg: 0.9375rem;
     --type-lg--line-height: 1.375rem;
-    --type-xl: 1.125rem;
-    --type-xl--line-height: 1.5rem;
+    --type-xl: 1.25rem;
+    --type-xl--line-height: 1.75rem;
+    --type-display: 1.75rem;
+    --type-display--line-height: 2.25rem;
 
-    /* Headline figures: the one number a block leads with (VStat). Same
-       values as Tailwind's own text-2xl/3xl, so leaving them out of the
-       @theme block above changes nothing in app code. */
-    --type-2xl: 1.5rem;
-    --type-2xl--line-height: 2rem;
-    --type-3xl: 1.875rem;
-    --type-3xl--line-height: 2.25rem;
+    /* Tracking: tight for body and UI text, caps for uppercase labels. */
+    --tracking-tight: -0.01em;
+    --tracking-caps: 0.04em;
 
     /* ─── Weight scale (theme-independent) ────────────────────
          regular 450  the control chrome and body copy

@@ -51,7 +51,7 @@
   padding: 0 var(--ui-control-px);
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   position: relative;
   z-index: 10;
   /* Not `all`: that animates background-color, which fights the 5000s
@@ -259,8 +259,8 @@
   &--active {
     top: 0;
     left: var(--ui-control-px);
-    font-size: var(--ui-text-2xs);
-    line-height: var(--ui-leading-2xs);
+    font-size: var(--ui-text-xs);
+    line-height: var(--ui-leading-xs);
     transform: translateY(-50%);
     font-weight: var(--ui-weight-medium);
     color: var(--ui-primary);
@@ -326,8 +326,8 @@
   width: auto;
   padding: 0;
   border: none;
-  font-size: var(--ui-text-2xs);
-  line-height: var(--ui-leading-2xs);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-xs);
   /* Set in the same face as the label it makes room for. Left at 400 against a
      500 label it measures narrower, and the border closes over the last glyph. */
   font-weight: var(--ui-weight-medium);
@@ -352,7 +352,7 @@
    ============================================ */
 .v-input-helper-text {
   margin-left: var(--ui-space-lg);
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   line-height: 1rem;
   color: var(--ui-foreground-secondary);
 }
@@ -362,7 +362,7 @@
    ============================================ */
 .v-input-error-message {
   margin-left: var(--ui-space-lg);
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   line-height: 1rem;
   font-weight: var(--ui-weight-medium);
   color: var(--ui-danger);

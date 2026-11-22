@@ -71,9 +71,9 @@
   padding: 0;
   overflow: hidden;
   /* Same face as the raised label, or the notch closes over its last glyph. */
-  font-size: var(--ui-text-2xs);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
-  line-height: var(--ui-leading-2xs);
+  line-height: var(--ui-leading-xs);
   white-space: nowrap;
   transition: max-width 0.2s ease, padding 0.2s ease;
 
@@ -115,9 +115,9 @@
   .v-datepicker-label {
     top: 0;
     left: var(--ui-control-px);
-    font-size: var(--ui-text-2xs);
+    font-size: var(--ui-text-xs);
     font-weight: var(--ui-weight-medium);
-    line-height: var(--ui-leading-2xs);
+    line-height: var(--ui-leading-xs);
     color: var(--ui-primary);
   }
 
@@ -143,14 +143,14 @@
    HELPER TEXT & ERRORS
    ============================================ */
 .v-datepicker-helper-text {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   color: var(--ui-foreground-muted);
   margin-top: var(--ui-space-2xs);
   transition: color 0.2s ease;
 }
 
 .form-error {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   color: var(--ui-danger);
   font-weight: var(--ui-weight-medium);
   margin-top: var(--ui-space-2xs);
@@ -240,7 +240,7 @@
   --dp-cell-size: 2rem;
   --dp-cell-padding: var(--ui-space-xs);
   --dp-common-padding: var(--ui-space-md);
-  --dp-preview-font-size: var(--ui-text-2xs);
+  --dp-preview-font-size: var(--ui-text-xs);
   --dp-time-font-size: var(--ui-text-base);
 
   /* The field's height is set on `.dp--input` below rather than derived from
@@ -447,7 +447,7 @@
   font-family: inherit;
   /* VInput's type: 13px at 450, a hair tighter. */
   font-weight: var(--ui-weight-regular);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   transition: color 0.2s ease-out;
 }
 

@@ -72,12 +72,12 @@ describe.each(THEME_CASES)("VInput chrome — %s theme", (theme) => {
     }
   });
 
-  it("sets its type from the scale's base step, and the label from the 2xs one", async () => {
+  it("sets its type from the scale's base step, and the label from the xs one", async () => {
     const el = await renderInput({ name: "Marketplace", modelValue: "Amazon" });
     expect(getComputedStyle(find(el, ".v-input-field")).fontSize)
       .toBe(tokenAsValue("font-size", "--ui-text-base"));
     expect(getComputedStyle(find(el, ".v-label")).fontSize)
-      .toBe(tokenAsValue("font-size", "--ui-text-2xs"));
+      .toBe(tokenAsValue("font-size", "--ui-text-xs"));
   });
 
   it("renders the floating label and opens the notch on a value", async () => {

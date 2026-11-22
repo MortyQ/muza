@@ -98,7 +98,7 @@
 }
 
 :global(.toast-description) {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   color: var(--ui-foreground-secondary);
   margin-top: var(--ui-space-xs);
   line-height: 1.5;
@@ -193,7 +193,7 @@
 
 :global(.toast-action) {
   padding: var(--ui-space-sm) var(--ui-space-lg);
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-medium);
   border-radius: var(--ui-radius);
   background-color: var(--ui-primary);
@@ -217,7 +217,7 @@
 
 :global(.toast-cancel) {
   padding: var(--ui-space-sm) var(--ui-space-lg);
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-medium);
   border-radius: var(--ui-radius);
   background-color: var(--ui-surface-raised);

@@ -40,7 +40,7 @@
 .column-setup-title {
     font-size: var(--ui-text-base);
     font-weight: var(--ui-weight-strong);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--ui-tracking-tight);
     color: var(--ui-foreground);
 }
 
@@ -111,17 +111,17 @@
 
 .column-setup-toggle-label {
     flex: 1;
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-base);
     font-weight: var(--ui-weight-strong);
     color: var(--ui-foreground);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ui-tracking-tight);
 }
 
 .column-setup-toggle-count {
     font-size: var(--ui-text-xs);
     font-weight: var(--ui-weight-strong);
     color: color-mix(in oklch, var(--ui-foreground-secondary) 60%, transparent);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ui-tracking-tight);
     flex-shrink: 0;
 }
 
@@ -287,11 +287,11 @@
 
 .column-setup-item-label {
     flex: 1;
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-base);
     font-weight: var(--ui-weight-medium);
     color: var(--ui-foreground);
     user-select: none;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ui-tracking-tight);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -299,7 +299,7 @@
     transition: color 0.12s ease;
 
     @media (max-width: 400px) {
-        font-size: var(--ui-text-sm);
+        font-size: var(--ui-text-xs);
     }
 
     &--hidden {
@@ -357,10 +357,10 @@
     border-radius: var(--ui-radius-xs);
     background: var(--ui-surface-raised);
     color: var(--ui-foreground-secondary);
-    font-size: var(--ui-text-2xs);
+    font-size: var(--ui-text-xs);
     font-weight: var(--ui-weight-strong);
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: var(--ui-tracking-caps);
     flex-shrink: 0;
 
     &--warning {
@@ -395,10 +395,10 @@
     font-weight: var(--ui-weight-medium);
     color: color-mix(in oklch, var(--ui-foreground-secondary) 50%, transparent);
     flex: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ui-tracking-tight);
 
     @media (max-width: 400px) {
-        font-size: var(--ui-text-2xs);
+        font-size: var(--ui-text-xs);
         text-align: center;
         justify-content: center;
     }

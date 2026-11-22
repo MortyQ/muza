@@ -863,7 +863,7 @@ const handleConfirm = () => {
         title="Right Drawer"
         width="md"
       >
-        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+        <p class="home-page__note">
           This is the drawer content area. It scrolls independently from the backdrop.
           You can put forms, details, navigation — anything here.
         </p>
@@ -887,7 +887,7 @@ const handleConfirm = () => {
         title="Left Drawer"
         width="sm"
       >
-        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+        <p class="home-page__note">
           A narrow left-side drawer — useful for navigation or filters.
         </p>
       </VDrawer>
@@ -921,7 +921,7 @@ const handleConfirm = () => {
         max-width="md"
         title="Simple Modal"
       >
-        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+        <p class="home-page__note">
           A basic modal with a title and close button. Click outside or press Escape to dismiss.
         </p>
       </VModal>
@@ -935,7 +935,7 @@ const handleConfirm = () => {
         title="Delete item?"
         @confirm="modalConfirm.close()"
       >
-        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+        <p class="home-page__note">
           This action cannot be undone. Are you sure you want to permanently delete this item?
         </p>
       </VModal>
@@ -949,7 +949,7 @@ const handleConfirm = () => {
         title="Save changes"
         @confirm="handleConfirm"
       >
-        <p style="color: var(--ui-foreground-secondary); font-size: 0.875rem; line-height: 1.6">
+        <p class="home-page__note">
           Click "Save" to simulate an async operation
           — the button will show a loading spinner for 2 seconds.
         </p>
@@ -980,7 +980,7 @@ const handleConfirm = () => {
 }
 
 .home-page__title {
-  font-size: 1.5rem;
+  font-size: var(--ui-text-xl);
   font-weight: 600;
   color: var(--ui-foreground);
 }
@@ -992,7 +992,7 @@ const handleConfirm = () => {
 }
 
 .home-page__section-title {
-  font-size: 0.75rem;
+  font-size: var(--ui-text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1011,9 +1011,15 @@ const handleConfirm = () => {
   color: var(--ui-foreground-secondary);
 }
 
+.home-page__note {
+  color: var(--ui-foreground-secondary);
+  font-size: var(--ui-text-base);
+  line-height: 1.6;
+}
+
 .home-page__subtitle {
   margin-top: var(--ui-space-md);
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-weight: 600;
   color: var(--ui-foreground-secondary);
 
@@ -1071,7 +1077,7 @@ const handleConfirm = () => {
 
 .home-page__size-label {
   width: 7.5rem;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-variant-numeric: tabular-nums;
   color: var(--ui-foreground-muted);
 }

@@ -20,7 +20,7 @@
   font-size: var(--ui-text-base);
   font-weight: var(--ui-weight-regular);
   line-height: var(--ui-leading-base);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--ui-tracking-tight);
   white-space: nowrap;
   user-select: none;
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
@@ -134,7 +134,7 @@
   &--sm {
     height: calc(var(--ui-control-h) - var(--ui-space-sm));
     padding: 0 var(--ui-space-md);
-    font-size: var(--ui-text-sm);
+    font-size: var(--ui-text-xs);
   }
 
   &--md {

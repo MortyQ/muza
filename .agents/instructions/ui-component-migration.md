@@ -164,9 +164,10 @@ Badge       --ui-badge-neutral-bg  --ui-badge-neutral-text
 Radius      --ui-radius-xs  --ui-radius  -lg  -xl  -2xl  -full
 Shadow      --ui-shadow-xs  -sm  -md  -lg  -xl  -inner
 Focus ring  --ui-ring  --ui-ring-offset
-Type        --ui-text-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
-            --ui-leading-2xs  -xs  -sm  -base  -lg  -xl  -2xl  -3xl
-            (2xl/3xl are headline figures only — VStat — never a heading)
+Type        --ui-text-xs  -base  -lg  -xl  -display      (11 13 15 20 28 px)
+            --ui-leading-xs  -base  -lg  -xl  -display
+            (display is headline figures only — VStat — never a heading)
+Tracking    --ui-tracking-tight (-1%, body and UI text)  -caps (+4%, uppercase labels)
 Weight      --ui-weight-regular (450)  -medium (500)  -strong (600)
 Control     --ui-control-h  -sm  -md  -lg   --ui-control-px  --ui-control-gap
 Rhythm      --ui-space-2xs  -xs  -sm  -md  -lg  -xl  -2xl  -3xl  -4xl
@@ -185,6 +186,9 @@ looks like spacing (room reserved for a caret, a notch matched to a floating
 label, a nesting step tied to an icon) stays a literal with
 `/* literal: <reason> */` on the same line, so the exception is argued in place.
 Past 40px, use a multiple of a step: `calc(var(--ui-space-4xl) * 2)`.
+
+Four working sizes and one for figures: never a size in between. A former 12px
+use is meta (→ `xs`) or running text (→ `base`), decided at its site.
 
 `--ui-text-base` is 13px, which is what the button, the field and the select
 stand at. **14px is deliberately not a step**: it is the size the system is

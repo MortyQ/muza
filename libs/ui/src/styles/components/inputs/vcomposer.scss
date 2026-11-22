@@ -98,7 +98,7 @@
 }
 
 .v-composer__meta {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   color: var(--ui-foreground-secondary);
 }
 
@@ -147,7 +147,7 @@
 
 .v-composer__message {
   margin: var(--ui-space-xs) 0 0;
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-base);
   line-height: 1rem;
   color: var(--ui-foreground-secondary);
 }
@@ -183,7 +183,7 @@
 }
 
 .v-composer__failed {
-  font-size: var(--ui-text-sm);
+  font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-medium);
   color: var(--ui-danger);
 }

@@ -56,7 +56,7 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 5. Type scale and tracking
 
-- [ ] 5.1 Reshape the type scale.
+- [x] 5.1 Reshape the type scale.
   - In `theme.css`:
     - remove `--type-2xs`, `--type-sm`, `--type-2xl` and `--type-3xl`;
     - set `--type-xl` to 1.25rem, line height 1.75rem;
@@ -65,23 +65,23 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
   - Mirror these changes in `tokens.css`.
   - Add `--ui-tracking-tight` (-0.01em) and `--ui-tracking-caps` (0.04em).
   - Verify: a token contract for the five sizes and two trackings.
-- [ ] 5.2 Map only the system's type steps in Tailwind (D11).
+- [x] 5.2 Map only the system's type steps in Tailwind (D11).
   - Change: add `--text-*: initial` to `@theme inline` and map only `xs`/`base`/`lg`/`xl`/`display`.
   - Migrate the apps' `text-2xs`, `text-sm` and `text-2xl` uses.
   - Move the dashboard pages' own off-scale sizes onto the scale: 14px descriptions and 16px section titles on the demo pages, 10px sidebar and workspace badges, 12px toolbar subtitle.
   - Verify: `pnpm build` succeeds, and a search for the removed utilities in `apps/` returns nothing.
-- [ ] 5.3 Re-map library uses of the removed steps per D1.
+- [x] 5.3 Re-map library uses of the removed steps per D1.
   - Each `--ui-text-2xs`/`-sm`/`-2xl`/`-3xl` use moves; each 12px site becomes `xs` for meta or `base` for running text.
   - `VStat` moves `md` to `xl` and `lg` to `display`; `VSkeleton`'s figure lines follow.
   - Verify: `test:unit`, plus the `VStat` and `VSkeleton` token contracts updated to the new sizes.
-- [ ] 5.4 Replace literal `letter-spacing` with the tracking tokens.
+- [x] 5.4 Replace literal `letter-spacing` with the tracking tokens.
   - Extend the type-values guard with the tracking rule and the display allow-list (D3).
   - Verify: the guard passes and fails when a literal is reintroduced.
-- [ ] 5.5 Fix the copy in two components.
+- [x] 5.5 Fix the copy in two components.
   - `VComposer`'s error message: no em dash.
   - `VListEditor`'s separator hint: no middle dots.
   - Verify: Hallmark's sloplint reports no gate 19 or 63 for those two files.
-- [ ] 5.6 Update the docs.
+- [x] 5.6 Update the docs.
   - Update the Type row in `ui-component-migration.md`.
   - Add CHANGELOG **BREAKING** entries: each removed step with its replacement, `xl` 18 → 20px, `display` added.
   - Verify: the changelog lists every removed token.
