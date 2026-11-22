@@ -26,12 +26,14 @@
       background-color var(--ui-duration-instant) var(--ui-ease-out),
       box-shadow var(--ui-duration-instant) var(--ui-ease-out);
 
-    &:hover:not(.v-file-upload__dropzone--disabled, .v-file-upload__dropzone--loading) {
-      border-color: var(--ui-border-strong);
-      background-color: var(--ui-surface-hover);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(.v-file-upload__dropzone--disabled, .v-file-upload__dropzone--loading) {
+        border-color: var(--ui-border-strong);
+        background-color: var(--ui-surface-hover);
 
-      .v-file-upload__icon-wrapper {
-        transform: scale(1.1);
+        .v-file-upload__icon-wrapper {
+          transform: scale(1.1);
+        }
       }
     }
 

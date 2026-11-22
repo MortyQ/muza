@@ -456,7 +456,6 @@ describe("radius values", () => {
   const HAIRLINE_RADII = new Set([
     "styles/components/base/vbutton.scss", // the focus inset's corner
     "styles/components/inputs/vcheckbox.scss", // the tick and the dash
-    "styles/components/layout/vcard.scss", // the accent bar
     "styles/components/navigation-sidebar/_sidebar-nav.scss", // the active bar
     "components/table/assets/styles/_header.scss", // the resize divider
     "components/table/assets/styles/_wrapper.scss", // inner corner, 1px border

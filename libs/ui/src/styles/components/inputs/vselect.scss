@@ -43,9 +43,15 @@
     top: 0;
     font-size: var(--ui-text-xs);
     line-height: var(--ui-leading-xs);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
     font-weight: var(--ui-weight-medium);
   }
+}
+
+/* The accent marks focus: a raised label takes it only while the select is
+   focused, not merely because it holds a value. */
+.v-select:focus-within .v-select__label--active {
+  color: var(--ui-primary);
 }
 
 /* ============================================

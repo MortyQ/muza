@@ -116,7 +116,7 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
   - Easings: `--ui-ease-out` and `--ui-ease-in-out`.
   - Verify: a token contract for the three durations.
 - [x] 7.2 Replace every literal duration and easing in library styles.
-  - Table cells and headers use `instant`; this covers `$highlight-transition` and `$transition-slow`.
+  - Table cells and headers answer hover (colour) on `instant`; the highlight's opacity fade runs on `fast`. This covers `$highlight-transition` and `$transition-slow`.
   - Overlays use `overlay` on enter and `fast` on exit.
   - Remove the `vthemeswitcher.scss` overshoot.
   - Verify: the duration and easing guard passes, a table cell computes an 80ms transition, `VCollapse`'s geometry spec still passes, and the reduced-motion branches are unchanged.
@@ -156,10 +156,11 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 10. Integration
 
-- [ ] 10.1 Run the cold-build verification from `ui-component-migration.md` § Verify, plus `test:unit`, `test:tokens` and `test:types`.
+- [x] 10.1 Run the cold-build verification from `ui-component-migration.md` § Verify, plus `test:unit`, `test:tokens` and `test:types`.
   - Verify: all are green.
-- [ ] 10.2 Run `REVIEW_MODE=feature .claude/hooks/review.sh`.
+- [x] 10.2 Run `REVIEW_MODE=feature .claude/hooks/review.sh`.
   - Verify: zero critical findings.
+  - Done 2026-11-22 against `9876690..HEAD`, with the hook's own `reviewer-prompt.md`, `rules.muzakit.md` and group J pass, run by an agent: the hook's nested `claude -p` could not authenticate in that session (OAuth session expired). Result: 0 critical, 2 warnings; the warning and every group J gap were fixed in the following commit. Rerun the hook itself once the CLI is signed in.
 
 ## Workflow follow-up
 

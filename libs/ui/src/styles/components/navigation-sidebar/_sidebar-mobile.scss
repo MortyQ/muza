@@ -47,8 +47,10 @@ $sidebar-mobile-breakpoint: 1024px;
     z-index: -1;
   }
 
+  // Entering is an overlay arriving; leaving falls back to the fast step above.
   &--open {
     transform: translate3d(0, 0, 0);
+    transition: transform var(--ui-duration-overlay) var(--ui-ease-out);
   }
 }
 

@@ -14,7 +14,7 @@ type TagTone = Exclude<TagColor, "error" | "gray"> | "custom";
 const {
   label = "",
   variant = "soft",
-  color = "primary",
+  color = "neutral",
   size = "sm",
   icon = undefined,
   iconPosition = "left",

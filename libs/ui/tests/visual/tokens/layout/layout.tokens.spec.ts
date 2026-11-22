@@ -105,10 +105,10 @@ describe.each(THEME_CASES)("layout tokens — %s theme", (theme) => {
       expect(computedValue(icon, "--v-notice-tone")).toBe(rawToken(token));
     });
 
-    it("defaults to the primary tone", async () => {
+    it("defaults to the info tone: a notice is semantic colour, not the accent", async () => {
       const el = await mountIt(VInfoNotice, { title: "T" });
       const icon = el.querySelector(".v-info-notice__icon") as HTMLElement;
-      expect(computedValue(icon, "--v-notice-tone")).toBe(rawToken("--ui-primary"));
+      expect(computedValue(icon, "--v-notice-tone")).toBe(rawToken("--ui-info"));
     });
 
     it("tones each feature icon independently", async () => {

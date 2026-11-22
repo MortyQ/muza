@@ -21,11 +21,16 @@ gradients and sort icons stay as they are.
 - **THEN** that row's fixed-column edge is `--ui-primary` at 85%
 
 ### Requirement: Rows answer hover at once
-Hover and press feedback on table cells and header cells SHALL use the `instant` duration (80ms).
+Hover and press feedback on table cells and header cells (the colour change) SHALL use the
+`instant` duration (80ms). The highlight dim, an opacity fade, is an in-place change on `fast`.
 
 #### Scenario: Hover duration
-- **WHEN** a table cell's computed transition is read
-- **THEN** its duration is 80ms and its easing is the library's ease-out curve
+- **WHEN** the colour layers of a table cell's transition are read
+- **THEN** each runs 80ms on the library's ease-out curve
+
+#### Scenario: Highlight fade
+- **WHEN** a table with `highlight` on dims or restores a row
+- **THEN** the opacity change runs on the fast step (150ms), both when a pin is set and when the last pin is removed
 
 ### Requirement: Highlight dims only around a pin
 With highlight enabled, rows and columns SHALL dim only while a row or a column is pinned. With

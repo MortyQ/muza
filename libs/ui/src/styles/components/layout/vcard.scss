@@ -119,7 +119,7 @@
 }
 
 .v-card--radius-sm {
-  border-radius: 0.125rem !important;
+  border-radius: var(--ui-radius-xs) !important;
 }
 
 .v-card--radius-md {

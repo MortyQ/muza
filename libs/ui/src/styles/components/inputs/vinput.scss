@@ -269,7 +269,7 @@
     line-height: var(--ui-leading-xs);
     transform: translateY(-50%);
     font-weight: var(--ui-weight-medium);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
   }
 
   &--error {
@@ -460,4 +460,10 @@
   .error-slide-leave-to {
     transform: none;
   }
+}
+
+/* The accent marks focus: a raised label takes it only while the field is
+   focused, not merely because it holds a value. */
+.v-input-container:focus-within .v-label--active:not(.v-label--error) {
+  color: var(--ui-primary);
 }

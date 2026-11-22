@@ -21,6 +21,9 @@
 
 ### Changed
 
+- **BREAKING — `VTag` defaults to the `neutral` tone** (was `primary`), and `VInfoNotice` to `info` (was `primary`): the accent is opt-in through `color="primary"` / `tone="primary"`.
+- **A raised field label takes the accent only while the field has focus** (`VInput`, `VSelect`, `VDatepicker`); with a value and no focus it is secondary text.
+- **`VCard` `radius="sm"`** is 4px (`--ui-radius-xs`), the scale's smallest step; it was a 2px literal.
 - **BREAKING — `VIcon` defaults to 16px** (was 24), the size that sits on a line of base text, and centres on the line it sits in (`vertical-align: middle`). Pass `size` where 24 was meant; every icon inside the library already sets its own size.
 - **`VTable` cells set tabular figures**, so a numeric column lines up digit for digit.
 - **The accent has three roles**: the primary action, a current or selected state, and focus. 55 other uses turned neutral: hover tints (table rows, the sort control, drop zones, datepicker days, menu items), decorative icons (card, accordion, title block, drag-and-drop, file items), the empty-state title, select group headings and the column picker's text buttons. `VInfoNotice` defaults to the `info` tone.

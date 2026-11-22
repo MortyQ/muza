@@ -44,9 +44,9 @@ describe("VInfoNotice", () => {
       expect(w.find(".v-info-notice__subtitle").exists()).toBe(false);
     });
 
-    it("defaults to the info icon at the primary tone", () => {
+    it("defaults to the info icon at the info tone: the accent is opt-in", () => {
       const w = notice({ title: "T" });
-      expect(w.find(".v-info-notice__icon").classes()).toContain("v-info-notice--tone-primary");
+      expect(w.find(".v-info-notice__icon").classes()).toContain("v-info-notice--tone-info");
       expect(w.findComponent(VIcon).props().icon).toBe("lucide:info");
     });
 
@@ -100,11 +100,11 @@ describe("VInfoNotice", () => {
       expect(w.findAll(".v-info-notice__feature-description")).toHaveLength(1);
     });
 
-    it("tones each feature icon independently, defaulting to primary", () => {
+    it("tones each feature icon independently, defaulting to info", () => {
       const w = notice({ features: FEATURES });
       const icons = w.findAll(".v-info-notice__feature-icon");
       expect(icons[0].classes()).toContain("v-info-notice--tone-success");
-      expect(icons[1].classes()).toContain("v-info-notice--tone-primary");
+      expect(icons[1].classes()).toContain("v-info-notice--tone-info");
     });
 
     it("drops the head when there is no title or subtitle", () => {

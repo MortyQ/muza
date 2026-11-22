@@ -73,7 +73,7 @@ useEventListener(document, "keydown", (e: KeyboardEvent) => {
 
 <style scoped>
 .sidebar-overlay-enter-active {
-  transition: opacity var(--ui-duration-fast) var(--ui-ease-out);
+  transition: opacity var(--ui-duration-overlay) var(--ui-ease-out);
 }
 
 .sidebar-overlay-enter-from {

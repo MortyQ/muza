@@ -45,10 +45,10 @@ describe("VTag", () => {
     },
   );
 
-  it("defaults to a soft primary square tag", () => {
+  it("defaults to a soft neutral square tag: the accent is opt-in", () => {
     const w = tag({});
     expect(w.attributes("data-variant")).toBe("soft");
-    expect(w.attributes("data-tone")).toBe("primary");
+    expect(w.attributes("data-tone")).toBe("neutral");
     expect(w.classes()).toContain("vtag--square");
     expect(w.classes()).toContain("vtag--sm");
   });

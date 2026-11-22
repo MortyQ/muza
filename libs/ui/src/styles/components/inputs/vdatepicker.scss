@@ -120,7 +120,7 @@
     font-size: var(--ui-text-xs);
     font-weight: var(--ui-weight-medium);
     line-height: var(--ui-leading-xs);
-    color: var(--ui-primary);
+    color: var(--ui-foreground-secondary);
   }
 
   .v-datepicker-legend {
@@ -559,4 +559,11 @@
   .error-slide-leave-to {
     transform: none;
   }
+}
+
+/* The accent marks focus: the raised label takes it while the field is focused
+   or the calendar is open, not merely because a date is set. */
+.v-datepicker-container--labelled:focus-within .v-datepicker-label,
+.v-datepicker-container--labelled.v-datepicker-container--open .v-datepicker-label {
+  color: var(--ui-primary);
 }
