@@ -81,13 +81,13 @@ describe("VTooltip", () => {
       expect(popper(w).exists()).toBe(false);
     });
 
-    it("hides on blur", async () => {
+    it("hides when focus leaves", async () => {
       vi.useFakeTimers();
       const w = tooltip();
-      await reveal(w, "focus");
+      await reveal(w, "focusin");
       expect(popper(w).exists()).toBe(true);
 
-      await w.trigger("blur");
+      await w.trigger("focusout");
       await w.vm.$nextTick();
       expect(popper(w).exists()).toBe(false);
     });
@@ -97,7 +97,25 @@ describe("VTooltip", () => {
     it("opens on focus, so the tooltip is not mouse-only", async () => {
       vi.useFakeTimers();
       const w = tooltip();
-      await reveal(w, "focus");
+      await reveal(w, "focusin");
+      expect(popper(w).exists()).toBe(true);
+    });
+
+    it("opens on focus without the hover delay", async () => {
+      vi.useFakeTimers();
+      const w = tooltip({ delay: 800 });
+      await reveal(w, "focusin", 0);
+      expect(popper(w).exists()).toBe(true);
+    });
+
+    it("opens when the trigger inside it takes focus", async () => {
+      // `focus` does not bubble, so a listener for it on the wrapper never hears
+      // the button inside; `focusin` does.
+      vi.useFakeTimers();
+      const w = tooltip();
+      await w.find(".trigger").trigger("focusin");
+      vi.advanceTimersByTime(0);
+      await w.vm.$nextTick();
       expect(popper(w).exists()).toBe(true);
     });
   });

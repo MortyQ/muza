@@ -98,6 +98,26 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
       expect(getComputedStyle(track).backgroundColor).not.toBe("rgb(22, 163, 74)");
     });
 
+    it("rings the track in the focus token on keyboard focus", async () => {
+      const el = await mountIt(VSwitch, { modelValue: false });
+      const input = el.querySelector(".v-switch__input") as HTMLInputElement;
+      const track = el.querySelector(".v-switch__track") as HTMLElement;
+
+      expect(getComputedStyle(track).outlineStyle).toBe("none");
+      input.focus({ focusVisible: true } as FocusOptions);
+      expect(getComputedStyle(track).outlineStyle).toBe("solid");
+      expect(getComputedStyle(track).outlineColor).toBe(tokenAsColor("--ui-ring"));
+      input.blur();
+    });
+
+    it("draws no ring when the input is focused without :focus-visible", async () => {
+      const el = await mountIt(VSwitch, { modelValue: false });
+      const input = el.querySelector(".v-switch__input") as HTMLInputElement;
+      input.focus({ focusVisible: false } as FocusOptions);
+      expect(getComputedStyle(el.querySelector(".v-switch__track") as HTMLElement).outlineStyle).toBe("none");
+      input.blur();
+    });
+
     it("gives the thumb a theme-aware shadow, not a black one", async () => {
       // A hardcoded black drop shadow is invisible on a dark surface — this is
       // exactly the defect the convention guard turned up.

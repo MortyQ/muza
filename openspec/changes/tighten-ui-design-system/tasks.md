@@ -17,12 +17,12 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 2. Accessibility
 
-- [ ] 2.1 Give `VSwitch` a focus ring (D9).
+- [x] 2.1 Give `VSwitch` a focus ring (D9).
   - Change: an instant `outline` in `--ui-ring` on `:focus-visible`.
   - Verify: a browser contract asserts the outline appears on keyboard focus and not on pointer click.
-- [ ] 2.2 Open `VTooltip` on focus without the hover delay.
+- [x] 2.2 Open `VTooltip` on focus without the hover delay.
   - Verify: a unit spec on fake timers. Focus opens it at 0ms; hover opens it after `delay`.
-- [ ] 2.3 Hide the decorative graphics from assistive technology.
+- [x] 2.3 Hide the decorative graphics from assistive technology.
   - Change: add `aria-hidden="true"` to the three decorative svgs in `TableColumnSetup.vue` and the canvas in `VAnimatedBackground.vue`.
   - Verify: unit assertions, and Hallmark's sloplint reports no gate 33 for those files.
 

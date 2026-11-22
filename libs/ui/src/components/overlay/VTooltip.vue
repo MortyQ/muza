@@ -166,15 +166,20 @@ const calculatePosition = async () => {
   }
 };
 
-const showTooltip = () => {
+const showTooltip = (wait = delay) => {
   if (disabled || !text) return;
 
   timeout.value = setTimeout(async () => {
     isVisible.value = true;
     await nextTick();
     calculatePosition();
-  }, delay);
+  }, wait);
 };
+
+// The hover delay keeps a sweeping pointer from popping every tooltip it crosses.
+// Focus is deliberate, so a keyboard user gets the hint at once.
+const onPointerEnter = () => showTooltip();
+const onFocusIn = () => showTooltip(0);
 
 const hideTooltip = () => {
   if (timeout.value) {
@@ -199,9 +204,9 @@ const tooltipStyles = computed(() => ({
   <div
     ref="triggerRef"
     :class="['v-tooltip', wrapperClass]"
-    @blur="hideTooltip"
-    @focus="showTooltip"
-    @mouseenter="showTooltip"
+    @focusin="onFocusIn"
+    @focusout="hideTooltip"
+    @mouseenter="onPointerEnter"
     @mouseleave="hideTooltip"
   >
     <!-- Trigger Element -->

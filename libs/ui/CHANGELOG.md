@@ -103,6 +103,10 @@ Found by a full pass of the new reviewer (`.claude/hooks/review.sh`, `REVIEW_MOD
   - "show all" in column setup is a tri-state checkbox;
   - a header label with `onHeaderClick` is a button.
 - **Icon-only buttons are named**: `VTab`'s overflow button ("3 more tabs"), `VChip` close, file and list remove buttons, the table's refresh, row-expand, additional-headers and both column popover triggers. Disclosure buttons report `aria-expanded`.
+- **Keyboard focus**:
+  - `VSwitch` draws a focus ring on its track; its input is visually hidden, so focus was invisible.
+  - `VTooltip` opens at once when its trigger takes focus. It also listens for `focusin`, so focus on the button inside the wrapper now opens it. The hover delay applies to the pointer only.
+- **Decorative graphics are hidden** (`aria-hidden="true"`): the six icons in column setup, and the canvas of `VAnimatedBackground`.
 - **Labels**:
   - `VSelect`'s floating label names its combobox.
   - `VCheckbox` keeps its label association when disabled.

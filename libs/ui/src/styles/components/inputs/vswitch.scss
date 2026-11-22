@@ -73,6 +73,13 @@
   }
 }
 
+/* The input is visually hidden, so its focus has to show on the track. An
+   outline, not a shadow: it is not on the transition list, so it appears at once. */
+.v-switch__input:focus-visible + .v-switch__track {
+  outline: 2px solid var(--ui-ring);
+  outline-offset: 2px;
+}
+
 /* ============================================
    THUMB
    ============================================ */
