@@ -1049,7 +1049,7 @@ defineExpose({ visibleColumns: effectiveColumns });
           <div
             :class="{
               'v-is-resizing': isResizing,
-              'v-table-grid--highlight': highlightConfig.enabled,
+              'v-table-grid--highlight': highlightConfig.enabled && highlightApi.hasPin.value,
             }"
             :style="gridStyles"
             class="v-table-grid"

@@ -70,6 +70,7 @@
 ### Fixed
 
 - `VTable` no longer shows "No data to display" while its first load is still running.
+- `VTable` with `highlight` on no longer renders at 38% opacity before anything is pinned. Rows and columns dim only while a row or a column is pinned.
 - `VTable`, sorting and paging:
   - Clearing a front sort shows the current data again. It used to restore a snapshot of the first load, so a refetch, a page change or an edit made before the sort was lost.
   - Refresh and reset-sort ask for page 1. They asked for `pagination.page`, so a table that did not own its page refetched the page it was leaving.
