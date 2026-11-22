@@ -513,6 +513,12 @@ describe("VTable — row accent", () => {
     expect(hovered.boxShadow).toContain("inset");
   });
 
+  it("sets figures in tabular digits, so a numeric column lines up", async () => {
+    const el = await table({ data: makeRows(5) });
+    const cell = rows(el)[0].firstElementChild as HTMLElement;
+    expect(getComputedStyle(cell).fontVariantNumeric).toBe("tabular-nums");
+  });
+
   it("answers hover at once: every cell rule transitions on the instant step", async () => {
     // A row the pointer sweeps across hundreds of times a day; at 300ms the
     // tint trailed the cursor. Read from the stylesheet, because this project

@@ -7,7 +7,7 @@ import { registerLibraryIcons } from "../../icons/registerLibraryIcons";
 
 const {
   icon = "",
-  size = 24,
+  size = 16,
   color = undefined,
   loading = false,
 } = defineProps<{
@@ -50,9 +50,12 @@ const iconSize = computed(() =>
 </template>
 
 <style scoped>
+/* inline-flex and middle: centred on the line of text it sits in, not
+   sitting on the baseline. */
 .v-icon {
   display: inline-flex;
   flex-shrink: 0;
+  vertical-align: middle;
   line-height: 1;
 }
 

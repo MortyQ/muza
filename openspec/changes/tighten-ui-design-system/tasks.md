@@ -143,15 +143,15 @@ There is no pixel suite, so every group ends with a check by eye on `/home`, `/c
 
 ## 9. Icons and alignment
 
-- [ ] 9.1 Change `VIcon`'s default `size` to 16 (D10).
+- [x] 9.1 Change `VIcon`'s default `size` to 16 (D10).
   - Give an explicit size to every library call site that relied on 24.
   - Add `inline-flex`, `vertical-align: middle` and `flex-shrink: 0` to its root.
   - Verify:
     - a unit spec for the default and explicit size;
     - a browser contract that the icon's centre is within 1px of the text line's centre.
-- [ ] 9.2 Set `font-variant-numeric: tabular-nums` on table cells.
+- [x] 9.2 Set `font-variant-numeric: tabular-nums` on table cells.
   - Verify: a `VTable.layout` assertion that a cell computes `tabular-nums`.
-- [ ] 9.3 Add a CHANGELOG **BREAKING** entry for the `VIcon` default.
+- [x] 9.3 Add a CHANGELOG **BREAKING** entry for the `VIcon` default.
   - Verify: it names the old and the new value.
 
 ## 10. Integration

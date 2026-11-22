@@ -16,14 +16,14 @@ describe("VIcon", () => {
     expect(iconProps({ icon: "lucide:check" }).icon).toBe("lucide:check");
   });
 
-  it("defaults to 24px square", () => {
+  it("defaults to 16px square, the size that sits on a line of base text", () => {
     const props = iconProps({ icon: "lucide:check" });
-    expect(props.width).toBe(24);
-    expect(props.height).toBe(24);
+    expect(props.width).toBe(16);
+    expect(props.height).toBe(16);
   });
 
   it("accepts a numeric size", () => {
-    expect(iconProps({ icon: "lucide:check", size: 16 }).width).toBe(16);
+    expect(iconProps({ icon: "lucide:check", size: 20 }).width).toBe(20);
   });
 
   it("parses a string size into a number", () => {

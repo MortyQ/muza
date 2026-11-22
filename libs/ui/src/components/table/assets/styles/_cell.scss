@@ -11,6 +11,8 @@
   font-size: $table-font-size-base;
   line-height: $table-line-height-base;
   font-weight: $table-font-weight-regular;
+  // Figures that compare line up digit for digit.
+  font-variant-numeric: tabular-nums;
   min-width: 0;
   transition: background-color var(--ui-duration-instant) var(--ui-ease-out);
 

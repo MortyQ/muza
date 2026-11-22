@@ -23,6 +23,7 @@ Source of truth for the contract: `libs/ui/src/components/table/types/props.ts` 
 | Empty state | built in (`TableEmptyState`) — don't wrap the table in your own `v-if="!rows.length"` |
 | Fixed column | `fixed: "left" | "right"` on the column |
 | Actions column | a normal column with `width: "flex"` + a `#cell-actions` slot |
+| Alignment | numbers `align: "right"` (cells set tabular figures, so digits line up), labels left; a status pill may sit centred |
 | Selection | `v-model:selected-rows` + `:multi-select="MultiSelectConfig"` |
 | Sorting | `:sort="{ type: 'front' | 'server', multiple }"`, `v-model:sort-state` |
 | Page size | `v-model:page-size` — bind when the size *is* a request `limit` |

@@ -21,6 +21,8 @@
 
 ### Changed
 
+- **BREAKING — `VIcon` defaults to 16px** (was 24), the size that sits on a line of base text, and centres on the line it sits in (`vertical-align: middle`). Pass `size` where 24 was meant; every icon inside the library already sets its own size.
+- **`VTable` cells set tabular figures**, so a numeric column lines up digit for digit.
 - **The accent has three roles**: the primary action, a current or selected state, and focus. 55 other uses turned neutral: hover tints (table rows, the sort control, drop zones, datepicker days, menu items), decorative icons (card, accordion, title block, drag-and-drop, file items), the empty-state title, select group headings and the column picker's text buttons. `VInfoNotice` defaults to the `info` tone.
 - **`VTable` pinned columns keep a quieter accent**: a 1px edge at 55% (was 2px at 70%), rising to 85% on row hover, and a 3% tint. Row hover tints the surface instead of the accent, and its edge bar is neutral.
 - **BREAKING (tokens) — two elevations**: `--ui-shadow-sm` for resting cards and `--ui-shadow-lg` for anything that floats.
