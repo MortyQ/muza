@@ -282,7 +282,7 @@ so `shadow-md` or `inset-shadow-sm` produce nothing. The raw variables are named
 `--corner-*` precisely because `--shadow-*: var(--shadow-*)` inside
 `@theme inline` would be self-referential.
 
-The dark theme's elevations are tinted with the brand violet — a black drop
+The dark theme's elevations are tinted with the sky accent — a black drop
 shadow is invisible on a dark surface.
 
 ---

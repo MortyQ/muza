@@ -63,13 +63,13 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
 
 ## 4. Fallbacks and docs — `feat(ui): match token fallbacks to the new light palette`
 
-- [ ] 4.1 Update every colour fallback in `libs/ui/src/styles/tokens.css`, including the
+- [x] 4.1 Update every colour fallback in `libs/ui/src/styles/tokens.css`, including the
   `--ui-shadow-*` fallbacks, to the light value from group 2. Verify: a one-off diff script finds
   no fallback that differs from its light variable. Also extend the 1.1 spec with a case asserting
   the same.
-- [ ] 4.2 Update the `oklch(52% 0.27 280)` example in the `tests/setup/tokens.ts` comments.
-- [ ] 4.3 In `ui-component-migration.md`, replace "tinted with the brand violet" with the new tint.
-- [ ] 4.4 Add a "Changed" entry to `libs/ui/CHANGELOG.md`. It says the palette is so-platform's
+- [x] 4.2 Update the `oklch(52% 0.27 280)` example in the `tests/setup/tokens.ts` comments.
+- [x] 4.3 In `ui-component-migration.md`, replace "tinted with the brand violet" with the new tint.
+- [x] 4.4 Add a "Changed" entry to `libs/ui/CHANGELOG.md`. It says the palette is so-platform's
   sky and slate, that no token was renamed, and that dark `*-foreground` tokens are now dark.
 
 ## 5. Verification

@@ -129,3 +129,14 @@ describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
 it("makes the dark sidebar the darkest plane", () => {
   expect(luminance(colour("dark", "nav"))).toBeLessThan(luminance(colour("dark", "background")));
 });
+
+it("gives every colour token a fallback equal to its light-theme value", () => {
+  const tokens = readFileSync(resolve(__dirname, "../../src/styles/tokens.css"), "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "");
+  const drift = [...tokens.matchAll(/var\(--([\w-]+),\s*([\s\S]*?)\);/g)]
+    .map(([, name, fallback]) => [name, fallback.replace(/\s+/g, " ").trim()] as const)
+    .filter(([name]) => THEMES.light[name]?.includes("oklch("))
+    .filter(([name, fallback]) => fallback !== THEMES.light[name])
+    .map(([name, fallback]) => `--${name}: ${fallback} ≠ ${THEMES.light[name]}`);
+  expect(drift).toEqual([]);
+});

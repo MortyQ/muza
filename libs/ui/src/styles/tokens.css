@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════
-   VIOLET/SLATE DESIGN SYSTEM
+   SKY/SLATE DESIGN SYSTEM — so-platform's palette
    Color space: OKLCH (perceptually uniform — equal L = equal brightness)
-   Strategy: hue 280 for all neutrals + primary (violet). Low chroma = slate-gray.
-   High chroma = interactive violet.
+   Strategy: slate (hue ~257) for every neutral, sky for the accent, green /
+   amber / red / cyan for the statuses. Values live in @muzakit/config's
+   theme.css; the fallbacks below are its light theme, verbatim.
 
    TOKEN NAMING RULES:
    --ui-[group]-[variant]
@@ -28,51 +29,51 @@
     /* ╔══════════════════════════════════════════════════════════╗
        ║  BRAND — PRIMARY                                         ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-primary:            var(--primary, oklch(52% 0.27 280));
-    --ui-primary-hover:      var(--primary-hover, oklch(47% 0.27 280));
-    --ui-primary-active:     var(--primary-active, oklch(42% 0.27 280));
+    --ui-primary:            var(--primary, oklch(50.0% 0.119 243));
+    --ui-primary-hover:      var(--primary-hover, oklch(44.3% 0.100 241));
+    --ui-primary-active:     var(--primary-active, oklch(39.1% 0.085 241));
     --ui-primary-foreground: var(--primary-foreground, oklch(100% 0 0));
-    --ui-primary-subtle:     var(--primary-subtle, oklch(95% 0.06 280));
-    --ui-primary-muted:      var(--primary-muted, oklch(89% 0.09 280));
+    --ui-primary-subtle:     var(--primary-subtle, oklch(97.7% 0.012 237));
+    --ui-primary-muted:      var(--primary-muted, oklch(95.1% 0.025 237));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  SURFACES — PAGE & COMPONENT BACKGROUNDS                 ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-background:           var(--background, oklch(96% 0.015 280));
-    --ui-surface-sunken:       var(--surface-sunken, oklch(93% 0.018 280));
-    --ui-surface:              var(--surface, oklch(99.5% 0.003 280));
-    --ui-surface-raised:       var(--surface-raised, oklch(98% 0.005 280));
-    --ui-surface-overlay:      var(--surface-overlay, oklch(100% 0.002 280));
-    --ui-surface-hover:        var(--surface-hover, oklch(94% 0.008 280));
-    --ui-surface-active:       var(--surface-active, oklch(91% 0.010 280));
-    --ui-surface-tinted:       var(--surface-tinted, oklch(96% 0.020 280));
-    --ui-surface-tinted-deep:  var(--surface-tinted-deep, oklch(93% 0.025 280));
+    --ui-background:           var(--background, oklch(96.8% 0.007 248));
+    --ui-surface-sunken:       var(--surface-sunken, oklch(92.9% 0.013 256));
+    --ui-surface:              var(--surface, oklch(100% 0 0));
+    --ui-surface-raised:       var(--surface-raised, oklch(98.4% 0.003 248));
+    --ui-surface-overlay:      var(--surface-overlay, oklch(100% 0 0));
+    --ui-surface-hover:        var(--surface-hover, oklch(96.8% 0.007 248));
+    --ui-surface-active:       var(--surface-active, oklch(92.9% 0.013 256));
+    --ui-surface-tinted:       var(--surface-tinted, oklch(97.7% 0.012 237));
+    --ui-surface-tinted-deep:  var(--surface-tinted-deep, oklch(95.1% 0.025 237));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  NAVIGATION                                              ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-nav:        var(--nav, oklch(22% 0.035 275));
-    --ui-nav-hover:  var(--nav-hover, oklch(27% 0.032 275));
-    --ui-nav-active: var(--nav-active, oklch(30% 0.030 275));
-    --ui-nav-border: var(--nav-border, oklch(28% 0.025 275));
+    --ui-nav:        var(--nav, oklch(20.8% 0.040 266));
+    --ui-nav-hover:  var(--nav-hover, oklch(27.9% 0.037 260));
+    --ui-nav-active: var(--nav-active, oklch(37.2% 0.039 257));
+    --ui-nav-border: var(--nav-border, oklch(27.9% 0.037 260));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  TEXT — FOREGROUND (5-level hierarchy)                   ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-foreground:           var(--foreground, oklch(16% 0.015 280));
-    --ui-foreground-secondary: var(--foreground-secondary, oklch(38% 0.012 280));
-    --ui-foreground-muted:     var(--foreground-muted, oklch(55% 0.008 280));
-    --ui-foreground-subtle:    var(--foreground-subtle, oklch(70% 0.005 280));
-    --ui-foreground-disabled:  var(--foreground-disabled, oklch(76% 0.004 280));
+    --ui-foreground:           var(--foreground, oklch(27.9% 0.037 260));
+    --ui-foreground-secondary: var(--foreground-secondary, oklch(44.6% 0.037 257));
+    --ui-foreground-muted:     var(--foreground-muted, oklch(54% 0.041 257));
+    --ui-foreground-subtle:    var(--foreground-subtle, oklch(71.1% 0.035 257));
+    --ui-foreground-disabled:  var(--foreground-disabled, oklch(86.9% 0.020 253));
     --ui-foreground-inverted:  var(--foreground-inverted, oklch(100% 0 0));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  BORDERS (4 weights: subtle → default → strong → focus)  ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-border-subtle: var(--border-subtle, oklch(92% 0.008 280));
-    --ui-border:        var(--border, oklch(87% 0.010 280));
-    --ui-border-strong: var(--border-strong, oklch(77% 0.013 280));
-    --ui-border-focus:  var(--border-focus, oklch(52% 0.27 280));
+    --ui-border-subtle: var(--border-subtle, oklch(96.8% 0.007 248));
+    --ui-border:        var(--border, oklch(92.9% 0.013 256));
+    --ui-border-strong: var(--border-strong, oklch(86.9% 0.020 253));
+    --ui-border-focus:  var(--border-focus, oklch(50.0% 0.119 243));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  OVERLAY & SCRIM                                         ║
@@ -84,46 +85,46 @@
        ║  STATUS COLORS (each: base / hover / fg / subtle / muted)║
        ╚══════════════════════════════════════════════════════════╝ */
 
-    /* Success — green hue 145 */
-    --ui-success: var(--success, oklch(52% 0.17 145));
-    --ui-success-hover: var(--success-hover, oklch(46% 0.17 145));
+    /* Success — green */
+    --ui-success: var(--success, oklch(52.7% 0.137 150));
+    --ui-success-hover: var(--success-hover, oklch(44.8% 0.108 151));
     --ui-success-foreground: var(--success-foreground, oklch(100% 0 0));
-    --ui-success-subtle: var(--success-subtle, oklch(94% 0.05 145));
-    --ui-success-muted: var(--success-muted, oklch(88% 0.07 145));
+    --ui-success-subtle: var(--success-subtle, oklch(98.2% 0.018 156));
+    --ui-success-muted: var(--success-muted, oklch(96.2% 0.043 157));
 
-    /* Warning — yellow hue 75 */
-    --ui-warning: var(--warning, oklch(72% 0.17 75));
-    --ui-warning-hover: var(--warning-hover, oklch(65% 0.17 75));
-    --ui-warning-foreground: var(--warning-foreground, oklch(20% 0.01 75));
-    --ui-warning-subtle: var(--warning-subtle, oklch(96% 0.05 75));
-    --ui-warning-muted: var(--warning-muted, oklch(91% 0.07 75));
+    /* Warning — amber */
+    --ui-warning: var(--warning, oklch(55.5% 0.146 49));
+    --ui-warning-hover: var(--warning-hover, oklch(47.3% 0.125 46));
+    --ui-warning-foreground: var(--warning-foreground, oklch(100% 0 0));
+    --ui-warning-subtle: var(--warning-subtle, oklch(98.7% 0.021 95));
+    --ui-warning-muted: var(--warning-muted, oklch(96.2% 0.058 96));
 
-    /* Danger — red hue 25 */
-    --ui-danger: var(--danger, oklch(55% 0.22 25));
-    --ui-danger-hover: var(--danger-hover, oklch(49% 0.22 25));
+    /* Danger — red */
+    --ui-danger: var(--danger, oklch(50.5% 0.190 28));
+    --ui-danger-hover: var(--danger-hover, oklch(44.4% 0.161 27));
     --ui-danger-foreground: var(--danger-foreground, oklch(100% 0 0));
-    --ui-danger-subtle: var(--danger-subtle, oklch(95% 0.05 25));
-    --ui-danger-muted: var(--danger-muted, oklch(90% 0.08 25));
+    --ui-danger-subtle: var(--danger-subtle, oklch(97.1% 0.013 17));
+    --ui-danger-muted: var(--danger-muted, oklch(93.6% 0.031 18));
 
-    /* Info — blue hue 240 (distinct from violet primary hue 280) */
-    --ui-info:            var(--info, oklch(57% 0.20 240));
-    --ui-info-hover:      var(--info-hover, oklch(51% 0.20 240));
+    /* Info — cyan, distinct from the sky accent */
+    --ui-info:            var(--info, oklch(52.0% 0.094 223));
+    --ui-info-hover:      var(--info-hover, oklch(45.0% 0.077 224));
     --ui-info-foreground: var(--info-foreground, oklch(100% 0 0));
-    --ui-info-subtle:     var(--info-subtle, oklch(94% 0.05 240));
-    --ui-info-muted:      var(--info-muted, oklch(88% 0.07 240));
+    --ui-info-subtle:     var(--info-subtle, oklch(98.4% 0.019 201));
+    --ui-info-muted:      var(--info-muted, oklch(95.6% 0.044 203));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  COMPONENT TOKENS — INPUT                                ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-input-bg:          var(--input-bg, oklch(100% 0.002 280));
-    --ui-input-border:      var(--input-border, oklch(65% 0.010 280));
-    --ui-input-placeholder: var(--input-placeholder, oklch(70% 0.005 280));
+    --ui-input-bg:          var(--input-bg, oklch(100% 0 0));
+    --ui-input-border:      var(--input-border, oklch(66.5% 0.030 257));
+    --ui-input-placeholder: var(--input-placeholder, oklch(71.1% 0.035 257));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  COMPONENT TOKENS — BADGE (neutral)                      ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-badge-neutral-bg:   var(--badge-neutral-bg, oklch(91% 0.008 280));
-    --ui-badge-neutral-text: var(--badge-neutral-text, oklch(35% 0.012 280));
+    --ui-badge-neutral-bg:   var(--badge-neutral-bg, oklch(96.8% 0.007 248));
+    --ui-badge-neutral-text: var(--badge-neutral-text, oklch(44.6% 0.037 257));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  RADIUS                                                  ║
@@ -204,13 +205,13 @@
        ╚══════════════════════════════════════════════════════════╝ */
     /* Two levels: sm for resting cards, lg for anything that floats. Hover
        changes the surface, never the elevation. Sourced from the theme so dark
-       mode can tint them with the brand violet —
+       mode can tint them with the sky accent —
        a black shadow on a dark surface is invisible. Fallbacks are the light
        values, for anyone loading tokens.css without the theme. */
     --ui-shadow-sm: var(--elevation-sm,
-        0 1px 3px 0 oklch(20% 0.02 280 / 0.09), 0 1px 2px -1px oklch(20% 0.02 280 / 0.07));
+        0 1px 3px 0 oklch(20% 0.02 257 / 0.09), 0 1px 2px -1px oklch(20% 0.02 257 / 0.07));
     --ui-shadow-lg: var(--elevation-lg,
-        0 12px 20px -6px oklch(20% 0.02 280 / 0.14), 0 4px 8px -4px oklch(20% 0.02 280 / 0.09));
+        0 12px 20px -6px oklch(20% 0.02 257 / 0.14), 0 4px 8px -4px oklch(20% 0.02 257 / 0.09));
 
     /* ╔══════════════════════════════════════════════════════════╗
        ║  MOTION                                                  ║
