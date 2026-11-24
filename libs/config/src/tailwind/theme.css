@@ -322,7 +322,7 @@
     --primary-muted:       oklch(39.1% 0.085 241); /* sky-900 #0c4a6e */
 
     --background:           oklch(20.8% 0.040 266); /* slate-900 #0f172a */
-    --surface-sunken:       oklch(12.9% 0.041 265); /* slate-950 #020617: a plane below the page, not equal to it */
+    --surface-sunken:       oklch(20.8% 0.040 266); /* slate-900 #0f172a: so-platform's dark page */
     --surface:              oklch(27.9% 0.037 260); /* slate-800 #1e293b */
     --surface-raised:       oklch(37.2% 0.039 257); /* slate-700 #334155 */
     --surface-overlay:      oklch(37.2% 0.039 257); /* slate-700 #334155 */
@@ -382,14 +382,16 @@
     --badge-neutral-text:  oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
 
     /* ─── Elevation ───────────────────────────────────────────
-       A black shadow on a dark surface is invisible, so dark mode carries the
-       sky accent instead: the elevation reads as a glow rather than a drop
-       shadow, and stays visible against every surface in the ramp. Chroma is
-       held inside sRGB for this hue. */
-    --elevation-sm:    0 1px 3px 0 oklch(45% 0.12 237 / 0.24),
-                    0 1px 2px -1px oklch(0% 0 0 / 0.40);
-    --elevation-lg:    0 12px 20px -6px oklch(52% 0.14 237 / 0.38),
-                    0 4px 8px -4px oklch(0% 0 0 / 0.50);
+       so-platform's dark shadows, as the owner chose them over a tinted glow:
+       a deep black drop plus a 5% white line along the top edge, which is
+       what lifts a card off slate on a dark page. sm is their DEFAULT step
+       (a card at rest), lg their lg (anything that floats). */
+    --elevation-sm:    inset 0 1px 0 0 oklch(100% 0 0 / 0.05),
+                    0 1px 3px 0 oklch(0% 0 0 / 0.35),
+                    0 1px 2px -1px oklch(0% 0 0 / 0.35);
+    --elevation-lg:    inset 0 1px 0 0 oklch(100% 0 0 / 0.05),
+                    0 10px 15px -3px oklch(0% 0 0 / 0.40),
+                    0 4px 6px -4px oklch(0% 0 0 / 0.40);
 }
 
 

@@ -146,11 +146,24 @@ Reported by the owner after apply: in the dark theme cards and tables merged int
 - The dark `border-subtle` moves to the lightest slate that separates from `surface`.
 - `theme-contrast.spec.ts` asserts the plane order and the dark edge.
 
+### 4d. so-platform's dark page and shadows (decision E, owner, after comparing on Insightful)
+
+The owner compared both on the live Insightful page and preferred so-platform's dark theme on two
+counts. First, its page is slate-900 throughout; decision D's slate-950 frame read as a black hole
+around the panel. Second, its shadows are a deep black drop with a 5% white top line; the sky glow
+looked weaker.
+
+**[VERDICT]** The dark `--surface-sunken` returns to slate-900, so the frame and the page are one
+plane, as in so-platform. Decision D's other two parts stay: the content panel on `--background`,
+and the lifted `--border-subtle`. The dark `--elevation-sm` / `-lg` are so-platform's `DEFAULT` /
+`lg` dark shadows verbatim. The plane check now requires card > page ≥ frame.
+
 ### 5. Elevation retinted, not redesigned
 
 The two shadow levels and their geometry stay. Only the hue changes:
 - light shadows move from 280 to slate 257;
-- the dark glow moves from 280 to sky 237;
+- the dark glow first moved from 280 to sky 237, then gave way to so-platform's black shadows
+  (decision E);
 - the alpha values stay.
 
 A violet glow under sky controls would be the one remnant of the old brand.

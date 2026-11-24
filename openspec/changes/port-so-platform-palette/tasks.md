@@ -70,6 +70,13 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
   both cases fail on so-platform's values and pass on the new ones, and cards and tables stand off
   the page in the dark theme.
 
+- [x] 3.7 Decision E:
+  - the dark `--surface-sunken` returns to slate-900;
+  - the dark `--elevation-sm` / `-lg` are so-platform's dark `DEFAULT` / `lg` shadows.
+
+  The plane check in `theme-contrast.spec.ts` becomes card > page ≥ frame. Verify: the spec passes,
+  and the dark dashboard matches so-platform's page tone.
+
 ## 4. Fallbacks and docs — `feat(ui): match token fallbacks to the new light palette`
 
 - [x] 4.1 Update every colour fallback in `libs/ui/src/styles/tokens.css`, including the

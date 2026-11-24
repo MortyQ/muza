@@ -61,6 +61,10 @@ applies them.
     `#f1f5f9` the owner liked;
   - the dark `--surface-sunken` is slate-950;
   - the dark `--border-subtle` is `oklch(33% 0.038 259)`, between slate-800 and slate-700.
+- **so-platform's dark page and shadows (decision E, owner, 2026-11-24).** After comparing on the
+  Insightful page, the owner preferred so-platform's dark theme. The dark frame returns to slate-900,
+  and the dark shadows become so-platform's black drop with a 5% white top line. This replaces the
+  sky glow below and decision D's slate-950 frame.
 - **Elevation tint.** The shadows follow the palette.
   - The light shadow takes the slate hue (257) instead of violet.
   - The dark glow takes the accent's hue (237) instead of the brand violet.

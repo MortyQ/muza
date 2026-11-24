@@ -66,13 +66,14 @@ drawn darker than it needs to be to reach that minimum.
 - **THEN** its border reaches at least 3:1 and at most 3.2:1 against the field background
 
 ### Requirement: Planes stay distinct
-In both themes the frame (`--surface-sunken`), the page (`--background`) and a card or table
-(`--surface`) SHALL be three distinct planes, each lighter than the one beneath it. In the dark
-theme the subtle edge of a card or table (`--border-subtle`) SHALL stay visible on `--surface`.
+In both themes a card or table (`--surface`) SHALL be lighter than the page (`--background`) it sits
+on, and the frame (`--surface-sunken`) SHALL NOT be lighter than the page. In the dark theme the frame
+and the page are both so-platform's `#0f172a`, and the subtle edge of a card or table
+(`--border-subtle`) SHALL stay visible on `--surface`.
 
 #### Scenario: A card on the page in the dark theme
 - **WHEN** a card or a table sits on the dashboard's content panel in the dark theme
-- **THEN** its fill is lighter than the panel, and the panel is lighter than the frame around it
+- **THEN** its fill is lighter than the panel, and the panel is `#0f172a` like the frame around it
 - **AND** its subtle edge differs from its fill
 
 ### Requirement: Navigation tokens are the darkest plane
@@ -86,13 +87,14 @@ the datepicker's dark branch.
 - **WHEN** the dark theme's colour variables are read
 - **THEN** `--nav` is `#020617` and `--background` is `#0f172a`
 
-### Requirement: Elevation follows the palette
-Shadows SHALL be tinted from the palette in use. The light shadow SHALL use the neutral (slate) hue.
-The dark glow SHALL use the accent's hue.
+### Requirement: Elevation follows so-platform
+The light shadow SHALL use the neutral (slate) hue. The dark shadows SHALL be so-platform's: a black
+drop with a 5% white line along the top edge, `sm` at their resting-card strength and `lg` at their
+floating strength.
 
 #### Scenario: Dark floating surface
 - **WHEN** a modal or dropdown floats in the dark theme
-- **THEN** its glow carries the sky accent's hue, not violet
+- **THEN** it casts a black shadow and carries a faint light top edge, with no coloured glow
 
 ### Requirement: Fallbacks match the light theme
 The fallback value of each `--ui-*` colour token in `@muzakit/ui`'s `tokens.css` SHALL equal that
