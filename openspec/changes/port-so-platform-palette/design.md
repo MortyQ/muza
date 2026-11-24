@@ -108,6 +108,23 @@ These two pairs fail only after the port. They are not in the owner's original e
 **[VERDICT]** Recommended both; the owner accepted both. The spec's 4.5:1 rule holds with no
 exceptions.
 
+### 4b. Dark `-hover` goes lighter (decision C, accepted during apply)
+
+Found by the DOM audit in task 3.4: so-platform's dark `-hover` is a darker step than its fill.
+
+**[SKEPTIC]**
+- muzakit's tonal components write their text in `-hover`, on purpose: it is the darker step in
+  light and the lighter one in dark (`vbutton.scss`).
+- With so-platform's ramp that text falls to 3.1:1 on a danger tint, and to 4.47:1 on the primary
+  button and the active sidebar item.
+
+**[ADVOCATE]** Copying so-platform's ramp exactly keeps the hex identical in both repos.
+
+**[VERDICT]** Use the 300 step for every dark `-hover` and the 200 step for the dark
+`-primary-active`. The fills stay so-platform's. so-platform reached the same place with a
+`[data-theme="dark"]` block per component; here one token does it. `theme-contrast.spec.ts` gains
+the tonal pair, so the ramp cannot flip back unnoticed.
+
 ### 5. Elevation retinted, not redesigned
 
 The two shadow levels and their geometry stay. Only the hue changes:

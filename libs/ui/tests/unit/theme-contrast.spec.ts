@@ -64,10 +64,20 @@ const colour = (theme: keyof typeof THEMES, name: string): Oklch => {
   return parsed;
 };
 
-const ratio = (theme: keyof typeof THEMES, fg: string, bg: string): number => {
-  const [x, y] = [luminance(colour(theme, fg)), luminance(colour(theme, bg))];
-  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
-};
+const contrast = (x: number, y: number): number =>
+  (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+
+const ratio = (theme: keyof typeof THEMES, fg: string, bg: string): number =>
+  contrast(luminance(colour(theme, fg)), luminance(colour(theme, bg)));
+
+/**
+ * Luminance of a tone laid over a surface at `alpha`, the way
+ * `color-mix(in oklch, tone N%, transparent)` composites. Mixing luminances
+ * rather than encoded channels is a few hundredths off for a 9–15% tint, well
+ * inside the margin these pairs keep.
+ */
+const tinted = (theme: keyof typeof THEMES, tone: string, alpha: number): number =>
+  alpha * luminance(colour(theme, tone)) + (1 - alpha) * luminance(colour(theme, "surface"));
 
 const STATUSES = ["success", "warning", "danger", "info"] as const;
 
@@ -86,6 +96,15 @@ const TEXT_PAIRS: ReadonlyArray<readonly [string, string]> = [
 describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
   it.each(TEXT_PAIRS)("text --%s on --%s reaches 4.5:1", (fg, bg) => {
     expect(ratio(theme, fg, bg)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // Tonal buttons, tags, chips and the active nav item: text in -hover on the
+  // tone at 9% at rest and 15% on hover.
+  it.each(["primary", ...STATUSES])("tonal --%s-hover text reaches 4.5:1 on its tint", (tone) => {
+    const text = luminance(colour(theme, `${tone}-hover`));
+    for (const alpha of [0.09, 0.15]) {
+      expect(contrast(text, tinted(theme, tone, alpha))).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it("draws the field border at 3:1, and no heavier than it needs to be", () => {

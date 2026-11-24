@@ -40,21 +40,26 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
 
 ## 3. Dark palette — `feat(config): port so-platform dark palette`
 
-- [ ] 3.1 Replace every colour variable in `:root[data-theme="dark"]` with its so-platform value,
+- [x] 3.1 Replace every colour variable in `:root[data-theme="dark"]` with its so-platform value,
   applying choices 2, 4, 5 and 8:
   - `*-foreground` is `#0f172a`;
   - subtles are step 950 and muted steps are 900;
   - nav is `#020617`, nav-hover is `#0f172a`, nav-active and nav-border are `#1e293b`.
 
   Verify: the dark cases of the 1.1 spec pass.
-- [ ] 3.2 Set the dark field border to `oklch(50.5% 0.030 257)`, with its reason in a comment.
+- [x] 3.2 Set the dark field border to `oklch(50.5% 0.030 257)`, with its reason in a comment.
   Verify: the 1.1 border case passes.
-- [ ] 3.3 Retint the dark glow in `--elevation-sm` and `--elevation-lg` to hue 237, sky, keeping
+- [x] 3.3 Retint the dark glow in `--elevation-sm` and `--elevation-lg` to hue 237, sky, keeping
   the alpha. Rewrite the "brand violet" comment. Verify: `test:tokens` passes.
-- [ ] 3.4 Grep `libs/ui/src` for every reader of a `*-foreground` token. Check each one on
+- [x] 3.4 Grep `libs/ui/src` for every reader of a `*-foreground` token. Check each one on
   `/components-demo` in the dark theme, where the label or mark is now dark on a light fill: the
   checkbox, switch, toast action, tags and chips. Verify: compare screenshots in the dark theme;
   any component that needed white is listed and fixed in this block.
+
+- [x] 3.5 Decision C: set every dark `-hover` to the 300 step and the dark `--primary-active` to
+  sky-200, with the reason in the block's comment. Add the "tonal `-hover` text on a 9% and 15% tint"
+  case to `theme-contrast.spec.ts`. Verify: the case fails with so-platform's sky-500 and red-500
+  hovers and passes with the 300 steps.
 
 ## 4. Fallbacks and docs — `feat(ui): match token fallbacks to the new light palette`
 

@@ -48,6 +48,11 @@ applies them.
     4.34:1. On a card it passes at 4.76:1. **Accepted:** `oklch(54% 0.041 257)`, a hair darker than
     slate-500, which gives 4.6:1 on the page and 5.0:1 on a card. The alternative is to keep
     slate-500 and accept the shortfall on the bare page.
+- **Dark hover direction (decision C, owner accepted 2026-11-24, found during apply).**
+  so-platform's dark `-hover` is one step *darker* than the fill (sky-400 → sky-500). muzakit's
+  tonal buttons, tags, chips and active nav item write their text in `-hover`, which drops it to
+  3.1–4.5:1 on a tonal fill (danger worst). The dark `-hover` is therefore the 300 step and the
+  accent's `-active` the 200 step; every fill stays so-platform's. That gives 6.2–8.6:1.
 - **Elevation tint.** The shadows follow the palette.
   - The light shadow takes the slate hue (257) instead of violet.
   - The dark glow takes the accent's hue (237) instead of the brand violet.

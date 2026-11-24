@@ -47,6 +47,15 @@ Text SHALL reach at least 4.5:1 against the surface it is drawn on, in both them
 - **WHEN** muted foreground text sits directly on the light page background
 - **THEN** the contrast is at least 4.5:1
 
+### Requirement: Tonal text reads on its tint
+A tone's `-hover` value SHALL reach at least 4.5:1, as text, against the tone laid over a surface at
+9% and at 15%, in both themes. This is the text colour of tonal buttons, tags, chips and the active
+navigation item. In the dark theme `-hover` SHALL therefore be lighter than the tone's fill.
+
+#### Scenario: Tonal danger button in the dark theme
+- **WHEN** a danger tonal button is shown in the dark theme, at rest or hovered
+- **THEN** its label reaches at least 4.5:1 against its tinted fill
+
 ### Requirement: Controls and focus meet 3:1
 The field border SHALL reach at least 3:1 against the field background, in both themes. So SHALL
 the focus border and the focus ring against the surface around them. The field border SHALL NOT be
