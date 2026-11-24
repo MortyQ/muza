@@ -80,6 +80,12 @@ describe.each(THEME_CASES)("VInput chrome — %s theme", (theme) => {
       .toBe(tokenAsValue("font-size", "--ui-text-xs"));
   });
 
+  it("sets the resting label in the muted step, not the foreground at reduced alpha", async () => {
+    // A translucent label fell to about 4:1 on the field; the muted step holds 4.5:1.
+    const label = find(await renderInput({ name: "Marketplace" }), ".v-label");
+    expect(getComputedStyle(label).color).toBe(tokenAsColor("--ui-foreground-muted"));
+  });
+
   it("tints the raised label with the accent only while the field has focus", async () => {
     // The accent marks focus, not "has a value".
     const el = await renderInput({ name: "Marketplace", modelValue: "Amazon" });

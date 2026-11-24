@@ -95,7 +95,7 @@
   overflow: hidden;
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
-  color: color-mix(in oklch, var(--ui-foreground) 60%, transparent);
+  color: var(--ui-foreground-muted);
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;

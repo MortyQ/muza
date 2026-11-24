@@ -181,22 +181,26 @@
    Left out of the tonal system on purpose. `neutral` already *is* the tonal
    quiet button, so converting this one would leave two spellings of one
    appearance; keeping it filled is what gives a row somewhere to put the single
-   button that should outrank the others. */
+   button that should outrank the others.
+
+   The fill is the muted text step: the lightest one that still holds the
+   inverted label at 4.5:1 in both themes (`border-strong` gave 2:1). Hover and
+   press walk further from the surface. */
 .v-button--secondary {
-  background-color: var(--ui-border-strong);
-  border-color: var(--ui-border-strong);
+  background-color: var(--ui-foreground-muted);
+  border-color: var(--ui-foreground-muted);
   color: var(--ui-foreground-inverted);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled) {
-      background-color: var(--ui-foreground-muted);
-      border-color: var(--ui-foreground-muted);
+      background-color: var(--ui-foreground-secondary);
+      border-color: var(--ui-foreground-secondary);
     }
   }
 
   &:active:not(:disabled) {
-    background-color: var(--ui-foreground-secondary);
-    border-color: var(--ui-foreground-secondary);
+    background-color: var(--ui-foreground);
+    border-color: var(--ui-foreground);
   }
 }
 

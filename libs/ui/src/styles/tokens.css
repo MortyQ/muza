@@ -115,7 +115,7 @@
        ║  COMPONENT TOKENS — INPUT                                ║
        ╚══════════════════════════════════════════════════════════╝ */
     --ui-input-bg:          var(--input-bg, oklch(100% 0.002 280));
-    --ui-input-border:      var(--input-border, oklch(87% 0.010 280));
+    --ui-input-border:      var(--input-border, oklch(65% 0.010 280));
     --ui-input-placeholder: var(--input-placeholder, oklch(70% 0.005 280));
 
     /* ╔══════════════════════════════════════════════════════════╗
