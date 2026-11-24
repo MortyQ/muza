@@ -17,10 +17,11 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-    /* The consuming app loads Plus Jakarta Sans (see its index.html). A library
-       stylesheet must not fetch a font itself: an @import here is a blocking
-       request every consumer inherits, and it cannot be preconnected or
-       swapped for a self-hosted copy. Falls back to system-ui if absent. */
+    /* The consuming app loads Plus Jakarta Sans (the dashboard self-hosts it
+       in its main.css). A library stylesheet must not fetch a font itself: an
+       @import here is a blocking request every consumer inherits, and it cannot
+       be preconnected or swapped for a self-hosted copy. Falls back to
+       system-ui if absent. */
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     font-optical-sizing: auto;
 
