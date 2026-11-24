@@ -70,7 +70,7 @@
     /* ╔══════════════════════════════════════════════════════════╗
        ║  BORDERS (4 weights: subtle → default → strong → focus)  ║
        ╚══════════════════════════════════════════════════════════╝ */
-    --ui-border-subtle: var(--border-subtle, oklch(96.8% 0.007 248));
+    --ui-border-subtle: var(--border-subtle, oklch(92.9% 0.013 256));
     --ui-border:        var(--border, oklch(92.9% 0.013 256));
     --ui-border-strong: var(--border-strong, oklch(86.9% 0.020 253));
     --ui-border-focus:  var(--border-focus, oklch(50.0% 0.119 243));
@@ -117,7 +117,7 @@
        ║  COMPONENT TOKENS — INPUT                                ║
        ╚══════════════════════════════════════════════════════════╝ */
     --ui-input-bg:          var(--input-bg, oklch(100% 0 0));
-    --ui-input-border:      var(--input-border, oklch(66.5% 0.030 257));
+    --ui-input-border:      var(--input-border, oklch(86.9% 0.020 253));
     --ui-input-placeholder: var(--input-placeholder, oklch(71.1% 0.035 257));
 
     /* ╔══════════════════════════════════════════════════════════╗

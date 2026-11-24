@@ -78,6 +78,14 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
   follow-up, the dark frame moves to `oklch(16% 0.040 266)` so the panel reads against it. Verify:
   the spec passes, and the dark dashboard keeps so-platform's page tone with a visible panel.
 
+- [x] 3.8 Decision F:
+  - the field border is slate-300 / slate-600;
+  - the light `--border-subtle` is slate-200;
+  - the segmented control pill is a 15% primary tint with an inset 40% primary line and accent text.
+
+  Update `theme-contrast.spec.ts` (field edge 1.4–3:1, page hairline ≥ 1.08) and the pill's token
+  contract. Verify: the specs pass, and the page title divider shows in the light theme.
+
 ## 4. Fallbacks and docs — `feat(ui): match token fallbacks to the new light palette`
 
 - [x] 4.1 Update every colour fallback in `libs/ui/src/styles/tokens.css`, including the

@@ -163,6 +163,19 @@ frame now sits at `oklch(16% 0.040 266)`, halfway between slate-950 and slate-90
 enough to outline the panel, without the near-black hole decision D's slate-950 made (option A of
 three; a panel border and both together were the others).
 
+### 4e. Quiet field edges, page hairline, tools pill (decision F)
+
+**[SKEPTIC]**
+- Below 3:1, a field's edge fails WCAG 1.4.11 wherever the edge alone marks the control.
+
+**[ADVOCATE]**
+- On these pages a field always sits under a label and on a contrasting surface.
+- The owner judged the 3:1 edge heavy on the real screen, and focus still meets 3:1.
+
+**[VERDICT]** Slate-300 / slate-600, as first chosen. `theme-contrast.spec.ts` now pins the edge
+between 1.4:1 and 3:1. The light hairline moves to slate-200, because slate-100 is the page. The pill
+copies so-platform's tools style; it reads `--ui-primary` in the role "a current or selected state".
+
 ### 5. Elevation retinted, not redesigned
 
 The two shadow levels and their geometry stay. Only the hue changes:

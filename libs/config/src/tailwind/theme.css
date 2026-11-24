@@ -254,7 +254,7 @@
     --foreground-disabled:   oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
     --foreground-inverted:   oklch(100% 0 0); /* white #ffffff */
 
-    --border-subtle:  oklch(96.8% 0.007 248); /* slate-100 #f1f5f9 */
+    --border-subtle:  oklch(92.9% 0.013 256); /* slate-200 #e2e8f0: slate-100 is the page itself, so a hairline on it would vanish */
     --border:         oklch(92.9% 0.013 256); /* slate-200 #e2e8f0 */
     --border-strong:  oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
     --border-focus:   oklch(50.0% 0.119 243); /* sky-700 #0369a1 */
@@ -287,7 +287,7 @@
     --info-muted:       oklch(95.6% 0.044 203); /* cyan-100 #cffafe */
 
     --input-bg:            oklch(100% 0 0); /* white #ffffff */
-    --input-border:        oklch(66.5% 0.030 257); /* between slate-400 and slate-500: the 3:1 minimum, no heavier */
+    --input-border:        oklch(86.9% 0.020 253); /* slate-300 #cbd5e1: a quiet field edge, the owner's choice over 3:1 */
     --input-placeholder:   oklch(71.1% 0.035 257); /* slate-400 #94a3b8 */
     --badge-neutral-bg:    oklch(96.8% 0.007 248); /* slate-100 #f1f5f9 */
     --badge-neutral-text:  oklch(44.6% 0.037 257); /* slate-600 #475569 */
@@ -376,7 +376,7 @@
     --info-muted:       oklch(39.8% 0.066 227); /* cyan-900 #164e63 */
 
     --input-bg:            oklch(20.8% 0.040 266); /* slate-900 #0f172a */
-    --input-border:        oklch(50.5% 0.030 257); /* between slate-600 and slate-500: the 3:1 minimum, no heavier */
+    --input-border:        oklch(44.6% 0.037 257); /* slate-600 #475569: a quiet field edge, the owner's choice over 3:1 */
     --input-placeholder:   oklch(55.4% 0.041 257); /* slate-500 #64748b */
     --badge-neutral-bg:    oklch(37.2% 0.039 257); /* slate-700 #334155 */
     --badge-neutral-text:  oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */

@@ -107,10 +107,17 @@ describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
     }
   });
 
-  it("draws the field border at 3:1, and no heavier than it needs to be", () => {
+  // The owner chose quiet field edges over WCAG's 3:1 for control boundaries:
+  // slate-300 / slate-600, one step past so-platform's own. The field still
+  // reads as a field: its edge must stay visible, just not heavy.
+  it("draws a visible but quiet field edge", () => {
     const value = ratio(theme, "input-border", "input-bg");
-    expect(value).toBeGreaterThanOrEqual(3);
-    expect(value).toBeLessThanOrEqual(3.2);
+    expect(value).toBeGreaterThanOrEqual(1.4);
+    expect(value).toBeLessThan(3);
+  });
+
+  it("keeps a hairline visible on the page itself", () => {
+    expect(ratio(theme, "border-subtle", "background")).toBeGreaterThanOrEqual(1.08);
   });
 
   // The dashboard stacks the frame (sunken), the content panel (background) and

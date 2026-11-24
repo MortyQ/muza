@@ -56,14 +56,22 @@ navigation item. In the dark theme `-hover` SHALL therefore be lighter than the 
 - **WHEN** a danger tonal button is shown in the dark theme, at rest or hovered
 - **THEN** its label reaches at least 4.5:1 against its tinted fill
 
-### Requirement: Controls and focus meet 3:1
-The field border SHALL reach at least 3:1 against the field background, in both themes. So SHALL
-the focus border and the focus ring against the surface around them. The field border SHALL NOT be
-drawn darker than it needs to be to reach that minimum.
+### Requirement: Focus meets 3:1, the field edge stays quiet
+The focus border and the focus ring SHALL reach at least 3:1 against the surface around them, in
+both themes. The resting field border SHALL be slate-300 (light) and slate-600 (dark): one step past
+so-platform's own, visible against the field, and deliberately below 3:1 at the owner's choice.
 
 #### Scenario: Resting field
 - **WHEN** an input is shown at rest in either theme
-- **THEN** its border reaches at least 3:1 and at most 3.2:1 against the field background
+- **THEN** its border is visible against the field background, at less than 3:1
+
+### Requirement: A hairline stays visible on the page
+The subtle border (`--border-subtle`) SHALL differ visibly from the page background in both themes,
+so a divider drawn straight on the page, such as the line under the page title, does not vanish.
+
+#### Scenario: Title divider in the light theme
+- **WHEN** the dashboard renders in the light theme
+- **THEN** the line under the page title is visible against the `#f1f5f9` page
 
 ### Requirement: Planes stay distinct
 In both themes a card or table (`--surface`) SHALL be lighter than the page (`--background`) it sits

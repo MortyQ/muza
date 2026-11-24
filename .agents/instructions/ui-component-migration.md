@@ -236,7 +236,7 @@ table `_fixed`, `_fullscreen` (focus), `_header` (resize line), `_highlight`,
 (selected, dragged over), `TableExpandAdditionalHeadersButton` (expanded,
 focus); `vavatar`, `vbutton`, `vchip`, `vtag`, `vloader`, `vprogressbar`,
 `vtoaster`, `dragndrop`, `vcheckbox`, `vcomposer`, `vdatepicker`, `vfileupload`,
-`vinput`, `vlisteditor`, `vselect`, `vselect-floating`, `vswitch`, `vaccordion`
+`vinput`, `vlisteditor`, `vsegmentedcontrol` (the pill), `vselect`, `vselect-floating`, `vswitch`, `vaccordion`
 (focus), `vanimatedbackground` (brand backdrop), `vinfonotice` (tone), `vtab`,
 the sidebar partials, `vfloating` (selected item). Review a new use against
 this list; nothing checks it automatically.

@@ -8,6 +8,16 @@ import VSwitch from "../../../../src/components/inputs/VSwitch.vue";
 import { applyTheme, THEME_CASES } from "../../../setup/theme";
 import { computed as computedValue, tokenAsColor } from "../../../setup/tokens";
 
+/** The computed colour of a CSS colour expression, resolved in the current theme. */
+const colorOf = (expression: string): string => {
+  const probe = document.createElement("span");
+  probe.style.color = expression;
+  document.body.append(probe);
+  const value = getComputedStyle(probe).color;
+  probe.remove();
+  return value;
+};
+
 const SEGMENTS = [
   { label: "Day", value: "day" },
   { label: "Week", value: "week" },
@@ -174,12 +184,20 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
       expect(track.boxShadow).toBe(container.boxShadow);
     });
 
-    it("sets the selected pill off by surface, without a shadow", async () => {
+    it("marks the selected segment with a primary tint and an inset primary line", async () => {
       const el = await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" });
       const pill = getComputedStyle(el.querySelector(".v-sc__pill") as HTMLElement);
-      expect(pill.backgroundColor).toBe(tokenAsColor("--ui-surface-active"));
-      expect(pill.backgroundColor).not.toBe(getComputedStyle(el).backgroundColor);
-      expect(pill.boxShadow).toBe("none");
+      expect(pill.backgroundColor)
+        .toBe(colorOf("color-mix(in oklch, var(--ui-primary) 15%, transparent)"));
+      // A 1px inset ring, not an elevation: no offset, no blur.
+      expect(pill.boxShadow)
+        .toBe(`${colorOf("color-mix(in oklch, var(--ui-primary) 40%, transparent)")} 0px 0px 0px 1px inset`);
+    });
+
+    it("writes the selected label in the accent", async () => {
+      const el = await mountIt(VSegmentedControl, { options: SEGMENTS, modelValue: "day" });
+      const active = el.querySelector(".v-sc__item--active") as HTMLElement;
+      expect(getComputedStyle(active).color).toBe(tokenAsColor("--ui-primary-hover"));
     });
 
     it("nests the pill's corner inside the track's: outer = inner + padding", async () => {
@@ -228,9 +246,10 @@ describe.each(THEME_CASES)("input tokens — %s theme", (theme) => {
         expect(Math.round(box(pill).width)).toBe(Math.round(box(target).width));
       });
 
-      it("is the active surface, drawn from the surface-active token", async () => {
+      it("is the active surface, drawn from the primary tint", async () => {
         const { el, pill } = await mountPill("day");
-        expect(getComputedStyle(pill).backgroundColor).toBe(tokenAsColor("--ui-surface-active"));
+        expect(getComputedStyle(pill).backgroundColor)
+          .toBe(colorOf("color-mix(in oklch, var(--ui-primary) 15%, transparent)"));
         // Which is why the segment itself must not paint one: it would cut to
         // it instantly and the slide would be invisible underneath.
         expect(getComputedStyle(segment(el, 0)).backgroundColor).toBe("rgba(0, 0, 0, 0)");

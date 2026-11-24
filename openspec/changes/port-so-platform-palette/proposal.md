@@ -28,7 +28,7 @@ applies them.
   | 4 | Dark: text on statuses | dark text `#0f172a` (6.4–10.7:1) |
   | 5 | Dark status subtles | step 950, with step 900 as the muted step and the border |
   | 6 | Warning | amber-700 `#b45309`; white text on it and as text, 5.0:1 |
-  | 7 | Field border | one step darker than so-platform, raised to exactly 3:1 (see below) |
+  | 7 | Field border | one step darker than so-platform: slate-300 / slate-600 (decision F, below) |
   | 8 | Dark navigation | `#020617`, darker than the `#0f172a` page |
 
 - **Field border (choice 7).** The owner picked "one step darker" (`#cbd5e1` / `#475569`). But the
@@ -65,6 +65,14 @@ applies them.
   Insightful page, the owner preferred so-platform's dark theme. The dark frame returns to slate-900,
   and the dark shadows become so-platform's black drop with a 5% white top line. This replaces the
   sky glow below and decision D's slate-950 frame.
+- **Quiet field edges, a visible page hairline, the tools pill (decision F, owner, 2026-11-24).**
+  - The 3:1 field border looked heavy on the live page, so the field edge returns to the owner's
+    original choice: slate-300 / slate-600. It is deliberately below 3:1. Focus keeps its 3:1.
+  - The light `--border-subtle` was the page colour itself, so the line under the page title
+    vanished. It is now slate-200.
+  - The segmented control's pill takes so-platform's tools style: a 15% primary tint, an inset
+    40% primary line and the selected label in the accent. A selected segment is one of the
+    accent's roles.
 - **Elevation tint.** The shadows follow the palette.
   - The light shadow takes the slate hue (257) instead of violet.
   - The dark glow takes the accent's hue (237) instead of the brand violet.
