@@ -8,7 +8,7 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
 
 ## 1. Contrast contract — `test(ui): assert theme contrast pairs`
 
-- [ ] 1.1 Add `libs/ui/tests/unit/theme-contrast.spec.ts`. It does three things:
+- [x] 1.1 Add `libs/ui/tests/unit/theme-contrast.spec.ts`. It does three things:
   - reads `libs/config/src/tailwind/theme.css` as text;
   - takes the light and dark theme blocks by selector;
   - converts each `oklch()` value to sRGB and computes the WCAG ratio.
@@ -22,7 +22,7 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
   Verify: run `pnpm --filter @muzakit/ui test:unit -- theme-contrast` against the current violet
   palette. The field-border, status and dark-foreground pairs must not all pass, which proves the
   test can fail.
-- [ ] 1.2 Add a case that no colour variable in either block has a hue between 265 and 285. Verify:
+- [x] 1.2 Add a case that no colour variable in either block has a hue between 270 and 280 (the previous palette's range; slate sits at 257–266). Verify:
   it fails against the current palette.
 
 ## 2. Light palette — `feat(config): port so-platform light palette`
