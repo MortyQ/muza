@@ -1,7 +1,7 @@
 import { defineComponent, h, nextTick, ref } from "vue";
 
 import { mount, type VueWrapper } from "@vue/test-utils";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import TablePagination from "../../../src/components/table/components/TablePagination.vue";
 import TableToolbar from "../../../src/components/table/components/TableToolbar.vue";
@@ -184,6 +184,27 @@ describe("VTable", () => {
       const w = table({ totalRow: makeTotalRow() });
       const texts = w.findAll(".v-table-total-text").map(t => t.text());
       expect(texts).toContain("$6,692");
+    });
+  });
+
+  describe("scrollbars", () => {
+    it("show only while the table is being scrolled", async () => {
+      vi.useFakeTimers();
+      try {
+        const w = table();
+        const container = () => w.find(".v-table-scroll-container");
+        expect(container().classes()).not.toContain("v-table-scroll-container--scrolling");
+
+        await container().trigger("scroll");
+        expect(container().classes()).toContain("v-table-scroll-container--scrolling");
+
+        vi.advanceTimersByTime(800);
+        await nextTick();
+        expect(container().classes()).not.toContain("v-table-scroll-container--scrolling");
+      }
+      finally {
+        vi.useRealTimers();
+      }
     });
   });
 

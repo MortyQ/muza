@@ -2,37 +2,6 @@
 // ============================================
 @use './variables' as *;
 
-.v-table-scrollbar-styled {
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--ui-surface-sunken);
-    border-radius: var(--ui-radius-xs);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--ui-border) 70%, var(--ui-foreground-secondary) 30%);
-    border-radius: var(--ui-radius-xs);
-    border: 2px solid var(--ui-surface-sunken);
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background: color-mix(in oklch, var(--ui-border) 50%, var(--ui-foreground-secondary) 50%);
-      }
-    }
-
-    &:active {
-      background: var(--ui-foreground-secondary);
-    }
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--ui-border) var(--ui-surface-sunken);
-}
-
 .v-table-user-select-none {
   user-select: none;
   -webkit-user-select: none;
