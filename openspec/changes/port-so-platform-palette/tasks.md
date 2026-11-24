@@ -74,10 +74,10 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
 
 ## 5. Verification
 
-- [ ] 5.1 Run a cold build and every check in `ui-component-migration.md` § Verify. Also run
+- [x] 5.1 Run a cold build and every check in `ui-component-migration.md` § Verify. Also run
   `pnpm --filter @muzakit/ui test:unit`, `test:types` and `test:tokens`. Verify: all green, with
   the output quoted in the handoff.
-- [ ] 5.2 Run the dashboard and look at `/`, `/components-demo` and `/table-demo` in both themes.
+- [x] 5.2 Run the dashboard and look at `/`, `/components-demo` and `/table-demo` in both themes.
   Specific checks:
   - the table header and total-row gradients and pinned tints;
   - the dark sunken and hover surfaces (design.md, Risks);
@@ -85,7 +85,7 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
 
   Share screenshots with the owner. This also answers the open wrapper-colour question: the page is
   now `#f1f5f9`.
-- [ ] 5.3 Run `muzakit-starter-without-tailwind` with no theme loaded. Verify: its primary button
+- [x] 5.3 Run `muzakit-starter-without-tailwind` with no theme loaded. Verify: its primary button
   matches the dashboard's light-theme button.
 
 ## Workflow follow-up

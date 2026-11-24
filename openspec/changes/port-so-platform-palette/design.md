@@ -148,6 +148,13 @@ A violet glow under sky controls would be the one remnant of the old brand.
   `tokens.css` edit (`testing.md`, trap 1). → Mitigation: clear `libs/ui/node_modules/.vite` before
   `test:tokens`.
 
+- **[Finding] The `nav` tokens reach nothing visible.** The sidebar draws on `--ui-surface`. The
+  only reader of `--ui-nav*` is the datepicker's dark block, keyed on a `.dark` / `dp--theme-dark`
+  class that nothing sets. Choice 8 is therefore applied to the tokens but changes no screen today.
+  The dead block reads `--ui-foreground-inverted` on `--ui-nav`, which in the new dark palette is
+  slate-900 on slate-950. → Mitigation: none in this change, because the block never renders.
+  Removing it, or wiring the sidebar to `nav`, is a follow-up for the owner to decide.
+
 ## Migration Plan
 
 The work is a single commit set on its own branch. Rolling back means reverting it: no data,

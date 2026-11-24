@@ -65,13 +65,16 @@ drawn darker than it needs to be to reach that minimum.
 - **WHEN** an input is shown at rest in either theme
 - **THEN** its border reaches at least 3:1 and at most 3.2:1 against the field background
 
-### Requirement: Navigation is the darkest plane
-The navigation sidebar SHALL be dark in both themes. In the dark theme it SHALL be darker than the
-page background, so the sidebar separates from the page without relying on its border.
+### Requirement: Navigation tokens are the darkest plane
+The `nav` tokens SHALL be dark in both themes. In the dark theme `--nav` SHALL be darker than the
+page background, so anything drawn on it separates from the page without relying on a border.
 
-#### Scenario: Dark theme sidebar
-- **WHEN** the dashboard renders in the dark theme
-- **THEN** the sidebar is `#020617` and the page background is `#0f172a`
+The sidebar does not read these tokens; it draws on the surface tokens. Their only reader today is
+the datepicker's dark branch.
+
+#### Scenario: Dark theme navigation token
+- **WHEN** the dark theme's colour variables are read
+- **THEN** `--nav` is `#020617` and `--background` is `#0f172a`
 
 ### Requirement: Elevation follows the palette
 Shadows SHALL be tinted from the palette in use. The light shadow SHALL use the neutral (slate) hue.

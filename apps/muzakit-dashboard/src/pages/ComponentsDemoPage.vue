@@ -683,6 +683,8 @@ code {
   padding: 0.05rem 0.3rem;
   border-radius: var(--ui-radius-xs);
   background-color: var(--ui-surface-hover);
+  /* Not inherited: a muted hint on the dark theme's hover surface is 4.0:1. */
+  color: var(--ui-foreground-secondary);
   font-size: var(--ui-text-base);
 }
 </style>
