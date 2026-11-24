@@ -113,6 +113,18 @@ describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
     expect(value).toBeLessThanOrEqual(3.2);
   });
 
+  // The dashboard stacks three planes: the frame (sunken), the content panel
+  // (background) and cards and tables (surface). Each must step away from the
+  // one beneath it, or a card reads as part of the page.
+  it("keeps the frame, the page and a card on three distinct planes", () => {
+    const [frame, page, card] = ["surface-sunken", "background", "surface"]
+      .map(name => luminance(colour(theme, name)));
+    expect(frame).toBeLessThan(page);
+    expect(page).toBeLessThan(card);
+    expect(contrast(frame, page)).toBeGreaterThanOrEqual(1.05);
+    expect(contrast(page, card)).toBeGreaterThanOrEqual(1.05);
+  });
+
   it("draws the focus border at 3:1 against a surface", () => {
     expect(ratio(theme, "border-focus", "surface")).toBeGreaterThanOrEqual(3);
   });
@@ -124,6 +136,10 @@ describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
       .map(([name]) => name);
     expect(violet).toEqual([]);
   });
+});
+
+it("keeps a card's or table's subtle edge visible on its dark surface", () => {
+  expect(ratio("dark", "border-subtle", "surface")).toBeGreaterThanOrEqual(1.15);
 });
 
 it("makes the dark sidebar the darkest plane", () => {

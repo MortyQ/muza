@@ -61,6 +61,15 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
   case to `theme-contrast.spec.ts`. Verify: the case fails with so-platform's sky-500 and red-500
   hovers and passes with the 300 steps.
 
+- [x] 3.6 Decision D:
+  - the dashboard's content panel takes `bg-background`;
+  - the dark `--surface-sunken` is slate-950;
+  - the dark `--border-subtle` is `oklch(33% 0.038 259)`.
+
+  Add the "three distinct planes" and "dark subtle edge" cases to `theme-contrast.spec.ts`. Verify:
+  both cases fail on so-platform's values and pass on the new ones, and cards and tables stand off
+  the page in the dark theme.
+
 ## 4. Fallbacks and docs — `feat(ui): match token fallbacks to the new light palette`
 
 - [x] 4.1 Update every colour fallback in `libs/ui/src/styles/tokens.css`, including the

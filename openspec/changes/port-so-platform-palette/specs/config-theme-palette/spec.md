@@ -65,6 +65,16 @@ drawn darker than it needs to be to reach that minimum.
 - **WHEN** an input is shown at rest in either theme
 - **THEN** its border reaches at least 3:1 and at most 3.2:1 against the field background
 
+### Requirement: Planes stay distinct
+In both themes the frame (`--surface-sunken`), the page (`--background`) and a card or table
+(`--surface`) SHALL be three distinct planes, each lighter than the one beneath it. In the dark
+theme the subtle edge of a card or table (`--border-subtle`) SHALL stay visible on `--surface`.
+
+#### Scenario: A card on the page in the dark theme
+- **WHEN** a card or a table sits on the dashboard's content panel in the dark theme
+- **THEN** its fill is lighter than the panel, and the panel is lighter than the frame around it
+- **AND** its subtle edge differs from its fill
+
 ### Requirement: Navigation tokens are the darkest plane
 The `nav` tokens SHALL be dark in both themes. In the dark theme `--nav` SHALL be darker than the
 page background, so anything drawn on it separates from the page without relying on a border.

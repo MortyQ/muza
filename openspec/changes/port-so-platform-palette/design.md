@@ -125,6 +125,27 @@ Found by the DOM audit in task 3.4: so-platform's dark `-hover` is a darker step
 `[data-theme="dark"]` block per component; here one token does it. `theme-contrast.spec.ts` gains
 the tonal pair, so the ramp cannot flip back unnoticed.
 
+### 4c. Three planes in the dark theme (decision D)
+
+Reported by the owner after apply: in the dark theme cards and tables merged into the page.
+
+**[SKEPTIC]**
+- so-platform's dark ramp has two collisions: `border-subtle` = `surface` and
+  `surface-sunken` = `background`.
+- The dashboard's content panel was `bg-surface`, the same fill as every card on it, so only a
+  hairline at 50% of `--border` separated them.
+- The previous violet palette survived the same structure only because its subtle border was
+  4 L-points above the surface, and because the violet glow outlined each card.
+
+**[ADVOCATE]** Leaving the panel on `surface` keeps the layout untouched.
+
+**[VERDICT]**
+- The panel takes `--background`, so cards rise off it in both themes. The owner had already
+  picked this colour for the wrapper.
+- The dark `surface-sunken` drops to slate-950, so the frame still reads around the panel.
+- The dark `border-subtle` moves to the lightest slate that separates from `surface`.
+- `theme-contrast.spec.ts` asserts the plane order and the dark edge.
+
 ### 5. Elevation retinted, not redesigned
 
 The two shadow levels and their geometry stay. Only the hue changes:
@@ -139,9 +160,8 @@ A violet glow under sky controls would be the one remnant of the old brand.
 - **[Risk] A tint mixed toward a surface looks different on slate than on violet-grey.** Examples are
   the table's header gradient and pinned-row tints. → Mitigation: check `/table-demo` in both themes
   during apply, as `testing.md` requires for anything a token contract cannot see.
-- **[Risk] The dark `surface-sunken` equals the dark `background`** (`#0f172a`), as it does in
-  so-platform. A sunken well on the bare page will not read as sunken. → Mitigation: accept it,
-  because it matches so-platform. Flag any place where it reads as broken during the visual check.
+- **[Resolved] The dark `surface-sunken` equalled the dark `background`.** It is slate-950 now
+  (decision D).
 - **[Risk] The dark `surface-hover` equals `surface-raised`** (`#334155`). → Mitigation: same as
   above. A hover on a raised surface shows no change; flag it if any component relies on that hover.
 - **[Risk] The token-contract cache.** Vite's transform cache can serve the old colour after a

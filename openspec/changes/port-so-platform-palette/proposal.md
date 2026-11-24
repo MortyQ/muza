@@ -53,6 +53,14 @@ applies them.
   tonal buttons, tags, chips and active nav item write their text in `-hover`, which drops it to
   3.1–4.5:1 on a tonal fill (danger worst). The dark `-hover` is therefore the 300 step and the
   accent's `-active` the 200 step; every fill stays so-platform's. That gives 6.2–8.6:1.
+- **Dark layering (decision D, owner asked for it after seeing the port, 2026-11-24).** In
+  so-platform's dark palette `--border-subtle` equals `--surface` and `--surface-sunken` equals
+  `--background`. The dashboard's content panel was `--surface` too, so cards and tables merged into
+  the page and their edges vanished. The fix:
+  - the dashboard's content panel takes `--background`, which also makes the light page the
+    `#f1f5f9` the owner liked;
+  - the dark `--surface-sunken` is slate-950;
+  - the dark `--border-subtle` is `oklch(33% 0.038 259)`, between slate-800 and slate-700.
 - **Elevation tint.** The shadows follow the palette.
   - The light shadow takes the slate hue (257) instead of violet.
   - The dark glow takes the accent's hue (237) instead of the brand violet.
@@ -80,7 +88,8 @@ None. `openspec/specs/` holds no living spec yet.
 - **Packages:**
   - `@muzakit/config`: `theme.css`, the palette itself;
   - `@muzakit/ui`: `tokens.css` fallbacks, plus a `CHANGELOG.md` entry under "Changed";
-  - `muzakit-dashboard` and the starter: no code change, a new look.
+  - `muzakit-dashboard`: the content panel in `DefaultLayout.vue` takes `bg-background`;
+  - the starter: no code change, a new look.
 - **Public API of `@muzakit/ui`:** unchanged; same token names, new values.
 - **Tests:**
   - Token contracts read tokens rather than pinned colours, so they keep passing by construction.
@@ -91,8 +100,6 @@ None. `openspec/specs/` holds no living spec yet.
     amber, sky and green, not violet, and the dashboard passes none.
   - The table header and total-row gradients and the avatar palette. These are owner-kept uses
     outside the accent roles, and they follow `--ui-primary` on their own.
-  - Making the page background `#f1f5f9`. It already is, by this port; the owner liked it on the
-    "VTable" card and will judge it on the whole dashboard after apply.
   - Later migration phases:
     - removing `:root { font-family }` from `tokens.css`;
     - package naming and the `GlobalComponents` conflict;
