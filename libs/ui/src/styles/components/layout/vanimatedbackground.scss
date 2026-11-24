@@ -1,17 +1,54 @@
 /* Ported from Tailwind utilities that used to sit on the template:
-   `fixed inset-0 z-1 pointer-events-none` on the canvas and
+   `fixed inset-0 z-1 pointer-events-none` on the drawing layer and
    `fixed inset-0 z-1 bg-linear-to-br from-primary/5 via-accent/5 to-info/5`
    on the tint layer. */
 
-.v-animated-background__canvas,
+.v-animated-background,
 .v-animated-background__tint {
   position: fixed;
   inset: 0;
   z-index: 1;
 }
 
-.v-animated-background__canvas {
+.v-animated-background {
+  overflow: hidden;
   pointer-events: none;
+}
+
+/* One blob: a radial gradient that fades out at 70% of its radius, the falloff
+   the canvas drew, drifting back and forth along its own vector. Only
+   `transform` animates, so the browser moves each blob on the compositor. */
+.v-animated-background__blob {
+  position: absolute;
+  left: var(--v-blob-x);
+  top: var(--v-blob-y);
+  width: var(--v-blob-size);
+  height: var(--v-blob-size);
+  /* Centred on its point with `translate`, which composes with the animated
+     `transform` instead of being overwritten by it. */
+  translate: -50% -50%;
+  border-radius: var(--ui-radius-full);
+  background-image: radial-gradient(
+    circle closest-side,
+    var(--v-blob-core) 0%,
+    var(--v-blob-halo) 35%,
+    transparent 70%
+  );
+  will-change: transform;
+  animation: v-blob-drift var(--v-blob-period) ease-in-out var(--v-blob-offset) infinite alternate; /* literal: ambient loop, a soft curve keeps the drift from snapping at the turn */
+  animation-play-state: var(--v-blob-play);
+}
+
+@keyframes v-blob-drift {
+  to {
+    transform: translate(var(--v-blob-dx), var(--v-blob-dy));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v-animated-background__blob {
+    animation: none;
+  }
 }
 
 .v-animated-background__tint {

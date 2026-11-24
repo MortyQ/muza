@@ -1,63 +1,63 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import VAnimatedBackground from "../../../src/components/layout/VAnimatedBackground.vue";
 
+const blobs = (w: ReturnType<typeof mount>) => w.findAll(".v-animated-background__blob");
+
 /**
- * jsdom has no 2D context, and the component guards on that (`if (!ctx) return`),
- * so it mounts without drawing. What is worth asserting here is the structure
- * and the teardown; the painting itself is a canvas and would need a real engine
- * plus a frozen clock to be worth a pixel baseline, so it stays out of the
- * screenshot layer entirely.
+ * The motion is a CSS animation, which jsdom neither runs nor lays out. What is
+ * worth asserting here is the structure and what each blob hands to CSS.
  */
 describe("VAnimatedBackground", () => {
-  it("renders a canvas and a tint layer", () => {
+  it("renders a blob layer and a tint layer", () => {
     const w = mount(VAnimatedBackground);
-    expect(w.find("canvas.v-animated-background__canvas").exists()).toBe(true);
+    expect(w.find(".v-animated-background").exists()).toBe(true);
     expect(w.find(".v-animated-background__tint").exists()).toBe(true);
   });
 
-  it("hides its canvas from assistive technology", () => {
-    expect(mount(VAnimatedBackground).find("canvas").attributes("aria-hidden")).toBe("true");
+  it("hides its blobs from assistive technology", () => {
+    const layer = mount(VAnimatedBackground).find(".v-animated-background");
+    expect(layer.attributes("aria-hidden")).toBe("true");
   });
 
-  it("styles itself through classes, never inline", () => {
-    const w = mount(VAnimatedBackground);
-    expect(w.find("canvas").attributes("style")).toBeUndefined();
-    expect(w.find(".v-animated-background__tint").attributes("style")).toBeUndefined();
+  it("renders one blob per `count`", () => {
+    expect(blobs(mount(VAnimatedBackground, { props: { count: 3 } }))).toHaveLength(3);
+    expect(blobs(mount(VAnimatedBackground))).toHaveLength(15);
   });
 
-  it("survives a missing 2D context", () => {
-    // The guard is what makes the component safe under SSR hydration and in
-    // any environment without canvas support.
-    expect(() => mount(VAnimatedBackground)).not.toThrow();
+  it("hands each blob to CSS as custom properties only, never as inline style", () => {
+    for (const blob of blobs(mount(VAnimatedBackground, { props: { count: 4 } }))) {
+      const style = (blob.element as HTMLElement).style;
+      const names = Array.from({ length: style.length }, (_, i) => style.item(i));
+      expect(names.length).toBeGreaterThan(0);
+      expect(names.every(name => name.startsWith("--v-blob-")), names.join(", ")).toBe(true);
+    }
+    const tint = mount(VAnimatedBackground).find(".v-animated-background__tint");
+    expect(tint.attributes("style")).toBeUndefined();
   });
 
-  it("releases its resize listener and animation frame on unmount", () => {
-    const removeEventListener = vi.spyOn(window, "removeEventListener");
-    const cancelAnimationFrame = vi.spyOn(window, "cancelAnimationFrame");
-
-    const context = {
-      clearRect: vi.fn(),
-      createRadialGradient: vi.fn(() => ({ addColorStop: vi.fn() })),
-      beginPath: vi.fn(),
-      arc: vi.fn(),
-      fill: vi.fn(),
-      fillStyle: "",
-    };
-    vi.spyOn(HTMLCanvasElement.prototype, "getContext")
-      .mockReturnValue(context as unknown as CanvasRenderingContext2D);
-
-    const w = mount(VAnimatedBackground);
-    w.unmount();
-
-    expect(removeEventListener).toHaveBeenCalledWith("resize", expect.any(Function));
-    expect(cancelAnimationFrame).toHaveBeenCalled();
-
-    vi.restoreAllMocks();
+  it("sizes a blob from its radius range", () => {
+    const props = { count: 1, minRadius: 50, maxRadius: 0 };
+    const [blob] = blobs(mount(VAnimatedBackground, { props }));
+    expect((blob.element as HTMLElement).style.getPropertyValue("--v-blob-size")).toBe("100px");
   });
 
-  it("accepts a blob count without throwing", () => {
-    expect(() => mount(VAnimatedBackground, { props: { count: 3, speed: 0 } })).not.toThrow();
+  it("keeps an rgb colour's hue at the canvas's alphas", () => {
+    const [blob] = blobs(mount(VAnimatedBackground, { props: { count: 1, colors: ["rgba(10, 20, 30, 0.3)"] } }));
+    const style = (blob.element as HTMLElement).style;
+    expect(style.getPropertyValue("--v-blob-core")).toBe("rgba(10, 20, 30, 0.5)");
+    expect(style.getPropertyValue("--v-blob-halo")).toBe("rgba(10, 20, 30, 0.25)");
+  });
+
+  it("mixes any other colour toward transparent, so tokens work too", () => {
+    const [blob] = blobs(mount(VAnimatedBackground, { props: { count: 1, colors: ["var(--ui-primary)"] } }));
+    expect((blob.element as HTMLElement).style.getPropertyValue("--v-blob-core"))
+      .toBe("color-mix(in oklch, var(--ui-primary) 50%, transparent)");
+  });
+
+  it("holds still at speed 0", () => {
+    const [blob] = blobs(mount(VAnimatedBackground, { props: { count: 1, speed: 0 } }));
+    expect((blob.element as HTMLElement).style.getPropertyValue("--v-blob-play")).toBe("paused");
   });
 });
