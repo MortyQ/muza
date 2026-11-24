@@ -49,10 +49,24 @@ jobs:
           VITE_DEMO_EMAIL: ${{ vars.VITE_DEMO_EMAIL }}
           VITE_DEMO_PASSWORD: ${{ vars.VITE_DEMO_PASSWORD }}
 
-      # Pages has no rewrites: a deep link or a refresh on /muza/settings would
-      # 404. Serving the app as the 404 page lets the router take the path over.
-      - name: SPA fallback
-        run: cp apps/muzakit-dashboard/dist/index.html apps/muzakit-dashboard/dist/404.html
+      # Pages has no rewrites. Every known route gets its own copy of the app
+      # shell as `<route>.html`, which Pages serves for `/<route>` with no
+      # trailing-slash redirect, so a deep link or a refresh answers 200 rather
+      # than 404 (a 404
+      # status is logged as a console error, and crawlers and Lighthouse treat
+      # the page as missing). 404.html stays as the fallback for anything else,
+      # including routes added later and not listed here.
+      - name: SPA routes
+        working-directory: apps/muzakit-dashboard/dist
+        run: |
+          cp index.html 404.html
+          for route in auth home analytics components-demo table-demo 403 \
+            reports/overview reports/monthly reports/custom reports/quarterly/q1 reports/quarterly/q2 \
+            settings/profile settings/team settings/billing \
+            settings/account/security settings/account/notifications; do
+            mkdir -p "$(dirname "$route")"
+            cp index.html "$route.html"
+          done
 
       - uses: actions/upload-pages-artifact@v3
         with:

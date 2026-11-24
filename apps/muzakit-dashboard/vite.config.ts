@@ -39,7 +39,9 @@ export default ({ mode }: ConfigEnv) => {
     },
 
     build: {
-      sourcemap: mode !== "production",
+      // Shipped in production too: the repository is public, and the maps let the browser and
+      // Lighthouse map a stack trace back to the source.
+      sourcemap: true,
       rollupOptions: {
         output: {
           manualChunks: {
