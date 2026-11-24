@@ -1,27 +1,34 @@
 <script lang="ts" setup>
-import { computed, ref, type Component, watch } from "vue";
+import { computed, defineAsyncComponent, ref, type Component, watch } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
-
-import { VLoader } from "@muzakit/ui";
 
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { setOnAuthFailed } from "@/shared/config/axios";
 import { useGlobalFiltersSync } from "@/shared/config/global-filter/useGlobalFiltersSync";
 
-import AuthLayout from "./AuthLayout.vue";
-import DefaultLayout from "./DefaultLayout.vue";
+import LayoutLoader from "./LayoutLoader.vue";
+import LayoutLoadError from "./LayoutLoadError.vue";
 
 const authStore = useAuthStore();
 const { syncFromUrl } = useGlobalFiltersSync();
 
-const layouts: Record<string, Component> = {
-  default: DefaultLayout,
-  auth: AuthLayout,
-};
-
 const route = useRoute();
 const router = useRouter();
+
+// Each layout is its own chunk: the sign-in page never needs the sidebar, topbar and filters,
+// and the app shell never needs the sign-in backdrop.
+const lazyLayout = (loader: () => Promise<Component>) => defineAsyncComponent({
+  loader,
+  loadingComponent: LayoutLoader,
+  errorComponent: LayoutLoadError,
+  delay: 200,
+});
+
+const layouts: Record<string, Component> = {
+  default: lazyLayout(() => import("./DefaultLayout.vue")),
+  auth: lazyLayout(() => import("./AuthLayout.vue")),
+};
 
 const isRouterReady = ref(false);
 router.isReady().then(() => {
@@ -51,10 +58,5 @@ const layout = computed(() => {
     v-if="layout"
     class="w-full"
   />
-  <div
-    v-else
-    class="w-full min-h-screen flex justify-center items-center"
-  >
-    <VLoader class="text-primary" />
-  </div>
+  <LayoutLoader v-else />
 </template>
