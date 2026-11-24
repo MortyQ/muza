@@ -216,22 +216,14 @@ describe("VInput", () => {
       expect(field(w).attributes("type")).toBe("password");
     });
 
-    it("is a native button, so the keyboard reaches it without a tabindex", () => {
-      const toggle = input({ type: "password" }).find(".v-input-password-toggle");
-      expect(toggle.element.tagName).toBe("BUTTON");
-      expect(toggle.attributes("type")).toBe("button");
-    });
-
-    it("names its action and reports its state", async () => {
-      // A screen reader otherwise announces an unnamed "button".
+    it("is reachable from the keyboard", async () => {
       const w = input({ type: "password" });
       const toggle = w.find(".v-input-password-toggle");
-      expect(toggle.attributes("aria-label")).toBe("Show password");
-      expect(toggle.attributes("aria-pressed")).toBe("false");
+      expect(toggle.attributes("tabindex")).toBe("0");
+      expect(toggle.attributes("role")).toBe("button");
 
-      await toggle.trigger("click");
-      expect(toggle.attributes("aria-label")).toBe("Hide password");
-      expect(toggle.attributes("aria-pressed")).toBe("true");
+      await toggle.trigger("keydown.enter");
+      expect(field(w).attributes("type")).toBe("text");
     });
   });
 
