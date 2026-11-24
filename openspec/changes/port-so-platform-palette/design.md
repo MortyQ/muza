@@ -158,6 +158,11 @@ plane, as in so-platform. Decision D's other two parts stay: the content panel o
 and the lifted `--border-subtle`. The dark `--elevation-sm` / `-lg` are so-platform's `DEFAULT` /
 `lg` dark shadows verbatim. The plane check now requires card > page ≥ frame.
 
+A follow-up from the owner: with the frame level with the page, the content panel vanished. The
+frame now sits at `oklch(16% 0.040 266)`, halfway between slate-950 and slate-900. That is dark
+enough to outline the panel, without the near-black hole decision D's slate-950 made (option A of
+three; a panel border and both together were the others).
+
 ### 5. Elevation retinted, not redesigned
 
 The two shadow levels and their geometry stay. Only the hue changes:

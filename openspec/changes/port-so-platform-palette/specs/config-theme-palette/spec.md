@@ -67,13 +67,13 @@ drawn darker than it needs to be to reach that minimum.
 
 ### Requirement: Planes stay distinct
 In both themes a card or table (`--surface`) SHALL be lighter than the page (`--background`) it sits
-on, and the frame (`--surface-sunken`) SHALL NOT be lighter than the page. In the dark theme the frame
-and the page are both so-platform's `#0f172a`, and the subtle edge of a card or table
+on, and the frame (`--surface-sunken`) SHALL NOT be lighter than the page. In the dark theme the page
+is so-platform's `#0f172a`, the frame sits one step below it, and the subtle edge of a card or table
 (`--border-subtle`) SHALL stay visible on `--surface`.
 
 #### Scenario: A card on the page in the dark theme
 - **WHEN** a card or a table sits on the dashboard's content panel in the dark theme
-- **THEN** its fill is lighter than the panel, and the panel is `#0f172a` like the frame around it
+- **THEN** its fill is lighter than the panel, the panel is `#0f172a`, and the frame around it is darker still
 - **AND** its subtle edge differs from its fill
 
 ### Requirement: Navigation tokens are the darkest plane

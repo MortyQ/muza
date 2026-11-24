@@ -74,8 +74,9 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
   - the dark `--surface-sunken` returns to slate-900;
   - the dark `--elevation-sm` / `-lg` are so-platform's dark `DEFAULT` / `lg` shadows.
 
-  The plane check in `theme-contrast.spec.ts` becomes card > page ≥ frame. Verify: the spec passes,
-  and the dark dashboard matches so-platform's page tone.
+  The plane check in `theme-contrast.spec.ts` becomes card > page ≥ frame. Then, on the owner's
+  follow-up, the dark frame moves to `oklch(16% 0.040 266)` so the panel reads against it. Verify:
+  the spec passes, and the dark dashboard keeps so-platform's page tone with a visible panel.
 
 ## 4. Fallbacks and docs — `feat(ui): match token fallbacks to the new light palette`
 
