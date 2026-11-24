@@ -253,19 +253,20 @@ const computedPlaceholder = computed(() => {
           </button>
 
           <!-- Password Toggle -->
-          <div
+          <button
             v-else-if="type === 'password'"
+            :aria-label="currentInputType === 'text' ? 'Hide password' : 'Show password'"
+            :aria-pressed="currentInputType === 'text'"
             class="v-input-password-toggle"
-            role="button"
-            tabindex="0"
+            type="button"
             @click="changeInputType"
-            @keydown.enter.space="changeInputType"
           >
             <VIcon
               :icon="currentInputType === 'text' ? 'lucide:eye-off' : 'lucide:eye'"
+              aria-hidden="true"
               class="v-input-icon-svg"
             />
-          </div>
+          </button>
         </slot>
       </div>
 
