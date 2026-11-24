@@ -27,14 +27,14 @@ applies. That means `.claude/hooks/review.sh` runs on each staged block, and wit
 
 ## 2. Light palette — `feat(config): port so-platform light palette`
 
-- [ ] 2.1 Replace every colour variable in `:root, :root[data-theme="light"]` with its so-platform
+- [x] 2.1 Replace every colour variable in `:root, :root[data-theme="light"]` with its so-platform
   value, converted to oklch. Write the Tailwind step and hex in a comment, applying choices 1, 3
   and 6. Verify: the light cases of the 1.1 spec pass.
-- [ ] 2.2 Set the light field border to `oklch(66.5% 0.030 257)`, with a comment giving its reason
+- [x] 2.2 Set the light field border to `oklch(66.5% 0.030 257)`, with a comment giving its reason
   (3:1 minimum). Verify: the 1.1 border case passes at between 3.0 and 3.2.
-- [ ] 2.3 Apply decision A, danger-700 `#b91c1c` with hover `#991b1b`, and decision B, muted
+- [x] 2.3 Apply decision A, danger-700 `#b91c1c` with hover `#991b1b`, and decision B, muted
   `oklch(54% 0.041 257)`. Verify: the 1.1 "status on subtle" and "muted on page" cases pass.
-- [ ] 2.4 Retint the light `--elevation-sm` and `--elevation-lg` to hue 257, keeping geometry and
+- [x] 2.4 Retint the light `--elevation-sm` and `--elevation-lg` to hue 257, keeping geometry and
   alpha. Update the comment. Verify: `pnpm --filter @muzakit/ui test:tokens` passes; clear
   `libs/ui/node_modules/.vite` first.
 
