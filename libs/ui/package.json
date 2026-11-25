@@ -6,6 +6,7 @@
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "sideEffects": [
+    "./src/index.ts",
     "**/*.css",
     "**/*.scss"
   ],
