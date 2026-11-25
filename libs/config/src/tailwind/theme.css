@@ -218,159 +218,180 @@
 
 :root,
 :root[data-theme="light"] {
-    --primary:            oklch(52% 0.27 280);
-    --primary-hover:      oklch(47% 0.27 280);
-    --primary-active:     oklch(42% 0.27 280);
-    --primary-foreground: oklch(100% 0 0);
-    --primary-subtle:     oklch(95% 0.06 280);
-    --primary-muted:      oklch(89% 0.09 280);
+    /* ─── Palette ──────────────────────────────────────────────
+       so-platform's: sky for the accent, slate for every neutral, and
+       green, amber, red and cyan for the statuses. Each value is the
+       Tailwind step in the comment, converted to oklch. The few that sit
+       between two steps say why: each one is the lightest value that still
+       meets its contrast minimum. tests/unit/theme-contrast.spec.ts in
+       @muzakit/ui holds every pair to it. */
+    --primary:             oklch(50.0% 0.119 243); /* sky-700 #0369a1 */
+    --primary-hover:       oklch(44.3% 0.100 241); /* sky-800 #075985 */
+    --primary-active:      oklch(39.1% 0.085 241); /* sky-900 #0c4a6e */
+    --primary-foreground:  oklch(100% 0 0); /* white #ffffff */
+    --primary-subtle:      oklch(97.7% 0.012 237); /* sky-50 #f0f9ff */
+    --primary-muted:       oklch(95.1% 0.025 237); /* sky-100 #e0f2fe */
 
-    --background:          oklch(96% 0.015 280);
-    --surface-sunken:      oklch(93% 0.018 280);
-    --surface:             oklch(99.5% 0.003 280);
-    --surface-raised:      oklch(98% 0.005 280);
-    --surface-overlay:     oklch(100% 0.002 280);
-    --surface-hover:       oklch(94% 0.008 280);
-    --surface-active:      oklch(91% 0.010 280);
-    --surface-tinted:      oklch(96% 0.020 280);
-    --surface-tinted-deep: oklch(93% 0.025 280);
+    --background:           oklch(96.8% 0.007 248); /* slate-100 #f1f5f9 */
+    --surface-sunken:       oklch(92.9% 0.013 256); /* slate-200 #e2e8f0 */
+    --surface:              oklch(100% 0 0); /* white #ffffff */
+    --surface-raised:       oklch(98.4% 0.003 248); /* slate-50 #f8fafc */
+    --surface-overlay:      oklch(100% 0 0); /* white #ffffff */
+    --surface-hover:        oklch(96.8% 0.007 248); /* slate-100 #f1f5f9 */
+    --surface-active:       oklch(92.9% 0.013 256); /* slate-200 #e2e8f0 */
+    --surface-tinted:       oklch(97.7% 0.012 237); /* sky-50 #f0f9ff */
+    --surface-tinted-deep:  oklch(95.1% 0.025 237); /* sky-100 #e0f2fe */
 
-    --nav:        oklch(22% 0.035 275);
-    --nav-hover:  oklch(27% 0.032 275);
-    --nav-active: oklch(30% 0.030 275);
-    --nav-border: oklch(28% 0.025 275);
+    --nav:         oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --nav-hover:   oklch(27.9% 0.037 260); /* slate-800 #1e293b */
+    --nav-active:  oklch(37.2% 0.039 257); /* slate-700 #334155 */
+    --nav-border:  oklch(27.9% 0.037 260); /* slate-800 #1e293b */
 
-    --foreground:           oklch(16% 0.015 280);
-    --foreground-secondary: oklch(38% 0.012 280);
-    --foreground-muted:     oklch(55% 0.008 280);
-    --foreground-subtle:    oklch(70% 0.005 280);
-    --foreground-disabled:  oklch(76% 0.004 280);
-    --foreground-inverted:  oklch(100% 0 0);
+    --foreground:            oklch(27.9% 0.037 260); /* slate-800 #1e293b */
+    --foreground-secondary:  oklch(44.6% 0.037 257); /* slate-600 #475569 */
+    --foreground-muted:      oklch(54% 0.041 257); /* between slate-500 and slate-600: 4.5:1 on the page background */
+    --foreground-subtle:     oklch(71.1% 0.035 257); /* slate-400 #94a3b8 */
+    --foreground-disabled:   oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
+    --foreground-inverted:   oklch(100% 0 0); /* white #ffffff */
 
-    --border-subtle: oklch(92% 0.008 280);
-    --border:        oklch(87% 0.010 280);
-    --border-strong: oklch(77% 0.013 280);
-    --border-focus:  oklch(52% 0.27 280);
+    --border-subtle:  oklch(92.9% 0.013 256); /* slate-200 #e2e8f0: slate-100 is the page itself, so a hairline on it would vanish */
+    --border:         oklch(92.9% 0.013 256); /* slate-200 #e2e8f0 */
+    --border-strong:  oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
+    --border-focus:   oklch(50.0% 0.119 243); /* sky-700 #0369a1 */
 
     --overlay: oklch(0% 0 0 / 0.5);
     --scrim:   oklch(0% 0 0 / 0.25);
 
-    --success:            oklch(52% 0.17 145);
-    --success-hover:      oklch(46% 0.17 145);
-    --success-foreground: oklch(100% 0 0);
-    --success-subtle:     oklch(94% 0.05 145);
-    --success-muted:      oklch(88% 0.07 145);
+    --success:             oklch(52.7% 0.137 150); /* green-700 #15803d */
+    --success-hover:       oklch(44.8% 0.108 151); /* green-800 #166534 */
+    --success-foreground:  oklch(100% 0 0); /* white #ffffff */
+    --success-subtle:      oklch(98.2% 0.018 156); /* green-50 #f0fdf4 */
+    --success-muted:       oklch(96.2% 0.043 157); /* green-100 #dcfce7 */
 
-    --warning:            oklch(72% 0.17 75);
-    --warning-hover:      oklch(65% 0.17 75);
-    --warning-foreground: oklch(20% 0.01 75);
-    --warning-subtle:     oklch(96% 0.05 75);
-    --warning-muted:      oklch(91% 0.07 75);
+    --warning:             oklch(55.5% 0.146 49); /* amber-700 #b45309 */
+    --warning-hover:       oklch(47.3% 0.125 46); /* amber-800 #92400e */
+    --warning-foreground:  oklch(100% 0 0); /* white #ffffff */
+    --warning-subtle:      oklch(98.7% 0.021 95); /* amber-50 #fffbeb */
+    --warning-muted:       oklch(96.2% 0.058 96); /* amber-100 #fef3c7 */
 
-    --danger:            oklch(55% 0.22 25);
-    --danger-hover:      oklch(49% 0.22 25);
-    --danger-foreground: oklch(100% 0 0);
-    --danger-subtle:     oklch(95% 0.05 25);
-    --danger-muted:      oklch(90% 0.08 25);
+    --danger:             oklch(50.5% 0.190 28); /* red-700 #b91c1c */
+    --danger-hover:       oklch(44.4% 0.161 27); /* red-800 #991b1b */
+    --danger-foreground:  oklch(100% 0 0); /* white #ffffff */
+    --danger-subtle:      oklch(97.1% 0.013 17); /* red-50 #fef2f2 */
+    --danger-muted:       oklch(93.6% 0.031 18); /* red-100 #fee2e2 */
 
-    --info:            oklch(57% 0.20 240);
-    --info-hover:      oklch(51% 0.20 240);
-    --info-foreground: oklch(100% 0 0);
-    --info-subtle:     oklch(94% 0.05 240);
-    --info-muted:      oklch(88% 0.07 240);
+    --info:             oklch(52.0% 0.094 223); /* cyan-700 #0e7490 */
+    --info-hover:       oklch(45.0% 0.077 224); /* cyan-800 #155e75 */
+    --info-foreground:  oklch(100% 0 0); /* white #ffffff */
+    --info-subtle:      oklch(98.4% 0.019 201); /* cyan-50 #ecfeff */
+    --info-muted:       oklch(95.6% 0.044 203); /* cyan-100 #cffafe */
 
-    --input-bg:           oklch(100% 0.002 280);
-    --input-border:       oklch(87% 0.010 280);
-    --input-placeholder:  oklch(70% 0.005 280);
-    --badge-neutral-bg:   oklch(91% 0.008 280);
-    --badge-neutral-text: oklch(35% 0.012 280);
+    --input-bg:            oklch(100% 0 0); /* white #ffffff */
+    --input-border:        oklch(86.9% 0.020 253); /* slate-300 #cbd5e1: a quiet field edge, the owner's choice over 3:1 */
+    --input-placeholder:   oklch(71.1% 0.035 257); /* slate-400 #94a3b8 */
+    --badge-neutral-bg:    oklch(96.8% 0.007 248); /* slate-100 #f1f5f9 */
+    --badge-neutral-text:  oklch(44.6% 0.037 257); /* slate-600 #475569 */
 
     /* ─── Elevation ───────────────────────────────────────────
-       Neutral, cool-tinted shadows. Depth is what separates surfaces here;
+       Neutral shadows in the slate hue. Depth is what separates surfaces here;
        borders are only a hairline on top of it. */
-    --elevation-sm:    0 1px 3px 0 oklch(20% 0.02 280 / 0.09),
-                    0 1px 2px -1px oklch(20% 0.02 280 / 0.07);
-    --elevation-lg:    0 12px 20px -6px oklch(20% 0.02 280 / 0.14),
-                    0 4px 8px -4px oklch(20% 0.02 280 / 0.09);
+    --elevation-sm:    0 1px 3px 0 oklch(20% 0.02 257 / 0.09),
+                    0 1px 2px -1px oklch(20% 0.02 257 / 0.07);
+    --elevation-lg:    0 12px 20px -6px oklch(20% 0.02 257 / 0.14),
+                    0 4px 8px -4px oklch(20% 0.02 257 / 0.09);
 }
 
 /* ─── Dark theme ─────────────────────────────────────────── */
 :root[data-theme="dark"] {
-    --primary:            oklch(65% 0.25 280);
-    --primary-hover:      oklch(70% 0.25 280);
-    --primary-active:     oklch(75% 0.25 280);
-    --primary-foreground: oklch(100% 0 0);
-    --primary-subtle:     oklch(28% 0.10 280);
-    --primary-muted:      oklch(33% 0.13 280);
+    /* so-platform's dark palette. Its fills are light (sky-400, green-400…),
+       so every *-foreground is slate-900: white on them is under 2.2:1.
+       Status subtles are step 950 with 900 as muted; the sidebar is
+       slate-950, one plane darker than the page.
 
-    --background:          oklch(16% 0.025 270);
-    --surface-sunken:      oklch(13% 0.022 270);
-    --surface:             oklch(20% 0.025 270);
-    --surface-raised:      oklch(24% 0.025 270);
-    --surface-overlay:     oklch(27% 0.028 270);
-    --surface-hover:       oklch(24% 0.025 270);
-    --surface-active:      oklch(27% 0.025 270);
-    --surface-tinted:      oklch(24% 0.040 275);
-    --surface-tinted-deep: oklch(21% 0.038 275);
+       One deliberate departure: -hover is the 300 step and -active the 200,
+       lighter than the fill, where so-platform goes a step darker. Tonal
+       buttons, tags, chips and the active nav item write their text in
+       -hover, and so-platform's darker step leaves it at 3.1–4.5:1 on a
+       tonal fill. so-platform patches that per component; here the token
+       carries it. */
+    --primary:             oklch(75.4% 0.139 233); /* sky-400 #38bdf8 */
+    --primary-hover:       oklch(82.8% 0.101 230); /* sky-300 #7dd3fc */
+    --primary-active:      oklch(90.1% 0.055 231); /* sky-200 #bae6fd */
+    --primary-foreground:  oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --primary-subtle:      oklch(29.3% 0.063 243); /* sky-950 #082f49 */
+    --primary-muted:       oklch(39.1% 0.085 241); /* sky-900 #0c4a6e */
 
-    --nav:        oklch(13% 0.022 270);
-    --nav-hover:  oklch(17% 0.022 270);
-    --nav-active: oklch(20% 0.025 270);
-    --nav-border: oklch(22% 0.020 270);
+    --background:           oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --surface-sunken:       oklch(16% 0.040 266); /* between slate-950 and slate-900: a frame a step below so-platform's #0f172a page */
+    --surface:              oklch(27.9% 0.037 260); /* slate-800 #1e293b */
+    --surface-raised:       oklch(37.2% 0.039 257); /* slate-700 #334155 */
+    --surface-overlay:      oklch(37.2% 0.039 257); /* slate-700 #334155 */
+    --surface-hover:        oklch(37.2% 0.039 257); /* slate-700 #334155 */
+    --surface-active:       oklch(44.6% 0.037 257); /* slate-600 #475569 */
+    --surface-tinted:       oklch(29.3% 0.063 243); /* sky-950 #082f49 */
+    --surface-tinted-deep:  oklch(39.1% 0.085 241); /* sky-900 #0c4a6e */
 
-    --foreground:           oklch(93% 0.006 280);
-    --foreground-secondary: oklch(73% 0.010 280);
-    --foreground-muted:     oklch(52% 0.007 280);
-    --foreground-subtle:    oklch(40% 0.005 280);
-    --foreground-disabled:  oklch(35% 0.004 280);
-    --foreground-inverted:  oklch(16% 0.025 270);
+    --nav:         oklch(12.9% 0.041 265); /* slate-950 #020617 */
+    --nav-hover:   oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --nav-active:  oklch(27.9% 0.037 260); /* slate-800 #1e293b */
+    --nav-border:  oklch(27.9% 0.037 260); /* slate-800 #1e293b */
 
-    --border-subtle: oklch(24% 0.020 270);
-    --border:        oklch(30% 0.022 270);
-    --border-strong: oklch(40% 0.018 270);
-    --border-focus:  oklch(65% 0.25 280);
+    --foreground:            oklch(96.8% 0.007 248); /* slate-100 #f1f5f9 */
+    --foreground-secondary:  oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
+    --foreground-muted:      oklch(71.1% 0.035 257); /* slate-400 #94a3b8 */
+    --foreground-subtle:     oklch(55.4% 0.041 257); /* slate-500 #64748b */
+    --foreground-disabled:   oklch(44.6% 0.037 257); /* slate-600 #475569 */
+    --foreground-inverted:   oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+
+    --border-subtle:  oklch(33% 0.038 259); /* between slate-800 and slate-700: slate-800 is the surface itself */
+    --border:         oklch(37.2% 0.039 257); /* slate-700 #334155 */
+    --border-strong:  oklch(44.6% 0.037 257); /* slate-600 #475569 */
+    --border-focus:   oklch(75.4% 0.139 233); /* sky-400 #38bdf8 */
 
     --overlay: oklch(0% 0 0 / 0.65);
     --scrim:   oklch(0% 0 0 / 0.35);
 
-    --success:            oklch(63% 0.17 145);
-    --success-hover:      oklch(68% 0.17 145);
-    --success-foreground: oklch(100% 0 0);
-    --success-subtle:     oklch(24% 0.07 145);
-    --success-muted:      oklch(29% 0.09 145);
+    --success:             oklch(80.0% 0.182 152); /* green-400 #4ade80 */
+    --success-hover:       oklch(87.1% 0.136 154); /* green-300 #86efac */
+    --success-foreground:  oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --success-subtle:      oklch(26.6% 0.063 153); /* green-950 #052e16 */
+    --success-muted:       oklch(39.3% 0.090 153); /* green-900 #14532d */
 
-    --warning:            oklch(74% 0.17 75);
-    --warning-hover:      oklch(79% 0.17 75);
-    --warning-foreground: oklch(15% 0.01 75);
-    --warning-subtle:     oklch(24% 0.07 75);
-    --warning-muted:      oklch(29% 0.09 75);
+    --warning:             oklch(83.7% 0.164 84); /* amber-400 #fbbf24 */
+    --warning-hover:       oklch(87.9% 0.153 92); /* amber-300 #fcd34d */
+    --warning-foreground:  oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --warning-subtle:      oklch(27.9% 0.074 46); /* amber-950 #451a03 */
+    --warning-muted:       oklch(41.4% 0.105 46); /* amber-900 #78350f */
 
-    --danger:            oklch(63% 0.22 25);
-    --danger-hover:      oklch(68% 0.22 25);
-    --danger-foreground: oklch(100% 0 0);
-    --danger-subtle:     oklch(24% 0.08 25);
-    --danger-muted:      oklch(29% 0.10 25);
+    --danger:             oklch(71.1% 0.166 22); /* red-400 #f87171 */
+    --danger-hover:       oklch(80.8% 0.103 20); /* red-300 #fca5a5 */
+    --danger-foreground:  oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --danger-subtle:      oklch(25.8% 0.089 26); /* red-950 #450a0a */
+    --danger-muted:       oklch(39.6% 0.133 26); /* red-900 #7f1d1d */
 
-    --info:            oklch(66% 0.18 240);
-    --info-hover:      oklch(71% 0.18 240);
-    --info-foreground: oklch(100% 0 0);
-    --info-subtle:     oklch(24% 0.07 240);
-    --info-muted:      oklch(29% 0.09 240);
+    --info:             oklch(79.7% 0.134 212); /* cyan-400 #22d3ee */
+    --info-hover:       oklch(86.5% 0.115 207); /* cyan-300 #67e8f9 */
+    --info-foreground:  oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --info-subtle:      oklch(30.2% 0.054 230); /* cyan-950 #083344 */
+    --info-muted:       oklch(39.8% 0.066 227); /* cyan-900 #164e63 */
 
-    --input-bg:           oklch(18% 0.022 270);
-    --input-border:       oklch(30% 0.022 270);
-    --input-placeholder:  oklch(48% 0.007 280);
-    --badge-neutral-bg:   oklch(26% 0.020 270);
-    --badge-neutral-text: oklch(74% 0.009 280);
+    --input-bg:            oklch(20.8% 0.040 266); /* slate-900 #0f172a */
+    --input-border:        oklch(44.6% 0.037 257); /* slate-600 #475569: a quiet field edge, the owner's choice over 3:1 */
+    --input-placeholder:   oklch(55.4% 0.041 257); /* slate-500 #64748b */
+    --badge-neutral-bg:    oklch(37.2% 0.039 257); /* slate-700 #334155 */
+    --badge-neutral-text:  oklch(86.9% 0.020 253); /* slate-300 #cbd5e1 */
 
     /* ─── Elevation ───────────────────────────────────────────
-       A black shadow on a dark surface is invisible, so dark mode carries the
-       brand violet instead: the elevation reads as a glow rather than a drop
-       shadow, and stays visible against every surface in the ramp. */
-    --elevation-sm:    0 1px 3px 0 oklch(45% 0.20 280 / 0.24),
-                    0 1px 2px -1px oklch(0% 0 0 / 0.40);
-    --elevation-lg:    0 12px 20px -6px oklch(52% 0.24 280 / 0.38),
-                    0 4px 8px -4px oklch(0% 0 0 / 0.50);
+       so-platform's dark shadows, as the owner chose them over a tinted glow:
+       a deep black drop plus a 5% white line along the top edge, which is
+       what lifts a card off slate on a dark page. sm is their DEFAULT step
+       (a card at rest), lg their lg (anything that floats). */
+    --elevation-sm:    inset 0 1px 0 0 oklch(100% 0 0 / 0.05),
+                    0 1px 3px 0 oklch(0% 0 0 / 0.35),
+                    0 1px 2px -1px oklch(0% 0 0 / 0.35);
+    --elevation-lg:    inset 0 1px 0 0 oklch(100% 0 0 / 0.05),
+                    0 10px 15px -3px oklch(0% 0 0 / 0.40),
+                    0 4px 6px -4px oklch(0% 0 0 / 0.40);
 }
 
 

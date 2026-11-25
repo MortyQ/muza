@@ -1,0 +1,114 @@
+# Spec Delta
+
+## Purpose
+
+The theme in `@muzakit/config` gives every `--ui-*` colour token its value in the light and dark
+themes. This spec fixes which palette that is and the contrast every text and control pair must
+reach.
+
+## ADDED Requirements
+
+### Requirement: The palette is so-platform's
+The theme SHALL draw its colours from so-platform's palette. In both themes:
+- the accent SHALL be from Tailwind's sky scale;
+- neutrals (background, surfaces, text, borders, navigation) SHALL be from the slate scale;
+- each status SHALL be from its own scale: green, amber, red and cyan.
+
+A value MAY sit between two steps of its scale only where a contrast requirement below demands it.
+
+#### Scenario: Page and card in the light theme
+- **WHEN** the dashboard renders in the light theme
+- **THEN** the page background is `#f1f5f9` and a card surface is `#ffffff`
+
+#### Scenario: Page and card in the dark theme
+- **WHEN** the dashboard renders in the dark theme
+- **THEN** the page background is `#0f172a` and a card surface is `#1e293b`
+
+#### Scenario: No violet remains
+- **WHEN** the theme's colour variables are read in either theme
+- **THEN** none of them has a hue in the violet range the previous palette used (hue 270–280)
+
+### Requirement: Text meets 4.5:1
+Text SHALL reach at least 4.5:1 against the surface it is drawn on, in both themes. This holds for:
+- the primary, secondary and muted foregrounds on the page background and on a card;
+- each status colour, and the accent, used as text on a card and on its own subtle background;
+- each `*-foreground` token on its fill.
+
+#### Scenario: Button text on the accent
+- **WHEN** a primary button is drawn in either theme
+- **THEN** its label reaches at least 4.5:1 against its fill
+- **AND** in the dark theme the label is dark (`#0f172a`) on the light sky fill
+
+#### Scenario: Status as text
+- **WHEN** a success, warning, danger or info colour is used as text on a card or on its own subtle background, in either theme
+- **THEN** the contrast is at least 4.5:1
+
+#### Scenario: Muted text on the bare page
+- **WHEN** muted foreground text sits directly on the light page background
+- **THEN** the contrast is at least 4.5:1
+
+### Requirement: Tonal text reads on its tint
+A tone's `-hover` value SHALL reach at least 4.5:1, as text, against the tone laid over a surface at
+9% and at 15%, in both themes. This is the text colour of tonal buttons, tags, chips and the active
+navigation item. In the dark theme `-hover` SHALL therefore be lighter than the tone's fill.
+
+#### Scenario: Tonal danger button in the dark theme
+- **WHEN** a danger tonal button is shown in the dark theme, at rest or hovered
+- **THEN** its label reaches at least 4.5:1 against its tinted fill
+
+### Requirement: Focus meets 3:1, the field edge stays quiet
+The focus border and the focus ring SHALL reach at least 3:1 against the surface around them, in
+both themes. The resting field border SHALL be slate-300 (light) and slate-600 (dark): one step past
+so-platform's own, visible against the field, and deliberately below 3:1 at the owner's choice.
+
+#### Scenario: Resting field
+- **WHEN** an input is shown at rest in either theme
+- **THEN** its border is visible against the field background, at less than 3:1
+
+### Requirement: A hairline stays visible on the page
+The subtle border (`--border-subtle`) SHALL differ visibly from the page background in both themes,
+so a divider drawn straight on the page, such as the line under the page title, does not vanish.
+
+#### Scenario: Title divider in the light theme
+- **WHEN** the dashboard renders in the light theme
+- **THEN** the line under the page title is visible against the `#f1f5f9` page
+
+### Requirement: Planes stay distinct
+In both themes a card or table (`--surface`) SHALL be lighter than the page (`--background`) it sits
+on, and the frame (`--surface-sunken`) SHALL NOT be lighter than the page. In the dark theme the page
+is so-platform's `#0f172a`, the frame sits one step below it, and the subtle edge of a card or table
+(`--border-subtle`) SHALL stay visible on `--surface`.
+
+#### Scenario: A card on the page in the dark theme
+- **WHEN** a card or a table sits on the dashboard's content panel in the dark theme
+- **THEN** its fill is lighter than the panel, the panel is `#0f172a`, and the frame around it is darker still
+- **AND** its subtle edge differs from its fill
+
+### Requirement: Navigation tokens are the darkest plane
+The `nav` tokens SHALL be dark in both themes. In the dark theme `--nav` SHALL be darker than the
+page background, so anything drawn on it separates from the page without relying on a border.
+
+The sidebar does not read these tokens; it draws on the surface tokens. Their only reader today is
+the datepicker's dark branch.
+
+#### Scenario: Dark theme navigation token
+- **WHEN** the dark theme's colour variables are read
+- **THEN** `--nav` is `#020617` and `--background` is `#0f172a`
+
+### Requirement: Elevation follows so-platform
+The light shadow SHALL use the neutral (slate) hue. The dark shadows SHALL be so-platform's: a black
+drop with a 5% white line along the top edge, `sm` at their resting-card strength and `lg` at their
+floating strength.
+
+#### Scenario: Dark floating surface
+- **WHEN** a modal or dropdown floats in the dark theme
+- **THEN** it casts a black shadow and carries a faint light top edge, with no coloured glow
+
+### Requirement: Fallbacks match the light theme
+The fallback value of each `--ui-*` colour token in `@muzakit/ui`'s `tokens.css` SHALL equal that
+variable's light-theme value. A consumer that loads no theme then renders the same palette as one
+that does.
+
+#### Scenario: Consumer without the theme
+- **WHEN** `muzakit-starter-without-tailwind` renders a primary button
+- **THEN** the button has the same colours as in the dashboard's light theme

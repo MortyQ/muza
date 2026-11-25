@@ -4,7 +4,7 @@
  * browser actually computed for an element.
  *
  * Comparing raw strings does not work — `getPropertyValue("--ui-primary")`
- * returns the authored `oklch(52% 0.27 280)`, while `getComputedStyle(el)
+ * returns the authored `oklch(50.0% 0.119 243)`, while `getComputedStyle(el)
  * .backgroundColor` returns the browser's serialisation. Both sides are pushed
  * through the same probe element so the browser does the normalising.
  */
@@ -22,7 +22,7 @@ function getProbe(): HTMLElement {
   return probe;
 }
 
-/** Raw authored value of a custom property on :root, e.g. "oklch(52% .27 280)". */
+/** Raw authored value of a custom property on :root, e.g. "oklch(50% .119 243)". */
 export function rawToken(token: string): string {
   return getComputedStyle(document.documentElement)
     .getPropertyValue(token)

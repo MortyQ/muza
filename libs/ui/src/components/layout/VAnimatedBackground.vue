@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
-
-interface Blob {
-  x: number
-  y: number
-  radius: number
-  vx: number
-  vy: number
-  color: string
-}
+import { computed } from "vue";
 
 interface Props {
   count?: number
@@ -31,117 +22,63 @@ const {
   ],
 } = defineProps<Props>();
 
-const canvasRef = useTemplateRef<HTMLCanvasElement>("canvasRef");
-let animationFrameId: number;
-let resizeHandler: (() => void) | null = null;
-const blobs: Blob[] = [];
+/** Average drift, in px per second at `speed` 1 — the pace the canvas version had at 60fps. */
+const DRIFT_PX_PER_SECOND = 15;
+const RGB = /rgba?\((\d+),\s*(\d+),\s*(\d+)/;
 
-const initBlobs = (canvas: HTMLCanvasElement) => {
-  blobs.length = 0;
+const random = (min: number, max: number) => min + Math.random() * (max - min);
 
-  for (let i = 0; i < count; i++) {
-    blobs.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * maxRadius + minRadius,
-      vx: (Math.random() - 0.5) * speed,
-      vy: (Math.random() - 0.5) * speed,
-      color: colors[i % colors.length],
-    });
+/** The blob's centre and its halo. An `rgb()` colour keeps its hue at fixed alphas, as the canvas
+ *  drew it; anything else (a token, a named colour) is mixed toward transparent instead. */
+const stops = (color: string) => {
+  const match = color.match(RGB);
+  if (!match) {
+    return {
+      core: `color-mix(in oklch, ${color} 50%, transparent)`,
+      halo: `color-mix(in oklch, ${color} 25%, transparent)`,
+    };
   }
+  const [, r, g, b] = match;
+  return { core: `rgba(${r}, ${g}, ${b}, 0.5)`, halo: `rgba(${r}, ${g}, ${b}, 0.25)` };
 };
 
-const animate = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Every value reaches CSS as a custom property; the motion itself is a CSS animation of
+// `transform`, so it runs on the compositor and leaves the main thread idle. The canvas
+// version repainted every blob 60 times a second for as long as the page was open.
+const blobs = computed(() => Array.from({ length: count }, (_, i) => {
+  const radius = random(0, maxRadius) + minRadius;
+  const dx = random(-1, 1) * radius * 1.5;
+  const dy = random(-1, 1) * radius * 1.5;
+  const duration = speed > 0 ? Math.hypot(dx, dy) / (DRIFT_PX_PER_SECOND * speed) : 0;
+  const { core, halo } = stops(colors[i % colors.length]);
 
-  blobs.forEach((blob) => {
-    blob.x += blob.vx;
-    blob.y += blob.vy;
-
-    if (blob.x < -blob.radius || blob.x > canvas.width + blob.radius) {
-      blob.vx *= -1;
-    }
-    if (blob.y < -blob.radius || blob.y > canvas.height + blob.radius) {
-      blob.vy *= -1;
-    }
-
-    const gradient = ctx.createRadialGradient(
-      blob.x,
-      blob.y,
-      0,
-      blob.x,
-      blob.y,
-      blob.radius * 0.7,
-    );
-
-    // Extract RGB values and create sharper gradient with higher opacity
-    const rgbMatch = blob.color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (rgbMatch) {
-      const [, r, g, b] = rgbMatch;
-      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.5)`);
-      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.25)`);
-      gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-    }
-
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  animationFrameId = requestAnimationFrame(() => animate(canvas, ctx));
-};
-
-onMounted(() => {
-  const canvas = canvasRef.value;
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-
-  const resize = () => {
-    if (!canvas) return;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    if (blobs.length === 0) {
-      initBlobs(canvas);
-    }
+  return {
+    "--v-blob-x": `${random(0, 100)}%`,
+    "--v-blob-y": `${random(0, 100)}%`,
+    "--v-blob-size": `${radius * 2}px`,
+    "--v-blob-dx": `${dx}px`,
+    "--v-blob-dy": `${dy}px`,
+    "--v-blob-period": `${Math.max(duration, 1)}s`,
+    "--v-blob-offset": `${-random(0, duration)}s`,
+    "--v-blob-play": speed > 0 ? "running" : "paused",
+    "--v-blob-core": core,
+    "--v-blob-halo": halo,
   };
-
-  resizeHandler = resize;
-  resize();
-  window.addEventListener("resize", resize);
-
-  animate(canvas, ctx);
-
-  watch(
-    () => [count, minRadius, maxRadius, speed, colors],
-    () => {
-      if (canvasRef.value) {
-        initBlobs(canvasRef.value);
-      }
-    },
-    { deep: true },
-  );
-});
-
-onUnmounted(() => {
-  if (resizeHandler) {
-    window.removeEventListener("resize", resizeHandler);
-  }
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-  }
-  blobs.length = 0;
-});
+}));
 </script>
 
 <template>
-  <canvas
-    ref="canvasRef"
+  <div
     aria-hidden="true"
-    class="v-animated-background__canvas"
-  />
+    class="v-animated-background"
+  >
+    <span
+      v-for="(blob, index) in blobs"
+      :key="index"
+      :style="blob"
+      class="v-animated-background__blob"
+    />
+  </div>
   <div class="v-animated-background__tint" />
 </template>
 

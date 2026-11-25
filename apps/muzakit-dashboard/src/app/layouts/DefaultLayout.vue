@@ -61,7 +61,7 @@ const contentMargin = computed(() => ({
     <div
       :class="contentMargin"
       class="flex-1 flex flex-col transition-all duration-300
-      overflow-x-hidden rounded-xl shadow-lg bg-surface"
+      overflow-x-hidden rounded-xl shadow-lg bg-background"
     >
       <header
         class="shadow-sm border-b flex-shrink-0 lg:hidden"

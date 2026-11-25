@@ -236,7 +236,7 @@ table `_fixed`, `_fullscreen` (focus), `_header` (resize line), `_highlight`,
 (selected, dragged over), `TableExpandAdditionalHeadersButton` (expanded,
 focus); `vavatar`, `vbutton`, `vchip`, `vtag`, `vloader`, `vprogressbar`,
 `vtoaster`, `dragndrop`, `vcheckbox`, `vcomposer`, `vdatepicker`, `vfileupload`,
-`vinput`, `vlisteditor`, `vselect`, `vselect-floating`, `vswitch`, `vaccordion`
+`vinput`, `vlisteditor`, `vsegmentedcontrol` (the pill), `vselect`, `vselect-floating`, `vswitch`, `vaccordion`
 (focus), `vanimatedbackground` (brand backdrop), `vinfonotice` (tone), `vtab`,
 the sidebar partials, `vfloating` (selected item). Review a new use against
 this list; nothing checks it automatically.
@@ -282,8 +282,8 @@ so `shadow-md` or `inset-shadow-sm` produce nothing. The raw variables are named
 `--corner-*` precisely because `--shadow-*: var(--shadow-*)` inside
 `@theme inline` would be self-referential.
 
-The dark theme's elevations are tinted with the brand violet — a black drop
-shadow is invisible on a dark surface.
+The dark theme's elevations are so-platform's: a deep black drop with a 5% white
+line along the top edge, which is what lifts a card off a dark page.
 
 ---
 

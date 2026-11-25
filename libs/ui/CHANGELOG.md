@@ -21,6 +21,7 @@
 
 ### Changed
 
+- **The palette is so-platform's**: sky for the accent, slate for every neutral, and green, amber, red and cyan for the statuses, in both themes. No token was added, renamed or removed; every colour token has a new value. Where so-platform's own pair fails WCAG, the value moves one step: the light accent is sky-700, the light statuses and warning are their 700 step, muted text sits at the lightest slate that reaches 4.5:1, and the field border is slate-300 / slate-600, a quiet edge kept below 3:1 on purpose. The segmented control's pill is now a primary tint with an inset primary line. In the dark theme every `*-foreground` is now dark (slate-900) on the light fills, and `-hover` is the lighter 300 step. The fallbacks in `tokens.css` are the light theme's values, so a consumer without the theme renders the same palette.
 - **BREAKING — `VTag` defaults to the `neutral` tone** (was `primary`), and `VInfoNotice` to `info` (was `primary`): the accent is opt-in through `color="primary"` / `tone="primary"`.
 - **A raised field label takes the accent only while the field has focus** (`VInput`, `VSelect`, `VDatepicker`); with a value and no focus it is secondary text.
 - **`VCard` `radius="sm"`** is 4px (`--ui-radius-xs`), the scale's smallest step; it was a 2px literal.

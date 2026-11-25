@@ -5,6 +5,7 @@ import {
 } from "vue";
 
 import type { VirtualItem } from "@tanstack/vue-virtual";
+import { useDebounceFn } from "@vueuse/core";
 
 import VButton from "../base/VButton.vue";
 import VSkeleton from "../feedback/VSkeleton.vue";
@@ -484,6 +485,13 @@ const selection = useTableSelection({
 // Virtualization with dynamic height for expand
 const scrollContainerRef = ref<HTMLElement | null>(null);
 
+// The scrollbars stay invisible until the table is scrolled, the way an
+// overlay scrollbar behaves, and hide again once it has been still for 800ms.
+const isScrolling = ref(false);
+const hideScrollbars = useDebounceFn(() => {
+  isScrolling.value = false;
+}, 800);
+
 // Fullscreen geometry targets. `wrapperRef` becomes the fixed panel;
 // `placeholderRef` holds the wrapper's original slot in the page while it is
 // out of flow; the chrome refs are measured to derive the content height.
@@ -834,6 +842,9 @@ const scrollContainerStyle = computed(() => ({
 
 // ── Linked tables ───────────────────────────────────────────────────────────
 const onScrollContainerScroll = (event: Event) => {
+  isScrolling.value = true;
+  void hideScrollbars();
+
   if (!scrollSync) return;
   const el = event.target as HTMLElement;
   scrollSync.onScroll(el.scrollLeft, el.scrollTop);
@@ -1041,9 +1052,12 @@ defineExpose({ visibleColumns: effectiveColumns });
         <div
           ref="scrollContainerRef"
           :aria-busy="loading"
-          :class="{ 'v-table-scroll-container--loading': loading }"
+          :class="{
+            'v-table-scroll-container--loading': loading,
+            'v-table-scroll-container--scrolling': isScrolling,
+          }"
           :style="scrollContainerStyle"
-          class="v-table-scroll-container v-table-scrollbar-styled"
+          class="v-table-scroll-container"
           @scroll="onScrollContainerScroll"
         >
           <div

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ametie/vue-muza-use": "^1.10.0",
+    "@fontsource-variable/plus-jakarta-sans": "5.3.0",
     "@muzakit/ui": "workspace:*",
     "@muzakit/utils": "workspace:*",
     "@vuelidate/core": "^2.0.3",

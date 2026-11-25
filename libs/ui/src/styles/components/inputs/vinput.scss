@@ -242,7 +242,9 @@
   transform-origin: top left;
   font-size: var(--ui-text-base);
   line-height: var(--ui-leading-base);
-  color: color-mix(in oklch, var(--ui-foreground) 60%, transparent);
+  /* The muted step, not the foreground at reduced alpha: a translucent label
+     lands below 4.5:1 on the field, and an alpha follows whatever sits behind it. */
+  color: var(--ui-foreground-muted);
   transition:
     top var(--ui-duration-fast) var(--ui-ease-out),
     left var(--ui-duration-fast) var(--ui-ease-out),

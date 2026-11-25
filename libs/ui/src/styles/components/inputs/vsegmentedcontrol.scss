@@ -79,8 +79,11 @@
   width: var(--v-sc-pill-w, 0);
   transform: translateX(var(--v-sc-pill-x, 0));
   border-radius: calc(var(--ui-radius-lg) - var(--ui-space-2xs));
-  background: var(--ui-surface-active);
-  box-shadow: none;
+  /* The selected segment is a current state, one of the accent's three roles:
+     a primary tint with an inset primary line, the pill so-platform's tools
+     draw. The line is a ring, not an elevation. */
+  background: color-mix(in oklch, var(--ui-primary) 15%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ui-primary) 40%, transparent);
   opacity: 0;
   pointer-events: none;
 
@@ -143,7 +146,7 @@
      painted one too would cut to it instantly and the slide would be invisible
      underneath. */
   &--active {
-    color: var(--ui-foreground);
+    color: var(--ui-primary-hover);
   }
 
   &--disabled {

@@ -44,7 +44,12 @@
     top: 50%;
     width: 5px;
     height: 9px;
-    border: solid var(--ui-primary-foreground);
+    /* Longhands, not `border: solid var(...)` followed by `border-width`: a
+       shorthand holding var() is kept as pending substitution, and anything
+       that re-serialises the rule (a stylesheet copy, the CSSOM) drops its
+       colour, leaving the mark in currentColor, black on the accent. */
+    border-style: solid;
+    border-color: var(--ui-primary-foreground);
     border-width: 0 2px 2px 0;
     border-radius: 1px;
     transform: translate(-50%, -60%) rotate(45deg);

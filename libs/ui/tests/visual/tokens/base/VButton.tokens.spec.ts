@@ -82,7 +82,8 @@ describe.each(THEME_CASES)("VButton tokens — %s theme", (theme) => {
   it("keeps secondary filled — the one variant outside the tonal system", async () => {
     const el = await renderButton({ variant: "secondary" });
     const style = getComputedStyle(el);
-    expect(style.backgroundColor).toBe(tokenAsColor("--ui-border-strong"));
+    // The muted step: `border-strong` held the inverted label at only 2:1.
+    expect(style.backgroundColor).toBe(tokenAsColor("--ui-foreground-muted"));
     expect(style.color).toBe(tokenAsColor("--ui-foreground-inverted"));
   });
 

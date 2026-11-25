@@ -84,7 +84,12 @@ describe.each(THEME_CASES)("VSegmentedControl loading — %s theme", (theme) => 
     // so this reads it directly. Busy must not hide the option just picked.
     const busy = await renderControl({ loading: true });
     const pill = busy.querySelector<HTMLElement>(".v-sc__pill")!;
-    expect(getComputedStyle(pill).backgroundColor).toBe(tokenAsColor("--ui-surface-active"));
+    const probe = document.createElement("span");
+    probe.style.color = "color-mix(in oklch, var(--ui-primary) 15%, transparent)";
+    document.body.append(probe);
+    const tint = getComputedStyle(probe).color;
+    probe.remove();
+    expect(getComputedStyle(pill).backgroundColor).toBe(tint);
     expect(getComputedStyle(pill).opacity).toBe("1");
   });
 });
